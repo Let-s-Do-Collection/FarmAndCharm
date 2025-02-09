@@ -2,6 +2,9 @@ package net.satisfy.farm_and_charm.core.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -60,6 +63,7 @@ public class StackableEatableBlock extends Block {
     @Override
     public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         final ItemStack stack = player.getItemInHand(hand);
+
         if (player.isShiftKeyDown() && stack.isEmpty()) {
             if (!world.isClientSide) {
                 if (state.getValue(STACK_PROPERTY) > 1) {
@@ -69,29 +73,58 @@ public class StackableEatableBlock extends Block {
                 }
                 player.getFoodData().eat(3, 0.6f);
                 world.playSound(null, pos, SoundEvents.GENERIC_EAT, SoundSource.PLAYERS, 1.0F, 1.0F);
+
+                for (int i = 0; i < 10; i++) {
+                    double dx = (world.random.nextDouble() - 0.5) * 0.1;
+                    double dy = world.random.nextDouble() * 0.1;
+                    double dz = (world.random.nextDouble() - 0.5) * 0.1;
+                    world.addParticle(new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(this.asItem())),
+                            pos.getX() + 0.5, pos.getY() + 0.7, pos.getZ() + 0.5, dx, dy, dz);
+                }
+
                 return InteractionResult.sidedSuccess(world.isClientSide);
             }
-        } else if (stack.getItem() == this.asItem()) {
+        }
+
+        else if (stack.getItem() == this.asItem()) {
             if (state.getValue(STACK_PROPERTY) < this.maxStack) {
                 world.setBlock(pos, state.setValue(STACK_PROPERTY, state.getValue(STACK_PROPERTY) + 1), Block.UPDATE_ALL);
                 if (!player.isCreative()) {
                     stack.shrink(1);
                 }
+
+                for (int i = 0; i < 8; i++) {
+                    double angle = world.random.nextDouble() * Math.PI * 2;
+                    double speed = 0.1 + world.random.nextDouble() * 0.1;
+                    double dx = Math.cos(angle) * speed;
+                    double dy = 0.05;
+                    double dz = Math.sin(angle) * speed;
+
+                    world.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, state),
+                            pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, dx, dy, dz);
+                }
+
                 return InteractionResult.SUCCESS;
             }
-        } else if (stack.isEmpty()) {
+        }
+
+        else if (stack.isEmpty()) {
             if (state.getValue(STACK_PROPERTY) > 1) {
                 world.setBlock(pos, state.setValue(STACK_PROPERTY, state.getValue(STACK_PROPERTY) - 1), Block.UPDATE_ALL);
             } else if (state.getValue(STACK_PROPERTY) == 1) {
                 world.destroyBlock(pos, false);
             }
+
             Direction direction = player.getDirection().getOpposite();
             double xMotion = direction.getStepX() * 0.13;
             double yMotion = 0.35;
             double zMotion = direction.getStepZ() * 0.13;
+
             GeneralUtil.spawnSlice(world, new ItemStack(this), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, xMotion, yMotion, zMotion);
             return InteractionResult.SUCCESS;
         }
+
         return super.use(state, world, pos, player, hand, hit);
     }
+
 }

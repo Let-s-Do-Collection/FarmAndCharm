@@ -126,7 +126,7 @@ public class CraftingBowlBlock extends BaseEntityBlock {
                     for (ItemStack stack : bowlEntity.getItems()) {
                         if (!stack.isEmpty() && bowlEntity.getItem(4) != stack) {
                             ItemParticleOption particleOption = new ItemParticleOption(ParticleTypes.ITEM, stack);
-                            serverWorld.sendParticles(particleOption, pos.getX() + 0.5, pos.getY() + 0.25, pos.getZ() + 0.5, 1, randomSource.nextGaussian() * 0.15D, 0.05D, randomSource.nextGaussian() * 0.15D, 0.05D);
+                            serverWorld.sendParticles(particleOption, pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5, 1, randomSource.nextGaussian() * 0.15D, 0.05D, randomSource.nextGaussian() * 0.15D, 0.05D);
                         }
                     }
                 }

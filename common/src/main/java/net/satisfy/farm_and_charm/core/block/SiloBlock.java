@@ -2,6 +2,7 @@ package net.satisfy.farm_and_charm.core.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
@@ -88,25 +89,37 @@ public class SiloBlock extends FacingBlock implements EntityBlock {
         ItemStack itemStack = player.getItemInHand(interactionHand);
         if (level.isClientSide)
             return itemStack.isEmpty() || isDryItem(level, itemStack) ? InteractionResult.SUCCESS : isSilo(itemStack) || player.isDiscrete() ? InteractionResult.PASS : InteractionResult.CONSUME;
+
         BlockEntity be = level.getBlockEntity(blockPos);
         if (be instanceof SiloBlockEntity siloBE) {
             SiloBlockEntity siloController = siloBE.getControllerBE();
             if (siloController == null)
                 return InteractionResult.PASS;
+
             if (itemStack.isEmpty()) {
                 if (player.isDiscrete()) {
                     ItemStack returnStack = siloBE.tryRemoveItem();
-                    if (!returnStack.isEmpty())
+                    if (!returnStack.isEmpty()) {
                         player.addItem(itemStack);
+                        level.playSound(null, blockPos, SoundEvents.COMPOSTER_EMPTY,
+                                net.minecraft.sounds.SoundSource.BLOCKS, 1.0f, 1.0f);
+                    }
                 } else {
-                    siloController.open(!blockState.getValue(OPEN));
+                    boolean isOpen = blockState.getValue(OPEN);
+                    siloController.open(!isOpen);
+                    level.playSound(null, blockPos, isOpen ? SoundEvents.IRON_TRAPDOOR_CLOSE : SoundEvents.IRON_TRAPDOOR_OPEN,
+                            net.minecraft.sounds.SoundSource.BLOCKS, 1.0f, 1.0f);
                 }
                 return InteractionResult.SUCCESS;
-            } else if (isDryItem(level, itemStack) && siloController.tryAddItem(itemStack))
+            } else if (isDryItem(level, itemStack) && siloController.tryAddItem(itemStack)) {
+                level.playSound(null, blockPos, SoundEvents.COMPOSTER_FILL_SUCCESS,
+                        net.minecraft.sounds.SoundSource.BLOCKS, 1.0f, 1.0f);
                 return InteractionResult.SUCCESS;
+            }
         }
         return isSilo(itemStack) || player.isDiscrete() ? InteractionResult.PASS : InteractionResult.CONSUME;
     }
+
 
     @Override
     public void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean notify) {

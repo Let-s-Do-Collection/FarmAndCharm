@@ -210,5 +210,6 @@ public class FarmAndCharmForgeConfig {
                 .build();
         file.load();
         spec.setConfig(file);
+        file.save();
     }
 }

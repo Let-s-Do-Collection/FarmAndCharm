@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.forge;
 
+import dev.architectury.platform.Platform;
 import dev.architectury.platform.forge.EventBuses;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -17,7 +18,7 @@ public class FarmAndCharmForge {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         EventBuses.registerModEventBus(FarmAndCharm.MOD_ID, modEventBus);
         FarmAndCharm.init();
-        FarmAndCharmForgeConfig.loadConfig(FarmAndCharmForgeConfig.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve("farmandcharm.toml").toString());
+        FarmAndCharmForgeConfig.loadConfig(FarmAndCharmForgeConfig.COMMON_CONFIG, Platform.getConfigFolder().resolve("farmandcharm.toml").toString());
         modEventBus.addListener(this::commonSetup);
     }
 

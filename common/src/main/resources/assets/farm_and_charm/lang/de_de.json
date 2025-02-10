@@ -291,5 +291,9 @@
   "text.autoconfig.farm_and_charm.option.effects.satiationEffect.satiationEffectHealAmount": "Satiation Heal Amount",
   "text.autoconfig.farm_and_charm.option.effects.sustenanceEffect.sustenanceEffectInterval": "Sustenance Interval (ticks)",
   "text.autoconfig.farm_and_charm.option.effects.sustenanceEffect.sustenanceEffectHealAmount": "Sustenance Heal Amount",
-  "text.autoconfig.farm_and_charm.option.effects.sustenanceEffect.sustenanceEffectFoodIncrement": "Sustenance Food Increment"
+  "text.autoconfig.farm_and_charm.option.effects.sustenanceEffect.sustenanceEffectFoodIncrement": "Sustenance Food Increment",
+  "tooltip.farm_and_charm.recipe_unlocker.unlocks": "Schaltet frei: %s",
+  "tooltip.farm_and_charm.recipe_unlocker.already_unlocked": "Du hast dieses Rezept bereits erlernt!",
+  "tooltip.farm_and_charm.recipe_unlocker.unlocked.prefix": "Rezept freigeschaltet:"
 }
+

@@ -5,7 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -24,6 +24,7 @@ import net.satisfy.farm_and_charm.core.block.CookingPotBlock;
 import net.satisfy.farm_and_charm.core.item.food.EffectFood;
 import net.satisfy.farm_and_charm.core.item.food.EffectFoodHelper;
 import net.satisfy.farm_and_charm.core.recipe.CookingPotRecipe;
+import net.satisfy.farm_and_charm.core.recipe.RecipeUnlockManager;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.TagRegistry;
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.UUID;
 
 import static net.minecraft.world.item.ItemStack.isSameItemSameTags;
 
@@ -42,6 +44,7 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(MAX_CAPACITY, ItemStack.EMPTY);
     private int cookingTime;
     private boolean isBeingBurned;
+    private UUID ownerUuid;
     private final ContainerData delegate = new ContainerData() {
         public int get(int index) {
             return switch (index) {
@@ -83,12 +86,18 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
         super.load(nbt);
         ContainerHelper.loadAllItems(nbt, inventory);
         cookingTime = nbt.getInt("CookingTime");
+        if (nbt.hasUUID("OwnerUUID")) {
+            ownerUuid = nbt.getUUID("OwnerUUID");
+        }
     }
 
     protected void saveAdditional(CompoundTag nbt) {
         super.saveAdditional(nbt);
         ContainerHelper.saveAllItems(nbt, inventory);
         nbt.putInt("CookingTime", cookingTime);
+        if (ownerUuid != null) {
+            nbt.putUUID("OwnerUUID", ownerUuid);
+        }
     }
 
     public boolean isBeingBurned() {
@@ -132,21 +141,17 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
         if (!canCraft(recipe, access)) return;
         ItemStack recipeOutput = generateOutputItem(recipe, access);
         ItemStack outputSlotStack = getItem(OUTPUT_SLOT);
-
         if (outputSlotStack.isEmpty()) {
             setItem(OUTPUT_SLOT, recipeOutput);
         } else if (isSameItemSameTags(outputSlotStack, recipeOutput)) {
             outputSlotStack.grow(recipeOutput.getCount());
         }
-
         if (recipe instanceof CookingPotRecipe cookingRecipe) {
             for (var ingredient : cookingRecipe.getIngredients()) {
                 for (int slot = 0; slot < INGREDIENTS_AREA; slot++) {
                     ItemStack stack = getItem(slot);
                     if (ingredient.test(stack) && !stack.isEmpty()) {
-                        ItemStack remainderStack = stack.getItem().hasCraftingRemainingItem()
-                                ? new ItemStack(Objects.requireNonNull(stack.getItem().getCraftingRemainingItem()))
-                                : ItemStack.EMPTY;
+                        ItemStack remainderStack = stack.getItem().hasCraftingRemainingItem() ? new ItemStack(Objects.requireNonNull(stack.getItem().getCraftingRemainingItem())) : ItemStack.EMPTY;
                         stack.shrink(1);
                         if (!remainderStack.isEmpty()) {
                             if (getItem(slot).isEmpty()) {
@@ -166,8 +171,9 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
                                     }
                                 }
                                 if (!added) {
-                                    assert this.level != null;
-                                    Block.popResource(this.level, this.worldPosition, remainderStack);
+                                    if (this.level != null) {
+                                        Block.popResource(this.level, this.worldPosition, remainderStack);
+                                    }
                                 }
                             }
                         }
@@ -175,7 +181,6 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
                     }
                 }
             }
-
             if (cookingRecipe.isContainerRequired()) {
                 ItemStack containerSlotStack = getItem(CONTAINER_SLOT);
                 if (!containerSlotStack.isEmpty()) {
@@ -184,7 +189,6 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
                 }
             }
         }
-
         for (int slot = 0; slot < INGREDIENTS_AREA; slot++) {
             ItemStack ingredientStack = this.getItem(slot);
             if (!ingredientStack.isEmpty() && ingredientStack.getItem() instanceof EffectFood) {
@@ -197,7 +201,6 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
             }
         }
     }
-
 
     private ItemStack generateOutputItem(Recipe<?> recipe, RegistryAccess access) {
         ItemStack outputStack = recipe.getResultItem(access).copy();
@@ -222,12 +225,23 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
         if (wasBeingBurned != isBeingBurned || state.getValue(CookingPotBlock.LIT) != isBeingBurned) {
             world.setBlock(pos, state.setValue(CookingPotBlock.LIT, isBeingBurned), Block.UPDATE_ALL);
         }
+        if (!isBeingBurned) return;
+        Recipe<?> recipe = world.getRecipeManager().getRecipeFor(RecipeTypeRegistry.COOKING_POT_RECIPE_TYPE.get(), this, world).orElse(null);
 
-        if (!isBeingBurned) {
-            return;
+
+        if (recipe instanceof CookingPotRecipe cookingRecipe) {
+            if (cookingRecipe.requiresLearning()) {
+                ServerPlayer owner = Objects.requireNonNull(world.getServer()).getPlayerList().getPlayer(ownerUuid);
+                if (owner == null || !RecipeUnlockManager.isRecipeUnlocked(owner, recipe.getId())) {
+                    cookingTime = 0;
+                    if (state.getValue(CookingPotBlock.COOKING)) {
+                        world.setBlock(pos, state.setValue(CookingPotBlock.COOKING, false), Block.UPDATE_ALL);
+                    }
+                    return;
+                }
+            }
         }
 
-        Recipe<?> recipe = world.getRecipeManager().getRecipeFor(RecipeTypeRegistry.COOKING_POT_RECIPE_TYPE.get(), this, world).orElse(null);
         if (level == null) throw new IllegalStateException("Null world not allowed");
         RegistryAccess access = level.registryAccess();
         if (canCraft(recipe, access)) {
@@ -246,7 +260,6 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
         }
     }
 
-
     public NonNullList<ItemStack> getItems() {
         return inventory;
     }
@@ -256,12 +269,12 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
         return player.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) <= 64.0D;
     }
 
-    public @NotNull Component getDisplayName() {
-        return Component.translatable(getBlockState().getBlock().getDescriptionId());
+    public @NotNull net.minecraft.network.chat.Component getDisplayName() {
+        return net.minecraft.network.chat.Component.translatable(getBlockState().getBlock().getDescriptionId());
     }
 
-    @Nullable
-    public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
+    public @Nullable AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
+        ownerUuid = player.getUUID();
         return new CookingPotGuiHandler(syncId, inv, this, delegate);
     }
 }

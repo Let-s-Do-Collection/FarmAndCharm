@@ -6,6 +6,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -23,6 +24,7 @@ import net.satisfy.farm_and_charm.client.gui.handler.RoasterGuiHandler;
 import net.satisfy.farm_and_charm.core.block.RoasterBlock;
 import net.satisfy.farm_and_charm.core.item.food.EffectFood;
 import net.satisfy.farm_and_charm.core.item.food.EffectFoodHelper;
+import net.satisfy.farm_and_charm.core.recipe.RecipeUnlockManager;
 import net.satisfy.farm_and_charm.core.recipe.RoasterRecipe;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
@@ -32,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.UUID;
 
 import static net.minecraft.world.item.ItemStack.isSameItemSameTags;
 
@@ -42,6 +45,7 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(MAX_CAPACITY, ItemStack.EMPTY);
     private int roastingTime;
     private boolean isBeingBurned;
+    private UUID ownerUuid;
     private final ContainerData delegate = new ContainerData() {
         public int get(int index) {
             return switch (index) {
@@ -156,12 +160,22 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
         if (wasBeingBurned != isBeingBurned || state.getValue(RoasterBlock.LIT) != isBeingBurned) {
             world.setBlock(pos, state.setValue(RoasterBlock.LIT, isBeingBurned), Block.UPDATE_ALL);
         }
-
         if (!isBeingBurned) {
             return;
         }
-
         Recipe<?> recipe = world.getRecipeManager().getRecipeFor(RecipeTypeRegistry.ROASTER_RECIPE_TYPE.get(), this, world).orElse(null);
+        if (recipe instanceof RoasterRecipe roastingRecipe) {
+            if (roastingRecipe.requiresLearning()) {
+                ServerPlayer owner = Objects.requireNonNull(world.getServer()).getPlayerList().getPlayer(ownerUuid);
+                if (owner == null || !RecipeUnlockManager.isRecipeUnlocked(owner, recipe.getId())) {
+                    roastingTime = 0;
+                    if (state.getValue(RoasterBlock.ROASTING)) {
+                        world.setBlock(pos, state.setValue(RoasterBlock.ROASTING, false), Block.UPDATE_ALL);
+                    }
+                    return;
+                }
+            }
+        }
         if (level == null) throw new IllegalStateException("Null world not allowed");
         RegistryAccess access = level.registryAccess();
         if (canCraft(recipe, access)) {
@@ -180,7 +194,6 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
         }
     }
 
-
     public NonNullList<ItemStack> getItems() {
         return inventory;
     }
@@ -196,6 +209,7 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
 
     @Nullable
     public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
+        ownerUuid = player.getUUID();
         return new RoasterGuiHandler(syncId, inv, this, delegate);
     }
 }

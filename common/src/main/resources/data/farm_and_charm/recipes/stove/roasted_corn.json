@@ -11,7 +11,10 @@
       "tag": "farm_and_charm:butter"
     }
   ],
-  "item": "farm_and_charm:roasted_corn",
-  "count": 1,
-  "experience": 0.2
+  "result": {
+    "item": "farm_and_charm:roasted_corn",
+    "count": 1
+  },
+  "experience": 0.2,
+  "requiresLearning": false
 }

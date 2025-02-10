@@ -11,7 +11,10 @@
       "item": "minecraft:sugar"
     }
   ],
-  "item": "farm_and_charm:grandmothers_strawberry_cake",
-  "count": 2,
-  "experience": 0.35
+  "result": {
+    "item": "farm_and_charm:grandmothers_strawberry_cake",
+    "count": 2
+  },
+  "experience": 0.35,
+  "requiresLearning": false
 }

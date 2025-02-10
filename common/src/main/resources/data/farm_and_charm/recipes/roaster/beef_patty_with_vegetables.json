@@ -26,5 +26,6 @@
   "result": {
     "item": "farm_and_charm:beef_patty_with_vegetables",
     "count": 2
-  }
+  },
+  "requiresLearning": false
 }

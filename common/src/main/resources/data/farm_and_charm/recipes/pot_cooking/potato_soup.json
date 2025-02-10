@@ -17,5 +17,6 @@
   "result": {
     "item": "farm_and_charm:potato_soup",
     "count": 1
-  }
+  },
+  "requiresLearning": false
 }

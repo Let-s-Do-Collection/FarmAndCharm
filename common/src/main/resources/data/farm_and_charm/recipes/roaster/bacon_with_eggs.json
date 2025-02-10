@@ -23,5 +23,6 @@
   "result": {
     "item": "farm_and_charm:bacon_with_eggs",
     "count": 3
-  }
+  },
+  "requiresLearning": false
 }

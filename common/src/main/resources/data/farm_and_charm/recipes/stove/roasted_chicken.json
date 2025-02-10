@@ -11,7 +11,10 @@
       "item": "minecraft:carrot"
     }
   ],
-  "item": "farm_and_charm:roasted_chicken",
-  "count": 3,
-  "experience": 0.3
+  "result": {
+    "item": "farm_and_charm:roasted_chicken",
+    "count": 3
+  },
+  "experience": 0.3,
+  "requiresLearning": false
 }

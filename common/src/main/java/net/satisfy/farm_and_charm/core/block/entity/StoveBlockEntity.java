@@ -10,6 +10,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -29,11 +30,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.farm_and_charm.client.gui.handler.StoveGuiHandler;
 import net.satisfy.farm_and_charm.core.block.StoveBlock;
-import net.satisfy.farm_and_charm.core.item.food.EffectBlockItem;
 import net.satisfy.farm_and_charm.core.item.food.EffectFood;
-import net.satisfy.farm_and_charm.core.item.food.EffectFoodBlockItem;
 import net.satisfy.farm_and_charm.core.item.food.EffectFoodHelper;
+import net.satisfy.farm_and_charm.core.item.food.EffectBlockItem;
+import net.satisfy.farm_and_charm.core.item.food.EffectFoodBlockItem;
 import net.satisfy.farm_and_charm.core.recipe.StoveRecipe;
+import net.satisfy.farm_and_charm.core.recipe.RecipeUnlockManager;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
 import net.satisfy.farm_and_charm.core.world.ImplementedInventory;
@@ -42,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<StoveBlockEntity>, ImplementedInventory, MenuProvider {
     public static final int TOTAL_COOKING_TIME = 240;
@@ -77,6 +80,7 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
     };
     protected float experience;
     private NonNullList<ItemStack> inventory;
+    private UUID ownerUuid;
 
     public StoveBlockEntity(BlockPos pos, BlockState state) {
         super(EntityTypeRegistry.STOVE_BLOCK_ENTITY.get(), pos, state);
@@ -145,6 +149,16 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         StoveRecipe recipe = world.getRecipeManager().getRecipeFor(RecipeTypeRegistry.STOVE_RECIPE_TYPE.get(), blockEntity, world).orElse(null);
         assert level != null;
         RegistryAccess access = level.registryAccess();
+        if (recipe != null && recipe.requiresLearning()) {
+            ServerPlayer owner = Objects.requireNonNull(world.getServer()).getPlayerList().getPlayer(ownerUuid);
+            if (owner == null || !RecipeUnlockManager.isRecipeUnlocked(owner, recipe.getId())) {
+                this.cookTime = 0;
+                if (state.getValue(StoveBlock.LIT)) {
+                    world.setBlock(pos, state.setValue(StoveBlock.LIT, false), Block.UPDATE_ALL);
+                }
+                return;
+            }
+        }
         if (!initialBurningState && canCraft(recipe, access)) {
             this.burnTime = this.burnTimeTotal = this.getTotalBurnTime(this.getItem(4));
             if (burnTime > 0) {
@@ -328,6 +342,7 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
+        ownerUuid = player.getUUID();
         return new StoveGuiHandler(syncId, inv, this, this.propertyDelegate);
     }
 

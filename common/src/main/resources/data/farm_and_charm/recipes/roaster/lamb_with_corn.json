@@ -20,5 +20,6 @@
   "result": {
     "item": "farm_and_charm:lamb_with_corn",
     "count": 1
-  }
+  },
+  "requiresLearning": false
 }

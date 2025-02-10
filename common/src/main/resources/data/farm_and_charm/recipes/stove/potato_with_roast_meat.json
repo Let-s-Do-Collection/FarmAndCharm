@@ -11,7 +11,10 @@
       "item": "minecraft:honey_bottle"
     }
   ],
-  "item": "farm_and_charm:potato_with_roast_meat",
-  "count": 2,
-  "experience": 0.5
+  "result": {
+    "item": "farm_and_charm:potato_with_roast_meat",
+    "count": 2
+  },
+  "experience": 0.5,
+  "requiresLearning": false
 }

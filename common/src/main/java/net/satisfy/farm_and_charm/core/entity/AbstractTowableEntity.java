@@ -67,6 +67,7 @@ public abstract class AbstractTowableEntity extends Entity {
             for (Entity ent : entities) {
                 if (ent instanceof DrivableEntity drivable) {
                     if (drivable.hasDriver()) {
+                        assert drivable.getDriver() != null;
                         if (drivable.getDriver().equals(entity)) {
                             return false;
                         }
@@ -94,6 +95,7 @@ public abstract class AbstractTowableEntity extends Entity {
     @Override
     protected void addAdditionalSaveData(CompoundTag compoundTag) {
         if (this.hasDriver()) {
+            assert this.getDriver() != null;
             compoundTag.putInt(DRIVER, this.getDriver().getId());
         }
     }
@@ -200,7 +202,6 @@ public abstract class AbstractTowableEntity extends Entity {
     }
 
     private void addStats() {
-        // Implementiere hier deine Logik zur Statistikerfassung, falls nötig
     }
 
     void tickLerp() {
@@ -246,7 +247,7 @@ public abstract class AbstractTowableEntity extends Entity {
         double distanceTravelled = Math.sqrt(dx * dx + dz * dz);
 
         if (distanceTravelled > 0.2 && soundCooldownTicks <= 0 && !this.level().isClientSide()) {
-            this.level().playSound(null, this.blockPosition(), SoundEventRegistry.CART_MOVING.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+            this.level().playSound(null, this.blockPosition(), SoundEventRegistry.CART_MOVING.get(), SoundSource.BLOCKS, 0.7F, 1.0F);
             soundCooldownTicks = 45;
         }
 

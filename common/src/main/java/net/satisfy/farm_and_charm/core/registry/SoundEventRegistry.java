@@ -19,7 +19,6 @@ public class SoundEventRegistry {
     public static final RegistrySupplier<SoundEvent> ROASTER_COOKING = create("roaster_cooking");
     public static final RegistrySupplier<SoundEvent> STOVE_CRACKLING = create("stove_crackling");
     public static final RegistrySupplier<SoundEvent> WATER_SPRINKLER = create("water_sprinkler");
-
     public static final RegistrySupplier<SoundEvent> CART_MOVING = create("cart_moving");;
 
     public static void init() {}

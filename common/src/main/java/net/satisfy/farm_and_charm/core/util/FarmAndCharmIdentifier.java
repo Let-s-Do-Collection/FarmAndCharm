@@ -9,7 +9,4 @@ public class FarmAndCharmIdentifier extends ResourceLocation {
         super(FarmAndCharm.MOD_ID, path);
     }
 
-    public static String asString(String path) {
-        return (FarmAndCharm.MOD_ID + ":" + path);
-    }
 }

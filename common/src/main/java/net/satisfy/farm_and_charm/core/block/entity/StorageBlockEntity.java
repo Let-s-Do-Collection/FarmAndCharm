@@ -14,7 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
-import net.satisfy.farm_and_charm.core.util.Util;
+import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class StorageBlockEntity extends BlockEntity {
@@ -48,7 +48,7 @@ public class StorageBlockEntity extends BlockEntity {
             if (!this.level.isClientSide()) {
                 Packet<ClientGamePacketListener> updatePacket = this.getUpdatePacket();
 
-                for (ServerPlayer player : Util.tracking(serverLevel, this.getBlockPos())) {
+                for (ServerPlayer player : GeneralUtil.tracking(serverLevel, this.getBlockPos())) {
                     player.connection.send(updatePacket);
                 }
             }

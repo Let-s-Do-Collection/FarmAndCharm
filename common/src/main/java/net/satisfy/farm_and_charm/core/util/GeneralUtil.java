@@ -2,7 +2,10 @@ package net.satisfy.farm_and_charm.core.util;
 
 import com.google.gson.JsonArray;
 import com.mojang.datafixers.util.Pair;
-import dev.architectury.registry.client.rendering.ColorHandlerRegistry;
+import dev.architectury.platform.Platform;
+import dev.architectury.registry.registries.DeferredRegister;
+import dev.architectury.registry.registries.Registrar;
+import dev.architectury.registry.registries.RegistrySupplier;
 import io.netty.buffer.Unpooled;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -14,11 +17,10 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -26,25 +28,21 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.RotatedPillarBlock;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -54,7 +52,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Supplier;
 
+@SuppressWarnings("unused, deprecation")
 public class GeneralUtil {
     private static final Map<ResourceLocation, Map<BlockPos, Pair<ChairEntity, BlockPos>>> CHAIRS = new HashMap<>();
     private static final String BLOCK_POS_KEY = "block_pos";
@@ -62,6 +62,20 @@ public class GeneralUtil {
     public static final EnumProperty<GeneralUtil.LineConnectingType> LINE_CONNECTING_TYPE = EnumProperty.create("type", GeneralUtil.LineConnectingType.class);
 
     public GeneralUtil() {
+    }
+
+    public static <T extends Block> RegistrySupplier<T> registerWithItem(DeferredRegister<Block> registerB, Registrar<Block> registrarB, DeferredRegister<Item> registerI, Registrar<Item> registrarI, ResourceLocation name, Supplier<T> block) {
+        RegistrySupplier<T> toReturn = registerWithoutItem(registerB, registrarB, name, block);
+        registerItem(registerI, registrarI, name, () -> new BlockItem(toReturn.get(), new Item.Properties()));
+        return toReturn;
+    }
+
+    public static <T extends Block> RegistrySupplier<T> registerWithoutItem(DeferredRegister<Block> register, Registrar<Block> registrar, ResourceLocation path, Supplier<T> block) {
+        return Platform.isForge() ? register.register(path.getPath(), block) : registrar.register(path, block);
+    }
+
+    public static <T extends Item> RegistrySupplier<T> registerItem(DeferredRegister<Item> register, Registrar<Item> registrar, ResourceLocation path, Supplier<T> itemSupplier) {
+        return Platform.isForge() ? register.register(path.getPath(), itemSupplier) : registrar.register(path, itemSupplier);
     }
 
     public static boolean isFullAndSolid(LevelReader levelReader, BlockPos blockPos) {
@@ -78,36 +92,34 @@ public class GeneralUtil {
     }
 
     public static boolean matchesRecipe(Container inventory, NonNullList<Ingredient> recipe, int startIndex, int endIndex) {
-        List<ItemStack> validStacks = new ArrayList();
+        List<ItemStack> validStacks = new ArrayList<>();
 
-        for(int i = startIndex; i <= endIndex; ++i) {
+        for (int i = startIndex; i <= endIndex; ++i) {
             ItemStack stackInSlot = inventory.getItem(i);
             if (!stackInSlot.isEmpty()) {
                 validStacks.add(stackInSlot);
             }
         }
 
-        Iterator var10 = recipe.iterator();
+        Iterator<Ingredient> recipeIterator = recipe.iterator();
 
         boolean matches;
         do {
-            if (!var10.hasNext()) {
+            if (!recipeIterator.hasNext()) {
                 return true;
             }
 
-            Ingredient entry = (Ingredient)var10.next();
+            Ingredient ingredient = recipeIterator.next();
             matches = false;
-            Iterator var8 = validStacks.iterator();
 
-            while(var8.hasNext()) {
-                ItemStack item = (ItemStack)var8.next();
-                if (entry.test(item)) {
+            for (ItemStack itemStack : validStacks) {
+                if (ingredient.test(itemStack)) {
                     matches = true;
-                    validStacks.remove(item);
+                    validStacks.remove(itemStack);
                     break;
                 }
             }
-        } while(matches);
+        } while (matches);
 
         return false;
     }
@@ -130,25 +142,12 @@ public class GeneralUtil {
         int times = (to.get2DDataValue() - from.get2DDataValue() + 4) % 4;
 
         for(int i = 0; i < times; ++i) {
-            buffer[0].forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {
-                buffer[1] = Shapes.joinUnoptimized(buffer[1], Shapes.box(1.0 - maxZ, minY, minX, 1.0 - minZ, maxY, maxX), BooleanOp.OR);
-            });
+            buffer[0].forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> buffer[1] = Shapes.joinUnoptimized(buffer[1], Shapes.box(1.0 - maxZ, minY, minX, 1.0 - minZ, maxY, maxX), BooleanOp.OR));
             buffer[0] = buffer[1];
             buffer[1] = Shapes.empty();
         }
 
         return buffer[0];
-    }
-
-    public static void registerColorArmor(Item item, int defaultColor) {
-        ColorHandlerRegistry.registerItemColors((stack, tintIndex) -> {
-            return 0 < tintIndex ? 16777215 : getColor(stack, defaultColor);
-        }, new ItemLike[]{item});
-    }
-
-    static int getColor(ItemStack itemStack, int defaultColor) {
-        CompoundTag displayTag = itemStack.getTagElement("display");
-        return null != displayTag && displayTag.contains("color", 99) ? displayTag.getInt("color") : defaultColor;
     }
 
     public static void spawnSlice(Level level, ItemStack stack, double x, double y, double z, double xMotion, double yMotion, double zMotion) {
@@ -168,10 +167,6 @@ public class GeneralUtil {
         return tracking(world, new ChunkPos(pos));
     }
 
-    public static float getInPercent(int i) {
-        return (float)i / 100.0F;
-    }
-
     public static ItemStack convertStackAfterFinishUsing(LivingEntity entity, ItemStack used, Item returnItem, Item usedItem) {
         if (entity instanceof ServerPlayer serverPlayer) {
             CriteriaTriggers.CONSUME_ITEM.trigger(serverPlayer, used);
@@ -181,8 +176,7 @@ public class GeneralUtil {
         if (used.isEmpty()) {
             return new ItemStack(returnItem);
         } else {
-            if (entity instanceof Player) {
-                Player player = (Player)entity;
+            if (entity instanceof Player player) {
                 if (!((Player)entity).getAbilities().instabuild) {
                     ItemStack itemStack2 = new ItemStack(returnItem);
                     if (!player.getInventory().add(itemStack2)) {
@@ -212,6 +206,23 @@ public class GeneralUtil {
             }
         }
         return InteractionResult.PASS;
+    }
+
+    public static BlockPos getPreviousPlayerPosition(Player player, ChairEntity chairEntity) {
+        if (!player.level().isClientSide()) {
+            ResourceLocation id = getDimensionTypeId(player.level());
+            if (CHAIRS.containsKey(id)) {
+                Map<BlockPos, Pair<ChairEntity, BlockPos>> chairsInDimension = CHAIRS.get(id);
+
+                for (Pair<ChairEntity, BlockPos> chairPair : chairsInDimension.values()) {
+                    if (chairPair.getFirst() == chairEntity) {
+                        return chairPair.getSecond();
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     public static boolean isOccupied(Level world, BlockPos pos) {
@@ -271,47 +282,17 @@ public class GeneralUtil {
         return null;
     }
 
-    public static InteractionResult fillBucket(Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, ItemStack itemStack, ItemStack returnItem, BlockState blockState, SoundEvent soundEvent) {
-        if (!level.isClientSide) {
-            Item item = itemStack.getItem();
-            player.setItemInHand(interactionHand, ItemUtils.createFilledResult(itemStack, player, returnItem));
-            player.awardStat(Stats.ITEM_USED.get(item));
-            level.setBlockAndUpdate(blockPos, blockState);
-            level.playSound((Player)null, blockPos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
-            level.gameEvent((Entity)null, GameEvent.FLUID_PICKUP, blockPos);
-        }
-
-        return InteractionResult.sidedSuccess(level.isClientSide);
-    }
-
-    public static InteractionResult emptyBucket(Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, ItemStack itemStack, ItemStack returnItem, BlockState blockState, SoundEvent soundEvent) {
-        if (!level.isClientSide) {
-            Item item = itemStack.getItem();
-            player.setItemInHand(interactionHand, ItemUtils.createFilledResult(itemStack, player, returnItem));
-            player.awardStat(Stats.ITEM_USED.get(item));
-            level.setBlockAndUpdate(blockPos, blockState);
-            level.playSound((Player)null, blockPos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
-            level.gameEvent((Entity)null, GameEvent.FLUID_PLACE, blockPos);
-        }
-
-        return InteractionResult.sidedSuccess(level.isClientSide);
-    }
-
-    public static RotatedPillarBlock logBlock() {
-        return new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.OAK_LOG));
-    }
-
     public static boolean isDamageType(DamageSource source, List<ResourceKey<DamageType>> damageTypes) {
-        Iterator var2 = damageTypes.iterator();
+        Iterator<ResourceKey<DamageType>> iterator = damageTypes.iterator();
 
-        ResourceKey key;
+        ResourceKey<DamageType> damageKey;
         do {
-            if (!var2.hasNext()) {
+            if (!iterator.hasNext()) {
                 return false;
             }
 
-            key = (ResourceKey)var2.next();
-        } while(!source.is(key));
+            damageKey = iterator.next();
+        } while (!source.is(damageKey));
 
         return true;
     }
@@ -330,8 +311,8 @@ public class GeneralUtil {
 
     public static void popResourceFromFace(Level level, BlockPos blockPos, Direction side, ItemStack itemStack) {
         BlockState blockState = level.getBlockState(blockPos);
-        double itemWidth = (double) EntityType.ITEM.getWidth();
-        double itemHeight = (double)EntityType.ITEM.getHeight();
+        double itemWidth = EntityType.ITEM.getWidth();
+        double itemHeight = EntityType.ITEM.getHeight();
         VoxelShape shape = blockState.getCollisionShape(level, blockPos);
         double posX = (double)blockPos.getX() + 0.5;
         double posY = (double)blockPos.getY() + 0.5;
@@ -393,8 +374,8 @@ public class GeneralUtil {
             int[] positions = new int[blockPoses.size() * 3];
             int pos = 0;
 
-            for(Iterator var4 = blockPoses.iterator(); var4.hasNext(); ++pos) {
-                BlockPos blockPos = (BlockPos)var4.next();
+            for(Iterator<BlockPos> var4 = blockPoses.iterator(); var4.hasNext(); ++pos) {
+                BlockPos blockPos = var4.next();
                 positions[pos * 3] = blockPos.getX();
                 positions[pos * 3 + 1] = blockPos.getY();
                 positions[pos * 3 + 2] = blockPos.getZ();
@@ -414,21 +395,19 @@ public class GeneralUtil {
     }
 
     public static Set<BlockPos> readBlockPoses(CompoundTag compoundTag) {
-        Set<BlockPos> blockSet = new HashSet();
-        if (!compoundTag.contains("block_poses")) {
-            return blockSet;
-        } else {
+        Set<BlockPos> blockSet = new HashSet<>();
+        if (compoundTag.contains("block_poses")) {
             int[] positions = compoundTag.getIntArray("block_poses");
 
-            for(int pos = 0; pos < positions.length / 3; ++pos) {
+            for (int pos = 0; pos < positions.length / 3; ++pos) {
                 blockSet.add(new BlockPos(positions[pos * 3], positions[pos * 3 + 1], positions[pos * 3 + 2]));
             }
 
-            return blockSet;
         }
+        return blockSet;
     }
 
-    public static enum LineConnectingType implements StringRepresentable {
+    public enum LineConnectingType implements StringRepresentable {
         NONE("none"),
         MIDDLE("middle"),
         LEFT("left"),
@@ -436,7 +415,7 @@ public class GeneralUtil {
 
         private final String name;
 
-        private LineConnectingType(String type) {
+        LineConnectingType(String type) {
             this.name = type;
         }
 
@@ -448,6 +427,33 @@ public class GeneralUtil {
     public static class FoodComponent extends FoodProperties {
         public FoodComponent(List<Pair<MobEffectInstance, Float>> statusEffects) {
             super(1, 0.0F, false, true, false, statusEffects);
+        }
+    }
+
+    public static Optional<Tuple<Float, Float>> getRelativeHitCoordinatesForBlockFace(BlockHitResult blockHitResult, Direction direction, Direction[] unAllowedDirections) {
+        Direction direction2 = blockHitResult.getDirection();
+        if (Arrays.asList(unAllowedDirections).contains(direction2)) {
+            return Optional.empty();
+        } else if (direction != direction2 && direction2 != Direction.UP && direction2 != Direction.DOWN) {
+            return Optional.empty();
+        } else {
+            BlockPos blockPos = blockHitResult.getBlockPos().relative(direction2);
+            Vec3 vec3 = blockHitResult.getLocation().subtract(blockPos.getX(), blockPos.getY(), blockPos.getZ());
+            float d = (float) vec3.x();
+            float f = (float) vec3.z();
+            float y = (float) vec3.y();
+
+            if (direction2 == Direction.UP || direction2 == Direction.DOWN) {
+                direction2 = direction;
+            }
+
+            return switch (direction2) {
+                case NORTH -> Optional.of(new Tuple<>((float) (1.0 - d), y));
+                case SOUTH -> Optional.of(new Tuple<>(d, y));
+                case WEST -> Optional.of(new Tuple<>(f, y));
+                case EAST -> Optional.of(new Tuple<>((float) (1.0 - f), y));
+                case DOWN, UP -> Optional.empty();
+            };
         }
     }
 }

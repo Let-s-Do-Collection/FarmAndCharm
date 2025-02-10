@@ -11,7 +11,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.satisfy.farm_and_charm.core.util.ChairUtil;
+import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class ChairEntity extends Entity {
@@ -24,10 +24,10 @@ public class ChairEntity extends Entity {
 
     public @NotNull Vec3 getDismountLocationForPassenger(LivingEntity passenger) {
         if (passenger instanceof Player p) {
-            BlockPos pos = ChairUtil.getPreviousPlayerPosition(p, this);
+            BlockPos pos = GeneralUtil.getPreviousPlayerPosition(p, this);
             if (pos != null) {
                 this.discard();
-                return new Vec3((double)pos.getX() + 0.5, (double)pos.getY(), (double)pos.getZ() + 0.5);
+                return new Vec3((double)pos.getX() + 0.5, pos.getY(), (double)pos.getZ() + 0.5);
             }
         }
 
@@ -37,7 +37,7 @@ public class ChairEntity extends Entity {
 
     public void remove(RemovalReason reason) {
         super.remove(reason);
-        ChairUtil.removeChairEntity(this.level(), this.blockPosition());
+        GeneralUtil.removeChairEntity(this.level(), this.blockPosition());
     }
 
     protected void readAdditionalSaveData(CompoundTag nbt) {
@@ -46,7 +46,7 @@ public class ChairEntity extends Entity {
     protected void addAdditionalSaveData(CompoundTag nbt) {
     }
 
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
+    public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {
         return new ClientboundAddEntityPacket(this);
     }
 }

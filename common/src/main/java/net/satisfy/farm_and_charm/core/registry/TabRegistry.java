@@ -119,9 +119,6 @@ public class TabRegistry {
                 output.accept(ObjectRegistry.FERTILIZER.get());
                 output.accept(ObjectRegistry.COMPOST.get());
                 output.accept(ObjectRegistry.SCARECROW.get());
-
-
-
             })
             .build());
 

@@ -6,15 +6,19 @@
   "client": [
   ],
   "mixins": [
+    "AbstractHorseMixin",
     "AnimalEntityMixin",
     "CampfireBlockMixin",
     "CatAvoidEntityGoalMixin",
     "CatMixin",
     "CatTemptGoalMixin",
+    "ChickenMixin",
     "CropBlockMixin",
     "FarmlandBlockMixin",
-    "HorseMixin",
+    "FoxMixin",
+    "ParrotMixin",
     "PigMixin",
+    "RabbitMixin",
     "TemptGoalAccessor"
   ],
   "injectors": {

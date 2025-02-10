@@ -12,6 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.farm_and_charm.core.util.ChairUtil;
+import org.jetbrains.annotations.NotNull;
 
 public class ChairEntity extends Entity {
     public ChairEntity(EntityType<?> type, Level world) {
@@ -21,7 +22,7 @@ public class ChairEntity extends Entity {
     protected void defineSynchedData() {
     }
 
-    public Vec3 getDismountLocationForPassenger(LivingEntity passenger) {
+    public @NotNull Vec3 getDismountLocationForPassenger(LivingEntity passenger) {
         if (passenger instanceof Player p) {
             BlockPos pos = ChairUtil.getPreviousPlayerPosition(p, this);
             if (pos != null) {

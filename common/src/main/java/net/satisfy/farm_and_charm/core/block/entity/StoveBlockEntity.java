@@ -151,7 +151,7 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         RegistryAccess access = level.registryAccess();
         if (recipe != null && recipe.requiresLearning()) {
             ServerPlayer owner = Objects.requireNonNull(world.getServer()).getPlayerList().getPlayer(ownerUuid);
-            if (owner == null || !RecipeUnlockManager.isRecipeUnlocked(owner, recipe.getId())) {
+            if (owner == null || RecipeUnlockManager.isRecipeLocked(owner, recipe.getId())) {
                 this.cookTime = 0;
                 if (state.getValue(StoveBlock.LIT)) {
                     world.setBlock(pos, state.setValue(StoveBlock.LIT, false), Block.UPDATE_ALL);

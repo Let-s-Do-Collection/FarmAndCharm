@@ -232,7 +232,7 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
         if (recipe instanceof CookingPotRecipe cookingRecipe) {
             if (cookingRecipe.requiresLearning()) {
                 ServerPlayer owner = Objects.requireNonNull(world.getServer()).getPlayerList().getPlayer(ownerUuid);
-                if (owner == null || !RecipeUnlockManager.isRecipeUnlocked(owner, recipe.getId())) {
+                if (owner == null || RecipeUnlockManager.isRecipeLocked(owner, recipe.getId())) {
                     cookingTime = 0;
                     if (state.getValue(CookingPotBlock.COOKING)) {
                         world.setBlock(pos, state.setValue(CookingPotBlock.COOKING, false), Block.UPDATE_ALL);

@@ -156,8 +156,8 @@ public class ObjectRegistry {
 
     public static final RegistrySupplier<Item> ONION_SOUP = registerItem("onion_soup", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("onion_soup"), PlatformHelper.getSaturationMod("onion_soup"), MobEffectRegistry.RESTED.get(), 2400), 2400, true));
 
-    public static final RegistrySupplier<RecipeUnlockerItem> RECIPE_UNLOCKER = registerItem("recipe_unlocker", () -> new RecipeUnlockerItem(new Item.Properties()));
-    public static final ItemStack ONION_SOUP_RECIPE_UNLOCKER_STACK = RecipeUnlockerItem.createUnlockerForRecipes(RECIPE_UNLOCKER.get(), "farm_and_charm:pot_cooking/onion_soup");
+    public static final RegistrySupplier<GrandmothersRecipeBookItem> RECIPE_UNLOCKER = registerItem("recipe_unlocker", () -> new GrandmothersRecipeBookItem(new Item.Properties()));
+    public static final ItemStack ONION_SOUP_RECIPE_UNLOCKER_STACK = GrandmothersRecipeBookItem.createUnlockerForRecipes(RECIPE_UNLOCKER.get(), "farm_and_charm:pot_cooking/onion_soup");
 
 
 

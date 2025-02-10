@@ -11,6 +11,8 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -23,21 +25,12 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
+import java.util.*;
 
-public class RecipeUnlockerItem extends Item {
+public class GrandmothersRecipeBookItem extends Item {
     private static final Map<ServerLevel, Map<UUID, Set<ResourceLocation>>> worldUnlockedRecipes = new HashMap<>();
 
-    public RecipeUnlockerItem(Properties properties) {
+    public GrandmothersRecipeBookItem(Properties properties) {
         super(properties);
     }
 
@@ -48,28 +41,20 @@ public class RecipeUnlockerItem extends Item {
             List<ResourceLocation> recipeIds = new ArrayList<>();
             assert tag != null;
             if (tag.contains("Recipes")) {
-                ListTag list = tag.getList("Recipes", 8);
-                for (int i = 0; i < list.size(); i++) {
-                    recipeIds.add(new ResourceLocation(list.getString(i)));
-                }
+                tag.getList("Recipes", 8).forEach(e -> recipeIds.add(new ResourceLocation(e.getAsString())));
             } else if (tag.contains("Recipe")) {
                 recipeIds.add(new ResourceLocation(tag.getString("Recipe")));
             }
-            if (!recipeIds.isEmpty()) {
-                RecipeManager manager = level.getRecipeManager();
-                for (ResourceLocation id : recipeIds) {
-                    Optional<? extends Recipe<?>> opt = manager.byKey(id);
-                    if (opt.isPresent()) {
-                        Recipe<?> recipe = opt.get();
-                        ItemStack resultStack = recipe.getResultItem(level.registryAccess());
-                        tooltip.add(Component.translatable("tooltip.farm_and_charm.recipe_unlocker.unlocks", resultStack.getHoverName())
-                                .withStyle(ChatFormatting.GRAY));
-                    } else {
-                        tooltip.add(Component.translatable("tooltip.farm_and_charm.recipe_unlocker.unlocks", id.toString())
-                                .withStyle(ChatFormatting.GRAY));
-                    }
+            RecipeManager manager = level.getRecipeManager();
+            recipeIds.forEach(id -> {
+                Optional<? extends Recipe<?>> opt = manager.byKey(id);
+                if (opt.isPresent()) {
+                    ItemStack resultStack = opt.get().getResultItem(level.registryAccess());
+                    tooltip.add(Component.literal("Unlocks: ").withStyle(ChatFormatting.WHITE).append(Component.literal("[").withStyle(style -> style.withColor(0xFFD700))).append(resultStack.getHoverName().copy().withStyle(style -> style.withColor(0xFFD700).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new HoverEvent.ItemStackInfo(resultStack))))).append(Component.literal("]").withStyle(style -> style.withColor(0xFFD700))).append(Component.literal(" Recipe").withStyle(ChatFormatting.WHITE)));
+                } else {
+                    tooltip.add(Component.literal("Unlocks: ").withStyle(ChatFormatting.WHITE).append(Component.literal("[").withStyle(style -> style.withColor(0xFFD700))).append(Component.literal(id.toString()).withStyle(ChatFormatting.GRAY)).append(Component.literal("]").withStyle(style -> style.withColor(0xFFD700))).append(Component.literal(" Recipe").withStyle(ChatFormatting.WHITE)));
                 }
-            }
+            });
         }
     }
 
@@ -108,16 +93,9 @@ public class RecipeUnlockerItem extends Item {
                     if (!recipes.isEmpty()) {
                         Recipe<?> firstRecipe = recipes.get(0);
                         ItemStack resultStack = firstRecipe.getResultItem(level.registryAccess());
-                        MutableComponent message = Component.literal("")
-                                .append(Component.translatable("tooltip.farm_and_charm.recipe_unlocker.unlocked.prefix")
-                                        .withStyle(ChatFormatting.YELLOW))
-                                .append(Component.literal(" [").withStyle(ChatFormatting.WHITE))
-                                .append(resultStack.getHoverName().copy().withStyle(style -> style.withColor(ChatFormatting.WHITE)
-                                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM,
-                                                new HoverEvent.ItemStackInfo(resultStack)))))
-                                .append(Component.literal("]").withStyle(ChatFormatting.WHITE));
+                        MutableComponent message = Component.translatable("tooltip.farm_and_charm.recipe_unlocker.unlocked.prefix").withStyle(ChatFormatting.YELLOW).append(Component.literal(" [").withStyle(ChatFormatting.WHITE)).append(resultStack.getHoverName().copy().withStyle(style -> style.withColor(0xFFD700).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new HoverEvent.ItemStackInfo(resultStack))))).append(Component.literal("]").withStyle(ChatFormatting.WHITE));
                         serverPlayer.displayClientMessage(message, false);
-                        spawnGoldenParticles(serverPlayer);
+                        spawnLevelUpEffect(serverPlayer);
                         stack.shrink(1);
                         return InteractionResultHolder.success(stack);
                     }
@@ -127,7 +105,7 @@ public class RecipeUnlockerItem extends Item {
         return InteractionResultHolder.pass(player.getItemInHand(hand));
     }
 
-    public static ItemStack createUnlockerForRecipes(RecipeUnlockerItem item, String... recipeIds) {
+    public static ItemStack createUnlockerForRecipes(GrandmothersRecipeBookItem item, String... recipeIds) {
         ItemStack stack = new ItemStack(item);
         CompoundTag tag = new CompoundTag();
         if (recipeIds.length == 1) {
@@ -143,22 +121,36 @@ public class RecipeUnlockerItem extends Item {
         return stack;
     }
 
-    private void spawnGoldenParticles(ServerPlayer serverPlayer) {
-        ServerLevel serverLevel = (ServerLevel) serverPlayer.level();
+    private void spawnLevelUpEffect(ServerPlayer player) {
+        ServerLevel level = (ServerLevel) player.level();
+        Random random = new Random();
+        level.playSound(null, player.blockPosition(), SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 1.0f, 1.2f);
+
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             int ticks = 0;
+
             @Override
             public void run() {
-                if (ticks >= 40) {
+                if (ticks++ >= 30) {
                     timer.cancel();
                     return;
                 }
-                serverLevel.sendParticles(new DustParticleOptions(new Vector3f(1.0f, 0.84f, 0.0f), 1.0f),
-                        serverPlayer.getX(), serverPlayer.getY() + 1.0, serverPlayer.getZ(),
-                        5, 0.5, 0.5, 0.5, 0.0);
-                ticks++;
+                double angle = (ticks * 12) * (Math.PI / 180);
+                double radius = 0.6;
+                double xOffset = Math.cos(angle) * radius + (random.nextFloat() * 0.2 - 0.1);
+                double zOffset = Math.sin(angle) * radius + (random.nextFloat() * 0.2 - 0.1);
+                double yOffset = (ticks * 0.04);
+
+                level.sendParticles(new DustParticleOptions(new Vector3f(0.97f, 0.86f, 0.43f), 1.2f),
+                        player.getX() + xOffset, player.getY() + 0.5 + yOffset, player.getZ() + zOffset,
+                        3, 0.1, 0.1, 0.1, 0.02);
+
+                level.sendParticles(new DustParticleOptions(new Vector3f(0.54f, 1.0f, 0.54f), 1.0f),
+                        player.getX() - xOffset, player.getY() + 0.5 + yOffset, player.getZ() - zOffset,
+                        2, 0.1, 0.1, 0.1, 0.02);
             }
-        }, 0, 50);
+        }, 0, 60);
     }
+
 }

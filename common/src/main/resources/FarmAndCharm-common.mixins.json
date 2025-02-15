@@ -19,7 +19,8 @@
     "ParrotMixin",
     "PigMixin",
     "RabbitMixin",
-    "TemptGoalAccessor"
+    "TemptGoalAccessor",
+    "ZombieMixin"
   ],
   "injectors": {
     "defaultRequire": 1

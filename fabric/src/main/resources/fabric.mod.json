@@ -7,8 +7,11 @@
   "authors": [
     "satisfy, jason13official"
   ],
+  "credits": [
+    "MissLilitu, CR-055"
+  ],
   "contact": {
-    "homepage": "https://legacy.curseforge.com/minecraft/mc-mods/FarmAndCharm",
+    "issues": "https://github.com/satisfyu/Let-s-Do-Hub",
     "sources": "https://github.com/satisfyu/FarmAndCharm"
   },
   "license": "custom",

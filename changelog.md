@@ -1,6 +1,4 @@
-[Unreleased] - 2025.02.08
-
-
+[1.0.6] - 2025.02.15
 
 **Added**
 * Added the ability to retrieve items from the MincerBlock by Shift-Right Clicking
@@ -9,6 +7,7 @@
 * FeedingTrough can now be filled by using Hoppers
 * You can now use various Farm&Charm Crops to feed and breed farm and other animals
 * Added Particles when eating a StackableEatableBlock - e.g. Pancakes
+* Zombies have a really low Chance to spawn wielding a Pitchfork as a Weapon
 
 **Changed**
 * Strawberry crop now only drops an Item when age == MAX_AGE
@@ -22,8 +21,7 @@
 * Renamed the "place_stove" advancement
 * Pitchfork now uses the "handheld" model parent instead of "generated" – wield it like a true weapon! (even if it technically isn't one)
 * Slightly raised the position of the particles when stirring the CraftingBowlBlock
-* WindowSill White/Blue/Yellow Pot Texture
-* Improved Roaster, Supply Cart, Plates, Mincer & Plow Texture
+* Improved Roaster, Supply Cart, Plates, Mincer, Window Sill & Plow Texture
 * Updated following translations: ru_ru (Tefnya), zh_cn (sillymoon), pt_br (GMalvestiti)
 
 **Fixed**
@@ -31,8 +29,3 @@
 * StoveBlockEntity now properly processes EffectBlockItem and applies stored effects to the crafted result
 * Properly registered StorageBlockEntity & StorageBlockRenderer
 * ForgeConfig not generating / loading properly
-
-**ToDo**
-* Additionally, cart movement could be significantly improved, particularly when navigating inclines and declines.
-* Make Dog Food, Cat Food and Horse Fodder placeable
-* Water Property FeedingtroughBlock

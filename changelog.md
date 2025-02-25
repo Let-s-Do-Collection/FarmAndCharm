@@ -1,3 +1,16 @@
+[1.0.7] - 2025.02.25
+
+**Added**
+
+
+**Changed**
+* Reduced all Wild Crops spawn rates
+
+**Fixed**
+* ChairBlocks not allowing / using Items in your Offhand when Right-Clicking on a Chair
+
+___
+
 [1.0.6] - 2025.02.15
 
 **Added**

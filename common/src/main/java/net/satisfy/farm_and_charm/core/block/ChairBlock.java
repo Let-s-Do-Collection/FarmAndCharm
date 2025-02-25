@@ -105,11 +105,15 @@ public class ChairBlock extends Block {
 
     @Override
     public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (hand == InteractionHand.OFF_HAND) {
+            return InteractionResult.PASS;
+        }
         if (state.getValue(HALF) == DoubleBlockHalf.LOWER) {
             return GeneralUtil.onUse(world, player, hand, hit, 0);
         }
         return InteractionResult.PASS;
     }
+
 
     @Override
     public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {

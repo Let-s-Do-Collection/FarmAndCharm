@@ -43,7 +43,7 @@
         }
       ]
     },
-    "tries": 25,
+    "tries": 12,
     "xz_spread": 3,
     "y_spread": 1,
     "whitelist": [

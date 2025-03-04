@@ -32,6 +32,7 @@ public class CookingPotRecipe implements Recipe<Container> {
         this.requiresLearning = requiresLearning;
     }
 
+
     @Override
     public boolean matches(Container inventory, Level world) {
         return GeneralUtil.matchesRecipe(inventory, inputs, 0, 6);

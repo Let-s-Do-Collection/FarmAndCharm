@@ -8,19 +8,18 @@ import net.minecraft.world.food.FoodData;
 import net.satisfy.farm_and_charm.platform.PlatformHelper;
 
 public class SustenanceEffect extends MobEffect {
-
     public SustenanceEffect() {
         super(MobEffectCategory.BENEFICIAL, 0);
     }
 
     @Override
     public void applyEffectTick(LivingEntity entity, int amplifier) {
-        if (!entity.getCommandSenderWorld().isClientSide && entity instanceof Player player) {
+        if (!entity.level().isClientSide() && entity instanceof Player player) {
             int interval = PlatformHelper.getSustenanceEffectInterval();
             int healAmount = PlatformHelper.getSustenanceEffectHealAmount();
             int foodIncrement = PlatformHelper.getSustenanceEffectFoodIncrement();
 
-            if (entity.tickCount % interval == 0) {
+            if (interval > 0 && entity.tickCount % interval == 0) {
                 FoodData foodData = player.getFoodData();
                 if (foodData.getFoodLevel() == 20) {
                     player.heal(healAmount);
@@ -33,6 +32,7 @@ public class SustenanceEffect extends MobEffect {
 
     @Override
     public boolean isDurationEffectTick(int duration, int amplifier) {
-        return duration % PlatformHelper.getSustenanceEffectInterval() == 0;
+        int interval = PlatformHelper.getSustenanceEffectInterval();
+        return interval > 0 && duration % interval == 0;
     }
 }

@@ -61,9 +61,6 @@ public class GeneralUtil {
     private static final String BLOCK_POSES_KEY = "block_poses";
     public static final EnumProperty<GeneralUtil.LineConnectingType> LINE_CONNECTING_TYPE = EnumProperty.create("type", GeneralUtil.LineConnectingType.class);
 
-    public GeneralUtil() {
-    }
-
     public static <T extends Block> RegistrySupplier<T> registerWithItem(DeferredRegister<Block> registerB, Registrar<Block> registrarB, DeferredRegister<Item> registerI, Registrar<Item> registrarI, ResourceLocation name, Supplier<T> block) {
         RegistrySupplier<T> toReturn = registerWithoutItem(registerB, registrarB, name, block);
         registerItem(registerI, registrarI, name, () -> new BlockItem(toReturn.get(), new Item.Properties()));

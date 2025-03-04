@@ -8,6 +8,7 @@
 
 **Fixed**
 * ChairBlocks not allowing / using Items in your Offhand when Right-Clicking on a Chair
+* Sustenance not working properly
 
 ___
 

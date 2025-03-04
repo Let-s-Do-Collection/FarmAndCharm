@@ -41,6 +41,7 @@ public class GrandmothersRecipeBookItem extends Item {
             List<ResourceLocation> recipeIds = new ArrayList<>();
             assert tag != null;
             if (tag.contains("Recipes")) {
+
                 tag.getList("Recipes", 8).forEach(e -> recipeIds.add(new ResourceLocation(e.getAsString())));
             } else if (tag.contains("Recipe")) {
                 recipeIds.add(new ResourceLocation(tag.getString("Recipe")));

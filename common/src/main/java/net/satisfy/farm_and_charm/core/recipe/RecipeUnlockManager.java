@@ -8,7 +8,6 @@ import java.util.*;
 
 public class RecipeUnlockManager {
 
-    
     @SuppressWarnings("unused")
     public static void unlockRecipes(ServerPlayer player, List<Recipe<?>> recipes) {
         Set<ResourceLocation> unlocked = loadUnlockedRecipes(player);

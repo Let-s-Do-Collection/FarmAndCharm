@@ -43,6 +43,7 @@ public class RecipeUnlockSavedData extends SavedData {
         for (Map.Entry<UUID, Set<ResourceLocation>> entry : playerRecipes.entrySet()) {
             ListTag list = new ListTag();
             for (ResourceLocation recipe : entry.getValue()) {
+
                 list.add(StringTag.valueOf(recipe.toString()));
             }
             playersTag.put(entry.getKey().toString(), list);

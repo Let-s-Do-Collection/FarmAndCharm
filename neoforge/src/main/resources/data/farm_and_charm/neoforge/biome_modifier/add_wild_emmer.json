@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#farm_and_charm:spawns_wild_emmer",
+  "features": "farm_and_charm:wild_emmer_chance",
+  "step": "vegetal_decoration"
+}

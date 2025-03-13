@@ -1,6 +1,0 @@
-{
-  "type": "forge:add_features",
-  "biomes": "#farm_and_charm:spawns_wild_crops",
-  "features": "farm_and_charm:wild_lettuce_chance",
-  "step": "vegetal_decoration"
-}

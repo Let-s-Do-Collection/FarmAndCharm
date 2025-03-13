@@ -1,0 +1,37 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "Custom"
+
+[[mods]]
+modId = "farm_and_charm"
+version = "${version}"
+displayName = "[Let's Do] Farm & Charm"
+authors = "satisfy, jason13"
+description = '''
+The farm calls: Experience the art of advanced agriculture and farmhouse cuisine! Use mincers, cooking pots, as well as new grains and fruit varieties to enhance your culinary and agricultural skills.
+'''
+logoFile = "pack.png"
+
+[[mixins]]
+config = "FarmAndCharm-common.mixins.json"
+
+[[dependencies.farm_and_charm]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.0,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.farm_and_charm]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.farm_and_charm]]
+modId = "architectury"
+type = "required"
+versionRange = "[9.0.8,)"
+ordering = "AFTER"
+side = "BOTH"

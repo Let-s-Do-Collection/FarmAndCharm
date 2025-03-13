@@ -40,7 +40,6 @@ public abstract class AbstractTowableEntity extends Entity {
 
     public AbstractTowableEntity(EntityType<?> entityType, Level level) {
         super(entityType, level);
-        this.setMaxUpStep(1.2f);
         this.leftWheel = new CartWheel(this, -1.5F);
         this.rightWheel = new CartWheel(this, 1.5F);
     }
@@ -219,13 +218,18 @@ public abstract class AbstractTowableEntity extends Entity {
     }
 
     @Override
-    public void lerpTo(final double x, final double y, final double z, final float yaw, final float pitch, final int posRotationIncrements, final boolean teleport) {
-        this.lerpX = x;
-        this.lerpY = y;
-        this.lerpZ = z;
-        this.lerpYaw = yaw;
-        this.lerpPitch = pitch;
-        this.lerpSteps = posRotationIncrements;
+    public void lerpTo(double d, double e, double f, float g, float h, int i) {
+        this.lerpX = d;
+        this.lerpY = e;
+        this.lerpZ = f;
+        this.lerpYaw = g;
+        this.lerpPitch = h;
+        this.lerpSteps = i;
+
+        if (i == 0) {
+            this.setPos(d, e, f);
+            this.setRot(g, h);
+        }
     }
 
     @Override

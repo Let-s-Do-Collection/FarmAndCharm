@@ -2,8 +2,8 @@ package net.satisfy.farm_and_charm.core.recipe;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -15,16 +15,14 @@ import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
 import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class CookingPotRecipe implements Recipe<Container> {
-    final ResourceLocation id;
+public class CookingPotRecipe implements Recipe<RecipeInput> {
     private final NonNullList<Ingredient> inputs;
     private final boolean containerRequired;
     private final ItemStack containerItem;
     private final ItemStack output;
     private final boolean requiresLearning;
 
-    public CookingPotRecipe(ResourceLocation id, NonNullList<Ingredient> inputs, boolean containerRequired, ItemStack containerItem, ItemStack output, boolean requiresLearning) {
-        this.id = id;
+    public CookingPotRecipe(NonNullList<Ingredient> inputs, boolean containerRequired, ItemStack containerItem, ItemStack output, boolean requiresLearning) {
         this.inputs = inputs;
         this.containerRequired = containerRequired;
         this.containerItem = containerItem;
@@ -32,16 +30,16 @@ public class CookingPotRecipe implements Recipe<Container> {
         this.requiresLearning = requiresLearning;
     }
 
-
     @Override
-    public boolean matches(Container inventory, Level world) {
-        return GeneralUtil.matchesRecipe(inventory, inputs, 0, 6);
+    public boolean matches(RecipeInput recipeInput, Level level) {
+        return GeneralUtil.matchesRecipe(recipeInput, inputs, 0, 6);
     }
 
     @Override
-    public @NotNull ItemStack assemble(Container container, RegistryAccess registryAccess) {
+    public @NotNull ItemStack assemble(RecipeInput recipeInput, HolderLookup.Provider provider) {
         return ItemStack.EMPTY;
     }
+
 
     @Override
     public boolean canCraftInDimensions(int width, int height) {
@@ -49,13 +47,12 @@ public class CookingPotRecipe implements Recipe<Container> {
     }
 
     @Override
-    public @NotNull ItemStack getResultItem(RegistryAccess registryAccess) {
+    public @NotNull ItemStack getResultItem(HolderLookup.Provider provider) {
         return this.output.copy();
     }
 
-    @Override
-    public @NotNull ResourceLocation getId() {
-        return id;
+    public ResourceLocation getId() {
+        return RecipeTypeRegistry.COOKING_POT_RECIPE_TYPE.getId();
     }
 
     @Override
@@ -107,7 +104,7 @@ public class CookingPotRecipe implements Recipe<Container> {
             }
             ItemStack result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "result"));
             boolean requiresLearning = GsonHelper.getAsBoolean(json, "requiresLearning", false);
-            return new CookingPotRecipe(id, ingredients, required, containerStack, result, requiresLearning);
+            return new CookingPotRecipe(ingredients, required, containerStack, result, requiresLearning);
         }
 
         @Override
@@ -118,7 +115,7 @@ public class CookingPotRecipe implements Recipe<Container> {
             ItemStack containerStack = required ? buf.readItem() : ItemStack.EMPTY;
             ItemStack output = buf.readItem();
             boolean requiresLearning = buf.readBoolean();
-            return new CookingPotRecipe(id, ingredients, required, containerStack, output, requiresLearning);
+            return new CookingPotRecipe(ingredients, required, containerStack, output, requiresLearning);
         }
 
         @Override

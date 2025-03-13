@@ -10,7 +10,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.satisfy.farm_and_charm.FarmAndCharm;
-import net.satisfy.farm_and_charm.core.compat.rei.Farm_And_CharmREIClientPlugin;
+import net.satisfy.farm_and_charm.core.compat.rei.FarmAndCharmREIClientPlugin;
 import net.satisfy.farm_and_charm.core.recipe.RoasterRecipe;
 
 import java.util.Collections;
@@ -23,7 +23,7 @@ public class RoasterDisplay extends BasicDisplay {
 
 
     public RoasterDisplay(Recipe<Container> recipe) {
-        this(EntryIngredients.ofIngredients(Farm_And_CharmREIClientPlugin.ingredients(recipe, getContainer(recipe))), Collections.singletonList(EntryIngredients.of(recipe.getResultItem(BasicDisplay.registryAccess()))), Optional.ofNullable(recipe.getId()));
+        this(EntryIngredients.ofIngredients(FarmAndCharmREIClientPlugin.ingredients(recipe, getContainer(recipe))), Collections.singletonList(EntryIngredients.of(recipe.getResultItem(BasicDisplay.registryAccess()))), Optional.ofNullable(recipe.getId()));
     }
 
     public RoasterDisplay(List<EntryIngredient> inputs, List<EntryIngredient> outputs, Optional<ResourceLocation> location) {

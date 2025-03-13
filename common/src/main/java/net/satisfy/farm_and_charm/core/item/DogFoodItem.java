@@ -48,7 +48,7 @@ public class DogFoodItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> tooltip, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
         if (PlatformHelper.isTamingEnabled()) {
             tooltip.add(Component.translatable("tooltip.farm_and_charm.animal_fed_to_dog").withStyle(ChatFormatting.GRAY));
             tooltip.add(Component.translatable("tooltip.farm_and_charm.dog_effect_1").withStyle(ChatFormatting.BLUE));

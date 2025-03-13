@@ -12,7 +12,7 @@ import net.minecraft.world.entity.Entity;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 
 public class ScarecrowModel<T extends Entity> extends EntityModel<T> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(FarmAndCharm.MOD_ID, "scarecrow"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "scarecrow"), "main");
     private final ModelPart scarecrow;
     private final ModelPart post;
 
@@ -67,10 +67,9 @@ public class ScarecrowModel<T extends Entity> extends EntityModel<T> {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        scarecrow.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        post.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int i, int j, int k) {
+        scarecrow.render(poseStack, vertexConsumer, i, j);
+        post.render(poseStack, vertexConsumer, i, j);
     }
 
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {

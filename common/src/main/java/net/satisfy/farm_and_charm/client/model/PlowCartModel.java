@@ -11,7 +11,7 @@ import net.satisfy.farm_and_charm.core.entity.PlowCartEntity;
 import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 
 public class PlowCartModel<T extends PlowCartEntity> extends EntityModel<T> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new FarmAndCharmIdentifier("plow"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(FarmAndCharmIdentifier.of("plow"), "main");
 
     private final ModelPart cart;
     private final ModelPart right_wheel;
@@ -69,9 +69,9 @@ public class PlowCartModel<T extends PlowCartEntity> extends EntityModel<T> {
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        this.cart.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.right_wheel.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.left_wheel.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int i, int j, int k) {
+        this.cart.render(poseStack, vertexConsumer, i, j, k);
+        this.right_wheel.render(poseStack, vertexConsumer, i, j, k);
+        this.left_wheel.render(poseStack, vertexConsumer, i, j, k);
     }
 }

@@ -21,7 +21,7 @@ public class CookingPotGui extends AbstractContainerScreen<CookingPotGuiHandler>
     public static final int ARROW_Y = 14;
 
     static {
-        BACKGROUND = new FarmAndCharmIdentifier("textures/gui/pot_gui.png");
+        BACKGROUND = FarmAndCharmIdentifier.of("textures/gui/pot_gui.png");
     }
 
     public CookingPotGui(CookingPotGuiHandler handler, Inventory playerInventory, Component title) {
@@ -35,7 +35,7 @@ public class CookingPotGui extends AbstractContainerScreen<CookingPotGuiHandler>
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        this.renderBackground(guiGraphics);
+        this.renderBackground(guiGraphics, (int) delta, mouseX, mouseY);
         super.render(guiGraphics, mouseX, mouseY, delta);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }

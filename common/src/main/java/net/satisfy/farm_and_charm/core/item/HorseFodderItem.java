@@ -16,7 +16,6 @@ import net.minecraft.world.level.Level;
 import net.satisfy.farm_and_charm.core.registry.MobEffectRegistry;
 import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -55,7 +54,7 @@ public class HorseFodderItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> tooltip, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
         if (PlatformHelper.isHorseEffectsEnabled()) {
             tooltip.add(Component.translatable("tooltip.farm_and_charm.animal_fed_to_horse").withStyle(ChatFormatting.GRAY));
             tooltip.add(Component.translatable("tooltip.farm_and_charm.horse_effect_1").withStyle(ChatFormatting.BLUE));

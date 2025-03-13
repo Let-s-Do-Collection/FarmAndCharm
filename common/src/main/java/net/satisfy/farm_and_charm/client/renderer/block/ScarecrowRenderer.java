@@ -19,8 +19,7 @@ import org.joml.Quaternionf;
 import java.util.Objects;
 
 public class ScarecrowRenderer implements BlockEntityRenderer<ScarecrowBlockEntity> {
-
-    private static final ResourceLocation TEXTURE = new ResourceLocation(FarmAndCharm.MOD_ID, "textures/entity/scarecrow.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "textures/entity/scarecrow.png");
     private final ModelPart scarecrow;
     private final ModelPart post;
 
@@ -45,8 +44,8 @@ public class ScarecrowRenderer implements BlockEntityRenderer<ScarecrowBlockEnti
         poseStack.mulPose(new Quaternionf().rotateX((float) Math.toRadians(angle)));
         poseStack.translate(-0.5, 0, -0.5);
 
-        scarecrow.render(poseStack, vertexConsumer, combinedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-        post.render(poseStack, vertexConsumer, combinedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        scarecrow.render(poseStack, vertexConsumer, combinedLight, OverlayTexture.NO_OVERLAY);
+        post.render(poseStack, vertexConsumer, combinedLight, OverlayTexture.NO_OVERLAY);
 
         poseStack.popPose();
     }

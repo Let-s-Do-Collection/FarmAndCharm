@@ -3,42 +3,55 @@ package net.satisfy.farm_and_charm.core.entity;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.HasCustomInventoryScreen;
+import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.vehicle.ContainerEntity;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
-public class SupplyCartEntity extends AbstractTowableEntity implements MenuProvider, Container {
-    private final NonNullList<ItemStack> inventory = NonNullList.withSize(27, ItemStack.EMPTY);
+public class SupplyCartEntity extends AbstractTowableEntity implements HasCustomInventoryScreen, ContainerEntity {
     private int openCount;
+    private static final int CONTAINER_SIZE = 27;
+    private NonNullList<ItemStack> inventory;
+    @Nullable
+    private ResourceKey<LootTable> lootTable;
+    private long lootTableSeed;
 
     public SupplyCartEntity(EntityType<?> entityType, Level level) {
         super(entityType, level);
+        this.inventory = NonNullList.withSize(CONTAINER_SIZE, ItemStack.EMPTY);
     }
 
     @Override
-    protected void defineSynchedData() {
-    }
-
-    @Override
-    protected void readAdditionalSaveData(CompoundTag compoundTag) {
-        super.readAdditionalSaveData(compoundTag);
-        ContainerHelper.loadAllItems(compoundTag, this.inventory);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
     }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compoundTag) {
         super.addAdditionalSaveData(compoundTag);
-        ContainerHelper.saveAllItems(compoundTag, this.inventory);
+        this.addChestVehicleSaveData(compoundTag, this.registryAccess());
+    }
+
+    @Override
+    protected void readAdditionalSaveData(CompoundTag compoundTag) {
+        super.readAdditionalSaveData(compoundTag);
+        this.readChestVehicleSaveData(compoundTag, this.registryAccess());
     }
 
     @Override
@@ -68,6 +81,32 @@ public class SupplyCartEntity extends AbstractTowableEntity implements MenuProvi
     @Override
     public int getContainerSize() {
         return this.inventory.size();
+    }
+
+    @Override
+    public @Nullable ResourceKey<LootTable> getLootTable() {
+        return this.lootTable;
+    }
+
+    @Override
+    public void setLootTable(@Nullable ResourceKey<LootTable> resourceKey) {
+        this.lootTable = resourceKey;
+    }
+
+    public long getLootTableSeed() {
+        return this.lootTableSeed;
+    }
+
+    public void setLootTableSeed(long l) {
+        this.lootTableSeed = l;
+    }
+
+    public @NotNull NonNullList<ItemStack> getItemStacks() {
+        return this.inventory;
+    }
+
+    public void clearItemStacks() {
+        this.inventory = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
     }
 
     @Override
@@ -162,5 +201,14 @@ public class SupplyCartEntity extends AbstractTowableEntity implements MenuProvi
 
     public boolean isOpen() {
         return this.openCount > 0;
+    }
+
+    @Override
+    public void openCustomInventoryScreen(Player player) {
+        player.openMenu(this);
+        if (!player.level().isClientSide) {
+            this.gameEvent(GameEvent.CONTAINER_OPEN, player);
+            PiglinAi.angerNearbyPiglins(player, true);
+        }
     }
 }

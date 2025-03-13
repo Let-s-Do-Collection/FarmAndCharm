@@ -14,7 +14,7 @@ import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 
 @Environment(EnvType.CLIENT)
 public class StoveGui extends AbstractContainerScreen<StoveGuiHandler> {
-    public static final ResourceLocation BACKGROUND = new FarmAndCharmIdentifier("textures/gui/stove_gui.png");
+    public static final ResourceLocation BACKGROUND;
 
     public static final int ARROW_X = 93;
     public static final int ARROW_Y = 32;
@@ -28,9 +28,13 @@ public class StoveGui extends AbstractContainerScreen<StoveGuiHandler> {
         super.init();
     }
 
+    static {
+        BACKGROUND = FarmAndCharmIdentifier.of("textures/gui/pot_gui.png");
+    }
+
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        this.renderBackground(guiGraphics);
+        this.renderBackground(guiGraphics, (int) delta, mouseX, mouseY);
         super.render(guiGraphics, mouseX, mouseY, delta);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
     }

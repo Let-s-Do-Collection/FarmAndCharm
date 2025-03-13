@@ -10,7 +10,6 @@ import net.satisfy.farm_and_charm.core.block.entity.StoveBlockEntity;
 import org.jetbrains.annotations.NotNull;
 
 public class StoveOutputSlot extends Slot {
-
     private final Player player;
     private int amount;
 

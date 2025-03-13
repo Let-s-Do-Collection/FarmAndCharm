@@ -20,7 +20,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class MincerRenderer implements BlockEntityRenderer<MincerBlockEntity> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(FarmAndCharm.MOD_ID, "textures/entity/mincer.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "textures/entity/mincer.png");
     private final ModelPart mincer;
     private final ModelPart crank;
 

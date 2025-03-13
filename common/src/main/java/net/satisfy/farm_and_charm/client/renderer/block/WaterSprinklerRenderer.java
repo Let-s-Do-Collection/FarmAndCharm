@@ -16,7 +16,7 @@ import net.satisfy.farm_and_charm.core.block.entity.WaterSprinklerBlockEntity;
 import org.joml.Quaternionf;
 
 public class WaterSprinklerRenderer implements BlockEntityRenderer<WaterSprinklerBlockEntity> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(FarmAndCharm.MOD_ID, "textures/entity/water_sprinkler.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "textures/entity/water_sprinkler.png");
     private final ModelPart rotating;
     private final ModelPart basin;
     private long lastRenderTime = 0;

@@ -15,6 +15,8 @@ import net.satisfy.farm_and_charm.client.gui.StoveGui;
 import net.satisfy.farm_and_charm.client.model.*;
 import net.satisfy.farm_and_charm.client.renderer.block.*;
 import net.satisfy.farm_and_charm.client.renderer.entity.ChairRenderer;
+import net.satisfy.farm_and_charm.client.renderer.entity.PlowCartRenderer;
+import net.satisfy.farm_and_charm.client.renderer.entity.SupplyCartRenderer;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.ModelRegistry;
 import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;

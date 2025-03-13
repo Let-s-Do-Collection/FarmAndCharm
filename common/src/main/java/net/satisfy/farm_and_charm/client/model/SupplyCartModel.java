@@ -11,7 +11,7 @@ import net.satisfy.farm_and_charm.core.entity.SupplyCartEntity;
 import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 
 public class SupplyCartModel<T extends SupplyCartEntity> extends EntityModel<T> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new FarmAndCharmIdentifier("supply_cart"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(FarmAndCharmIdentifier.of("supply_cart"), "main");
     private final ModelPart cart;
     private final ModelPart right_wheel;
     private final ModelPart left_wheel;
@@ -59,10 +59,10 @@ public class SupplyCartModel<T extends SupplyCartEntity> extends EntityModel<T> 
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        this.cart.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.chest.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.right_wheel.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        this.left_wheel.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int i, int j, int k) {
+        this.cart.render(poseStack, vertexConsumer, i, j, k);
+        this.chest.render(poseStack, vertexConsumer, i, j, k);
+        this.right_wheel.render(poseStack, vertexConsumer, i, j, k);
+        this.left_wheel.render(poseStack, vertexConsumer, i, j, k);
     }
 }

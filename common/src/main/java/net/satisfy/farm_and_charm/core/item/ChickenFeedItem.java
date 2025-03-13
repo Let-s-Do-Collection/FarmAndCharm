@@ -21,13 +21,12 @@ import net.minecraft.world.level.Level;
 import net.satisfy.farm_and_charm.core.registry.MobEffectRegistry;
 import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class ChickenFeedItem extends Item {
     public ChickenFeedItem(Properties properties) {
-        super(properties.food(new FoodProperties.Builder().nutrition(0).saturationMod(0f).build()));
+        super(properties.food(new FoodProperties.Builder().nutrition(0).saturationModifier(0f).build()));
     }
 
     @Override
@@ -63,7 +62,7 @@ public class ChickenFeedItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> tooltip, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
         if (PlatformHelper.isChickenEffectsEnabled()) {
             tooltip.add(Component.translatable("tooltip.farm_and_charm.animal_fed_to_chicken").withStyle(ChatFormatting.GRAY));
             tooltip.add(Component.translatable("tooltip.farm_and_charm.cluck").withStyle(ChatFormatting.BLUE));

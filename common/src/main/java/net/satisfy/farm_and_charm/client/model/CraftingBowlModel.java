@@ -12,7 +12,7 @@ import net.minecraft.world.entity.Entity;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 
 public class CraftingBowlModel<T extends Entity> extends EntityModel<T> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(FarmAndCharm.MOD_ID, "crafting_bowl"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "crafting_bowl"), "main");
     private final ModelPart bowl;
     private final ModelPart swing;
 
@@ -36,11 +36,10 @@ public class CraftingBowlModel<T extends Entity> extends EntityModel<T> {
         return LayerDefinition.create(meshdefinition, 64, 64);
     }
 
-
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        bowl.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        swing.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int i, int j, int k) {
+        bowl.render(poseStack, vertexConsumer, i, j, k);
+        swing.render(poseStack, vertexConsumer, i, j, k);
     }
 
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {

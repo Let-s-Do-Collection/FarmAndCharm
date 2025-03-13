@@ -28,7 +28,6 @@ import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 
-@SuppressWarnings("all")
 public class StackableEatableBlock extends Block {
     private static final IntegerProperty STACK_PROPERTY = IntegerProperty.create("stack", 1, 8);
     private static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
@@ -42,7 +41,7 @@ public class StackableEatableBlock extends Block {
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
@@ -62,8 +61,8 @@ public class StackableEatableBlock extends Block {
     }
 
     @Override
-    public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        final ItemStack stack = player.getItemInHand(hand);
+    protected @NotNull InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult blockHitResult) {
+        final ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
         if (player.isShiftKeyDown() && stack.isEmpty()) {
             if (!world.isClientSide) {
                 if (state.getValue(STACK_PROPERTY) > 1) {
@@ -115,6 +114,6 @@ public class StackableEatableBlock extends Block {
             GeneralUtil.spawnSlice(world, new ItemStack(this), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, xMotion, yMotion, zMotion);
             return InteractionResult.SUCCESS;
         }
-        return super.use(state, world, pos, player, hand, hit);
+        return super.useWithoutItem(state, world, pos, player, blockHitResult);
     }
 }

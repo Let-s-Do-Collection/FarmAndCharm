@@ -26,7 +26,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("deprecation")
 public abstract class TomatoCropBlock extends Block {
     public static final IntegerProperty AGE;
     private static final int MAX_AGE = 4;
@@ -94,7 +93,8 @@ public abstract class TomatoCropBlock extends Block {
     }
 
     @Override
-    public @NotNull InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+    protected @NotNull InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player, BlockHitResult blockHitResult) {
+        InteractionHand interactionHand = player.getUsedItemHand();
         if (player.getItemInHand(interactionHand).is(Items.BONE_MEAL)) {
             return InteractionResult.PASS;
         }
@@ -103,7 +103,7 @@ public abstract class TomatoCropBlock extends Block {
             dropTomatoes(level, blockPos, blockState);
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
-        return super.use(blockState, level, blockPos, player, interactionHand, blockHitResult);
+        return super.useWithoutItem(blockState, level, blockPos, player, blockHitResult);
     }
 
     protected void dropTomatoes(Level level, BlockPos blockPos, BlockState blockState) {

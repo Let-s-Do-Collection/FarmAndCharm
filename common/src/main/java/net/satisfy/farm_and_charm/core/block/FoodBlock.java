@@ -12,6 +12,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -37,7 +38,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 
-@SuppressWarnings("deprecation")
 public class FoodBlock extends FacingBlock {
     public static final DirectionProperty FACING;
     public static final IntegerProperty BITES;
@@ -63,38 +63,45 @@ public class FoodBlock extends FacingBlock {
     }
 
     @Override
-    public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    public @NotNull InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
+        InteractionHand hand = player.getUsedItemHand();
+        ItemStack itemStack = player.getItemInHand(hand);
         if (world.isClientSide) {
-            return tryEat(world, pos, state, player) == InteractionResult.SUCCESS ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
-        } else {
-            return tryEat(world, pos, state, player);
+            if (tryEat(world, pos, state, player).consumesAction()) {
+                return InteractionResult.SUCCESS;
+            }
+
+            if (itemStack.isEmpty()) {
+                return InteractionResult.CONSUME;
+            }
         }
+        return tryEat(world, pos, state, player);
     }
 
     private InteractionResult tryEat(LevelAccessor world, BlockPos pos, BlockState state, Player player) {
+        if (world instanceof Level level) {
+            for (int count = 0; count < 10; ++count) {
+                double d0 = level.random.nextGaussian() * 0.02D;
+                double d1 = level.random.nextGaussian() * 0.02D;
+                double d2 = level.random.nextGaussian() * 0.02D;
+                level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, state), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, d0, d1, d2);
+            }
+        }
+
         if (!player.canEat(false)) {
             return InteractionResult.PASS;
         } else {
-            player.getFoodData().eat(foodComponent.getNutrition(), foodComponent.getSaturationModifier());
-            if (world instanceof Level level) {
-                level.playSound(null, pos, SoundEvents.GENERIC_EAT, SoundSource.PLAYERS, 0.5f, level.getRandom().nextFloat() * 0.1f + 0.9f);
-                level.gameEvent(player, GameEvent.EAT, pos);
+            player.getFoodData().eat(foodComponent.nutrition(), foodComponent.saturation());
+            world.playSound(null, pos, SoundEvents.GENERIC_EAT, SoundSource.PLAYERS, 0.5f, world.getRandom().nextFloat() * 0.1f + 0.9f);
+            world.gameEvent(player, GameEvent.EAT, pos);
 
-                int bites = state.getValue(BITES);
+            int bites = state.getValue(BITES);
 
-                if (bites < maxBites - 1) {
-                    world.setBlock(pos, state.setValue(BITES, bites + 1), 3);
-                } else {
-                    world.destroyBlock(pos, false);
-                    world.gameEvent(player, GameEvent.BLOCK_DESTROY, pos);
-                }
-
-                for (int count = 0; count < 10; ++count) {
-                    double d0 = level.random.nextGaussian() * 0.02D;
-                    double d1 = level.random.nextGaussian() * 0.02D;
-                    double d2 = level.random.nextGaussian() * 0.02D;
-                    level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, state), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, d0, d1, d2);
-                }
+            if (bites < maxBites - 1) {
+                world.setBlock(pos, state.setValue(BITES, bites + 1), 3);
+            } else {
+                world.destroyBlock(pos, false);
+                world.gameEvent(player, GameEvent.BLOCK_DESTROY, pos);
             }
             return InteractionResult.SUCCESS;
         }
@@ -129,7 +136,7 @@ public class FoodBlock extends FacingBlock {
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack, BlockGetter world, List<Component> tooltip, TooltipFlag tooltipContext) {
-        tooltip.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Component> list, TooltipFlag tooltipFlag) {
+        list.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
     }
 }

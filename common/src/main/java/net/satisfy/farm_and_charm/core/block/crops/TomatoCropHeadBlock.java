@@ -52,7 +52,7 @@ public class TomatoCropHeadBlock extends TomatoCropBlock implements Bonemealable
     }
 
     @Override
-    public boolean isValidBonemealTarget(LevelReader levelReader, BlockPos blockPos, BlockState blockState, boolean bl) {
+    public boolean isValidBonemealTarget(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
         return true;
     }
 
@@ -62,7 +62,6 @@ public class TomatoCropHeadBlock extends TomatoCropBlock implements Bonemealable
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public @NotNull BlockState updateShape(BlockState blockState, net.minecraft.core.Direction direction, BlockState blockState2, net.minecraft.world.level.LevelAccessor levelAccessor, BlockPos blockPos, BlockPos blockPos2) {
         if ((direction == net.minecraft.core.Direction.DOWN && !blockState.canSurvive(levelAccessor, blockPos)) || (getHeight(blockPos, levelAccessor) > getMaxHeight(levelAccessor, blockPos) && !isRopeAbove(levelAccessor, blockPos))) {
             levelAccessor.scheduleTick(blockPos, this, 1);

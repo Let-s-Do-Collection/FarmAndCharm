@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-@SuppressWarnings("deprecation")
 public class FeedingTroughBlock extends LineConnectingBlock implements EntityBlock {
     public static final IntegerProperty SIZE = IntegerProperty.create("size", 0, 4);
     private static final Supplier<VoxelShape> voxelShapeSupplier = () -> {

@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-@SuppressWarnings("deprecation, unused")
+@SuppressWarnings("unused")
 public class BenchBlock extends LineConnectingBlock {
     public BenchBlock(Properties settings) {
         super(settings);

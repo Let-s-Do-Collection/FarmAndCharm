@@ -28,7 +28,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-@SuppressWarnings("deprecation")
 public abstract class StorageBlock extends FacingBlock implements EntityBlock {
 
     public StorageBlock(BlockBehaviour.Properties settings) {

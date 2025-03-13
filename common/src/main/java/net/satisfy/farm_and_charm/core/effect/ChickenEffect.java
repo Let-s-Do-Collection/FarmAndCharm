@@ -17,7 +17,7 @@ public class ChickenEffect extends MobEffect {
     }
 
     @Override
-    public void applyEffectTick(LivingEntity entity, int amplifier) {
+    public boolean applyEffectTick(LivingEntity entity, int amplifier) {
         if (!entity.level().isClientSide) {
             int tickInterval = PlatformHelper.getChickenEffectTickInterval();
             float eggChance = PlatformHelper.getChickenEffectEggChance() / 100.0f;
@@ -41,7 +41,7 @@ public class ChickenEffect extends MobEffect {
     }
 
     @Override
-    public boolean isDurationEffectTick(int duration, int amplifier) {
+    public boolean shouldApplyEffectTickThisTick(int i, int j) {
         return true;
     }
 }

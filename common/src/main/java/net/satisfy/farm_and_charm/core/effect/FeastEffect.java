@@ -1,4 +1,4 @@
-package net.satisfy.farm_and_charm.core.effect;
+package net.satisfy.farm_and_charm.effect;
 
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -16,13 +16,14 @@ public class FeastEffect extends MobEffect {
     }
 
     @Override
-    public void applyEffectTick(LivingEntity entity, int amplifier) {
+    public boolean applyEffectTick(LivingEntity entity, int amplifier) {
         if (!entity.level().isClientSide() && entity instanceof Player player) {
             int satiationInterval = PlatformHelper.getFeastEffectSatiationInterval();
             int sustenanceInterval = PlatformHelper.getFeastEffectSustenanceInterval();
             int healAmount = PlatformHelper.getFeastEffectHealAmount();
 
-            int duration = this.getDuration(entity, this);
+            int duration = this.getDuration(player, this);
+
             if (duration % satiationInterval == 0) {
                 if (!player.getFoodData().needsFood() &&
                         !player.hasEffect(MobEffects.REGENERATION) &&
@@ -43,7 +44,7 @@ public class FeastEffect extends MobEffect {
     }
 
     @Override
-    public boolean isDurationEffectTick(int duration, int amplifier) {
+    public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
         int satiationInterval = PlatformHelper.getFeastEffectSatiationInterval();
         int sustenanceInterval = PlatformHelper.getFeastEffectSustenanceInterval();
         return duration % satiationInterval == 0 || duration % sustenanceInterval == 0;

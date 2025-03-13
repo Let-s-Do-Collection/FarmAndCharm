@@ -15,7 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -99,19 +99,19 @@ public class SinkBlock extends Block {
     }
 
     @Override
-    public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (world.isClientSide || state.getValue(HALF) != DoubleBlockHalf.LOWER) return InteractionResult.SUCCESS;
-        ItemStack itemStack = player.getItemInHand(hand);
+    protected @NotNull InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player, BlockHitResult blockHitResult) {
+        if(level.isClientSide || blockState.getValue(HALF) != DoubleBlockHalf.LOWER) return InteractionResult.SUCCESS;
+        ItemStack itemStack = player.getItemInHand(InteractionHand.MAIN_HAND);
         Item item = itemStack.getItem();
-        if (itemStack.isEmpty() && !state.getValue(FILLED)) {
-            world.setBlock(pos, state.setValue(FILLED, true), Block.UPDATE_ALL);
-            world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0f, 1.0f);
+        if(itemStack.isEmpty() && !blockState.getValue(FILLED)){
+            level.setBlock(blockPos, blockState.setValue(FILLED, true), Block.UPDATE_ALL);
+            level.playSound(null, blockPos.getX(), blockPos.getY(), blockPos.getZ(), SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0f, 1.0f);
             return InteractionResult.SUCCESS;
-        } else if ((item == Items.WATER_BUCKET || item == Items.GLASS_BOTTLE) && !state.getValue(FILLED)) {
-            world.setBlock(pos, state.setValue(FILLED, true), Block.UPDATE_ALL);
-            world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0f, 1.0f);
-            if (!player.isCreative()) {
-                if (item == Items.WATER_BUCKET) {
+        } else if((item == Items.WATER_BUCKET || item == Items.GLASS_BOTTLE) && !blockState.getValue(FILLED)){
+            level.setBlock(blockPos, blockState.setValue(FILLED, true), Block.UPDATE_ALL);
+            level.playSound(null, blockPos.getX(), blockPos.getY(), blockPos.getZ(), SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0f, 1.0f);
+            if(!player.isCreative()){
+                if(item == Items.WATER_BUCKET){
                     itemStack.shrink(1);
                     player.addItem(new ItemStack(Items.BUCKET));
                 } else {
@@ -120,16 +120,16 @@ public class SinkBlock extends Block {
                 }
             }
             return InteractionResult.SUCCESS;
-        } else if ((item == Items.BUCKET || item == Items.GLASS_BOTTLE) && state.getValue(FILLED)) {
-            world.setBlock(pos, state.setValue(FILLED, false), Block.UPDATE_ALL);
-            world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0f, 1.0f);
-            if (!player.isCreative()) {
-                if (item == Items.BUCKET) {
+        } else if((item == Items.BUCKET || item == Items.GLASS_BOTTLE) && blockState.getValue(FILLED)){
+            level.setBlock(blockPos, blockState.setValue(FILLED, false), Block.UPDATE_ALL);
+            level.playSound(null, blockPos.getX(), blockPos.getY(), blockPos.getZ(), SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0f, 1.0f);
+            if(!player.isCreative()){
+                if(item == Items.BUCKET){
                     itemStack.shrink(1);
                     player.addItem(new ItemStack(Items.WATER_BUCKET));
                 } else {
                     itemStack.shrink(1);
-                    player.addItem(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.WATER));
+                    player.addItem(PotionContents.createItemStack(Items.POTION, Potions.WATER));
                 }
             }
             return InteractionResult.SUCCESS;
@@ -191,7 +191,7 @@ public class SinkBlock extends Block {
     }
 
     @Override
-    public void playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
+    public @NotNull BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
         DoubleBlockHalf half = state.getValue(HALF);
         BlockPos blockPos = half == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
         BlockState blockState = world.getBlockState(blockPos);
@@ -204,6 +204,7 @@ public class SinkBlock extends Block {
             }
         }
         super.playerWillDestroy(world, pos, state, player);
+        return blockState;
     }
 
     @Override

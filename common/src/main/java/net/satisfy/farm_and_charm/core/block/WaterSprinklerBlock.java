@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -22,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("deprecation")
 public class WaterSprinklerBlock extends BaseEntityBlock {
-
+    public static final MapCodec<WaterSprinklerBlock> CODEC = simpleCodec(WaterSprinklerBlock::new);
     private static final VoxelShape SHAPE = Shapes.or(
             Shapes.box(0.0625, 0, 0.0625, 0.9375, 0.0625, 0.9375),
             Shapes.box(0.0625, 0.0625, 0.0625, 0.125, 0.75, 0.9375),
@@ -39,6 +40,11 @@ public class WaterSprinklerBlock extends BaseEntityBlock {
     @Override
     public @NotNull VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return SHAPE;
+    }
+
+    @Override
+    protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Override

@@ -43,17 +43,18 @@ public class EatableBoxBlock extends FacingBlock {
     }
 
     @Override
-    public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        ItemStack itemStack = player.getItemInHand(hand);
+    protected @NotNull InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player, BlockHitResult blockHitResult) {
+        ItemStack itemStack = player.getItemInHand(InteractionHand.MAIN_HAND);
+        Level world = player.getCommandSenderWorld();
         if (world.isClientSide) {
-            if (tryEat(world, pos, state, player).consumesAction()) {
+            if (tryEat(world, blockPos, blockState, player).consumesAction()) {
                 return InteractionResult.SUCCESS;
             }
             if (itemStack.isEmpty()) {
                 return InteractionResult.CONSUME;
             }
         }
-        return tryEat(world, pos, state, player);
+        return tryEat(world, blockPos, blockState, player);
     }
 
     private InteractionResult tryEat(Level world, BlockPos pos, BlockState state, Player player) {

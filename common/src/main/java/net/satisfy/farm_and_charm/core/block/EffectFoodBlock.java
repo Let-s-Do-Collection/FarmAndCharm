@@ -1,6 +1,7 @@
 package net.satisfy.farm_and_charm.core.block;
 
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -41,8 +42,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-@SuppressWarnings("deprecation")
 public class EffectFoodBlock extends BaseEntityBlock {
+    public static final MapCodec<EffectFoodBlock> CODEC = simpleCodec(EffectFoodBlock::new);
     public static final DirectionProperty FACING;
     public static final IntegerProperty BITES;
     private static final Supplier<VoxelShape> voxelShapeSupplier = () -> {
@@ -67,12 +68,19 @@ public class EffectFoodBlock extends BaseEntityBlock {
     private final int maxBites;
     private final FoodProperties foodComponent;
 
+    public EffectFoodBlock(Properties properties) {
+        super(properties);
+        this.maxBites = 3;
+        this.foodComponent = new FoodProperties.Builder().nutrition(1).build();
+    }
+
     public EffectFoodBlock(Properties settings, int maxBites, FoodProperties foodComponent) {
         super(settings);
         this.maxBites = maxBites;
         this.foodComponent = foodComponent;
         registerDefaultState(this.defaultBlockState().setValue(BITES, 0).setValue(FACING, Direction.NORTH));
     }
+
 
     @Nullable
     @Override
@@ -98,7 +106,8 @@ public class EffectFoodBlock extends BaseEntityBlock {
     }
 
     @Override
-    public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected @NotNull InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult blockHitResult) {
+        InteractionHand hand = player.getUsedItemHand();
         ItemStack itemStack = player.getItemInHand(hand);
         if (world.isClientSide) {
             if (tryEat(world, pos, state, player).consumesAction()) {
@@ -116,7 +125,7 @@ public class EffectFoodBlock extends BaseEntityBlock {
         if (!player.canEat(false)) {
             return InteractionResult.PASS;
         } else {
-            player.getFoodData().eat(foodComponent.getNutrition(), foodComponent.getSaturationModifier());
+            player.getFoodData().eat(foodComponent.nutrition(), foodComponent.saturation());
             world.playSound(null, pos, SoundEvents.FOX_EAT, SoundSource.PLAYERS, 0.5f, world.getRandom().nextFloat() * 0.1f + 0.9f);
             world.gameEvent(player, GameEvent.EAT, pos);
 
@@ -150,6 +159,11 @@ public class EffectFoodBlock extends BaseEntityBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, BITES);
+    }
+
+    @Override
+    protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
     }
 
     @Override

@@ -33,7 +33,6 @@ import net.satisfy.farm_and_charm.core.registry.SoundEventRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("deprecation")
 public class StoveBlock extends Block implements EntityBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
@@ -127,7 +126,7 @@ public class StoveBlock extends Block implements EntityBlock {
 
     @Override
     public void stepOn(Level world, BlockPos pos, BlockState state, Entity entity) {
-        if (state.getValue(LIT) && entity instanceof Player && !EnchantmentHelper.hasFrostWalker((Player) entity)) {
+        if (state.getValue(LIT) && entity instanceof Player) {
             entity.hurt(world.damageSources().hotFloor(), 1.0F);
         }
     }

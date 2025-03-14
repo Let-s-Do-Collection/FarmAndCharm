@@ -1,60 +1,53 @@
 package net.satisfy.farm_and_charm.core.effect;
 
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.*;
-
-import java.util.UUID;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 
 public class SweetsEffect extends MobEffect {
-    public static final UUID SPEED_MODIFIER_ID = UUID.fromString("2deaf4fc-1673-4c5b-ac4f-25e37e08760f");
-    private static final UUID ATTACK_SPEED_MODIFIER_ID = UUID.fromString("80c07bfd-79bb-4056-9817-534a54376ab4");
-    public static final UUID ATTACK_DAMAGE_MODIFIER_ID = UUID.fromString("b99c1012-b2d4-423f-a1af-c855433731f0");
+    public static final ResourceLocation SPEED_MODIFIER_ID = FarmAndCharmIdentifier.of("sweets_speed_modifier");
+    public static final ResourceLocation ATTACK_DAMAGE_MODIFIER_ID = FarmAndCharmIdentifier.of("sweets_attack_damage_modifier");
+    public static final ResourceLocation ATTACK_SPEED_MODIFIER_ID = FarmAndCharmIdentifier.of("sweets_attack_speed_modifier");
 
     public SweetsEffect() {
         super(MobEffectCategory.BENEFICIAL, 0);
     }
 
     @Override
-    public void applyEffectTick(LivingEntity livingEntity, int amplifier) {
+    public boolean applyEffectTick(LivingEntity livingEntity, int amplifier) {
         if (!livingEntity.level().isClientSide) {
-            double increase = amplifier + 1;
+            double percentIncrease = 0.02 * (amplifier + 1);
+            percentIncrease = Math.min(percentIncrease, 0.3);
 
-            applyModifier(livingEntity, Attributes.MOVEMENT_SPEED, SPEED_MODIFIER_ID, increase / 20);
-            applyModifier(livingEntity, Attributes.ATTACK_SPEED, ATTACK_SPEED_MODIFIER_ID, increase / 2);
-            applyModifier(livingEntity, Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE_MODIFIER_ID, increase);
+            applyModifier(livingEntity, Attributes.MOVEMENT_SPEED, SPEED_MODIFIER_ID, percentIncrease, "Farm_And_Charm speed boost");
+            applyModifier(livingEntity, Attributes.ATTACK_SPEED, ATTACK_SPEED_MODIFIER_ID, percentIncrease, "Farm_And_Charm attack speed boost");
+            applyModifier(livingEntity, Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE_MODIFIER_ID, percentIncrease, "Farm_And_Charm attack damage boost");
         }
-    }
-
-    private void applyModifier(LivingEntity entity, Attribute attribute, UUID uuid, double increase) {
-        AttributeInstance attributeInstance = entity.getAttribute(attribute);
-        if (attributeInstance != null) {
-            AttributeModifier modifier = new AttributeModifier(uuid, "SweetsEffect modifier", increase, AttributeModifier.Operation.ADDITION);
-            if (attributeInstance.getModifier(uuid) != null) {
-                attributeInstance.removeModifier(uuid);
-            }
-            attributeInstance.addPermanentModifier(modifier);
-        }
-    }
-
-    @Override
-    public boolean isDurationEffectTick(int duration, int amplifier) {
         return true;
     }
 
-    @Override
-    public void removeAttributeModifiers(LivingEntity entity, AttributeMap attributeMap, int amplifier) {
-        removeModifier(entity, Attributes.MOVEMENT_SPEED, SPEED_MODIFIER_ID);
-        removeModifier(entity, Attributes.ATTACK_SPEED, ATTACK_SPEED_MODIFIER_ID);
-        removeModifier(entity, Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE_MODIFIER_ID);
-        super.removeAttributeModifiers(entity, attributeMap, amplifier);
+    private void applyModifier(LivingEntity entity, Holder<Attribute> attribute, ResourceLocation id, double percentIncrease, String name) {
+        AttributeInstance attributeInstance = entity.getAttribute(attribute);
+
+        if (attributeInstance != null) {
+            AttributeModifier modifier = attributeInstance.getModifier(id);
+            if (modifier != null) {
+                attributeInstance.removeModifier(modifier);
+            }
+            double increase = attribute.value().getDefaultValue() * percentIncrease;
+            attributeInstance.addTransientModifier(new AttributeModifier(id, increase, AttributeModifier.Operation.ADD_VALUE));
+        }
     }
 
-    private void removeModifier(LivingEntity entity, Attribute attribute, UUID uuid) {
-        AttributeInstance attributeInstance = entity.getAttribute(attribute);
-        if (attributeInstance != null) {
-            attributeInstance.removeModifier(uuid);
-        }
+    @Override
+    public boolean shouldApplyEffectTickThisTick(int i, int j) {
+        return true;
     }
 }

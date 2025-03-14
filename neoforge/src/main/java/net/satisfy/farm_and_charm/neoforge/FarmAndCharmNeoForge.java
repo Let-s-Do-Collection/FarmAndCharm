@@ -17,6 +17,7 @@ public class FarmAndCharmNeoForge {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         EventBuses.registerModEventBus(FarmAndCharm.MOD_ID, modEventBus);
         FarmAndCharm.init();
+        EffectRegisterImpl.MOB_EFFECTS.register(modBus);
         FarmAndCharmForgeConfig.loadConfig(FarmAndCharmForgeConfig.COMMON_CONFIG, Platform.getConfigFolder().resolve("farmandcharm.toml").toString());
         modEventBus.addListener(this::commonSetup);
     }

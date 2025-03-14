@@ -13,7 +13,7 @@ public class SustenanceEffect extends MobEffect {
     }
 
     @Override
-    public void applyEffectTick(LivingEntity entity, int amplifier) {
+    public boolean applyEffectTick(LivingEntity entity, int amplifier) {
         if (!entity.level().isClientSide() && entity instanceof Player player) {
             int interval = PlatformHelper.getSustenanceEffectInterval();
             int healAmount = PlatformHelper.getSustenanceEffectHealAmount();
@@ -26,12 +26,14 @@ public class SustenanceEffect extends MobEffect {
                 } else if (foodData.getFoodLevel() < 20) {
                     foodData.setFoodLevel(Math.min(foodData.getFoodLevel() + foodIncrement, 20));
                 }
+                return true;
             }
         }
+        return false;
     }
 
     @Override
-    public boolean isDurationEffectTick(int duration, int amplifier) {
+    public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
         int interval = PlatformHelper.getSustenanceEffectInterval();
         return interval > 0 && duration % interval == 0;
     }

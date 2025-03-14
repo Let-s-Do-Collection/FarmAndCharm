@@ -3,6 +3,8 @@ package net.satisfy.farm_and_charm.platform.forge;
 import net.satisfy.farm_and_charm.neoforge.config.FarmAndCharmForgeConfig;
 
 public class PlatformHelperImpl {
+    public static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(BuiltInRegistries.MOB_EFFECT, FarmAndCharm.MOD_ID);
+
     public static boolean isBonemealEffectEnabled() {
         return FarmAndCharmForgeConfig.ENABLE_BONEMEAL_EFFECT.get();
     }
@@ -159,5 +161,10 @@ public class PlatformHelperImpl {
 
     public static int getSatiationEffectHealAmount() {
         return FarmAndCharmForgeConfig.SATIATION_EFFECT_HEAL_AMOUNT.get();
+    }
+
+
+    public static Holder<MobEffect> registerEffect(String name, Supplier<MobEffect> effect) {
+        return MOB_EFFECTS.register(name, effect);
     }
 }

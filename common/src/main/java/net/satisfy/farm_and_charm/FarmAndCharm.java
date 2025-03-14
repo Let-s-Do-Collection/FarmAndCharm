@@ -8,7 +8,6 @@ public class FarmAndCharm {
     public static void init() {
         ObjectRegistry.init();
         EntityTypeRegistry.init();
-        MobEffectRegistry.init();
         TabRegistry.init();
         ScreenhandlerTypeRegistry.init();
         SoundEventRegistry.init();

@@ -1,8 +1,15 @@
 package net.satisfy.farm_and_charm.platform.fabric;
 
 import me.shedaniel.autoconfig.AutoConfig;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.effect.MobEffect;
+import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 import net.satisfy.farm_and_charm.fabric.core.config.FarmAndCharmFabricConfig;
 import net.satisfy.farm_and_charm.platform.PlatformHelper;
+
+import java.util.function.Supplier;
 
 public class PlatformHelperImpl extends PlatformHelper {
     public static boolean isBonemealEffectEnabled() {
@@ -186,5 +193,11 @@ public class PlatformHelperImpl extends PlatformHelper {
     public static int getSatiationEffectHealAmount() {
         FarmAndCharmFabricConfig config = AutoConfig.getConfigHolder(FarmAndCharmFabricConfig.class).getConfig();
         return config.effects.satiationEffect.satiationEffectHealAmount;
+    }
+
+    public static class EffectRegisterImpl {
+        public static Holder<MobEffect> registerEffect(String name, Supplier<MobEffect> effect) {
+            return Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, FarmAndCharmIdentifier.of(name), effect.get());
+        }
     }
 }

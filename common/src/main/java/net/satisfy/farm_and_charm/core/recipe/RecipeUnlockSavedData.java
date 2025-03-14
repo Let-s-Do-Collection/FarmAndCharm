@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.recipe;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -19,7 +20,8 @@ public class RecipeUnlockSavedData extends SavedData {
 
     public RecipeUnlockSavedData() {}
 
-    public static RecipeUnlockSavedData fromNbt(CompoundTag tag) {
+
+    public CompoundTag save(CompoundTag compoundTag, HolderLookup.Provider provider) {
         RecipeUnlockSavedData data = new RecipeUnlockSavedData();
         CompoundTag playersTag = tag.getCompound("players");
         for (String key : playersTag.getAllKeys()) {

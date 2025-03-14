@@ -36,7 +36,6 @@ repositories {
 dependencies {
     neoForge "net.neoforged:neoforge:${rootProject.neoforge_version}"
     modApi "dev.architectury:architectury-neoforge:${rootProject.architectury_version}"
-    modImplementation "maven.modrinth:do-api:${project.doapi_version}-forge"
 
     modImplementation "me.shedaniel:RoughlyEnoughItems-neoforge:$rei_version"
     modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")

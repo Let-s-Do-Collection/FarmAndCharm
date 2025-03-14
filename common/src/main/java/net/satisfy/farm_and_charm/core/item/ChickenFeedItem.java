@@ -33,7 +33,7 @@ public class ChickenFeedItem extends Item {
     public @NotNull InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity entity, InteractionHand hand) {
         if (PlatformHelper.isChickenEffectsEnabled() && !player.level().isClientSide && entity.getType() == EntityType.CHICKEN) {
             Chicken chicken = (Chicken) entity;
-            chicken.addEffect(new MobEffectInstance(MobEffectRegistry.CLUCK.get(), 1200));
+            chicken.addEffect(new MobEffectInstance(MobEffectRegistry.CLUCK, 1200));
             player.level().playSound(null, chicken.getX(), chicken.getY(), chicken.getZ(), SoundEvents.CHICKEN_AMBIENT, SoundSource.NEUTRAL, 1.0F, 1.0F);
             chicken.level().addParticle(ParticleTypes.HEART, chicken.getX(), chicken.getY() + 0.5, chicken.getZ(), 0.0D, 0.0D, 0.0D);
             if (!player.getAbilities().instabuild) {
@@ -47,7 +47,7 @@ public class ChickenFeedItem extends Item {
     @Override
     public @NotNull ItemStack finishUsingItem(ItemStack stack, Level world, LivingEntity entityLiving) {
         if (PlatformHelper.isChickenEffectsEnabled() && entityLiving instanceof Player player && !world.isClientSide) {
-            player.addEffect(new MobEffectInstance(MobEffectRegistry.CLUCK.get(), 400));
+            player.addEffect(new MobEffectInstance(MobEffectRegistry.CLUCK, 400));
             world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);

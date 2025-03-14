@@ -5,7 +5,7 @@
   },
   "recipe_type": "MEAT",
   "result": {
-    "item": "farm_and_charm:tomato_seeds",
+    "id": "farm_and_charm:tomato_seeds",
     "count": 4
   }
 }

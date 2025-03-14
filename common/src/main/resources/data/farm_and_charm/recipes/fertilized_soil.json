@@ -11,7 +11,7 @@
     }
   },
   "result": {
-    "item": "farm_and_charm:fertilized_soil",
+    "id": "farm_and_charm:fertilized_soil",
     "count": 1
   }
 }

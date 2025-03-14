@@ -17,7 +17,7 @@
     }
   },
   "result": {
-    "item": "farm_and_charm:feeding_trough",
+    "id": "farm_and_charm:feeding_trough",
     "count": 2
   }
 }

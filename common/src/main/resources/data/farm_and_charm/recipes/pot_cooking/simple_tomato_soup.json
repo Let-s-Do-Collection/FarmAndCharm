@@ -18,7 +18,7 @@
     }
   },
   "result": {
-    "item": "farm_and_charm:simple_tomato_soup",
+    "id": "farm_and_charm:simple_tomato_soup",
     "count": 1
   },
   "requiresLearning": false

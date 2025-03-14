@@ -5,7 +5,7 @@
   },
   "recipe_type": "METAL",
   "result": {
-    "item": "minecraft:emerald",
+    "id": "minecraft:emerald",
     "count": 3
   }
 }

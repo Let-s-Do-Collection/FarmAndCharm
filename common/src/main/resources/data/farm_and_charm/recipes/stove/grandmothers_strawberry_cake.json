@@ -12,7 +12,7 @@
     }
   ],
   "result": {
-    "item": "farm_and_charm:grandmothers_strawberry_cake",
+    "id": "farm_and_charm:grandmothers_strawberry_cake",
     "count": 2
   },
   "experience": 0.35,

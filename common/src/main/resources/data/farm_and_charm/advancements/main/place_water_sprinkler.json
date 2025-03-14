@@ -21,7 +21,8 @@
     "frame": "task",
     "hidden": false,
     "icon": {
-      "item": "farm_and_charm:water_sprinkler"
+      "count": 1,
+      "id": "farm_and_charm:water_sprinkler"
     },
     "show_toast": true,
     "title": {

@@ -1,6 +1,5 @@
 package net.satisfy.farm_and_charm.core.util;
 
-import com.google.gson.JsonArray;
 import com.mojang.datafixers.util.Pair;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.DeferredRegister;
@@ -27,17 +26,18 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.*;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
@@ -119,19 +119,6 @@ public class GeneralUtil {
         } while (matches);
 
         return false;
-    }
-
-    public static NonNullList<Ingredient> deserializeIngredients(JsonArray json) {
-        NonNullList<Ingredient> ingredients = NonNullList.create();
-
-        for(int i = 0; i < json.size(); ++i) {
-            Ingredient ingredient = Ingredient.fromJson(json.get(i));
-            if (!ingredient.isEmpty()) {
-                ingredients.add(ingredient);
-            }
-        }
-
-        return ingredients;
     }
 
     public static VoxelShape rotateShape(Direction from, Direction to, VoxelShape shape) {
@@ -418,12 +405,6 @@ public class GeneralUtil {
 
         public @NotNull String getSerializedName() {
             return this.name;
-        }
-    }
-
-    public static class FoodComponent extends FoodProperties {
-        public FoodComponent(List<Pair<MobEffectInstance, Float>> statusEffects) {
-            super(1, 0.0F, false, true, false, statusEffects);
         }
     }
 

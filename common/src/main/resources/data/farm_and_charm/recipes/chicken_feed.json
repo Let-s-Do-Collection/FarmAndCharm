@@ -21,7 +21,7 @@
     }
   ],
   "result": {
-    "item": "farm_and_charm:chicken_feed",
+    "id": "farm_and_charm:chicken_feed",
     "count": 3
   }
 }

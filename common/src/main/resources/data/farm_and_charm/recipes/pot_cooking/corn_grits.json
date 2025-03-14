@@ -18,7 +18,7 @@
     }
   },
   "result": {
-    "item": "farm_and_charm:corn_grits",
+    "id": "farm_and_charm:corn_grits",
     "count": 1
   },
   "requiresLearning": false

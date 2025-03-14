@@ -2,7 +2,8 @@
   "parent": "farm_and_charm:main/root",
   "display": {
     "icon": {
-      "item": "farm_and_charm:wild_tomatoes"
+      "count": 1,
+      "id": "farm_and_charm:wild_tomatoes"
     },
     "title": {
       "translate": "advancement.farm_and_charm.find_wild_crops"

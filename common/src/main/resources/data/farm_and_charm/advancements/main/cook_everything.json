@@ -2,7 +2,8 @@
   "parent": "farm_and_charm:main/place_cooking_pot",
   "display": {
     "icon": {
-      "item": "farm_and_charm:goulash"
+      "count": 1,
+      "id": "farm_and_charm:goulash"
     },
     "title": {
       "translate": "advancement.farm_and_charm.cook_everything"

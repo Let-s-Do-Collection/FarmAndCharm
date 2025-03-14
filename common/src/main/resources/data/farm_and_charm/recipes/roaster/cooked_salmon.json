@@ -18,7 +18,7 @@
     "item": "minecraft:bowl"
   },
   "result": {
-    "item": "farm_and_charm:cooked_salmon",
+    "id": "farm_and_charm:cooked_salmon",
     "count": 1
   },
   "requiresLearning": false

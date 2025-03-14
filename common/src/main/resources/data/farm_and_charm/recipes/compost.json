@@ -10,7 +10,7 @@
     }
   },
   "result": {
-    "item": "farm_and_charm:compost",
+    "id": "farm_and_charm:compost",
     "count": 1
   }
 }

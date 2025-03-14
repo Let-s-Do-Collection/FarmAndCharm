@@ -21,7 +21,8 @@
     "frame": "task",
     "hidden": false,
     "icon": {
-      "item": "farm_and_charm:cooking_pot"
+      "count": 1,
+      "id": "farm_and_charm:cooking_pot"
     },
     "show_toast": true,
     "title": {

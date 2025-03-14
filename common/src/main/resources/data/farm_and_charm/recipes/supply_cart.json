@@ -20,7 +20,7 @@
     }
   },
   "result": {
-    "item": "farm_and_charm:supply_cart",
+    "id": "farm_and_charm:supply_cart",
     "count": 1
   }
 }

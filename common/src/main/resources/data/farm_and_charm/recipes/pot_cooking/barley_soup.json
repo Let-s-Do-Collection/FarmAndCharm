@@ -21,7 +21,7 @@
     }
   },
   "result": {
-    "item": "farm_and_charm:barley_soup",
+    "id": "farm_and_charm:barley_soup",
     "count": 1
   },
   "requiresLearning": false

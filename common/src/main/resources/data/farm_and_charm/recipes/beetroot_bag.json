@@ -12,6 +12,7 @@
     }
   },
   "result": {
-    "item": "farm_and_charm:beetroot_bag"
+    "id": "farm_and_charm:beetroot_bag",
+    "count": 1
   }
 }

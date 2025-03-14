@@ -5,7 +5,7 @@
   },
   "recipe_type": "WOOD",
   "result": {
-    "item": "minecraft:stripped_acacia_log",
+    "id": "minecraft:stripped_acacia_log",
     "count": 1
   }
 }

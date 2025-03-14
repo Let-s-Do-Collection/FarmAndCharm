@@ -18,7 +18,7 @@
     "item": "minecraft:bowl"
   },
   "result": {
-    "item": "farm_and_charm:chicken_wrapped_in_bacon",
+    "id": "farm_and_charm:chicken_wrapped_in_bacon",
     "count": 1
   },
   "requiresLearning": false

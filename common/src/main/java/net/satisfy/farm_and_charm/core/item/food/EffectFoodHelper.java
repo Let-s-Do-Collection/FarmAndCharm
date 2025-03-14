@@ -3,6 +3,7 @@ package net.satisfy.farm_and_charm.core.item.food;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
@@ -28,7 +29,7 @@ public class EffectFoodHelper {
         removeRawChickenEffects(stack);
         ListTag nbtList = getEffectNbt(stack);
         boolean bl = true;
-        int id = MobEffect.getId(effect.getFirst().getEffect());
+        int id = BuiltInRegistries.MOB_EFFECT.asHolderIdMap().getId(effect.getFirst().getEffect()) + 1;
 
         for (int i = 0; i < nbtList.size(); ++i) {
             CompoundTag nbtCompound = nbtList.getCompound(i);

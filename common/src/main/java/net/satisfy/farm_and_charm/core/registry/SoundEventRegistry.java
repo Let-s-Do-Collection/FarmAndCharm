@@ -21,10 +21,11 @@ public class SoundEventRegistry {
     public static final RegistrySupplier<SoundEvent> WATER_SPRINKLER = create("water_sprinkler");
     public static final RegistrySupplier<SoundEvent> CART_MOVING = create("cart_moving");;
 
-    public static void init() {}
-
     private static RegistrySupplier<SoundEvent> create(String name) {
-        ResourceLocation id = new FarmAndCharmIdentifier(name);
+        final ResourceLocation id = FarmAndCharmIdentifier.of(name);
         return SOUND_EVENTS.register(id, () -> SoundEvent.createVariableRangeEvent(id));
     }
+
+    public static void init() {}
+
 }

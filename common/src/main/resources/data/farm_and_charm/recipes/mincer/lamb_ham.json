@@ -5,7 +5,7 @@
   },
   "recipe_type": "MEAT",
   "result": {
-    "item": "farm_and_charm:lamb_ham",
+    "id": "farm_and_charm:lamb_ham",
     "count": 1
   }
 }

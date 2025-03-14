@@ -24,7 +24,7 @@
     "item": "minecraft:bowl"
   },
   "result": {
-    "item": "farm_and_charm:sausage_with_oat_patty",
+    "id": "farm_and_charm:sausage_with_oat_patty",
     "count": 2
   },
   "requiresLearning": false

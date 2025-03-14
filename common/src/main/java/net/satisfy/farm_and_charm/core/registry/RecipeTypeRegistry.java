@@ -31,7 +31,7 @@ public class RecipeTypeRegistry {
 
 
     private static <T extends Recipe<?>> RegistrySupplier<RecipeSerializer<T>> create(String name, Supplier<RecipeSerializer<T>> serializer) {
-        return RECIPE_SERIALIZERS.register(new FarmAndCharmIdentifier(name), serializer);
+        return RECIPE_SERIALIZERS.register(FarmAndCharmIdentifier.of(name), serializer);
     }
 
     private static <T extends Recipe<?>> RegistrySupplier<RecipeType<T>> create(String name) {
@@ -41,7 +41,7 @@ public class RecipeTypeRegistry {
                 return name;
             }
         };
-        return RECIPE_TYPES.register(new FarmAndCharmIdentifier(name), type);
+        return RECIPE_TYPES.register(FarmAndCharmIdentifier.of(name), type);
     }
 
     public static void init() {

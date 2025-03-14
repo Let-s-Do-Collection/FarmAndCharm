@@ -5,7 +5,7 @@
   },
   "recipe_type": "WOOD",
   "result": {
-    "item": "minecraft:melon_slice",
+    "id": "minecraft:melon_slice",
     "count": 9
   }
 }

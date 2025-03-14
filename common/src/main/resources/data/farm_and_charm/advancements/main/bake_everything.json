@@ -2,7 +2,8 @@
   "parent": "farm_and_charm:main/place_stove",
   "display": {
     "icon": {
-      "item": "farm_and_charm:baked_lamb_ham"
+      "count": 1,
+      "id": "farm_and_charm:baked_lamb_ham"
     },
     "title": {
       "translate": "advancement.farm_and_charm.bake_everything"

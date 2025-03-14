@@ -13,7 +13,7 @@
     }
   },
   "result": {
-    "item": "farm_and_charm:tool_rack",
+    "id": "farm_and_charm:tool_rack",
     "count": 3
   }
 }

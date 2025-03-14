@@ -18,7 +18,7 @@
     }
   },
   "result": {
-    "item": "farm_and_charm:ribwort_tea",
+    "id": "farm_and_charm:ribwort_tea",
     "count": 1
   },
   "requiresLearning": false

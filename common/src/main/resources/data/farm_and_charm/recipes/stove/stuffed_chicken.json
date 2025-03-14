@@ -12,7 +12,7 @@
     }
   ],
   "result": {
-    "item": "farm_and_charm:stuffed_chicken",
+    "id": "farm_and_charm:stuffed_chicken",
     "count": 1
   },
   "experience": 0.6,

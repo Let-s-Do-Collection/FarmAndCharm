@@ -18,7 +18,7 @@
     }
   },
   "result": {
-    "item": "farm_and_charm:strawberry_tea",
+    "id": "farm_and_charm:strawberry_tea",
     "count": 1
   },
   "requiresLearning": false

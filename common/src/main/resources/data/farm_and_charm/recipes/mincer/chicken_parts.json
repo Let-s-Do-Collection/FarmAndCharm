@@ -5,7 +5,7 @@
   },
   "recipe_type": "MEAT",
   "result": {
-    "item": "farm_and_charm:chicken_parts",
+    "id": "farm_and_charm:chicken_parts",
     "count": 3
   }
 }

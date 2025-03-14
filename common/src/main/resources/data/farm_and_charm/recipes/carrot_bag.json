@@ -12,6 +12,7 @@
     }
   },
   "result": {
-    "item": "farm_and_charm:carrot_bag"
+    "id": "farm_and_charm:carrot_bag",
+    "count": 9
   }
 }

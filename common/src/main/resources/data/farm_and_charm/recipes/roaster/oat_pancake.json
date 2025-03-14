@@ -24,7 +24,7 @@
     "item": "minecraft:bowl"
   },
   "result": {
-    "item": "farm_and_charm:oat_pancake",
+    "id": "farm_and_charm:oat_pancake",
     "count": 3
   },
   "requiresLearning": false

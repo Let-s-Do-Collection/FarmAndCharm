@@ -2,7 +2,8 @@
   "parent": "farm_and_charm:main/introduction_drying",
   "display": {
     "icon": {
-      "item": "farm_and_charm:fertilizer"
+      "count": 1,
+      "id": "farm_and_charm:fertilizer"
     },
     "title": {
       "translate": "advancement.farm_and_charm.get_fertilizer"

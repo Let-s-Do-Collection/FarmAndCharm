@@ -14,6 +14,7 @@
     }
   },
   "result": {
-    "item": "farm_and_charm:cooking_pot"
+    "id": "farm_and_charm:cooking_pot",
+    "count": 9
   }
 }

@@ -35,7 +35,8 @@
     "frame": "task",
     "hidden": false,
     "icon": {
-      "item": "farm_and_charm:pitchfork"
+      "count": 1,
+      "id": "farm_and_charm:pitchfork"
     },
     "show_toast": true,
     "title": {

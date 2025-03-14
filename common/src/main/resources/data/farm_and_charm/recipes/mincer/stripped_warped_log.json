@@ -5,7 +5,7 @@
   },
   "recipe_type": "WOOD",
   "result": {
-    "item": "minecraft:stripped_warped_stem",
+    "id": "minecraft:stripped_warped_stem",
     "count": 1
   }
 }

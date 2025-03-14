@@ -15,7 +15,7 @@
     }
   ],
   "result": {
-    "item": "farm_and_charm:cat_food",
+    "id": "farm_and_charm:cat_food",
     "count": 6
   }
 }

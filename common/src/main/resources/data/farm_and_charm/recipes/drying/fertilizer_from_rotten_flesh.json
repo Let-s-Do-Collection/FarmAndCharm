@@ -5,7 +5,7 @@
     "item": "minecraft:rotten_flesh"
   },
   "result": {
-    "item": "farm_and_charm:fertilizer",
+    "id": "farm_and_charm:fertilizer",
     "count": 1
   }
 }

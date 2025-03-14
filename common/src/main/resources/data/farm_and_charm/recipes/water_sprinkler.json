@@ -17,7 +17,7 @@
     }
   },
   "result": {
-    "item": "farm_and_charm:water_sprinkler",
+    "id": "farm_and_charm:water_sprinkler",
     "count": 1
   }
 }

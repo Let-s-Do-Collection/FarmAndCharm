@@ -2,7 +2,8 @@
   "parent": "farm_and_charm:main/root",
   "display": {
     "icon": {
-      "item": "farm_and_charm:stuffed_chicken"
+      "count": 1,
+      "id": "farm_and_charm:stuffed_chicken"
     },
     "title": {
       "translate": "advancement.farm_and_charm.make_everything"

@@ -5,7 +5,7 @@
   },
   "recipe_type": "STONE",
   "result": {
-    "item": "minecraft:pointed_dripstone",
+    "id": "minecraft:pointed_dripstone",
     "count": 4
   }
 }

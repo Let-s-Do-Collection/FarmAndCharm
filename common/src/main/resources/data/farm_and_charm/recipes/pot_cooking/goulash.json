@@ -24,7 +24,7 @@
     }
   },
   "result": {
-    "item": "farm_and_charm:goulash",
+    "id": "farm_and_charm:goulash",
     "count": 1
   },
   "requiresLearning": false

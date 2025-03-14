@@ -9,7 +9,7 @@
     }
   ],
   "result": {
-    "item": "farm_and_charm:farmers_bread",
+    "id": "farm_and_charm:farmers_bread",
     "count": 3
   },
   "experience": 0.3,

@@ -5,7 +5,7 @@
   },
   "recipe_type": "STONE",
   "result": {
-    "item": "minecraft:cobblestone",
+    "id": "minecraft:cobblestone",
     "count": 2
   }
 }

@@ -1,7 +1,8 @@
 {
   "display": {
     "icon": {
-      "item": "farm_and_charm:scarecrow"
+      "count": 1,
+      "id": "farm_and_charm:scarecrow"
     },
     "title": {
       "translate": "advancement.farm_and_charm.root"

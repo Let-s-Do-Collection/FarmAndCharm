@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#c:tomato",
-    "#forge:tomato"
+    "#c:crops/tomato",
+    "#forge:crops/tomato"
   ]
 }

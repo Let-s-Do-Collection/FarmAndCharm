@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#c:wheat",
-    "#forge:wheat"
+    "#c:grains/wheats",
+    "#forge:grains/wheats"
   ]
 }

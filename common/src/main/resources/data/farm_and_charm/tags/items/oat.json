@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "#c:grains/oats",
+    "#forge:grains/oats"
+  ]
+}

@@ -1,13 +1,17 @@
 package net.satisfy.farm_and_charm.core.recipe;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.PairMapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
@@ -15,17 +19,17 @@ import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
 import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class CookingPotRecipe implements Recipe<RecipeInput> {
     private final NonNullList<Ingredient> inputs;
-    private final boolean containerRequired;
-    private final ItemStack containerItem;
+    private final Pair<Boolean, ItemStack> container;
     private final ItemStack output;
     private final boolean requiresLearning;
 
-    public CookingPotRecipe(NonNullList<Ingredient> inputs, boolean containerRequired, ItemStack containerItem, ItemStack output, boolean requiresLearning) {
-        this.inputs = inputs;
-        this.containerRequired = containerRequired;
-        this.containerItem = containerItem;
+    public CookingPotRecipe(List<Ingredient> inputs, Pair<Boolean, ItemStack> container, ItemStack output, boolean requiresLearning) {
+        this.inputs = GeneralUtil.nonNullList(inputs, Ingredient.class);
+        this.container = container;
         this.output = output;
         this.requiresLearning = requiresLearning;
     }
@@ -70,12 +74,20 @@ public class CookingPotRecipe implements Recipe<RecipeInput> {
         return this.inputs;
     }
 
+    public Pair<Boolean, ItemStack> getContainer() {
+        return container;
+    }
+
+    public ItemStack getOutput() {
+        return output.copy();
+    }
+
     public boolean isContainerRequired() {
-        return containerRequired;
+        return container.getFirst();
     }
 
     public ItemStack getContainerItem() {
-        return containerItem;
+        return container.getSecond();
     }
 
     public boolean requiresLearning() {
@@ -88,46 +100,27 @@ public class CookingPotRecipe implements Recipe<RecipeInput> {
     }
 
     public static class Serializer implements RecipeSerializer<CookingPotRecipe> {
+        public PairMapCodec<Boolean, ItemStack> containerCodec = new PairMapCodec<>(
+                Codec.BOOL.fieldOf("required"), ItemStack.CODEC.fieldOf("result")
+        );
+
         @Override
-        public @NotNull CookingPotRecipe fromJson(ResourceLocation id, JsonObject json) {
-            NonNullList<Ingredient> ingredients = GeneralUtil.deserializeIngredients(GsonHelper.getAsJsonArray(json, "ingredients"));
-            if (ingredients.isEmpty()) {
-                throw new JsonParseException("No ingredients for CookingPot Recipe");
-            } else if (ingredients.size() > 6) {
-                throw new JsonParseException("Too many ingredients for CookingPot Recipe");
-            }
-            JsonObject containerObj = GsonHelper.getAsJsonObject(json, "container");
-            boolean required = GsonHelper.getAsBoolean(containerObj, "required", false);
-            ItemStack containerStack = ItemStack.EMPTY;
-            if (required) {
-                containerStack = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(containerObj, "item"));
-            }
-            ItemStack result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(json, "result"));
-            boolean requiresLearning = GsonHelper.getAsBoolean(json, "requiresLearning", false);
-            return new CookingPotRecipe(ingredients, required, containerStack, result, requiresLearning);
+        public @NotNull MapCodec<CookingPotRecipe> codec() {
+            return RecordCodecBuilder.mapCodec(obj -> obj.group(
+                    Ingredient.CODEC.listOf().fieldOf("ingredients").validate(list -> {
+                        if (list.isEmpty()) return DataResult.error(() -> "No ingredients for CookingPot Recipe");
+                        else if (list.size() > 6) return DataResult.error(() -> "Too many ingredients for CookingPot Recipe");
+                        return DataResult.success(list);
+                    }).forGetter(CookingPotRecipe::getIngredients),
+                    containerCodec.fieldOf("container").forGetter(CookingPotRecipe::getContainer),
+                    ItemStack.CODEC.fieldOf("output").forGetter(CookingPotRecipe::getOutput),
+                    Codec.BOOL.fieldOf("requiresLearning").orElse(false).forGetter(CookingPotRecipe::requiresLearning)
+            ).apply(obj, CookingPotRecipe::new));
         }
 
         @Override
-        public @NotNull CookingPotRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
-            NonNullList<Ingredient> ingredients = NonNullList.withSize(buf.readVarInt(), Ingredient.EMPTY);
-            ingredients.replaceAll(ignored -> Ingredient.fromNetwork(buf));
-            boolean required = buf.readBoolean();
-            ItemStack containerStack = required ? buf.readItem() : ItemStack.EMPTY;
-            ItemStack output = buf.readItem();
-            boolean requiresLearning = buf.readBoolean();
-            return new CookingPotRecipe(ingredients, required, containerStack, output, requiresLearning);
-        }
-
-        @Override
-        public void toNetwork(FriendlyByteBuf buf, CookingPotRecipe recipe) {
-            buf.writeVarInt(recipe.inputs.size());
-            recipe.inputs.forEach(entry -> entry.toNetwork(buf));
-            buf.writeBoolean(recipe.containerRequired);
-            if (recipe.containerRequired) {
-                buf.writeItem(recipe.containerItem);
-            }
-            buf.writeItem(recipe.output);
-            buf.writeBoolean(recipe.requiresLearning);
+        public @NotNull StreamCodec<RegistryFriendlyByteBuf, CookingPotRecipe> streamCodec() {
+            return ByteBufCodecs.fromCodecWithRegistries(codec().codec());
         }
     }
 }

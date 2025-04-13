@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -10,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -190,16 +192,7 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
                     if (recipe != null) {
 
                         ItemStack inputStack = this.stacks.get(INPUT_SLOT);
-
-                        String recipe_type = recipe.getRecipeType();
-                        int recipe_difficulty = 5;
-
-                        switch (recipe_type) {
-                            case "MEAT" -> recipe_difficulty = 1;
-                            case "WOOD" -> recipe_difficulty = 2;
-                            case "STONE" -> recipe_difficulty = 3;
-                            case "METAL" -> recipe_difficulty = 4;
-                        }
+                        int recipe_difficulty = recipe.getRecipeType().difficulty();
 
                         AABB searched_area = new AABB(pos);
                         searched_area.inflate(4.0D);
@@ -230,5 +223,29 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
                 level.setBlock(pos, state.setValue(MincerBlock.CRANKED, 0), Block.UPDATE_ALL);
             }
         }
+    }
+
+    public enum MincingType implements StringRepresentable {
+        MEAT, WOOD, STONE,
+        METAL, OTHER;
+
+        public int difficulty() {
+           return this.ordinal() + 1;
+        }
+
+        @Override
+        public String getSerializedName() { return this.name(); }
+
+        public static MincingType valueOfSafe(String string) {
+            try {
+                return MincingType.valueOf(string.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return MincingType.OTHER;
+            }
+        }
+
+        public static final Codec<MincingType> CODEC = Codec.STRING.xmap(
+                MincingType::valueOfSafe, MincingType::getSerializedName
+        );
     }
 }

@@ -1,6 +1,8 @@
 package net.satisfy.farm_and_charm.core.util;
 
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.ListBuilder;
 import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.Registrar;
@@ -34,6 +36,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
@@ -51,6 +54,7 @@ import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -88,7 +92,7 @@ public class GeneralUtil {
         return levelReader.getBlockState(blockPos.below()).isSolid();
     }
 
-    public static boolean matchesRecipe(Container inventory, NonNullList<Ingredient> recipe, int startIndex, int endIndex) {
+    public static boolean matchesRecipe(RecipeInput inventory, NonNullList<Ingredient> recipe, int startIndex, int endIndex) {
         List<ItemStack> validStacks = new ArrayList<>();
 
         for (int i = startIndex; i <= endIndex; ++i) {
@@ -433,5 +437,18 @@ public class GeneralUtil {
                 case DOWN, UP -> Optional.empty();
             };
         }
+    }
+
+    public static <T> NonNullList<T> nonNullList(List<T> list, Class<T> clazz) {
+        return nonNullList(list, clazz, true);
+    }
+
+
+    public static <T> NonNullList<T> nonNullList(List<T> list, Class<T> clazz, boolean throwsIfNull) {
+        if (throwsIfNull && list.stream().anyMatch(Objects::isNull)) throw new NullPointerException("List contains null values");
+
+        @SuppressWarnings("unchecked")
+        T[] array = (T[]) Array.newInstance(clazz, list.size());
+        return NonNullList.of(null, list.toArray(array));
     }
 }

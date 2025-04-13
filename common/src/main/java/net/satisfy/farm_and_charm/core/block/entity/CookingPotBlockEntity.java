@@ -212,7 +212,7 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
                 for (int slot = 0; slot < INGREDIENTS_AREA; slot++) {
                     ItemStack stack = getItem(slot);
                     if (ingredient.test(stack)) {
-                        EffectFoodHelper.getEffects(stack).forEach(effect -> EffectFoodHelper.addEffect(outputStack, effect));
+                        EffectFoodHelper.getEffects(stack).forEach(effect -> EffectFoodHelper.addEffect(outputStack, List.of(effect)));
                         break;
                     }
                 }

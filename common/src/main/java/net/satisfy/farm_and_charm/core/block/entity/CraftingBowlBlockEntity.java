@@ -89,11 +89,6 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
     }
 
     @Override
-    public boolean canPlaceItem(int index, ItemStack stack) {
-        return true;
-    }
-
-    @Override
     public @NotNull NonNullList<ItemStack> getItems() {
         return this.stacks;
     }

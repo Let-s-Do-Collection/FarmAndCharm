@@ -1,11 +1,10 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.*;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
@@ -14,7 +13,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -34,9 +36,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
-
-import static net.minecraft.world.item.ItemStack.isSameItemSameTags;
 
 public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker<RoasterBlockEntity>, ImplementedInventory, MenuProvider {
     private static final int MAX_CAPACITY = 8, CONTAINER_SLOT = 6, OUTPUT_SLOT = 7, INGREDIENTS_AREA = 2 * 3;
@@ -83,15 +84,17 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
         };
     }
 
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
-        ContainerHelper.loadAllItems(nbt, inventory);
+    @Override
+    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider provider) {
+        super.loadAdditional(nbt, provider);
+        ContainerHelper.loadAllItems(nbt, inventory, provider);
         roastingTime = nbt.getInt("RoastingTime");
     }
 
-    protected void saveAdditional(CompoundTag nbt) {
-        super.saveAdditional(nbt);
-        ContainerHelper.saveAllItems(nbt, inventory);
+    @Override
+    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider provider) {
+        super.saveAdditional(nbt, provider);
+        ContainerHelper.saveAllItems(nbt, inventory, provider);
         nbt.putInt("RoastingTime", roastingTime);
     }
 
@@ -105,7 +108,11 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
         if (recipe == null || recipe.getResultItem(access).isEmpty()) return false;
         if (recipe instanceof RoasterRecipe roastingRecipe) {
             ItemStack outputSlotStack = getItem(OUTPUT_SLOT), containerSlotStack = getItem(CONTAINER_SLOT);
-            boolean isContainerCorrect = containerSlotStack.is(roastingRecipe.getContainer().getItem()), isOutputSlotCompatible = outputSlotStack.isEmpty() || isSameItemSameTags(outputSlotStack, generateOutputItem(recipe, access)) && outputSlotStack.getCount() < outputSlotStack.getMaxStackSize();
+            boolean isContainerCorrect = containerSlotStack.is(roastingRecipe.getContainer().getItem()),
+                    isOutputSlotCompatible = outputSlotStack.isEmpty() || ItemStack.isSameItemSameComponents(
+                            outputSlotStack, generateOutputItem(recipe, access)
+                    ) && outputSlotStack.getCount() < outputSlotStack.getMaxStackSize();
+
             return isContainerCorrect && isOutputSlotCompatible;
         }
         return false;
@@ -160,14 +167,18 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
         if (wasBeingBurned != isBeingBurned || state.getValue(RoasterBlock.LIT) != isBeingBurned) {
             world.setBlock(pos, state.setValue(RoasterBlock.LIT, isBeingBurned), Block.UPDATE_ALL);
         }
-        if (!isBeingBurned) {
-            return;
-        }
-        Recipe<?> recipe = world.getRecipeManager().getRecipeFor(RecipeTypeRegistry.ROASTER_RECIPE_TYPE.get(), this, world).orElse(null);
-        if (recipe instanceof RoasterRecipe roastingRecipe) {
-            if (roastingRecipe.requiresLearning()) {
+        if (!isBeingBurned) return;
+
+        CraftingInput recipeInput = CraftingInput.of(3, 2, blockEntity.getItems().subList(0, CONTAINER_SLOT));
+        Optional<RecipeHolder<RoasterRecipe>> recipeHolder = world.getRecipeManager().getRecipeFor(RecipeTypeRegistry.ROASTER_RECIPE_TYPE.get(), recipeInput, world);
+
+        if (recipeHolder.isPresent()) {
+            RoasterRecipe recipe = recipeHolder.get().value();
+
+            if (recipe.requiresLearning()) {
                 ServerPlayer owner = Objects.requireNonNull(world.getServer()).getPlayerList().getPlayer(ownerUuid);
-                if (owner == null || RecipeUnlockManager.isRecipeLocked(owner, recipe.getId())) {
+                ResourceKey<Recipe<?>> recipeKey = ResourceKey.create(Registries.RECIPE, recipeHolder.get().id());
+                if (owner == null || RecipeUnlockManager.isRecipeLocked(owner, recipeKey)) {
                     roastingTime = 0;
                     if (state.getValue(RoasterBlock.ROASTING)) {
                         world.setBlock(pos, state.setValue(RoasterBlock.ROASTING, false), Block.UPDATE_ALL);
@@ -175,18 +186,22 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
                     return;
                 }
             }
-        }
-        if (level == null) throw new IllegalStateException("Null world not allowed");
-        RegistryAccess access = level.registryAccess();
-        if (canCraft(recipe, access)) {
-            if (++roastingTime >= MAX_ROASTING_TIME) {
-                roastingTime = 0;
-                craft(recipe, access);
+
+            if (level == null) throw new IllegalStateException("Null world not allowed");
+            RegistryAccess access = level.registryAccess();
+
+            if (canCraft(recipe, access)) {
+                if (++roastingTime >= MAX_ROASTING_TIME) {
+                    roastingTime = 0;
+                    craft(recipe, access);
+                }
+                if (!state.getValue(RoasterBlock.ROASTING)) {
+                    world.setBlock(pos, state.setValue(RoasterBlock.ROASTING, true), Block.UPDATE_ALL);
+                }
+
+                return;
             }
-            if (!state.getValue(RoasterBlock.ROASTING)) {
-                world.setBlock(pos, state.setValue(RoasterBlock.ROASTING, true), Block.UPDATE_ALL);
-            }
-        } else {
+
             roastingTime = 0;
             if (state.getValue(RoasterBlock.ROASTING)) {
                 world.setBlock(pos, state.setValue(RoasterBlock.ROASTING, false), Block.UPDATE_ALL);

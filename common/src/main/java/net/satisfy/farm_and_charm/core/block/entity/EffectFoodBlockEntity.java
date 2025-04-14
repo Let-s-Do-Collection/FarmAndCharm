@@ -1,9 +1,15 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.codecs.PairCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -18,7 +24,11 @@ import java.util.stream.Collectors;
 
 public class EffectFoodBlockEntity extends BlockEntity {
     public static final String STORED_EFFECTS_KEY = "StoredEffects";
-    private List<Pair<MobEffectInstance, Float>> effects;
+    private List<Pair<MobEffectInstance, Float>> effects; // instance : chance map
+
+    public static final Codec<List<Pair<MobEffectInstance, Float>>> effectsCodec = new PairCodec<>(
+            MobEffectInstance.CODEC, Codec.FLOAT
+    ).listOf();
 
     public EffectFoodBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(EntityTypeRegistry.EFFECT_FOOD_BLOCK_ENTITY.get(), blockPos, blockState);
@@ -38,23 +48,19 @@ public class EffectFoodBlockEntity extends BlockEntity {
     }
 
     @Override
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
-        this.effects = EffectFoodHelper.fromNbt(nbt != null ? nbt.getList(STORED_EFFECTS_KEY, 10) : new ListTag());
+    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider provider) {
+        super.loadAdditional(nbt, provider);
+        this.effects = effectsCodec.decode(
+                NbtOps.INSTANCE, nbt != null ? nbt.getList(STORED_EFFECTS_KEY, 10) : new ListTag()
+        ).getOrThrow().getFirst();
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt) {
-        super.saveAdditional(nbt);
-        if (effects == null) {
-            return;
-        }
-        ListTag nbtList = new ListTag();
-        for (Pair<MobEffectInstance, Float> effect : effects) {
-            nbtList.add(EffectFoodHelper.createNbt((short) MobEffect.getId(effect.getFirst().getEffect()), effect));
-
-        }
-        nbt.put(STORED_EFFECTS_KEY, nbtList);
+    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider provider) {
+        super.saveAdditional(nbt, provider);
+        if (effects == null) return;
+        DataResult<Tag> encoded = effectsCodec.encodeStart(NbtOps.INSTANCE, effects);
+        if (encoded.result().isPresent()) nbt.put(STORED_EFFECTS_KEY, encoded.getOrThrow());
     }
 }
 

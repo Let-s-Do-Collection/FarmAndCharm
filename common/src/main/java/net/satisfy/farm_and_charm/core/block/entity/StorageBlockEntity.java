@@ -1,6 +1,7 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -57,25 +58,28 @@ public class StorageBlockEntity extends BlockEntity {
         super.setChanged();
     }
 
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
+    @Override
+    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider provider) {
+        super.loadAdditional(nbt, provider);
         this.size = nbt.getInt("size");
         this.inventory = NonNullList.withSize(this.size, ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(nbt, this.inventory);
+        ContainerHelper.loadAllItems(nbt, this.inventory, provider);
     }
 
-    protected void saveAdditional(CompoundTag nbt) {
-        ContainerHelper.saveAllItems(nbt, this.inventory);
+    @Override
+    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider provider) {
+        ContainerHelper.saveAllItems(nbt, this.inventory, provider);
         nbt.putInt("size", this.size);
-        super.saveAdditional(nbt);
+        super.saveAdditional(nbt, provider);
     }
 
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-    public @NotNull CompoundTag getUpdateTag() {
-        return this.saveWithoutMetadata();
+    @Override
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+        return this.saveWithoutMetadata(provider);
     }
 
     public void setInventory(NonNullList<ItemStack> inventory) {

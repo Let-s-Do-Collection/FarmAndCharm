@@ -1,14 +1,12 @@
 package net.satisfy.farm_and_charm.core.item.food;
 
-import com.mojang.datafixers.util.Pair;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,13 +24,12 @@ public class EffectFoodItem extends Item implements EffectFood {
     @Override
     public @NotNull ItemStack finishUsingItem(ItemStack stack, Level world, LivingEntity user) {
         if (!world.isClientSide) {
-            List<Pair<MobEffectInstance, Float>> effects = EffectFoodHelper.getEffects(stack);
-            for (Pair<MobEffectInstance, Float> effect : effects) {
-                if (effect.getFirst() != null && world.random.nextFloat() < effect.getSecond()) {
-                    user.addEffect(new MobEffectInstance(effect.getFirst()));
+            List<FoodProperties.PossibleEffect> effects = EffectFoodHelper.getEffects(stack);
+            effects.forEach(chance -> {
+                if (world.random.nextFloat() < chance.probability()) {
+                    user.addEffect(new MobEffectInstance(chance.effect()));
                 }
-                
-            }
+            });
         }
 
         int slot = -1;
@@ -58,10 +55,5 @@ public class EffectFoodItem extends Item implements EffectFood {
             }
         }
         return returnStack;
-    }
-
-    @Override
-    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> list, TooltipFlag tooltipFlag) {
-        EffectFoodHelper.getTooltip(itemStack, list);
     }
 }

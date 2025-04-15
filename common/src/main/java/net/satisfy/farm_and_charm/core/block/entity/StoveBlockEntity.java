@@ -32,12 +32,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.farm_and_charm.client.gui.handler.StoveGuiHandler;
 import net.satisfy.farm_and_charm.core.block.StoveBlock;
-import net.satisfy.farm_and_charm.core.item.food.EffectFood;
-import net.satisfy.farm_and_charm.core.item.food.EffectFoodHelper;
-import net.satisfy.farm_and_charm.core.item.food.EffectBlockItem;
-import net.satisfy.farm_and_charm.core.item.food.EffectFoodBlockItem;
+import net.satisfy.farm_and_charm.core.item.food.*;
 import net.satisfy.farm_and_charm.core.recipe.StoveRecipe;
 import net.satisfy.farm_and_charm.core.recipe.RecipeUnlockManager;
+import net.satisfy.farm_and_charm.core.registry.DataComponentRegistry;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
 import net.satisfy.farm_and_charm.core.world.ImplementedInventory;
@@ -233,13 +231,12 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         ItemStack outputSlotStack = this.getItem(0);
         for (int slot : INGREDIENT_SLOTS) {
             ItemStack ingredientStack = this.getItem(slot);
-            if (!ingredientStack.isEmpty() && (ingredientStack.getItem() instanceof EffectFood || ingredientStack.getItem() instanceof EffectBlockItem)) {
-                CompoundTag ingredientTag = ingredientStack.getTag();
-                if (ingredientTag != null && ingredientTag.contains(EffectFoodHelper.STORED_EFFECTS_KEY)) {
-                    CompoundTag resultTag = recipeOutput.getOrCreateTag();
-                    resultTag.put(EffectFoodHelper.STORED_EFFECTS_KEY, ingredientTag.get(EffectFoodHelper.STORED_EFFECTS_KEY));
-                    recipeOutput.setTag(resultTag);
-                }
+            FoodEffectData effects = ingredientStack.get(DataComponentRegistry.FOOD_EFFECTS.get());
+            if (!ingredientStack.isEmpty()
+                    && (ingredientStack.getItem() instanceof EffectFood || ingredientStack.getItem() instanceof EffectBlockItem)
+                    && Objects.nonNull(effects)
+            ) {
+                recipeOutput.set(DataComponentRegistry.FOOD_EFFECTS.get(), effects);
             }
         }
         if (recipeOutput.getItem() instanceof EffectFood || recipeOutput.getItem() instanceof EffectFoodBlockItem) {

@@ -16,6 +16,7 @@
     "CropBlockMixin",
     "FarmlandBlockMixin",
     "FoxMixin",
+    "ItemStackMixin",
     "ParrotMixin",
     "PigMixin",
     "RabbitMixin",

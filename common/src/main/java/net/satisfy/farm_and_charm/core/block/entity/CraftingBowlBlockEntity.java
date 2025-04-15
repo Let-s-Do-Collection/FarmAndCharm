@@ -4,12 +4,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -28,7 +25,6 @@ import net.satisfy.farm_and_charm.core.block.CraftingBowlBlock;
 import net.satisfy.farm_and_charm.core.recipe.CraftingBowlRecipe;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
-import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -162,14 +158,15 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
 
             if (stirring > 0) {
                 RecipeInput recipeInput = CraftingInput.of(2, 2, blockEntity.getItems().subList(0, 3));
-                Optional<RecipeHolder<CraftingBowlRecipe>> recipeHolder = level.getRecipeManager().getRecipeFor(RecipeTypeRegistry.CRAFTING_BOWL_RECIPE_TYPE.get(), recipeInput, level);
+                Optional<RecipeHolder<CraftingBowlRecipe>> recipeHolder = level.getRecipeManager()
+                        .getRecipeFor(RecipeTypeRegistry.CRAFTING_BOWL_RECIPE_TYPE.get(), recipeInput, level);
+                Optional<CraftingBowlRecipe> recipe = recipeHolder.map(RecipeHolder::value);
 
-                if (recipeHolder.isPresent() && stirred < CraftingBowlBlock.STIRS_NEEDED) {
-                    CraftingBowlRecipe recipe = recipeHolder.get().value();
+                if (recipe.isPresent() && stirred < CraftingBowlBlock.STIRS_NEEDED) {
 
                     stirred++;
                     if (stirred == CraftingBowlBlock.STIRS_NEEDED) {
-                        recipe.getIngredients().forEach(ingredient -> {
+                        recipe.get().getIngredients().forEach(ingredient -> {
                             int size = blockEntity.getItems().size();
                             for (int slot = 0; slot < size; slot++) {
                                 ItemStack stack = blockEntity.getItem(slot);
@@ -190,8 +187,8 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
                                 }
                             }
                         });
-                        ItemStack resultItem = recipe.getResultItem(level.registryAccess()).copy();
-                        resultItem.setCount(recipe.getOutputCount());
+                        ItemStack resultItem = recipe.get().getResultItem(level.registryAccess()).copy();
+                        resultItem.setCount(recipe.get().getOutputCount());
                         blockEntity.setItem(4, resultItem);
                     }
                 }

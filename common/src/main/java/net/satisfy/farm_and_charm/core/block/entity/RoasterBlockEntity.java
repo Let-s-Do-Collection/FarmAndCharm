@@ -16,7 +16,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -35,6 +34,7 @@ import net.satisfy.farm_and_charm.core.world.ImplementedInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -151,7 +151,7 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
                 for (int slot = 0; slot < INGREDIENTS_AREA; slot++) {
                     ItemStack stack = getItem(slot);
                     if (ingredient.test(stack)) {
-                        EffectFoodHelper.getEffects(stack).forEach(effect -> EffectFoodHelper.addEffect(outputStack, effect));
+                        EffectFoodHelper.getEffects(stack).forEach(effect -> EffectFoodHelper.addEffect(outputStack, List.of(effect)));
                         break;
                     }
                 }
@@ -170,12 +170,12 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
         if (!isBeingBurned) return;
 
         CraftingInput recipeInput = CraftingInput.of(3, 2, blockEntity.getItems().subList(0, CONTAINER_SLOT));
-        Optional<RecipeHolder<RoasterRecipe>> recipeHolder = world.getRecipeManager().getRecipeFor(RecipeTypeRegistry.ROASTER_RECIPE_TYPE.get(), recipeInput, world);
+        Optional<RecipeHolder<RoasterRecipe>> recipeHolder = world.getRecipeManager()
+                .getRecipeFor(RecipeTypeRegistry.ROASTER_RECIPE_TYPE.get(), recipeInput, world);
+        Optional<RoasterRecipe> recipe = recipeHolder.map(RecipeHolder::value);
 
-        if (recipeHolder.isPresent()) {
-            RoasterRecipe recipe = recipeHolder.get().value();
-
-            if (recipe.requiresLearning()) {
+        if (recipe.isPresent()) {
+            if (recipe.get().requiresLearning()) {
                 ServerPlayer owner = Objects.requireNonNull(world.getServer()).getPlayerList().getPlayer(ownerUuid);
                 ResourceKey<Recipe<?>> recipeKey = ResourceKey.create(Registries.RECIPE, recipeHolder.get().id());
                 if (owner == null || RecipeUnlockManager.isRecipeLocked(owner, recipeKey)) {
@@ -190,10 +190,10 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
             if (level == null) throw new IllegalStateException("Null world not allowed");
             RegistryAccess access = level.registryAccess();
 
-            if (canCraft(recipe, access)) {
+            if (canCraft(recipe.get(), access)) {
                 if (++roastingTime >= MAX_ROASTING_TIME) {
                     roastingTime = 0;
-                    craft(recipe, access);
+                    craft(recipe.get(), access);
                 }
                 if (!state.getValue(RoasterBlock.ROASTING)) {
                     world.setBlock(pos, state.setValue(RoasterBlock.ROASTING, true), Block.UPDATE_ALL);

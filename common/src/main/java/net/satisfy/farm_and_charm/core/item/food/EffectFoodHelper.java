@@ -1,54 +1,32 @@
 package net.satisfy.farm_and_charm.core.item.food;
 
-import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.food.FoodProperties.PossibleEffect;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.PotionItem;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.satisfy.farm_and_charm.core.registry.DataComponentRegistry;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 public class EffectFoodHelper {
-    public static final String STORED_EFFECTS_KEY = "StoredEffects";
-    public static final String FOOD_STAGE = "CustomModelData";
 
-    public static void addEffect(ItemStack stack, Pair<MobEffectInstance, Float> effect) {
+    public static void addEffect(ItemStack stack, List<PossibleEffect> newEffects) {
         removeHungerEffect(stack);
         removeRawChickenEffects(stack);
-        ListTag nbtList = getEffectNbt(stack);
-        boolean bl = true;
-        int id = BuiltInRegistries.MOB_EFFECT.asHolderIdMap().getId(effect.getFirst().getEffect()) + 1;
-
-        for (int i = 0; i < nbtList.size(); ++i) {
-            CompoundTag nbtCompound = nbtList.getCompound(i);
-            int idTemp = nbtCompound.getInt("id");
-            if (idTemp == id) {
-                bl = false;
-                break;
-            }
-        }
-
-        if (bl) {
-            nbtList.add(createNbt((short) id, effect));
-        }
-
-        stack.getOrCreateTag().put(STORED_EFFECTS_KEY, nbtList);
-    }
-
-    private static ListTag getEffectNbt(ItemStack stack) {
-        CompoundTag nbtCompound = stack.getTag();
-        return nbtCompound != null ? nbtCompound.getList(STORED_EFFECTS_KEY, 10) : new ListTag();
+        List<PossibleEffect> effects = stack.getOrDefault(
+                DataComponentRegistry.FOOD_EFFECTS.get(), new FoodEffectData(List.of())
+        ).effects();
+        effects.addAll(newEffects);
+        stack.set(DataComponentRegistry.FOOD_EFFECTS.get(), new FoodEffectData(newEffects));
     }
 
     public static CompoundTag createNbt(short id, Pair<MobEffectInstance, Float> effect) {
@@ -60,120 +38,61 @@ public class EffectFoodHelper {
         return nbtCompound;
     }
 
-    public static List<Pair<MobEffectInstance, Float>> getEffects(ItemStack stack) {
+    public static List<PossibleEffect> getEffects(ItemStack stack) {
         removeHungerEffect(stack);
         removeRawChickenEffects(stack);
-        List<Pair<MobEffectInstance, Float>> effects = Lists.newArrayList();
         if (stack.getItem() instanceof EffectFood) {
-            effects = fromNbt(getEffectNbt(stack));
+            return stack.getOrDefault(
+                    DataComponentRegistry.FOOD_EFFECTS.get(), new FoodEffectData(List.of())
+            ).effects();
         } else if (stack.getItem() instanceof PotionItem) {
-            List<MobEffectInstance> potionEffects = PotionUtils.getMobEffects(stack);
-            for (MobEffectInstance effect : potionEffects) {
-                effects.add(new Pair<>(effect, 1.0f));
-            }
+            PotionContents potionEffects = stack.get(DataComponents.POTION_CONTENTS);
+            if (potionEffects == null) return List.of();
+            return StreamSupport.stream(potionEffects.getAllEffects().spliterator(), false)
+                    .map(obj -> new PossibleEffect(obj, 1))
+                    .toList();
         } else {
-            FoodProperties foodComponent = stack.getItem().getFoodProperties();
-            if (foodComponent != null) {
-                effects = foodComponent.getEffects();
-            }
+            FoodProperties foodComponent = stack.get(DataComponents.FOOD);
+            return foodComponent != null ? foodComponent.effects() : List.of();
         }
-        return effects;
     }
 
     private static void removeHungerEffect(ItemStack stack) {
-        ListTag nbtList = getEffectNbt(stack);
-        ListTag updatedList = new ListTag();
-
-        for (int i = 0; i < nbtList.size(); ++i) {
-            CompoundTag nbtCompound = nbtList.getCompound(i);
-            MobEffect effect = MobEffect.byId(nbtCompound.getShort("id"));
-            if (effect != MobEffects.HUNGER) {
-                updatedList.add(nbtCompound);
-            }
-        }
-
-        stack.getOrCreateTag().put(STORED_EFFECTS_KEY, updatedList);
+        if (!stack.has(DataComponentRegistry.FOOD_EFFECTS.get())) return;
+        stack.set(DataComponentRegistry.FOOD_EFFECTS.get(), new FoodEffectData(
+            stack.getOrDefault(
+                    DataComponentRegistry.FOOD_EFFECTS.get(), new FoodEffectData(List.of())
+            ).effects().stream().filter(
+                    chance -> !chance.effect().is(MobEffects.HUNGER)
+            ).toList()
+        ));
     }
 
     private static void removeRawChickenEffects(ItemStack stack) {
-        if (stack.getItem() == Items.CHICKEN) {
-            ListTag nbtList = getEffectNbt(stack);
-            ListTag updatedList = new ListTag();
-
-            for (int i = 0; i < nbtList.size(); ++i) {
-                CompoundTag nbtCompound = nbtList.getCompound(i);
-                MobEffect effect = MobEffect.byId(nbtCompound.getShort("id"));
-                if (effect != MobEffects.HUNGER) {
-                    updatedList.add(nbtCompound);
-                }
-            }
-
-            stack.getOrCreateTag().put(STORED_EFFECTS_KEY, updatedList);
-        }
+        if (!stack.is(Items.CHICKEN) || !stack.has(DataComponentRegistry.FOOD_EFFECTS.get())) return;
+        stack.set(DataComponentRegistry.FOOD_EFFECTS.get(), new FoodEffectData(
+                stack.getOrDefault(
+                        DataComponentRegistry.FOOD_EFFECTS.get(), new FoodEffectData(List.of())
+                ).effects().stream().filter(
+                        chance -> !chance.effect().is(MobEffects.HUNGER)
+                ).toList()
+        ));
     }
 
     public static void applyEffects(ItemStack stack) {
-        CompoundTag tag = stack.getOrCreateTag();
-        if (!tag.contains(STORED_EFFECTS_KEY)) {
-            FoodProperties foodProperties = stack.getItem().getFoodProperties();
-            if (foodProperties != null) {
-                ListTag nbtList = new ListTag();
-                for (Pair<MobEffectInstance, Float> effect : foodProperties.getEffects()) {
-                    int id = MobEffect.getId(effect.getFirst().getEffect());
-                    CompoundTag effectTag = new CompoundTag();
-                    effectTag.putShort("id", (short) id);
-                    effectTag.putInt("duration", effect.getFirst().getDuration());
-                    effectTag.putInt("amplifier", effect.getFirst().getAmplifier());
-                    effectTag.putFloat("chance", effect.getSecond());
-                    nbtList.add(effectTag);
-                }
-                tag.put(STORED_EFFECTS_KEY, nbtList);
-            }
+        if (!stack.has(DataComponentRegistry.FOOD_EFFECTS.get()) && stack.has(DataComponents.FOOD)) {
+            FoodProperties foodComponent = stack.get(DataComponents.FOOD); assert foodComponent != null;
+            stack.set(DataComponentRegistry.FOOD_EFFECTS.get(), new FoodEffectData(foodComponent.effects()));
         }
-    }
-
-    public static List<Pair<MobEffectInstance, Float>> fromNbt(ListTag list) {
-        List<Pair<MobEffectInstance, Float>> effects = Lists.newArrayList();
-        for (int i = 0; i < list.size(); ++i) {
-            CompoundTag nbtCompound = list.getCompound(i);
-            MobEffect effect = MobEffect.byId(nbtCompound.getShort("id"));
-            if (effect != null) {
-                effects.add(new Pair<>(new MobEffectInstance(effect, nbtCompound.getInt("duration"), nbtCompound.getInt("amplifier")), nbtCompound.getFloat("chance")));
-            }
-        }
-        return effects;
     }
 
     public static ItemStack setStage(ItemStack stack, int stage) {
-        CompoundTag nbtCompound = stack.getTag() != null ? stack.getTag() : new CompoundTag();
-        nbtCompound.putInt(FOOD_STAGE, stage);
-        stack.setTag(nbtCompound);
+        stack.set(DataComponentRegistry.FOOD_STAGE.get(), stage);
         return stack;
     }
 
     public static int getStage(ItemStack stack) {
-        CompoundTag nbtCompound = stack.getTag();
-        return nbtCompound != null ? nbtCompound.getInt(FOOD_STAGE) : 0;
-    }
-
-    public static void getTooltip(ItemStack stack, List<Component> tooltip) {
-        List<Pair<MobEffectInstance, Float>> effects = getEffects(stack);
-        if (effects.isEmpty()) {
-            tooltip.add(Component.translatable("effect.none").withStyle(ChatFormatting.GRAY));
-        } else {
-            for (Pair<MobEffectInstance, Float> effectPair : effects) {
-                MobEffectInstance statusEffect = effectPair.getFirst();
-                MutableComponent mutableText = Component.translatable(statusEffect.getDescriptionId());
-
-                if (statusEffect.getAmplifier() > 0) {
-                    mutableText = Component.translatable("potion.withAmplifier", mutableText, Component.translatable("potion.potency." + statusEffect.getAmplifier()));
-                }
-                if (effectPair.getFirst().getDuration() > 20) {
-                    mutableText = Component.translatable("potion.withDuration", mutableText, MobEffectUtil.formatDuration(statusEffect, 1.0f));
-                }
-
-                tooltip.add(mutableText.withStyle(statusEffect.getEffect().getCategory().getTooltipFormatting()));
-            }
-        }
+        return Optional.ofNullable(stack.get(DataComponentRegistry.FOOD_STAGE.get()))
+                .orElse(0);
     }
 }

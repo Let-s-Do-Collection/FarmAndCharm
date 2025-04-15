@@ -1,17 +1,13 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
 import net.minecraft.core.*;
-import net.minecraft.core.component.DataComponentMap;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
@@ -23,8 +19,9 @@ import net.satisfy.farm_and_charm.client.gui.handler.CookingPotGuiHandler;
 import net.satisfy.farm_and_charm.core.block.CookingPotBlock;
 import net.satisfy.farm_and_charm.core.item.food.EffectFood;
 import net.satisfy.farm_and_charm.core.item.food.EffectFoodHelper;
+import net.satisfy.farm_and_charm.core.item.food.FoodEffectData;
 import net.satisfy.farm_and_charm.core.recipe.CookingPotRecipe;
-import net.satisfy.farm_and_charm.core.recipe.RecipeUnlockManager;
+import net.satisfy.farm_and_charm.core.registry.DataComponentRegistry;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.TagRegistry;
@@ -191,13 +188,13 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
         }
         for (int slot = 0; slot < INGREDIENTS_AREA; slot++) {
             ItemStack ingredientStack = this.getItem(slot);
-            if (!ingredientStack.isEmpty() && ingredientStack.getItem() instanceof EffectFood) {
-                DataComponentMap ingredientComponents = ingredientStack.getComponents();
-                if (ingredientComponents.has(EffectFoodHelper.STORED_EFFECTS)) {
-                    DataComponentMap recipeOutputComponents = recipeOutput.getComponents();
-                    recipeOutputComponents = recipeOutputComponents.set(EffectFoodHelper.STORED_EFFECTS, ingredientComponents.get(EffectFoodHelper.STORED_EFFECTS));
-                    recipeOutput.applyComponents(recipeOutputComponents);
-                }
+
+            FoodEffectData effects = ingredientStack.get(DataComponentRegistry.FOOD_EFFECTS.get());
+            if (!ingredientStack.isEmpty()
+                && ingredientStack.getItem() instanceof EffectFood
+                && Objects.nonNull(effects)
+            ) {
+                recipeOutput.set(DataComponentRegistry.FOOD_EFFECTS.get(), effects);
             }
         }
 

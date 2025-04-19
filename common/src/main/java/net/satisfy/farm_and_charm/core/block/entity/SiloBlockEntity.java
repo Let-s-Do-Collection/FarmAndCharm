@@ -2,6 +2,7 @@ package net.satisfy.farm_and_charm.core.block.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -326,27 +327,26 @@ public class SiloBlockEntity extends BlockEntity implements IMultiBlockEntityCon
     }
 
     @Override
-    protected void saveAdditional(CompoundTag compoundTag) {
-        super.saveAdditional(compoundTag);
+    protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
+        super.saveAdditional(compoundTag, provider);
         if (this.controller != null)
             GeneralUtil.putBlockPos(compoundTag, this.controller);
         compoundTag.putBoolean("Update", this.updateConnectivity);
         compoundTag.putInt("Width", this.width);
         compoundTag.putInt("Height", this.height);
-        ContainerHelper.saveAllItems(compoundTag, this.items);
+        ContainerHelper.saveAllItems(compoundTag, this.items, provider);
         compoundTag.putIntArray("Times", this.times);
     }
 
-
     @Override
-    public void load(CompoundTag compoundTag) {
-        super.load(compoundTag);
+    protected void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
+        super.loadAdditional(compoundTag, provider);
         this.controller = GeneralUtil.readBlockPos(compoundTag);
         this.updateConnectivity = !compoundTag.contains("Update") || compoundTag.getBoolean("Update");
         this.width = compoundTag.contains("Width") ? compoundTag.getInt("Width") : 1;
         this.height = compoundTag.contains("Height") ? compoundTag.getInt("Height") : 1;
         this.items = NonNullList.withSize(MAX_CAPACITY * 2, ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(compoundTag, this.items);
+        ContainerHelper.loadAllItems(compoundTag, this.items, provider);
         this.times = compoundTag.contains("Times") ? compoundTag.getIntArray("Times") : new int[MAX_CAPACITY];
     }
 

@@ -2,6 +2,7 @@ package net.satisfy.farm_and_charm.core.block.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.ContainerHelper;
@@ -80,7 +81,7 @@ public class FeedingTroughBlockEntity extends BlockEntity implements WorldlyCont
             ItemStack current = items.get(slot);
             if (current.isEmpty()) {
                 items.set(slot, stack.copy());
-            } else if (ItemStack.isSameItemSameTags(current, stack)) {
+            } else if (ItemStack.isSameItemSameComponents(current, stack)) {
                 int newCount = Math.min(4, current.getCount() + stack.getCount());
                 current.setCount(newCount);
                 items.set(slot, current);
@@ -101,15 +102,15 @@ public class FeedingTroughBlockEntity extends BlockEntity implements WorldlyCont
     }
 
     @Override
-    public void load(@NotNull CompoundTag tag) {
-        super.load(tag);
-        ContainerHelper.loadAllItems(tag, items);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.loadAdditional(tag, provider);
+        ContainerHelper.loadAllItems(tag, items, provider);
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag) {
-        super.saveAdditional(tag);
-        ContainerHelper.saveAllItems(tag, items);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.saveAdditional(tag, provider);
+        ContainerHelper.saveAllItems(tag, items, provider);
     }
 
     @Override

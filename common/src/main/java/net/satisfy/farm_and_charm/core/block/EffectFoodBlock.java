@@ -1,6 +1,5 @@
 package net.satisfy.farm_and_charm.core.block;
 
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -9,7 +8,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
@@ -139,8 +137,8 @@ public class EffectFoodBlock extends BaseEntityBlock {
 
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof EffectFoodBlockEntity effectFoodBlockEntity) {
-                for (Pair<MobEffectInstance, Float> effect : effectFoodBlockEntity.getEffects()) {
-                    player.addEffect(effect.getFirst());
+                for (FoodProperties.PossibleEffect chance : effectFoodBlockEntity.getEffectData()) {
+                    player.addEffect(chance.effect());
                 }
             }
 

@@ -1,15 +1,14 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.NonNullList;
-import net.minecraft.core.Position;
+import com.mojang.serialization.Codec;
+import net.minecraft.core.*;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -18,6 +17,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -33,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 public class MincerBlockEntity extends RandomizableContainerBlockEntity implements WorldlyContainer, BlockEntityTicker<MincerBlockEntity> {
@@ -63,18 +67,18 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
     }
 
     @Override
-    public void load(CompoundTag compound) {
-        super.load(compound);
+    protected void loadAdditional(CompoundTag compound, HolderLookup.Provider provider) {
+        super.loadAdditional(compound, provider);
         if (!this.tryLoadLootTable(compound))
             this.stacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(compound, this.stacks);
+        ContainerHelper.loadAllItems(compound, this.stacks, provider);
     }
 
     @Override
-    public void saveAdditional(CompoundTag compound) {
-        super.saveAdditional(compound);
+    protected void saveAdditional(CompoundTag compound, HolderLookup.Provider provider) {
+        super.saveAdditional(compound, provider);
         if (!this.trySaveLootTable(compound))
-            ContainerHelper.saveAllItems(compound, this.stacks);
+            ContainerHelper.saveAllItems(compound, this.stacks, provider);
     }
 
     @Override
@@ -83,8 +87,8 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
     }
 
     @Override
-    public @NotNull CompoundTag getUpdateTag() {
-        return this.saveWithoutMetadata();
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+        return this.saveWithoutMetadata(provider);
     }
 
     @Override
@@ -185,21 +189,13 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
                 if (cranked >= MincerBlock.CRANKS_NEEDED) {
                     cranked = 0;
 
-                    MincerRecipe recipe = level.getRecipeManager().getRecipeFor(RecipeTypeRegistry.MINCER_RECIPE_TYPE.get(), mincer, level).orElse(null);
-
-                    if (recipe != null) {
+                    RecipeInput recipeInput = CraftingInput.of(1, 1, mincer.getItems().subList(INPUT_SLOT, INPUT_SLOT));
+                    Optional<RecipeHolder<MincerRecipe>> recipeHolder = level.getRecipeManager().getRecipeFor(RecipeTypeRegistry.MINCER_RECIPE_TYPE.get(), recipeInput, level);
+                    if (recipeHolder.isPresent()) {
+                        MincerRecipe recipe = recipeHolder.get().value();
 
                         ItemStack inputStack = this.stacks.get(INPUT_SLOT);
-
-                        String recipe_type = recipe.getRecipeType();
-                        int recipe_difficulty = 5;
-
-                        switch (recipe_type) {
-                            case "MEAT" -> recipe_difficulty = 1;
-                            case "WOOD" -> recipe_difficulty = 2;
-                            case "STONE" -> recipe_difficulty = 3;
-                            case "METAL" -> recipe_difficulty = 4;
-                        }
+                        int recipe_difficulty = recipe.getRecipeType().difficulty();
 
                         AABB searched_area = new AABB(pos);
                         searched_area.inflate(4.0D);
@@ -230,5 +226,29 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
                 level.setBlock(pos, state.setValue(MincerBlock.CRANKED, 0), Block.UPDATE_ALL);
             }
         }
+    }
+
+    public enum MincingType implements StringRepresentable {
+        MEAT, WOOD, STONE,
+        METAL, OTHER;
+
+        public int difficulty() {
+           return this.ordinal() + 1;
+        }
+
+        @Override
+        public @NotNull String getSerializedName() { return this.name(); }
+
+        public static MincingType valueOfSafe(String string) {
+            try {
+                return MincingType.valueOf(string.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return MincingType.OTHER;
+            }
+        }
+
+        public static final Codec<MincingType> CODEC = Codec.STRING.xmap(
+                MincingType::valueOfSafe, MincingType::getSerializedName
+        );
     }
 }

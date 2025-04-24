@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:grains/barleys",
+    "#forge:grains/corn",
+    "#forge:grains/oats",
+    "#forge:grains/wheats"
+  ]
+}

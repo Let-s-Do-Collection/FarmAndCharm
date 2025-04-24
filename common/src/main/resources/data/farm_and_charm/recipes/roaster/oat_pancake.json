@@ -2,13 +2,13 @@
   "type": "farm_and_charm:roaster",
   "ingredients": [
     {
-      "item": "farm_and_charm:oat"
+      "tag": "farm_and_charm:oat"
     },
     {
-      "item": "farm_and_charm:oat"
+      "tag": "farm_and_charm:oat"
     },
     {
-      "item": "farm_and_charm:oat"
+      "tag": "farm_and_charm:oat"
     },
     {
       "tag": "farm_and_charm:dough"
@@ -17,7 +17,7 @@
       "tag": "farm_and_charm:butter"
     },
     {
-      "item": "farm_and_charm:strawberry"
+      "tag": "farm_and_charm:strawberry"
     }
   ],
   "container": {

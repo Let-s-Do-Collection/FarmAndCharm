@@ -34,7 +34,7 @@ public class StoveRecipe implements Recipe<RecipeInput> {
 
     @Override
     public boolean matches(RecipeInput recipeInput, Level level) {
-        return GeneralUtil.matchesRecipe(recipeInput, inputs, 1, 3);
+        return GeneralUtil.matchesRecipe(recipeInput, inputs, 0, 2);
     }
 
     @Override
@@ -92,7 +92,7 @@ public class StoveRecipe implements Recipe<RecipeInput> {
                         if (list.isEmpty()) return DataResult.error(() -> "No ingredients for Roaster Recipe");
                         else if (list.size() > 3) return DataResult.error(() -> "Too many ingredients for Roaster Recipe");
                         return DataResult.success(list);
-                    }).forGetter(StoveRecipe::getIngredients),
+                    }).forGetter(r -> r.getIngredients().subList(0, 2)),
                     ItemStack.CODEC.fieldOf("result").forGetter(StoveRecipe::getOutput),
                     Codec.FLOAT.fieldOf("experience").orElse(0F).forGetter(StoveRecipe::getExperience),
                     Codec.BOOL.fieldOf("requiresLearning").orElse(false).forGetter(StoveRecipe::requiresLearning)

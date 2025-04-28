@@ -11,7 +11,7 @@ import java.util.function.Predicate;
 
 public class FarmAndCharmBiomeModification {
     public static void init() {
-        BiomeModification world = BiomeModifications.create(new FarmAndCharmIdentifier("world_features"));
+        BiomeModification world = BiomeModifications.create(FarmAndCharmIdentifier.of("world_features"));
         Predicate<BiomeSelectionContext> spawnsWildFlowersBiomes = getFarm_And_CharmSelector("spawns_wild_flowers");
         Predicate<BiomeSelectionContext> spawnsWildEmmerBiomes = getFarm_And_CharmSelector("spawns_wild_emmer");
         Predicate<BiomeSelectionContext> spawnsWildOatBiomes = getFarm_And_CharmSelector("spawns_wild_oat");
@@ -50,6 +50,6 @@ public class FarmAndCharmBiomeModification {
     }
 
     private static Predicate<BiomeSelectionContext> getFarm_And_CharmSelector(String path) {
-        return BiomeSelectors.tag(TagKey.create(Registries.BIOME, new FarmAndCharmIdentifier(path)));
+        return BiomeSelectors.tag(TagKey.create(Registries.BIOME, FarmAndCharmIdentifier.of(path)));
     }
 }

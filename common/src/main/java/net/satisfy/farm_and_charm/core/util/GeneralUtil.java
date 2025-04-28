@@ -100,7 +100,7 @@ public class GeneralUtil {
         List<ItemStack> validStacks = new ArrayList<>();
 
         for (int i = startIndex; i <= endIndex; ++i) {
-            ItemStack stackInSlot = inventory.getItem(i);
+            ItemStack stackInSlot = inventory.size() > i ? inventory.getItem(i) : ItemStack.EMPTY;
             if (!stackInSlot.isEmpty()) {
                 validStacks.add(stackInSlot);
             }
@@ -453,6 +453,14 @@ public class GeneralUtil {
 
         @SuppressWarnings("unchecked")
         T[] array = (T[]) Array.newInstance(clazz, list.size());
+        return NonNullList.of(null, list.toArray(array));
+    }
+
+    public static <T> NonNullList<T> nonNullList(List<T> list, Class<T> clazz, int size) {
+        if (list.stream().anyMatch(Objects::isNull)) throw new NullPointerException("List contains null values");
+
+        @SuppressWarnings("unchecked")
+        T[] array = (T[]) Array.newInstance(clazz, size);
         return NonNullList.of(null, list.toArray(array));
     }
 

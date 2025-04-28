@@ -97,11 +97,6 @@ public class StoveCategory implements IRecipeCategory<StoveRecipe> {
     }
 
     @Override
-    public @NotNull IDrawable getBackground() {
-        return this.background;
-    }
-
-    @Override
     public @NotNull IDrawable getIcon() {
         return this.icon;
     }

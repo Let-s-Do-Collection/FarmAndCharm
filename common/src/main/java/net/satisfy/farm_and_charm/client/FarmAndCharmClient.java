@@ -77,7 +77,7 @@ public class FarmAndCharmClient {
         EntityModelLayerRegistry.register(CraftingBowlModel.LAYER_LOCATION, CraftingBowlModel::getTexturedModelData);
         EntityModelLayerRegistry.register(MincerModel.LAYER_LOCATION, MincerModel::getTexturedModelData);
         EntityModelLayerRegistry.register(ScarecrowModel.LAYER_LOCATION, ScarecrowModel::getTexturedModelData);
-        EntityModelLayerRegistry.register(ModelRegistry.CART, SupplyCartModel::createBodyLayer);
-        EntityModelLayerRegistry.register(ModelRegistry.PLOW, PlowCartModel::createBodyLayer);
+        EntityModelLayerRegistry.register(SupplyCartModel.LAYER_LOCATION, SupplyCartModel::createBodyLayer);
+        EntityModelLayerRegistry.register(PlowCartModel.LAYER_LOCATION, PlowCartModel::createBodyLayer);
     }
 }

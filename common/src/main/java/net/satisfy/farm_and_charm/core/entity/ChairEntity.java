@@ -5,6 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,8 +20,8 @@ public class ChairEntity extends Entity {
         super(type, world);
     }
 
-    protected void defineSynchedData() {
-    }
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 
     public @NotNull Vec3 getDismountLocationForPassenger(LivingEntity passenger) {
         if (passenger instanceof Player p) {
@@ -44,10 +45,6 @@ public class ChairEntity extends Entity {
     }
 
     protected void addAdditionalSaveData(CompoundTag nbt) {
-    }
-
-    public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return new ClientboundAddEntityPacket(this);
     }
 }
 

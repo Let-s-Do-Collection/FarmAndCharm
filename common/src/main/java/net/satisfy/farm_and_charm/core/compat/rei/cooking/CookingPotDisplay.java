@@ -11,6 +11,8 @@ import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.core.recipe.CookingPotRecipe;
 
@@ -22,13 +24,12 @@ public class CookingPotDisplay extends BasicDisplay {
 
     public static final CategoryIdentifier<CookingPotDisplay> COOKING_POT_DISPLAY = CategoryIdentifier.of(FarmAndCharm.MOD_ID, "cooking_pot_display");
 
-    public CookingPotDisplay(Recipe<Container> recipe) {
-        this(createInputs(recipe), createOutputs(recipe), getLocation(recipe));
+    public CookingPotDisplay(CookingPotRecipe recipe) {
+        super(createInputs(recipe), createOutputs(recipe));
     }
 
-    private static List<EntryIngredient> createInputs(Recipe<Container> recipe) {
+    private static List<EntryIngredient> createInputs(Recipe<RecipeInput> recipe) {
         List<EntryIngredient> inputs = new ArrayList<>();
-        ItemStack container = getContainer(recipe);
         int ingredientIndex = 0;
         for (net.minecraft.world.item.crafting.Ingredient ingredient : recipe.getIngredients()) {
             for (ItemStack stack : ingredient.getItems()) {
@@ -49,21 +50,17 @@ public class CookingPotDisplay extends BasicDisplay {
         return inputs;
     }
 
-    private static List<EntryIngredient> createOutputs(Recipe<Container> recipe) {
+    private static List<EntryIngredient> createOutputs(Recipe<RecipeInput> recipe) {
         RegistryAccess registryAccess = Minecraft.getInstance().level != null ? Minecraft.getInstance().level.registryAccess() : RegistryAccess.EMPTY;
         ItemStack result = recipe.getResultItem(registryAccess);
         return List.of(EntryIngredients.of(result));
-    }
-
-    private static Optional<ResourceLocation> getLocation(Recipe<Container> recipe) {
-        return Optional.of(recipe.getId());
     }
 
     public CookingPotDisplay(List<EntryIngredient> inputs, List<EntryIngredient> outputs, Optional<ResourceLocation> location) {
         super(inputs, outputs, location);
     }
 
-    public static ItemStack getContainer(Recipe<Container> recipe) {
+    public static ItemStack getContainer(Recipe<RecipeInput> recipe) {
         if (recipe instanceof CookingPotRecipe c) {
             return c.getContainerItem();
         } else {

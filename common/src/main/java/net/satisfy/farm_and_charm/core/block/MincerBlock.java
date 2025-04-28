@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -10,12 +11,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.Containers;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
+import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -80,6 +79,11 @@ public class MincerBlock extends BaseEntityBlock {
     }
 
     @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return simpleCodec(MincerBlock::new);
+    }
+
+    @Override
     public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos) {
         return true;
     }
@@ -108,7 +112,7 @@ public class MincerBlock extends BaseEntityBlock {
     }
 
     @Override
-    public @NotNull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult blockHitResult) {
         BlockEntity entity = level.getBlockEntity(pos);
         ItemStack playerStack = player.getItemInHand(hand);
 
@@ -120,7 +124,7 @@ public class MincerBlock extends BaseEntityBlock {
                         Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
                     }
                 }
-                return InteractionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             }
 
             ItemStack inputStack = mincer.getItem(mincer.INPUT_SLOT);
@@ -132,7 +136,7 @@ public class MincerBlock extends BaseEntityBlock {
                     ItemStack playerStackCopy = playerStack.copy();
                     playerStackCopy.setCount(playerStackCopy.getMaxStackSize());
                     mincer.setItem(mincer.INPUT_SLOT, playerStackCopy);
-                    return InteractionResult.SUCCESS;
+                    return ItemInteractionResult.SUCCESS;
                 }
 
                 if (mincer.canPlaceItem(mincer.INPUT_SLOT, playerStack)) {
@@ -154,16 +158,16 @@ public class MincerBlock extends BaseEntityBlock {
                         playerStack.shrink(playerStack.getCount());
                     }
 
-                    return InteractionResult.SUCCESS;
+                    return ItemInteractionResult.SUCCESS;
                 }
 
                 if (level.isClientSide() && playerStack.getItem() instanceof BlockItem) {
-                    return InteractionResult.sidedSuccess(level.isClientSide());
+                    return ItemInteractionResult.sidedSuccess(level.isClientSide());
                 }
             } else if (playerStack.isEmpty()) {
                 if (cranked >= CRANKS_NEEDED && crank == 0) {
                     level.setBlock(pos, state.setValue(CRANKED, 0), Block.UPDATE_ALL);
-                    return InteractionResult.SUCCESS;
+                    return ItemInteractionResult.SUCCESS;
                 }
 
                 if (level instanceof ServerLevel serverWorld) {
@@ -178,13 +182,13 @@ public class MincerBlock extends BaseEntityBlock {
                 if (crank <= 6) {
                     level.setBlock(pos, state.setValue(CRANK, 10), Block.UPDATE_ALL);
                     level.playSound(null, pos, SoundEventRegistry.MINCER_CRANKING.get(), SoundSource.BLOCKS, 1.0F, 2.5F);
-                    return InteractionResult.SUCCESS;
+                    return ItemInteractionResult.SUCCESS;
                 }
             }
 
             if (cranked >= CRANKS_NEEDED && crank == 0) {
                 level.setBlock(pos, state.setValue(CRANKED, 0), Block.UPDATE_ALL);
-                return InteractionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             }
 
             if (level instanceof ServerLevel serverWorld) {
@@ -199,12 +203,11 @@ public class MincerBlock extends BaseEntityBlock {
             if (crank <= 6) {
                 level.setBlock(pos, state.setValue(CRANK, 10), Block.UPDATE_ALL);
                 level.playSound(null, pos, SoundEventRegistry.MINCER_CRANKING.get(), SoundSource.BLOCKS, 0.05f, 2.5F);
-                return InteractionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             }
         }
-        return InteractionResult.SUCCESS;
+        return ItemInteractionResult.SUCCESS;
     }
-
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
@@ -280,7 +283,7 @@ public class MincerBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
         tooltip.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.GRAY));
     }
 }

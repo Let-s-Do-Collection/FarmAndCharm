@@ -25,15 +25,15 @@ public class StoveDisplay extends BasicDisplay implements SimpleGridMenuDisplay 
     private final float xp;
 
     public StoveDisplay(StoveRecipe recipe) {
-        this(EntryIngredients.ofIngredients(recipe.getIngredients()), Collections.singletonList(EntryIngredients.of(recipe.getResultItem(BasicDisplay.registryAccess()))), recipe, recipe.getExperience());
+        this(EntryIngredients.ofIngredients(recipe.getIngredients()), Collections.singletonList(EntryIngredients.of(recipe.getResultItem(BasicDisplay.registryAccess()))), recipe.getExperience());
     }
 
     public StoveDisplay(List<EntryIngredient> input, List<EntryIngredient> output, CompoundTag tag) {
-        this(input, output, RecipeManagerContext.getInstance().byId(tag, "location"), tag.getFloat("experience"));
+        this(input, output, tag.getFloat("experience"));
     }
 
-    public StoveDisplay(List<EntryIngredient> input, List<EntryIngredient> output, Recipe<?> recipe, float xp) {
-        super(input, output, Optional.ofNullable(recipe).map(Recipe::getId));
+    public StoveDisplay(List<EntryIngredient> input, List<EntryIngredient> output, float xp) {
+        super(input, output);
         this.xp = xp;
     }
 

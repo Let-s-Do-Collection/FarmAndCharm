@@ -38,6 +38,8 @@ public class ChickenEffect extends MobEffect {
                 }
             }
         }
+
+        return true;
     }
 
     @Override

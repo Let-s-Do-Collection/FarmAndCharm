@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -9,11 +10,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.Containers;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
+import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
@@ -57,6 +56,11 @@ public class CraftingBowlBlock extends BaseEntityBlock {
     }
 
     @Override
+    protected MapCodec<? extends BaseEntityBlock> codec() {
+        return simpleCodec(CraftingBowlBlock::new);
+    }
+
+    @Override
     public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos) {
         return true;
     }
@@ -87,13 +91,10 @@ public class CraftingBowlBlock extends BaseEntityBlock {
     }
 
     @Override
-    public @NotNull InteractionResult use(BlockState blockState, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult blockHitResult) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
-        ItemStack itemStack = player.getItemInHand(hand);
         if (blockEntity instanceof CraftingBowlBlockEntity bowlEntity) {
             int stirring = blockState.getValue(STIRRING);
-            int stirred = blockState.getValue(STIRRED);
-
             if (player.isShiftKeyDown() && itemStack.isEmpty() && hand == InteractionHand.MAIN_HAND) {
                 for (int i = 0; i < bowlEntity.getContainerSize(); i++) {
                     ItemStack stack = bowlEntity.getItem(i);
@@ -103,7 +104,7 @@ public class CraftingBowlBlock extends BaseEntityBlock {
                     }
                 }
                 bowlEntity.setChanged();
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             }
 
             if (!itemStack.isEmpty() && stirring == 0) {
@@ -112,34 +113,43 @@ public class CraftingBowlBlock extends BaseEntityBlock {
                     if (!player.isCreative()) {
                         itemStack.setCount(0);
                     }
-                    return InteractionResult.SUCCESS;
-                }
-            } else if (itemStack.isEmpty()) {
-                if (stirred >= STIRS_NEEDED && stirring == 0) {
-                    player.getInventory().add(bowlEntity.getItem(4));
-                    bowlEntity.setItem(4, ItemStack.EMPTY);
-                    world.setBlock(pos, blockState.setValue(STIRRED, 0), 3);
-                    return InteractionResult.SUCCESS;
-                }
-                if (world instanceof ServerLevel serverWorld) {
-                    RandomSource randomSource = serverWorld.random;
-                    for (ItemStack stack : bowlEntity.getItems()) {
-                        if (!stack.isEmpty() && bowlEntity.getItem(4) != stack) {
-                            ItemParticleOption particleOption = new ItemParticleOption(ParticleTypes.ITEM, stack);
-                            serverWorld.sendParticles(particleOption, pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5, 1, randomSource.nextGaussian() * 0.15D, 0.05D, randomSource.nextGaussian() * 0.15D, 0.05D);
-                        }
-                    }
-                }
-                if (stirring <= 6) {
-                    world.setBlock(pos, blockState.setValue(STIRRING, 10), 3);
-                    world.playSound(null, pos, SoundEventRegistry.CRAFTING_BOWL_STIRRING.get(), SoundSource.BLOCKS, 0.05f, 1.0F);
-                    return InteractionResult.SUCCESS;
+                    return ItemInteractionResult.SUCCESS;
                 }
             }
         }
-        return InteractionResult.PASS;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
+    @Override
+    protected InteractionResult useWithoutItem(BlockState blockState, Level world, BlockPos pos, Player player, BlockHitResult blockHitResult) {
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if (blockEntity instanceof CraftingBowlBlockEntity bowlEntity) {
+            int stirring = blockState.getValue(STIRRING);
+            int stirred = blockState.getValue(STIRRED);
+            if (stirred >= STIRS_NEEDED && stirring == 0) {
+                player.getInventory().add(bowlEntity.getItem(4));
+                bowlEntity.setItem(4, ItemStack.EMPTY);
+                world.setBlock(pos, blockState.setValue(STIRRED, 0), 3);
+                return InteractionResult.SUCCESS;
+            }
+            if (world instanceof ServerLevel serverWorld) {
+                RandomSource randomSource = serverWorld.random;
+                for (ItemStack stack : bowlEntity.getItems()) {
+                    if (!stack.isEmpty() && bowlEntity.getItem(4) != stack) {
+                        ItemParticleOption particleOption = new ItemParticleOption(ParticleTypes.ITEM, stack);
+                        serverWorld.sendParticles(particleOption, pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5, 1, randomSource.nextGaussian() * 0.15D, 0.05D, randomSource.nextGaussian() * 0.15D, 0.05D);
+                    }
+                }
+            }
+            if (stirring <= 6) {
+                world.setBlock(pos, blockState.setValue(STIRRING, 10), 3);
+                world.playSound(null, pos, SoundEventRegistry.CRAFTING_BOWL_STIRRING.get(), SoundSource.BLOCKS, 0.05f, 1.0F);
+                return InteractionResult.SUCCESS;
+            }
+        }
+
+        return InteractionResult.PASS;
+    }
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
@@ -211,7 +221,7 @@ public class CraftingBowlBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
         tooltip.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.GRAY));
     }
 }

@@ -13,7 +13,7 @@ import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 import org.jetbrains.annotations.NotNull;
 
 public class SupplyCartRenderer extends EntityRenderer<SupplyCartEntity> {
-    public static final ResourceLocation CART_TEXTURE = new FarmAndCharmIdentifier("textures/entity/supply_cart.png");
+    public static final ResourceLocation CART_TEXTURE = FarmAndCharmIdentifier.of("textures/entity/supply_cart.png");
     private final SupplyCartModel<SupplyCartEntity> model;
 
     public SupplyCartRenderer(EntityRendererProvider.Context context) {
@@ -37,7 +37,7 @@ public class SupplyCartRenderer extends EntityRenderer<SupplyCartEntity> {
 
         this.model.setupAnim(cart, cart.tickCount + g, 0.0F, cart.tickCount + g, yaw, cart.getXRot());
         VertexConsumer vertexConsumer = multiBufferSource.getBuffer(this.model.renderType(CART_TEXTURE));
-        this.model.renderToBuffer(poseStack, vertexConsumer, light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        this.model.renderToBuffer(poseStack, vertexConsumer, light, OverlayTexture.NO_OVERLAY);
 
         poseStack.popPose();
     }

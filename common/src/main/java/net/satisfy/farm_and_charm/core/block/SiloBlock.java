@@ -7,11 +7,13 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -72,7 +74,7 @@ public class SiloBlock extends FacingBlock implements EntityBlock {
     }
 
     public static Optional<SiloRecipe> getDryItemRecipe(Level level, ItemStack itemStack) {
-        return level.getRecipeManager().getAllRecipesFor(RecipeTypeRegistry.SILO_RECIPE_TYPE.get()).stream().filter(siloRecipe -> siloRecipe.getInput().test(itemStack)).findFirst();
+        return level.getRecipeManager().getAllRecipesFor(RecipeTypeRegistry.SILO_RECIPE_TYPE.get()).stream().filter(siloRecipe -> siloRecipe.value().getInput().test(itemStack)).findFirst().map(RecipeHolder::value);
     }
 
     public Direction getFacing(BlockState state) {
@@ -84,41 +86,50 @@ public class SiloBlock extends FacingBlock implements EntityBlock {
     }
 
     @Override
-    public @NotNull InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
-        ItemStack itemStack = player.getItemInHand(interactionHand);
+    protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
         if (level.isClientSide)
-            return itemStack.isEmpty() || isDryItem(level, itemStack) ? InteractionResult.SUCCESS : isSilo(itemStack) || player.isDiscrete() ? InteractionResult.PASS : InteractionResult.CONSUME;
+            return itemStack.isEmpty() || isDryItem(level, itemStack) ? ItemInteractionResult.SUCCESS : isSilo(itemStack) || player.isDiscrete() ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION : ItemInteractionResult.CONSUME;
 
+        BlockEntity be = level.getBlockEntity(blockPos);
+        if (be instanceof SiloBlockEntity siloBE) {
+            SiloBlockEntity siloController = siloBE.getControllerBE();
+            if (siloController == null)
+                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+
+            if (isDryItem(level, itemStack) && siloController.tryAddItem(itemStack)) {
+                level.playSound(null, blockPos, SoundEvents.COMPOSTER_FILL_SUCCESS,
+                        net.minecraft.sounds.SoundSource.BLOCKS, 1.0f, 1.0f);
+                return ItemInteractionResult.SUCCESS;
+            }
+        }
+        return isSilo(itemStack) || player.isDiscrete() ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION : ItemInteractionResult.CONSUME;
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player, BlockHitResult blockHitResult) {
         BlockEntity be = level.getBlockEntity(blockPos);
         if (be instanceof SiloBlockEntity siloBE) {
             SiloBlockEntity siloController = siloBE.getControllerBE();
             if (siloController == null)
                 return InteractionResult.PASS;
 
-            if (itemStack.isEmpty()) {
-                if (player.isDiscrete()) {
-                    ItemStack returnStack = siloBE.tryRemoveItem();
-                    if (!returnStack.isEmpty()) {
-                        player.addItem(itemStack);
-                        level.playSound(null, blockPos, SoundEvents.COMPOSTER_EMPTY,
-                                net.minecraft.sounds.SoundSource.BLOCKS, 1.0f, 1.0f);
-                    }
-                } else {
-                    boolean isOpen = blockState.getValue(OPEN);
-                    siloController.open(!isOpen);
-                    level.playSound(null, blockPos, isOpen ? SoundEvents.IRON_TRAPDOOR_CLOSE : SoundEvents.IRON_TRAPDOOR_OPEN,
+            if (player.isDiscrete()) {
+                ItemStack returnStack = siloBE.tryRemoveItem();
+                if (!returnStack.isEmpty()) {
+                    //player.addItem(itemStack);
+                    level.playSound(null, blockPos, SoundEvents.COMPOSTER_EMPTY,
                             net.minecraft.sounds.SoundSource.BLOCKS, 1.0f, 1.0f);
                 }
-                return InteractionResult.SUCCESS;
-            } else if (isDryItem(level, itemStack) && siloController.tryAddItem(itemStack)) {
-                level.playSound(null, blockPos, SoundEvents.COMPOSTER_FILL_SUCCESS,
+            } else {
+                boolean isOpen = blockState.getValue(OPEN);
+                siloController.open(!isOpen);
+                level.playSound(null, blockPos, isOpen ? SoundEvents.IRON_TRAPDOOR_CLOSE : SoundEvents.IRON_TRAPDOOR_OPEN,
                         net.minecraft.sounds.SoundSource.BLOCKS, 1.0f, 1.0f);
-                return InteractionResult.SUCCESS;
             }
+            return InteractionResult.SUCCESS;
         }
-        return isSilo(itemStack) || player.isDiscrete() ? InteractionResult.PASS : InteractionResult.CONSUME;
+        return player.isDiscrete() ? InteractionResult.PASS : InteractionResult.CONSUME;
     }
-
 
     @Override
     public void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean notify) {

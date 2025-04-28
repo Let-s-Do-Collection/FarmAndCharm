@@ -80,10 +80,10 @@ public class CookingPotCategory implements IRecipeCategory<CookingPotRecipe> {
         return this.localizedName;
     }
 
-    @Override
+    /*@Override
     public @NotNull IDrawable getBackground() {
         return this.background;
-    }
+    }*/
 
     @Override
     public @NotNull IDrawable getIcon() {

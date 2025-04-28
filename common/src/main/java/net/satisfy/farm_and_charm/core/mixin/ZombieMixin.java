@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Zombie.class)
 public abstract class ZombieMixin {
     @Inject(method = "finalizeSpawn", at = @At("RETURN"))
-    private void addPitchFork(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, SpawnGroupData spawnData, CompoundTag compound, CallbackInfoReturnable<SpawnGroupData> cir) {
+    private void addPitchFork(ServerLevelAccessor serverLevelAccessor, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, SpawnGroupData spawnGroupData, CallbackInfoReturnable<SpawnGroupData> cir) {
         if (Math.random() < 0.03) {
             ((Zombie)(Object)this).setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ObjectRegistry.PITCHFORK.get()));
         }

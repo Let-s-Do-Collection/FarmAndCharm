@@ -13,12 +13,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.core.recipe.CraftingBowlRecipe;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
+import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 import org.jetbrains.annotations.NotNull;
 
 public class CraftingBowlCategory implements IRecipeCategory<CraftingBowlRecipe> {
     public static final RecipeType<CraftingBowlRecipe> DOUGHING = RecipeType.create(FarmAndCharm.MOD_ID, "doughing", CraftingBowlRecipe.class);
     public final static ResourceLocation TEXTURE =
-            new ResourceLocation(FarmAndCharm.MOD_ID, "textures/gui/crafting_bowl.png");
+            FarmAndCharmIdentifier.of("textures/gui/crafting_bowl.png");
 
     private final IDrawable background;
     private final IDrawable icon;
@@ -36,11 +37,6 @@ public class CraftingBowlCategory implements IRecipeCategory<CraftingBowlRecipe>
     @Override
     public @NotNull Component getTitle() {
         return Component.translatable("rei.farm_and_charm.bowl_category");
-    }
-
-    @Override
-    public @NotNull IDrawable getBackground() {
-        return this.background;
     }
 
     @Override

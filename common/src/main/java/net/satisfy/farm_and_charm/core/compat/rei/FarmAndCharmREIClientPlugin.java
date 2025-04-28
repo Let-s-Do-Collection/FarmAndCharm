@@ -21,6 +21,7 @@ import net.satisfy.farm_and_charm.core.compat.rei.stove.StoveCategory;
 import net.satisfy.farm_and_charm.core.compat.rei.stove.StoveDisplay;
 import net.satisfy.farm_and_charm.core.recipe.*;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
+import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
 
 import java.util.ArrayList;
 import java.util.List;

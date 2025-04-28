@@ -145,7 +145,7 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
             --this.burnTime;
         }
 
-        CraftingInput recipeInput = CraftingInput.of(3, 1, blockEntity.getItems().subList(1, 3));
+        CraftingInput recipeInput = CraftingInput.of(3, 1, blockEntity.getItems().subList(1, 4));
         Optional<RecipeHolder<StoveRecipe>> recipeHolder = world.getRecipeManager().getRecipeFor(RecipeTypeRegistry.STOVE_RECIPE_TYPE.get(), recipeInput, world);
 
         assert level != null; RegistryAccess access = level.registryAccess();

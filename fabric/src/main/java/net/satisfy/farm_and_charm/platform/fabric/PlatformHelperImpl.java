@@ -195,9 +195,7 @@ public class PlatformHelperImpl extends PlatformHelper {
         return config.effects.satiationEffect.satiationEffectHealAmount;
     }
 
-    public static class EffectRegisterImpl {
-        public static Holder<MobEffect> registerEffect(String name, Supplier<MobEffect> effect) {
-            return Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, FarmAndCharmIdentifier.of(name), effect.get());
-        }
+    public static Holder<MobEffect> registerEffect(String name, Supplier<MobEffect> effect) {
+        return Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, FarmAndCharmIdentifier.of(name), effect.get());
     }
 }

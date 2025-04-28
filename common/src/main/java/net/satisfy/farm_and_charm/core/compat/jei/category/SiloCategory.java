@@ -14,11 +14,12 @@ import net.minecraft.world.item.ItemStack;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.core.recipe.SiloRecipe;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
+import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 import org.jetbrains.annotations.NotNull;
 
 public class SiloCategory implements IRecipeCategory<SiloRecipe> {
     public static final RecipeType<SiloRecipe> DRYING_TYPE = RecipeType.create(FarmAndCharm.MOD_ID, "drying", SiloRecipe.class);
-    public final static ResourceLocation TEXTURE = new ResourceLocation(FarmAndCharm.MOD_ID, "textures/gui/silo.png");
+    public final static ResourceLocation TEXTURE = FarmAndCharmIdentifier.of("textures/gui/silo.png");
 
     private final IDrawable background;
     private final IDrawable icon;
@@ -36,11 +37,6 @@ public class SiloCategory implements IRecipeCategory<SiloRecipe> {
     @Override
     public @NotNull Component getTitle() {
         return Component.translatable("rei.farm_and_charm.silo_category");
-    }
-
-    @Override
-    public @NotNull IDrawable getBackground() {
-        return this.background;
     }
 
     @Override

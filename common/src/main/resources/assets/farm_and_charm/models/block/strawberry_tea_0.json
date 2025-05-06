@@ -2,7 +2,7 @@
 	"parent": "farm_and_charm:block/template_tea_stage0",
 	"textures": {
 		"0": "farm_and_charm:block/jug",
-		"1": "farm_and_charm:block/tea",
+		"tea": "farm_and_charm:block/strawberry_tea",
 		"particle": "farm_and_charm:block/jug"
 	}
 }

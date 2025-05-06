@@ -89,36 +89,29 @@ public class GeneralUtil {
     }
 
     public static boolean matchesRecipe(Container inventory, NonNullList<Ingredient> recipe, int startIndex, int endIndex) {
-        List<ItemStack> validStacks = new ArrayList<>();
-
-        for (int i = startIndex; i <= endIndex; ++i) {
-            ItemStack stackInSlot = inventory.getItem(i);
-            if (!stackInSlot.isEmpty()) {
-                validStacks.add(stackInSlot);
-            }
+        List<ItemStack> inputStacks = new ArrayList<>();
+        for (int i = startIndex; i <= endIndex; i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (!stack.isEmpty()) inputStacks.add(stack.copy());
         }
 
-        Iterator<Ingredient> recipeIterator = recipe.iterator();
+        if (inputStacks.size() != recipe.size()) return false;
 
-        boolean matches;
-        do {
-            if (!recipeIterator.hasNext()) {
-                return true;
-            }
-
-            Ingredient ingredient = recipeIterator.next();
-            matches = false;
-
-            for (ItemStack itemStack : validStacks) {
-                if (ingredient.test(itemStack)) {
-                    matches = true;
-                    validStacks.remove(itemStack);
+        List<Ingredient> unmatched = new ArrayList<>(recipe);
+        for (ItemStack input : inputStacks) {
+            boolean matched = false;
+            Iterator<Ingredient> iter = unmatched.iterator();
+            while (iter.hasNext()) {
+                if (iter.next().test(input)) {
+                    iter.remove();
+                    matched = true;
                     break;
                 }
             }
-        } while (matches);
+            if (!matched) return false;
+        }
 
-        return false;
+        return unmatched.isEmpty();
     }
 
     public static NonNullList<Ingredient> deserializeIngredients(JsonArray json) {

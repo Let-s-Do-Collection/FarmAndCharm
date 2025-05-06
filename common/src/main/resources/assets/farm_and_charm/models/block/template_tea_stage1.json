@@ -2,7 +2,7 @@
 	"credit": "Made by Satisfy",
 	"textures": {
 		"0": "farm_and_charm:block/jug",
-		"1": "farm_and_charm:block/tea",
+		"tea": "farm_and_charm:block/ribwort_tea",
 		"particle": "farm_and_charm:block/jug"
 	},
 	"elements": [
@@ -10,19 +10,6 @@
 			"name": "bottom",
 			"from": [6, 0, 6],
 			"to": [10, 1, 10],
-			"rotation": {"angle": 0, "axis": "y", "origin": [6, 0, 6]},
-			"faces": {
-				"north": {"uv": [6, 11, 10, 12], "texture": "#0"},
-				"east": {"uv": [6, 11, 10, 12], "texture": "#0"},
-				"south": {"uv": [6, 11, 10, 12], "texture": "#0"},
-				"west": {"uv": [6, 11, 10, 12], "texture": "#0"},
-				"down": {"uv": [6, 12, 10, 16], "texture": "#0"}
-			}
-		},
-		{
-			"name": "bottom_inner",
-			"from": [10, 0, 6],
-			"to": [6, 1, 10],
 			"rotation": {"angle": 0, "axis": "y", "origin": [6, 0, 6]},
 			"faces": {
 				"north": {"uv": [6, 11, 10, 12], "texture": "#0"},
@@ -85,30 +72,6 @@
 			}
 		},
 		{
-			"name": "lid",
-			"from": [5.9, 7.9, 5.9],
-			"to": [10.1, 9.1, 10.1],
-			"rotation": {"angle": 0, "axis": "y", "origin": [5.5, 0, 5.5]},
-			"faces": {
-				"north": {"uv": [6, 3, 10, 4], "texture": "#0"},
-				"east": {"uv": [6, 3, 10, 4], "texture": "#0"},
-				"south": {"uv": [6, 3, 10, 4], "texture": "#0"},
-				"west": {"uv": [6, 3, 10, 4], "texture": "#0"}
-			}
-		},
-		{
-			"name": "lid_inner",
-			"from": [9.9, 7.9, 5.9],
-			"to": [6.1, 9.1, 10.1],
-			"rotation": {"angle": 0, "axis": "y", "origin": [5.5, 0, 5.5]},
-			"faces": {
-				"north": {"uv": [6, 3, 10, 4], "texture": "#0"},
-				"east": {"uv": [6, 3, 10, 4], "texture": "#0"},
-				"south": {"uv": [6, 3, 10, 4], "texture": "#0"},
-				"west": {"uv": [6, 3, 10, 4], "texture": "#0"}
-			}
-		},
-		{
 			"name": "handle",
 			"from": [3, 2, 8],
 			"to": [6, 9, 8],
@@ -118,30 +81,17 @@
 			}
 		},
 		{
-			"name": "tea_1",
+			"name": "tea",
 			"from": [5.5, 1.1, 5.5],
-			"to": [10.5, 3.1, 10.5],
-			"rotation": {"angle": 0, "axis": "y", "origin": [5.5, 0, 5.5]},
-			"faces": {
-				"north": {"uv": [5, 14, 10, 16], "texture": "#1"},
-				"east": {"uv": [5, 14, 10, 16], "texture": "#1"},
-				"south": {"uv": [5, 14, 10, 16], "texture": "#1"},
-				"west": {"uv": [5, 14, 10, 16], "texture": "#1"},
-				"up": {"uv": [5, 6, 10, 11], "texture": "#1"},
-				"down": {"uv": [5, 6, 10, 11], "texture": "#1"}
-			}
-		},
-		{
-			"name": "tea_2",
-			"from": [5.5, 3.1, 5.5],
 			"to": [10.5, 6.1, 10.5],
 			"rotation": {"angle": 0, "axis": "y", "origin": [5.5, 0, 5.5]},
 			"faces": {
-				"north": {"uv": [5, 11, 10, 14], "texture": "#1"},
-				"east": {"uv": [5, 11, 10, 14], "texture": "#1"},
-				"south": {"uv": [5, 11, 10, 14], "texture": "#1"},
-				"west": {"uv": [5, 11, 10, 14], "texture": "#1"},
-				"up": {"uv": [5, 6, 10, 11], "texture": "#1"}
+				"north": {"uv": [6, 8, 11, 13], "texture": "#tea"},
+				"east": {"uv": [6, 8, 11, 13], "texture": "#tea"},
+				"south": {"uv": [6, 8, 11, 13], "texture": "#tea"},
+				"west": {"uv": [6, 8, 11, 13], "texture": "#tea"},
+				"up": {"uv": [6, 3, 11, 8], "texture": "#tea"},
+				"down": {"uv": [6, 8, 11, 13], "texture": "#tea"}
 			}
 		}
 	]

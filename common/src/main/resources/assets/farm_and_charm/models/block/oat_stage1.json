@@ -1,5 +1,5 @@
 {
-  "parent": "farm_and_charm:block/oat_template",
+  "parent": "farm_and_charm:block/template_tall_crop",
   "textures": {
     "crop": "farm_and_charm:block/oat_stage1"
   }

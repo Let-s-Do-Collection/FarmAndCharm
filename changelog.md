@@ -1,16 +1,19 @@
-[1.0.7] - 2025.02.25
+[1.0.7] – 2025.05.06
 
 **Added**
 
-
 **Changed**
-* Reduced all Wild Crops spawn rates
+* Reduced spawn rates for all wild crops
+* Implemented templates for most crops, bags, tea, and more — this should slightly improve loading times
+* Completely overhauled all tags for much better compatibility with other mods (thanks to Ninjadaj!)
 
 **Fixed**
-* ChairBlocks not allowing / using Items in your Offhand when Right-Clicking on a Chair
-* Sustenance not working properly
+* Chair blocks no longer block the use of items in your offhand when right-clicking a chair
+* Sustenance effect now works correctly
+* Cooking pot now crafts the correct output
+* Scarecrow now properly grants a growth boost to nearby crops
 
-___
+***
 
 [1.0.6] - 2025.02.15
 

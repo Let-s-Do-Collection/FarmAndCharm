@@ -2,6 +2,8 @@
 
 **Added**
 * Tooltip showing remaining burn time when hovering over the stove burn icon
+* Added pt_br translation (thanks to Coffee-0xFF)
+* Updated ru_ru (thanks to Tefnya)
 
 **Changed**
 * Stove now uses the same valid fuel items and burn times as the furnace

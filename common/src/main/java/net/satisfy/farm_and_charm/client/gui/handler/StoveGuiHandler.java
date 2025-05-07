@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class StoveGuiHandler extends AbstractContainerMenu {
     private final Container inventory;
-    private final ContainerData propertyDelegate;
+    public final ContainerData propertyDelegate;
 
     public StoveGuiHandler(int syncId, Inventory playerInventory) {
         this(syncId, playerInventory, new SimpleContainer(5), new SimpleContainerData(4));
@@ -68,7 +68,7 @@ public class StoveGuiHandler extends AbstractContainerMenu {
     }
 
     public boolean isBeingBurned() {
-        return propertyDelegate.get(1) != 0;
+        return propertyDelegate.get(0) > 0;
     }
 
     @Override

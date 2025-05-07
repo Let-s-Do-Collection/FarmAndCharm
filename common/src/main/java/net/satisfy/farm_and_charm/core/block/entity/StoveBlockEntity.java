@@ -18,12 +18,11 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
@@ -41,8 +40,7 @@ import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
 import net.satisfy.farm_and_charm.core.world.ImplementedInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import java.util.HashMap;
-import java.util.Map;
+
 import java.util.Objects;
 import java.util.UUID;
 
@@ -138,14 +136,10 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
 
     @Override
     public void tick(Level world, BlockPos pos, BlockState state, StoveBlockEntity blockEntity) {
-        if (world.isClientSide) {
-            return;
-        }
+        if (world.isClientSide) return;
         boolean initialBurningState = blockEntity.isBurning();
         boolean dirty = false;
-        if (initialBurningState) {
-            --this.burnTime;
-        }
+        if (initialBurningState) --this.burnTime;
         StoveRecipe recipe = world.getRecipeManager().getRecipeFor(RecipeTypeRegistry.STOVE_RECIPE_TYPE.get(), blockEntity, world).orElse(null);
         assert level != null;
         RegistryAccess access = level.registryAccess();
@@ -153,9 +147,7 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
             ServerPlayer owner = Objects.requireNonNull(world.getServer()).getPlayerList().getPlayer(ownerUuid);
             if (owner == null || RecipeUnlockManager.isRecipeLocked(owner, recipe.getId())) {
                 this.cookTime = 0;
-                if (state.getValue(StoveBlock.LIT)) {
-                    world.setBlock(pos, state.setValue(StoveBlock.LIT, false), Block.UPDATE_ALL);
-                }
+                if (state.getValue(StoveBlock.LIT)) world.setBlock(pos, state.setValue(StoveBlock.LIT, false), Block.UPDATE_ALL);
                 return;
             }
         }
@@ -183,15 +175,11 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         } else if (!canCraft(recipe, access)) {
             this.cookTime = 0;
         }
-        if (initialBurningState != isBurning()) {
-            if (state.getValue(StoveBlock.LIT) != (burnTime > 0)) {
-                world.setBlock(pos, state.setValue(StoveBlock.LIT, burnTime > 0), Block.UPDATE_ALL);
-                dirty = true;
-            }
+        if (initialBurningState != isBurning() || state.getValue(StoveBlock.LIT) != (burnTime > 0 || (burnTime == 0 && burnTimeTotal > 0))) {
+            world.setBlock(pos, state.setValue(StoveBlock.LIT, burnTime > 0 || (burnTime == 0 && burnTimeTotal > 0)), Block.UPDATE_ALL);
+            dirty = true;
         }
-        if (dirty) {
-            setChanged();
-        }
+        if (dirty) setChanged();
     }
 
     protected boolean canCraft(StoveRecipe recipe, RegistryAccess access) {
@@ -277,17 +265,8 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
     }
 
     protected int getTotalBurnTime(ItemStack fuel) {
-        if (fuel.isEmpty()) {
-            return 0;
-        } else {
-            Item item = fuel.getItem();
-            Map<Item, Integer> fuelBurnTimes = new HashMap<>();
-            fuelBurnTimes.put(Items.COAL, 1600);
-            fuelBurnTimes.put(Items.CHARCOAL, 1600);
-            fuelBurnTimes.put(Items.LAVA_BUCKET, 20000);
-            fuelBurnTimes.put(Items.BLAZE_ROD, 2400);
-            return fuelBurnTimes.getOrDefault(item, 0);
-        }
+        if (fuel.isEmpty()) return 0;
+        return AbstractFurnaceBlockEntity.getFuel().getOrDefault(fuel.getItem(), 0);
     }
 
     private ItemStack getRemainderItem(ItemStack stack) {

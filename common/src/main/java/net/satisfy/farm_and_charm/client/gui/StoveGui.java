@@ -46,6 +46,23 @@ public class StoveGui extends AbstractContainerScreen<StoveGuiHandler> {
         }
     }
 
+    @Override
+    protected void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        super.renderTooltip(guiGraphics, mouseX, mouseY);
+        int iconX = this.leftPos + 62;
+        int iconY = this.topPos + 49;
+        int iconWidth = 17;
+        int iconHeight = 15;
+        if (mouseX >= iconX && mouseX <= iconX + iconWidth && mouseY >= iconY && mouseY <= iconY + iconHeight) {
+            int burnTime = this.menu.propertyDelegate.get(0);
+            int totalSeconds = burnTime / 20;
+            int minutes = totalSeconds / 60;
+            int seconds = totalSeconds % 60;
+            String formattedTime = String.format("%02d:%02d", minutes, seconds);
+            guiGraphics.renderTooltip(this.font, Component.translatable("gui.farm_and_charm.stove_burn_time", formattedTime), mouseX, mouseY);
+        }
+    }
+
     protected void renderBg(GuiGraphics guiGraphics, float delta, int mouseX, int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);

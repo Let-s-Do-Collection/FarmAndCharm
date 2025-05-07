@@ -1,8 +1,10 @@
 [1.0.7] – 2025.05.06
 
 **Added**
+* Tooltip showing remaining burn time when hovering over the stove burn icon
 
 **Changed**
+* Stove now uses the same valid fuel items and burn times as the furnace
 * Reduced spawn rates for all wild crops
 * Implemented templates for most crops, bags, tea, and more — this should slightly improve loading times
 * Completely overhauled all tags for much better compatibility with other mods (thanks to Ninjadaj!)

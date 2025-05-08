@@ -10,12 +10,13 @@
 * Reduced spawn rates for all wild crops
 * Implemented templates for most crops, bags, tea, and more — this should slightly improve loading times
 * Completely overhauled all tags for much better compatibility with other mods (thanks to Ninjadaj!)
+* `Stove` now uses the same Logic as Minecrafts `Furnace`, `Smoker` etc. for the FuelItems
 
 **Fixed**
 * Chair blocks no longer block the use of items in your offhand when right-clicking a chair
-* Sustenance effect now works correctly
-* Cooking pot now crafts the correct output
-* Scarecrow now properly grants a growth boost to nearby crops
+* `Sustenance` effect now works correctly
+* `Cooking Pot` now crafts the correct output
+* `Scarecrow` now properly grants a growth boost to nearby crops
 
 ***
 

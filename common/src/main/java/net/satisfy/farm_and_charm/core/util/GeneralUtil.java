@@ -37,7 +37,10 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.*;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
@@ -90,7 +93,7 @@ public class GeneralUtil {
 
     public static boolean matchesRecipe(Container inventory, NonNullList<Ingredient> recipe, int startIndex, int endIndex) {
         List<ItemStack> inputStacks = new ArrayList<>();
-        for (int i = startIndex; i <= endIndex; i++) {
+        for (int i = startIndex; i < endIndex; i++) {
             ItemStack stack = inventory.getItem(i);
             if (!stack.isEmpty()) inputStacks.add(stack.copy());
         }

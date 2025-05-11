@@ -1,3 +1,10 @@
+[1.0.8]
+**Fixed**
+* Recipes are properly recognized
+
+**Changed**
+* `Sausage with oat patty` now uses the roaster instead of the cooking pot
+
 [1.0.7] – 2025.05.06
 
 **Added**

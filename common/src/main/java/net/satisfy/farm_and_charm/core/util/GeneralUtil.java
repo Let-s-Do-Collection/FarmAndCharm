@@ -93,7 +93,7 @@ public class GeneralUtil {
 
     public static boolean matchesRecipe(Container inventory, NonNullList<Ingredient> recipe, int startIndex, int endIndex) {
         List<ItemStack> inputStacks = new ArrayList<>();
-        for (int i = startIndex; i < endIndex; i++) {
+        for (int i = startIndex; i <= endIndex; i++) {
             ItemStack stack = inventory.getItem(i);
             if (!stack.isEmpty()) inputStacks.add(stack.copy());
         }

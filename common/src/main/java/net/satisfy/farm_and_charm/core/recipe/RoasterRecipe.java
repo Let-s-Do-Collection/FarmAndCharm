@@ -32,7 +32,7 @@ public class RoasterRecipe implements Recipe<Container> {
 
     @Override
     public boolean matches(Container inventory, Level world) {
-        return GeneralUtil.matchesRecipe(inventory, inputs, 0, 6);
+        return GeneralUtil.matchesRecipe(inventory, inputs, 0, 5);
     }
 
     @Override

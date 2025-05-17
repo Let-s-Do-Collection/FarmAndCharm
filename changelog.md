@@ -1,3 +1,7 @@
+[1.0.9]
+*Fixed*
+* Actually fixed recipes this time
+
 [1.0.8]
 **Fixed**
 * Recipes are properly recognized

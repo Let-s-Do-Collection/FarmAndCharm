@@ -83,24 +83,16 @@ public class RoasterGuiHandler extends AbstractContainerMenu {
             ItemStack stack = slot.getItem();
             ItemStack copy = stack.copy();
 
-            if (index >= 0 && index <= 5) {
-                if (!this.moveItemStackTo(stack, 8, 44, true)) {
-                    return ItemStack.EMPTY;
-                }
-            } else if (index == 6) {
-                if (!this.moveItemStackTo(stack, 8, 44, true)) {
-                    return ItemStack.EMPTY;
-                }
-            } else if (index == 7) {
+            if (index >= 0 && index <= 7) {
                 if (!this.moveItemStackTo(stack, 8, 44, true)) {
                     return ItemStack.EMPTY;
                 }
             } else {
                 if (stack.is(TagRegistry.CONTAINER)) {
-                    if (!this.moveItemStackTo(stack, 6, 7, false)) {
+                    if (!this.moveItemStackTo(stack, 0, 6, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (!this.moveItemStackTo(stack, 0, 6, false)) {
+                } else if (!this.moveItemStackTo(stack, 0, 8, false)) {
                     return ItemStack.EMPTY;
                 }
             }

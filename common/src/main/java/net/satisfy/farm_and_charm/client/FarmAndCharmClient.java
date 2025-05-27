@@ -7,14 +7,17 @@ import dev.architectury.registry.client.rendering.RenderTypeRegistry;
 import dev.architectury.registry.menu.MenuRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.satisfy.farm_and_charm.client.gui.CookingPotGui;
+import net.satisfy.farm_and_charm.client.gui.PetBowlEditGui;
 import net.satisfy.farm_and_charm.client.gui.RoasterGui;
 import net.satisfy.farm_and_charm.client.gui.StoveGui;
 import net.satisfy.farm_and_charm.client.model.*;
 import net.satisfy.farm_and_charm.client.renderer.block.*;
 import net.satisfy.farm_and_charm.client.renderer.entity.ChairRenderer;
+import net.satisfy.farm_and_charm.core.block.entity.PetBowlBlockEntity;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.ModelRegistry;
 import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
@@ -44,6 +47,10 @@ public class FarmAndCharmClient {
         MenuRegistry.registerScreenFactory(ScreenhandlerTypeRegistry.ROASTER_SCREEN_HANDLER.get(), RoasterGui::new);
     }
 
+    public static void openPetBowlScreen(PetBowlBlockEntity entity) {
+        Minecraft.getInstance().setScreen(new PetBowlEditGui(entity));
+    }
+
     public static void registerEntityRenderers() {
         EntityRendererRegistry.register(EntityTypeRegistry.ROTTEN_TOMATO, ThrownItemRenderer::new);
         EntityRendererRegistry.register(EntityTypeRegistry.SUPPLY_CART, SupplyCartRenderer::new);
@@ -62,7 +69,9 @@ public class FarmAndCharmClient {
         BlockEntityRendererRegistry.register(EntityTypeRegistry.MINCER_BLOCK_ENTITY.get(), MincerRenderer::new);
         BlockEntityRendererRegistry.register(EntityTypeRegistry.CRAFTING_BOWL_BLOCK_ENTITY.get(), CraftingBowlRenderer::new);
         BlockEntityRendererRegistry.register(EntityTypeRegistry.SPRINKLER_BLOCK_ENTITY.get(), WaterSprinklerRenderer::new);
+        BlockEntityRendererRegistry.register(EntityTypeRegistry.PET_BOWL_BLOCK_ENTITY.get(), context -> new PetBowlBlockRenderer());
         BlockEntityRendererRegistry.register(EntityTypeRegistry.STORAGE_ENTITY.get(), context -> new StorageBlockEntityRenderer());
+
     }
 
     public static void preInitClient() {

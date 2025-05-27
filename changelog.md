@@ -1,9 +1,11 @@
 [1.0.9]
-*Fixed*
+
+**Fixed**
 * Actually fixed recipes this time
 * Improve quick move on cooking containers
 
 [1.0.8]
+
 **Fixed**
 * Recipes are properly recognized
 

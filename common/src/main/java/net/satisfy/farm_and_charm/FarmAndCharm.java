@@ -13,5 +13,6 @@ public class FarmAndCharm {
         ScreenhandlerTypeRegistry.init();
         SoundEventRegistry.init();
         RecipeTypeRegistry.init();
+        VillagerTradeRegistryHandler.init();
     }
 }

@@ -1,0 +1,124 @@
+{
+  "variants": {
+    "stack=1,facing=north": {
+      "model": "farm_and_charm:block/cat_food_bag_0"
+    },
+    "stack=1,facing=east": {
+      "model": "farm_and_charm:block/cat_food_bag_0",
+      "y": 90
+    },
+    "stack=1,facing=south": {
+      "model": "farm_and_charm:block/cat_food_bag_0",
+      "y": 180
+    },
+    "stack=1,facing=west": {
+      "model": "farm_and_charm:block/cat_food_bag_0",
+      "y": 270
+    },
+    "stack=2,facing=north": {
+      "model": "farm_and_charm:block/cat_food_bag_1"
+    },
+    "stack=2,facing=east": {
+      "model": "farm_and_charm:block/cat_food_bag_1",
+      "y": 90
+    },
+    "stack=2,facing=south": {
+      "model": "farm_and_charm:block/cat_food_bag_1",
+      "y": 180
+    },
+    "stack=2,facing=west": {
+      "model": "farm_and_charm:block/cat_food_bag_1",
+      "y": 270
+    },
+    "stack=3,facing=north": {
+      "model": "farm_and_charm:block/cat_food_bag_2"
+    },
+    "stack=3,facing=east": {
+      "model": "farm_and_charm:block/cat_food_bag_2",
+      "y": 90
+    },
+    "stack=3,facing=south": {
+      "model": "farm_and_charm:block/cat_food_bag_2",
+      "y": 180
+    },
+    "stack=3,facing=west": {
+      "model": "farm_and_charm:block/cat_food_bag_2",
+      "y": 270
+    },
+    "stack=4,facing=north": {
+      "model": "farm_and_charm:block/pancake_4"
+    },
+    "stack=4,facing=east": {
+      "model": "farm_and_charm:block/pancake_4",
+      "y": 90
+    },
+    "stack=4,facing=south": {
+      "model": "farm_and_charm:block/pancake_4",
+      "y": 180
+    },
+    "stack=4,facing=west": {
+      "model": "farm_and_charm:block/pancake_4",
+      "y": 270
+    },
+    "stack=5,facing=north": {
+      "model": "farm_and_charm:block/pancake_5"
+    },
+    "stack=5,facing=east": {
+      "model": "farm_and_charm:block/pancake_5",
+      "y": 90
+    },
+    "stack=5,facing=south": {
+      "model": "farm_and_charm:block/pancake_5",
+      "y": 180
+    },
+    "stack=5,facing=west": {
+      "model": "farm_and_charm:block/pancake_5",
+      "y": 270
+    },
+    "stack=6,facing=north": {
+      "model": "farm_and_charm:block/pancake_6"
+    },
+    "stack=6,facing=east": {
+      "model": "farm_and_charm:block/pancake_6",
+      "y": 90
+    },
+    "stack=6,facing=south": {
+      "model": "farm_and_charm:block/pancake_6",
+      "y": 180
+    },
+    "stack=6,facing=west": {
+      "model": "farm_and_charm:block/pancake_6",
+      "y": 270
+    },
+    "stack=7,facing=north": {
+      "model": "farm_and_charm:block/pancake_7"
+    },
+    "stack=7,facing=east": {
+      "model": "farm_and_charm:block/pancake_7",
+      "y": 90
+    },
+    "stack=7,facing=south": {
+      "model": "farm_and_charm:block/pancake_7",
+      "y": 180
+    },
+    "stack=7,facing=west": {
+      "model": "farm_and_charm:block/pancake_7",
+      "y": 270
+    },
+    "stack=8,facing=north": {
+      "model": "farm_and_charm:block/pancake_8"
+    },
+    "stack=8,facing=east": {
+      "model": "farm_and_charm:block/pancake_8",
+      "y": 90
+    },
+    "stack=8,facing=south": {
+      "model": "farm_and_charm:block/pancake_8",
+      "y": 180
+    },
+    "stack=8,facing=west": {
+      "model": "farm_and_charm:block/pancake_8",
+      "y": 270
+    }
+  }
+}

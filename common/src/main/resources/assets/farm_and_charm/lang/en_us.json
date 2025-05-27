@@ -292,6 +292,7 @@
   "text.autoconfig.farm_and_charm.option.effects.satiationEffect.satiationEffectHealAmount": "Satiation Heal Amount",
   "text.autoconfig.farm_and_charm.option.effects.sustenanceEffect.sustenanceEffectInterval": "Sustenance Interval (ticks)",
   "text.autoconfig.farm_and_charm.option.effects.sustenanceEffect.sustenanceEffectHealAmount": "Sustenance Heal Amount",
-  "text.autoconfig.farm_and_charm.option.effects.sustenanceEffect.sustenanceEffectFoodIncrement": "Sustenance Food Increment"
-
+  "text.autoconfig.farm_and_charm.option.effects.sustenanceEffect.sustenanceEffectFoodIncrement": "Sustenance Food Increment",
+  "gui.farm_and_charm.pet_bowl.edit": "Edit Pet Bowl",
+  "gui.farm_and_charm.text_edit.done": "Done"
 }

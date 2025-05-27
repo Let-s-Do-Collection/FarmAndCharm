@@ -13,6 +13,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -447,6 +448,33 @@ public class GeneralUtil {
                 case EAST -> Optional.of(new Tuple<>((float) (1.0 - f), y));
                 case DOWN, UP -> Optional.empty();
             };
+        }
+    }
+
+    public interface FedTracker {
+        void farmAndCharm$$markAsFed();
+        boolean farmAndCharm$$isFed();
+    }
+
+    public enum FoodType implements StringRepresentable {
+        NONE("none"),
+        CAT("cat"),
+        DOG("dog");
+
+        private final String name;
+
+        FoodType(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public @NotNull String getSerializedName() {
+            return name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
         }
     }
 }

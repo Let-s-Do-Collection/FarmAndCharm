@@ -154,6 +154,9 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Block> STRAWBERRY_TEA = registerTea("strawberry_tea", () -> new TeaJugBlock(BlockBehaviour.Properties.copy(Blocks.GLASS)), MobEffects.DIG_SPEED, 240);
     public static final RegistrySupplier<Block> NETTLE_TEA = registerTea("nettle_tea", () -> new TeaJugBlock(BlockBehaviour.Properties.copy(Blocks.GLASS)), MobEffects.HEAL, -0);
     public static final RegistrySupplier<Block> RIBWORT_TEA = registerTea("ribwort_tea", () -> new TeaJugBlock(BlockBehaviour.Properties.copy(Blocks.GLASS)), MobEffects.REGENERATION, 120);
+    public static final RegistrySupplier<Block> PET_BOWL = registerWithItem("pet_bowl", () -> new PetBowlBlock(BlockBehaviour.Properties.copy(Blocks.OAK_PLANKS).strength(1.0F).sound(SoundType.WOOD)));
+    public static final RegistrySupplier<Block> DOG_FOOD_BAG = registerWithItem("dog_food_bag", () -> new StackableBlock(BlockBehaviour.Properties.copy(Blocks.CYAN_CARPET), 3));
+    public static final RegistrySupplier<Block> CAT_FOOD_BAG = registerWithItem("cat_food_bag", () -> new StackableBlock(BlockBehaviour.Properties.copy(Blocks.PINK_CARPET), 3));
 
 
 

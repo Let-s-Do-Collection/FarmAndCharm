@@ -26,7 +26,7 @@ public class PetBowlEditGui extends Screen {
         int centerY = this.height / 2;
 
         textField = new EditBox(this.font, centerX - 100, centerY - 10, 200, 20, Component.literal(""));
-        textField.setMaxLength(16);
+        textField.setMaxLength(6);
         textField.setValue(entity.getText().getString());
         this.addRenderableWidget(textField);
         this.setInitialFocus(textField);

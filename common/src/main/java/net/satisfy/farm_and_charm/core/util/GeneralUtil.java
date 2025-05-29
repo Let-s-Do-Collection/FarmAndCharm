@@ -451,11 +451,6 @@ public class GeneralUtil {
         }
     }
 
-    public interface FedTracker {
-        void farmAndCharm$$markAsFed();
-        boolean farmAndCharm$$isFed();
-    }
-
     public enum FoodType implements StringRepresentable {
         NONE("none"),
         CAT("cat"),

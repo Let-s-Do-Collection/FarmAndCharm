@@ -107,6 +107,8 @@ public class PetBowlBlock extends FacingBlock implements EntityBlock {
                     if (!player.getAbilities().instabuild) {
                         heldItem.shrink(1);
                     }
+                    entity.setItem(0, new ItemStack(heldItem.getItem()));
+
                     entity.onFed(heldItem);
                     return InteractionResult.SUCCESS;
                 }

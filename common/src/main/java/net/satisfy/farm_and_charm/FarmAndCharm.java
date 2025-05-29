@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm;
 
+import net.satisfy.farm_and_charm.core.network.PacketHandler;
 import net.satisfy.farm_and_charm.core.registry.*;
 
 public class FarmAndCharm {
@@ -14,5 +15,6 @@ public class FarmAndCharm {
         SoundEventRegistry.init();
         RecipeTypeRegistry.init();
         VillagerTradeRegistryHandler.init();
+        PacketHandler.init();
     }
 }

@@ -121,6 +121,8 @@ public class TabRegistry {
                 output.accept(ObjectRegistry.PET_BOWL.get());
                 output.accept(ObjectRegistry.DOG_FOOD_BAG.get());
                 output.accept(ObjectRegistry.CAT_FOOD_BAG.get());
+                output.accept(ObjectRegistry.CHICKEN_NEST.get());
+
                 output.accept(ObjectRegistry.SCARECROW.get());
             })
             .build());

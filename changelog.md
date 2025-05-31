@@ -1,3 +1,9 @@
+[1.0.10]
+
+**Added**
+* **A Pet Bowl!**
+Use a Pet Bowl to feed your favorite cat or dog. From time to time, your pets will wander over to an empty bowl and beg for food. Feeding them not only makes them happy but also grants temporary bonuses. You can even assign a Name Tag to reserve a specific bowl for your most beloved companion.
+
 [1.0.9]
 
 **Fixed**

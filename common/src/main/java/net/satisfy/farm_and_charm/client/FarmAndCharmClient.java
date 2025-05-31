@@ -61,6 +61,7 @@ public class FarmAndCharmClient {
     public static void registerStorageTypeRenderers() {
         StorageBlockEntityRenderer.registerStorageType(StorageTypeRegistry.TOOL_RACK, new ToolRackRenderer());
         StorageBlockEntityRenderer.registerStorageType(StorageTypeRegistry.WINDOW_SILL, new WindowSillRenderer());
+        StorageBlockEntityRenderer.registerStorageType(StorageTypeRegistry.CHICKEN_NEST, new ChickenNestRenderer());
     }
 
     public static void registerBlockEntityRenderer() {

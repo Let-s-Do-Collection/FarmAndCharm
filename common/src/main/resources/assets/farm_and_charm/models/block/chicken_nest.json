@@ -1,0 +1,50 @@
+{
+	"credit": "Made by Satisfy",
+	"ambientocclusion": false,
+	"textures": {
+		"fan": "farm_and_charm:block/chicken_nest",
+		"particle": "farm_and_charm:block/chicken_nest"
+	},
+	"elements": [
+		{
+			"from": [8, 0, 0],
+			"to": [24, 0, 16],
+			"shade": false,
+			"rotation": {"angle": 22.5, "axis": "z", "origin": [8, 0, 0]},
+			"faces": {
+				"up": {"uv": [0, 0, 16, 16], "rotation": 90, "texture": "#fan"},
+				"down": {"uv": [0, 16, 16, 0], "rotation": 270, "texture": "#fan"}
+			}
+		},
+		{
+			"from": [-8, 0, 0],
+			"to": [8, 0, 16],
+			"shade": false,
+			"rotation": {"angle": -22.5, "axis": "z", "origin": [8, 0, 0]},
+			"faces": {
+				"up": {"uv": [0, 0, 16, 16], "rotation": 270, "texture": "#fan"},
+				"down": {"uv": [0, 16, 16, 0], "rotation": 90, "texture": "#fan"}
+			}
+		},
+		{
+			"from": [0, 0, 8],
+			"to": [16, 0, 24],
+			"shade": false,
+			"rotation": {"angle": -22.5, "axis": "x", "origin": [0, 0, 8]},
+			"faces": {
+				"up": {"uv": [16, 16, 0, 0], "texture": "#fan"},
+				"down": {"uv": [16, 0, 0, 16], "texture": "#fan"}
+			}
+		},
+		{
+			"from": [0, 0, -8],
+			"to": [16, 0, 8],
+			"shade": false,
+			"rotation": {"angle": 22.5, "axis": "x", "origin": [0, 0, 8]},
+			"faces": {
+				"up": {"uv": [0, 0, 16, 16], "texture": "#fan"},
+				"down": {"uv": [0, 16, 16, 0], "texture": "#fan"}
+			}
+		}
+	]
+}

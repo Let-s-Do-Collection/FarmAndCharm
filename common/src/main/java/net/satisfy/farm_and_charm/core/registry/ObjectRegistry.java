@@ -157,6 +157,7 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Block> PET_BOWL = registerWithItem("pet_bowl", () -> new PetBowlBlock(BlockBehaviour.Properties.copy(Blocks.OAK_PLANKS).strength(1.0F).sound(SoundType.WOOD)));
     public static final RegistrySupplier<Block> DOG_FOOD_BAG = registerWithItem("dog_food_bag", () -> new StackableBlock(BlockBehaviour.Properties.copy(Blocks.CYAN_CARPET), 3));
     public static final RegistrySupplier<Block> CAT_FOOD_BAG = registerWithItem("cat_food_bag", () -> new StackableBlock(BlockBehaviour.Properties.copy(Blocks.PINK_CARPET), 3));
+    public static final RegistrySupplier<Block> CHICKEN_NEST = registerWithItem("chicken_nest", () -> new ChickenNestBlock(BlockBehaviour.Properties.copy(Blocks.GRASS_BLOCK).noCollission().instabreak()));
 
 
 

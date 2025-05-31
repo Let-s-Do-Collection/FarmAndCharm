@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "farm_and_charm:block/chicken_nest" }
+  }
+}

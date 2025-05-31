@@ -67,6 +67,9 @@ public class DogEatFromBowlGoal extends Goal {
     @Override
     public boolean canContinueToUse() {
         if (targetBowl == null) return false;
+        BlockState state = dog.level().getBlockState(targetBowl);
+        if (!(state.getBlock() instanceof PetBowlBlock)) return false;
+
         float distSqr = targetVec.distanceSquared((float) dog.getX(), (float) dog.getY(), (float) dog.getZ());
         return distSqr > 4.0F || eatTicks < 60;
     }
@@ -94,7 +97,7 @@ public class DogEatFromBowlGoal extends Goal {
                 }
 
                 if (eatTicks % 10 == 0) {
-                    level.playSound(null, dog.blockPosition(), SoundEvents.WOLF_GROWL, SoundSource.NEUTRAL, 0.8F, 1.0F);
+                    level.playSound(null, dog.blockPosition(), SoundEvents.WOLF_GROWL, SoundSource.NEUTRAL, 0.4F, 0.4F);
                 }
             }
 
@@ -103,7 +106,6 @@ public class DogEatFromBowlGoal extends Goal {
                 if (be instanceof PetBowlBlockEntity bowl) {
                     bowl.decreaseFood();
                     ((BowlAccessor.StayNearBowl) dog).farmAndCharm$setStayCenter(targetBowl);
-
                 }
 
                 if (!level.isClientSide) {
@@ -112,11 +114,13 @@ public class DogEatFromBowlGoal extends Goal {
                             dog.getX(), dog.getY() + 0.5F, dog.getZ(),
                             3, 0.3, 0.3, 0.3, 0.01
                     );
-                    level.playSound(null, dog.blockPosition(), SoundEvents.WOLF_HOWL, dog.getSoundSource(), 1.0F, 1.0F);
+                    level.playSound(null, dog.blockPosition(), SoundEvents.WOLF_HOWL, dog.getSoundSource(), 0.4F, 0.4F);
 
                     BlockState old = level.getBlockState(targetBowl);
-                    BlockState nw = old.setValue(PetBowlBlock.FOOD_TYPE, GeneralUtil.FoodType.NONE);
-                    level.setBlockAndUpdate(targetBowl, nw);
+                    if (old.getBlock() instanceof PetBowlBlock && old.hasProperty(PetBowlBlock.FOOD_TYPE)) {
+                        BlockState nw = old.setValue(PetBowlBlock.FOOD_TYPE, GeneralUtil.FoodType.NONE);
+                        level.setBlockAndUpdate(targetBowl, nw);
+                    }
                 }
             }
         }

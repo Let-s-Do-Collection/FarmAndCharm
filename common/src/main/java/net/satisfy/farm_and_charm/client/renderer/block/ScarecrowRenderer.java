@@ -19,36 +19,37 @@ import org.joml.Quaternionf;
 import java.util.Objects;
 
 public class ScarecrowRenderer implements BlockEntityRenderer<ScarecrowBlockEntity> {
+    private static final ResourceLocation TEX_WITH = new ResourceLocation(FarmAndCharm.MOD_ID, "textures/entity/scarecrow.png");
+    private static final ResourceLocation TEX_NO  = new ResourceLocation(FarmAndCharm.MOD_ID, "textures/entity/scarecrow_no_dungarees.png");
 
-    private static final ResourceLocation TEXTURE = new ResourceLocation(FarmAndCharm.MOD_ID, "textures/entity/scarecrow.png");
     private final ModelPart scarecrow;
     private final ModelPart post;
 
-    public ScarecrowRenderer(BlockEntityRendererProvider.Context context) {
-        ModelPart root = context.bakeLayer(ScarecrowModel.LAYER_LOCATION);
+    public ScarecrowRenderer(BlockEntityRendererProvider.Context ctx) {
+        ModelPart root = ctx.bakeLayer(ScarecrowModel.LAYER_LOCATION);
         this.scarecrow = root.getChild("scarecrow");
-        this.post = root.getChild("post");
+        this.post      = root.getChild("post");
     }
 
     @Override
-    public void render(ScarecrowBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay) {
-        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
-        Direction direction = blockEntity.getBlockState().getValue(ScarecrowBlock.FACING);
-        float rotationDegrees = -direction.toYRot() + 180;
+    public void render(ScarecrowBlockEntity be, float pt, PoseStack ms, MultiBufferSource buf, int light, int overlay) {
+        Direction dir = be.getBlockState().getValue(ScarecrowBlock.FACING);
+        boolean has  = be.getBlockState().getValue(ScarecrowBlock.HAS_DUNGAREES);
+        ResourceLocation tex = has ? TEX_WITH : TEX_NO;
+        VertexConsumer vc = buf.getBuffer(RenderType.entityCutoutNoCull(tex));
 
-        long time = Objects.requireNonNull(blockEntity.getLevel()).getGameTime();
-        float angle = (float) Math.sin(time * 0.05) * 1.5f;
+        float rotY = -dir.toYRot() + 180;
+        long t = Objects.requireNonNull(be.getLevel()).getGameTime();
+        float angle = (float) Math.sin(t * 0.05) * 1.5f;
 
-        poseStack.pushPose();
-        poseStack.translate(0.5, 0, 0.5);
-        poseStack.mulPose(new Quaternionf().rotateY((float) Math.toRadians(rotationDegrees)));
-        poseStack.mulPose(new Quaternionf().rotateX((float) Math.toRadians(angle)));
-        poseStack.translate(-0.5, 0, -0.5);
+        ms.pushPose();
+        ms.translate(0.5, 0, 0.5);
+        ms.mulPose(new Quaternionf().rotateY((float)Math.toRadians(rotY)));
+        ms.mulPose(new Quaternionf().rotateX((float)Math.toRadians(angle)));
+        ms.translate(-0.5, 0, -0.5);
 
-        scarecrow.render(poseStack, vertexConsumer, combinedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-        post.render(poseStack, vertexConsumer, combinedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-
-        poseStack.popPose();
+        scarecrow.render(ms, vc, light, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        post.render(ms, vc, light, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+        ms.popPose();
     }
-
 }

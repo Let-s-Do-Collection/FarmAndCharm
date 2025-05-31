@@ -58,7 +58,6 @@ public class CatEatFromBowlGoal extends Goal {
         return false;
     }
 
-
     @Override
     public void start() {
         cat.getNavigation().moveTo(targetVec.x(), targetVec.y(), targetVec.z(), 1.0);
@@ -68,6 +67,9 @@ public class CatEatFromBowlGoal extends Goal {
     @Override
     public boolean canContinueToUse() {
         if (targetBowl == null) return false;
+        BlockState state = cat.level().getBlockState(targetBowl);
+        if (!(state.getBlock() instanceof PetBowlBlock)) return false;
+
         float distSqr = targetVec.distanceSquared((float) cat.getX(), (float) cat.getY(), (float) cat.getZ());
         return distSqr > 4.0F || eatTicks < 60;
     }
@@ -115,8 +117,10 @@ public class CatEatFromBowlGoal extends Goal {
                     level.playSound(null, cat.blockPosition(), SoundEvents.CAT_PURR, cat.getSoundSource(), 1.0F, 1.0F);
 
                     BlockState old = level.getBlockState(targetBowl);
-                    BlockState nw = old.setValue(PetBowlBlock.FOOD_TYPE, GeneralUtil.FoodType.NONE);
-                    level.setBlockAndUpdate(targetBowl, nw);
+                    if (old.getBlock() instanceof PetBowlBlock && old.hasProperty(PetBowlBlock.FOOD_TYPE)) {
+                        BlockState nw = old.setValue(PetBowlBlock.FOOD_TYPE, GeneralUtil.FoodType.NONE);
+                        level.setBlockAndUpdate(targetBowl, nw);
+                    }
                 }
             }
         }

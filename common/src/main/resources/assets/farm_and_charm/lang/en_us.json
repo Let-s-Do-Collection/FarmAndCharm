@@ -294,5 +294,14 @@
   "text.autoconfig.farm_and_charm.option.effects.sustenanceEffect.sustenanceEffectHealAmount": "Sustenance Heal Amount",
   "text.autoconfig.farm_and_charm.option.effects.sustenanceEffect.sustenanceEffectFoodIncrement": "Sustenance Food Increment",
   "gui.farm_and_charm.pet_bowl.edit": "Edit Pet Bowl",
-  "gui.farm_and_charm.text_edit.done": "Done"
+  "gui.farm_and_charm.text_edit.done": "Done",
+  "tooltip.farm_and_charm.dungarees": "Prevents farmland trampling when worn",
+  "item.farm_and_charm.dungarees": "Dungarees",
+  "block.farm_and_charm.chicken_nest": "Chicken Nest",
+  "block.farm_and_charm.pet_bowl": "Pet Bowl",
+  "block.farm_and_charm.dog_food_bag": "Dog Food Bag",
+  "block.farm_and_charm.cat_food_bag": "Cat Food Bag"
+
+
+
 }

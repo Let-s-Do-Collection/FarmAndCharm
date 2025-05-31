@@ -292,6 +292,8 @@
   "tooltip.farm_and_charm.recipe_unlocker.unlocks": "Schaltet frei: %s",
   "tooltip.farm_and_charm.recipe_unlocker.already_unlocked": "Du hast dieses Rezept bereits erlernt!",
   "tooltip.farm_and_charm.recipe_unlocker.unlocked.prefix": "Rezept freigeschaltet:",
-  "tooltip.farm_and_charm.recipe_unlocker.recipe_suffix": " Rezept"
+  "tooltip.farm_and_charm.recipe_unlocker.recipe_suffix": " Rezept",
+  "tooltip.farm_and_charm.dungarees": "Verhindert das Zertrampeln von Ackerboden beim Tragen"
+
 }
 

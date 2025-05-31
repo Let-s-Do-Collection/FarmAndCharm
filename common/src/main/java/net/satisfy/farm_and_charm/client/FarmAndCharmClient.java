@@ -87,5 +87,6 @@ public class FarmAndCharmClient {
         EntityModelLayerRegistry.register(ScarecrowModel.LAYER_LOCATION, ScarecrowModel::getTexturedModelData);
         EntityModelLayerRegistry.register(ModelRegistry.CART, SupplyCartModel::createBodyLayer);
         EntityModelLayerRegistry.register(ModelRegistry.PLOW, PlowCartModel::createBodyLayer);
+        EntityModelLayerRegistry.register(DungareesLeggingsModel.LAYER_LOCATION, DungareesLeggingsModel::createBodyLayer);
     }
 }

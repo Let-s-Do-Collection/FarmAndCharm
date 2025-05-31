@@ -18,6 +18,8 @@ loom {
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
 
         mixinConfig "FarmAndCharm-common.mixins.json"
+        mixinConfig "FarmAndCharm.mixins.json"
+
     }
 }
 

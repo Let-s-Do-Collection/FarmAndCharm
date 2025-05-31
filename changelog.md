@@ -3,12 +3,19 @@
 **Added**
 * **A Pet Bowl!**
 Use a Pet Bowl to feed your favorite cat or dog. From time to time, your pets will wander over to an empty bowl and beg for food. Feeding them not only makes them happy but also grants temporary bonuses. You can even assign a Name Tag to reserve a specific bowl for your most beloved companion.
+* Chicken Nest: Place it near Chickens and layed Eggs from Chickens will be placed inside the Chicken Nest instead of the Floor. Has a maximum capacity of 2. 
+* Dungarees - farm in style!
+
+***
+
 
 [1.0.9]
 
 **Fixed**
 * Actually fixed recipes this time
 * Improve quick move on cooking containers
+
+***
 
 [1.0.8]
 
@@ -17,6 +24,8 @@ Use a Pet Bowl to feed your favorite cat or dog. From time to time, your pets wi
 
 **Changed**
 * `Sausage with oat patty` now uses the roaster instead of the cooking pot
+
+***
 
 [1.0.7] – 2025.05.06
 

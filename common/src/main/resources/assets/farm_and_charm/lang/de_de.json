@@ -293,7 +293,14 @@
   "tooltip.farm_and_charm.recipe_unlocker.already_unlocked": "Du hast dieses Rezept bereits erlernt!",
   "tooltip.farm_and_charm.recipe_unlocker.unlocked.prefix": "Rezept freigeschaltet:",
   "tooltip.farm_and_charm.recipe_unlocker.recipe_suffix": " Rezept",
-  "tooltip.farm_and_charm.dungarees": "Verhindert das Zertrampeln von Ackerboden beim Tragen"
-
+  "tooltip.farm_and_charm.dungarees": "Verhindert das Zertrampeln von Ackerboden beim Tragen",
+  "gui.farm_and_charm.pet_bowl.edit": "Napf zuweisen",
+  "gui.farm_and_charm.text_edit.done": "Fertig",
+  "item.farm_and_charm.dungarees": "Latzhosen",
+  "block.farm_and_charm.chicken_nest": "Hühnernest",
+  "block.farm_and_charm.pet_bowl": "Napf",
+  "block.farm_and_charm.dog_food_bag": "Sack Hundefutter",
+  "block.farm_and_charm.cat_food_bag": "Sack Katzenfutter",
+  "block.farm_and_charm.chicken_coop": "Hühnerstall"
 }
 

@@ -13,6 +13,7 @@
     "CatGiftChanceMixin",
     "CatMixin",
     "CatTemptGoalMixin",
+    "ChickenAccessor",
     "ChickenMixin",
     "CropBlockMixin",
     "FarmlandBlockMixin",

@@ -2,48 +2,79 @@ package net.satisfy.farm_and_charm.core.mixin;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.animal.Chicken;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.satisfy.farm_and_charm.core.block.entity.StorageBlockEntity;
+import net.satisfy.farm_and_charm.core.entity.ai.ChickenEnterCoopGoal;
+import net.satisfy.farm_and_charm.core.entity.ai.ChickenGoToCoopGoal;
+import net.satisfy.farm_and_charm.core.entity.ai.ChickenLocateCoopGoal;
+import net.satisfy.farm_and_charm.core.entity.ai.LayEggInNestGoal;
+import net.satisfy.farm_and_charm.core.entity.ChickenCoopAccess;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Chicken.class)
-public class ChickenMixin {
+public class ChickenMixin implements ChickenCoopAccess {
+    @Unique
+    private BlockPos farmAndCharm$coopTarget;
 
-    @Inject(method = "isFood", at = @At("HEAD"), cancellable = true)
-    private void addCustomFoodItems(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-        if (stack.is(ObjectRegistry.CORN.get())) {
-            cir.setReturnValue(true);
-        }
+    @Override
+    public BlockPos farmAndCharm$getCoopTarget() {
+        return farmAndCharm$coopTarget;
     }
 
-    @Inject(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Chicken;playSound(Lnet/minecraft/sounds/SoundEvent;FF)V"), cancellable = true)
-    private void divertEggToNest(CallbackInfo ci) {
-        Chicken chicken = (Chicken)(Object) this;
-        Level level = chicken.level();
-        BlockPos chickenPos = chicken.blockPosition();
-        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
+    @Override
+    public void farmAndCharm$setCoopTarget(BlockPos pos) {
+        this.farmAndCharm$coopTarget = pos;
+    }
 
-        for (int dx = -4; dx <= 4; dx++) {
+    @Override
+    public void farmAndCharm$clearCoopTarget() {
+        this.farmAndCharm$coopTarget = null;
+    }
+
+    @Override
+    public boolean farmAndCharm$hasCoopTarget() {
+        return this.farmAndCharm$coopTarget != null;
+    }
+
+    @Inject(method = "registerGoals", at = @At("TAIL"))
+    private void addCustomGoals(CallbackInfo ci) {
+        Chicken chicken = (Chicken)(Object)this;
+        MobAccessor accessor = (MobAccessor) chicken;
+        accessor.farmAndCharm$getGoalSelector().addGoal(5, new LayEggInNestGoal(chicken));
+        accessor.farmAndCharm$getGoalSelector().addGoal(8, new ChickenLocateCoopGoal(chicken));
+        accessor.farmAndCharm$getGoalSelector().addGoal(9, new ChickenGoToCoopGoal(chicken));
+        accessor.farmAndCharm$getGoalSelector().addGoal(10, new ChickenEnterCoopGoal(chicken));
+    }
+
+    @Inject(method = "aiStep", at = @At("HEAD"), cancellable = true)
+    private void farmAndCharm$redirectEggLaying(CallbackInfo ci) {
+        Chicken chicken = (Chicken)(Object)this;
+        Level level = chicken.level();
+        if (level.isClientSide || chicken.isBaby() || !chicken.isAlive() || chicken.isChickenJockey()) return;
+
+        ChickenAccessor accessor = (ChickenAccessor) chicken;
+        if (accessor.farmAndCharm$getEggTime() > 0) return;
+
+        BlockPos origin = chicken.blockPosition();
+        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
+        for (int dx = -6; dx <= 6; dx++) {
             for (int dy = -2; dy <= 2; dy++) {
-                for (int dz = -4; dz <= 4; dz++) {
-                    mutable.set(chickenPos.getX() + dx, chickenPos.getY() + dy, chickenPos.getZ() + dz);
-                    BlockEntity blockEntity = level.getBlockEntity(mutable);
-                    if (blockEntity instanceof StorageBlockEntity storage &&
-                            level.getBlockState(mutable).is(ObjectRegistry.CHICKEN_NEST.get())) {
-                        for (int i = 0; i < storage.getInventory().size(); i++) {
-                            if (storage.getInventory().get(i).isEmpty()) {
-                                storage.setStack(i, new ItemStack(Items.EGG));
-                                storage.setChanged();
-                                ci.cancel();
-                                return;
+                for (int dz = -6; dz <= 6; dz++) {
+                    mutable.set(origin.getX() + dx, origin.getY() + dy, origin.getZ() + dz);
+                    if (level.getBlockState(mutable).is(ObjectRegistry.CHICKEN_NEST.get())) {
+                        BlockEntity be = level.getBlockEntity(mutable);
+                        if (be instanceof StorageBlockEntity storage) {
+                            for (int i = 0; i < storage.getInventory().size(); i++) {
+                                if (storage.getInventory().get(i).isEmpty()) {
+                                    ci.cancel();
+                                    return;
+                                }
                             }
                         }
                     }

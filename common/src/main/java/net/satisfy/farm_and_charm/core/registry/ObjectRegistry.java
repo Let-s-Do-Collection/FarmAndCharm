@@ -159,6 +159,7 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Block> CAT_FOOD_BAG = registerWithItem("cat_food_bag", () -> new StackableBlock(BlockBehaviour.Properties.copy(Blocks.PINK_CARPET), 3));
     public static final RegistrySupplier<Block> CHICKEN_NEST = registerWithItem("chicken_nest", () -> new ChickenNestBlock(BlockBehaviour.Properties.copy(Blocks.GRASS_BLOCK).noCollission().instabreak()));
     public static final RegistrySupplier<Item> DUNGAREES = registerItem("dungarees", () -> new DungareesItem(ArmorMaterials.LEATHER, ArmorItem.Type.LEGGINGS, getSettings().rarity(Rarity.RARE), new FarmAndCharmIdentifier("textures/models/armor/dungarees.png")));
+    public static final RegistrySupplier<Block> CHICKEN_COOP = registerWithItem("chicken_coop", () -> new ChickenCoopBlock(BlockBehaviour.Properties.copy(Blocks.OAK_PLANKS).strength(1.0F).sound(SoundType.WOOD)));
 
 
     public static void init() {

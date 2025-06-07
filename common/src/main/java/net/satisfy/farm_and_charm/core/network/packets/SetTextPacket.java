@@ -1,4 +1,4 @@
-package net.satisfy.farm_and_charm.core.network;
+package net.satisfy.farm_and_charm.core.network.packets;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;

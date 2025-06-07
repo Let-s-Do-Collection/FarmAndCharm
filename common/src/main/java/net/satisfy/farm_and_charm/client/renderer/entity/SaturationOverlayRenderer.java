@@ -15,9 +15,17 @@ import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.satisfy.farm_and_charm.core.util.SaturationTracker;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 
 public class SaturationOverlayRenderer {
+
+    public static void renderIfApplicable(PoseStack poseStack, MultiBufferSource buffer, LivingEntity entity) {
+        if (!(entity instanceof SaturationTracker.SaturatedAnimal saturated)) return;
+
+        SaturationTracker tracker = saturated.farm_and_charm$getSaturationTracker();
+        render(poseStack, buffer, entity, tracker.level(), tracker.foodCounter());
+    }
 
     public static void render(PoseStack poseStack, MultiBufferSource buffer, LivingEntity entity, int level, int foodCounter) {
         if (entity.isBaby()) return;

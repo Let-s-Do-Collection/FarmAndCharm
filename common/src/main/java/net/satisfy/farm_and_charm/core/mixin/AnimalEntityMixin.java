@@ -1,6 +1,7 @@
 package net.satisfy.farm_and_charm.core.mixin;
 
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -21,31 +22,40 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Animal.class)
 public abstract class AnimalEntityMixin extends Mob implements SaturationTracker.SaturatedAnimal {
+    
 
     @Unique
-    private final SaturationTracker farm_and_charm$saturation = new SaturationTracker();
+    private SaturationTracker farm_and_charm$saturation;
 
-    protected AnimalEntityMixin(EntityType<? extends Mob> entityType, Level world) {
-        super(entityType, world);
-    }
-
-    @Inject(method = "<init>", at = @At("TAIL"))
-    private void AFTAddSelfFeedingGoal(EntityType<? extends Mob> entityType, Level world, CallbackInfo ci) {
-        if (!world.isClientSide) {
-            this.goalSelector.addGoal(3, new ApproachFeedingTroughGoal((Animal) (Object) this, 1.2D));
-        }
+    protected AnimalEntityMixin(EntityType<? extends Mob> entityType, Level level) {
+        super(entityType, level);
     }
 
     @Override
     public SaturationTracker farm_and_charm$getSaturationTracker() {
+        if (farm_and_charm$saturation == null) {
+            farm_and_charm$saturation = new SaturationTracker();
+        }
         return farm_and_charm$saturation;
+    }
+
+    @Override
+    public void farm_and_charm$setSaturationTracker(SaturationTracker tracker) {
+        this.farm_and_charm$saturation = tracker;
+    }
+
+    @Inject(method = "<init>", at = @At("TAIL"))
+    private void farm_and_charm$addSelfFeedingGoal(EntityType<? extends Mob> entityType, Level level, CallbackInfo ci) {
+        if (!level.isClientSide) {
+            this.goalSelector.addGoal(3, new ApproachFeedingTroughGoal((Animal) (Object) this, 1.2D));
+        }
     }
 
     @Inject(method = "aiStep", at = @At("HEAD"))
     private void farm_and_charm$tickSaturation(CallbackInfo ci) {
         EntityType<?> type = this.getType();
         if (!(type == EntityType.COW || type == EntityType.PIG || type == EntityType.SHEEP || type == EntityType.CHICKEN)) return;
-        farm_and_charm$saturation.tick((Animal)(Object)this);
+        farm_and_charm$getSaturationTracker().tick((Animal)(Object)this);
     }
 
     @Inject(method = "mobInteract", at = @At("HEAD"), cancellable = true)
@@ -58,12 +68,36 @@ public abstract class AnimalEntityMixin extends Mob implements SaturationTracker
 
         if (!animal.isFood(stack) || animal.isBaby()) return;
 
-        farm_and_charm$saturation.tryFeed(animal, player, hand);
+        farm_and_charm$getSaturationTracker().tryFeed(animal, player, hand);
 
         if (!animal.level().isClientSide) {
             ((ServerLevel)animal.level()).sendParticles(ParticleTypes.HAPPY_VILLAGER, animal.getX(), animal.getY() + 1.0, animal.getZ(), 5, 0.2, 0.2, 0.2, 0.05);
         }
 
         cir.setReturnValue(InteractionResult.sidedSuccess(animal.level().isClientSide));
+    }
+
+    @Inject(method = "addAdditionalSaveData", at = @At("HEAD"))
+    private void farm_and_charm$saveSaturation(CompoundTag tag, CallbackInfo ci) {
+        SaturationTracker tracker = farm_and_charm$getSaturationTracker();
+        CompoundTag trackerTag = new CompoundTag();
+        trackerTag.putInt("SaturationLevel", tracker.level());
+        trackerTag.putInt("SaturationCounter", tracker.foodCounter());
+        trackerTag.putLong("SaturationLastFed", tracker.getLastFedTick());
+        trackerTag.putInt("SaturationDecayDelay", tracker.getDecayDelay());
+        tag.put("FarmAndCharmSaturation", trackerTag);
+    }
+
+    @Inject(method = "readAdditionalSaveData", at = @At("HEAD"))
+    private void farm_and_charm$loadSaturation(CompoundTag tag, CallbackInfo ci) {
+        if (tag.contains("FarmAndCharmSaturation", 10)) {
+            CompoundTag trackerTag = tag.getCompound("FarmAndCharmSaturation");
+            SaturationTracker tracker = new SaturationTracker();
+            tracker.setLevel(trackerTag.getInt("SaturationLevel"));
+            tracker.setFoodCounter(trackerTag.getInt("SaturationCounter"));
+            tracker.setLastFedTick(trackerTag.getLong("SaturationLastFed"));
+            tracker.setDecayDelay(trackerTag.getInt("SaturationDecayDelay"));
+            farm_and_charm$setSaturationTracker(tracker);
+        }
     }
 }

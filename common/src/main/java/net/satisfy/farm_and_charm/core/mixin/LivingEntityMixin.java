@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
-
     @Inject(method = "dropAllDeathLoot", at = @At("TAIL"))
     private void farm_and_charm$injectExtraLoot(DamageSource source, CallbackInfo ci) {
         if (!(((Object)this) instanceof Animal animal)) return;

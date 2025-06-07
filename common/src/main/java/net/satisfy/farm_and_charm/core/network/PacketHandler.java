@@ -1,6 +1,7 @@
 package net.satisfy.farm_and_charm.core.network;
 
 import dev.architectury.networking.NetworkManager;
+import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -26,18 +27,23 @@ public class PacketHandler {
         });
     }
 
+    public static void sendToClient(ServerPlayer player, SyncSaturationPacket packet) {
+        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+        SyncSaturationPacket.encode(packet, buf);
+        NetworkManager.sendToPlayer(player, SYNC_SATURATION, buf);
+    }
+
     public static void sendToServer(SetTextPacket packet) {
-        FriendlyByteBuf buf = new FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
+        FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         SetTextPacket.encode(packet, buf);
         NetworkManager.sendToServer(SET_SIGN_TEXT, buf);
     }
 
     public static void sendSaturationSync(SyncSaturationPacket packet, Entity entity) {
-        FriendlyByteBuf buf = new FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
-        SyncSaturationPacket.encode(packet, buf);
-
         if (entity.level() instanceof ServerLevel serverLevel) {
             for (ServerPlayer player : serverLevel.players()) {
+                FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+                SyncSaturationPacket.encode(packet, buf);
                 NetworkManager.sendToPlayer(player, SYNC_SATURATION, buf);
             }
         }

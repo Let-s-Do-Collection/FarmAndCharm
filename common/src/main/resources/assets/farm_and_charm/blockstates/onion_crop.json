@@ -1,42 +1,76 @@
 {
   "variants": {
-    "age=0": [
+    "age=0,big=false,giant=false": {
+      "model": "farm_and_charm:block/onion_stage0"
+    },
+    "age=0,big=true,giant=false": {
+      "model": "farm_and_charm:block/onion_stage0"
+    },
+    "age=0,big=false,giant=true": {
+      "model": "farm_and_charm:block/onion_stage0"
+    },
+    "age=0,big=true,giant=true": {
+      "model": "farm_and_charm:block/onion_stage0"
+    },
+
+    "age=1,big=false,giant=false": {
+      "model": "farm_and_charm:block/onion_stage1"
+    },
+    "age=1,big=true,giant=false": {
+      "model": "farm_and_charm:block/onion_stage1"
+    },
+    "age=1,big=false,giant=true": {
+      "model": "farm_and_charm:block/onion_stage1"
+    },
+    "age=1,big=true,giant=true": {
+      "model": "farm_and_charm:block/onion_stage1"
+    },
+
+    "age=2,big=false,giant=false": {
+      "model": "farm_and_charm:block/onion_stage2"
+    },
+    "age=2,big=true,giant=false": {
+      "model": "farm_and_charm:block/onion_stage2"
+    },
+    "age=2,big=false,giant=true": {
+      "model": "farm_and_charm:block/onion_stage2"
+    },
+    "age=2,big=true,giant=true": {
+      "model": "farm_and_charm:block/onion_stage2"
+    },
+
+    "age=3,big=false,giant=false": {
+      "model": "farm_and_charm:block/onion_stage3"
+    },
+    "age=3,big=true,giant=false": {
+      "model": "farm_and_charm:block/onion_stage3"
+    },
+    "age=3,big=false,giant=true": {
+      "model": "farm_and_charm:block/onion_stage3"
+    },
+    "age=3,big=true,giant=true": {
+      "model": "farm_and_charm:block/onion_stage3"
+    },
+
+    "age=4,big=false,giant=false": [
       {
-        "model": "farm_and_charm:block/onion_stage0",
-        "weight": 1
-      }
-    ],
-    "age=1": [
-      {
-        "model": "farm_and_charm:block/onion_stage1",
-        "weight": 1
-      }
-    ],
-    "age=2": [
-      {
-        "model": "farm_and_charm:block/onion_stage2",
-        "weight": 1
-      }
-    ],
-    "age=3": [
-      {
-        "model": "farm_and_charm:block/onion_stage3",
-        "weight": 1
-      }
-    ],
-    "age=4": [
-      {
-        "model": "farm_and_charm:block/onion_stage4_1",
-        "weight": 1
+        "model": "farm_and_charm:block/onion_stage4_1"
       },
       {
-        "model": "farm_and_charm:block/onion_stage4_2",
-        "weight": 1
+        "model": "farm_and_charm:block/onion_stage4_2"
       },
       {
-        "model": "farm_and_charm:block/onion_stage4_3",
-        "weight": 1
+        "model": "farm_and_charm:block/onion_stage4_3"
       }
-    ]
+    ],
+    "age=4,big=true,giant=false": {
+      "model": "farm_and_charm:block/onion_stage4_big"
+    },
+    "age=4,big=false,giant=true": {
+      "model": "farm_and_charm:block/onion_stage4_giant"
+    },
+    "age=4,big=true,giant=true": {
+      "model": "farm_and_charm:block/onion_stage4_giant"
+    }
   }
 }

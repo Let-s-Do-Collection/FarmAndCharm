@@ -1,0 +1,22 @@
+{
+	"credit": "Made by Satisfy",
+	"textures": {
+		"0": "farm_and_charm:block/lettuce_stage3_big",
+		"particle": "farm_and_charm:block/lettuce_stage3_big"
+	},
+	"elements": [
+		{
+			"from": [5, -1, 5],
+			"to": [11, 2, 11],
+			"rotation": {"angle": 0, "axis": "y", "origin": [5, -1, 5]},
+			"faces": {
+				"north": {"uv": [8, 2, 14, 5], "texture": "#0"},
+				"east": {"uv": [8, 10, 14, 13], "texture": "#0"},
+				"south": {"uv": [8, 2, 14, 5], "texture": "#0"},
+				"west": {"uv": [8, 6, 14, 9], "texture": "#0"},
+				"up": {"uv": [1, 2, 7, 8], "texture": "#0"},
+				"down": {"uv": [1, 9, 7, 15], "texture": "#0"}
+			}
+		}
+	]
+}

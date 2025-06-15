@@ -54,7 +54,6 @@ public class ChickenCoopBlockEntity extends BlockEntity {
         }
     }
 
-
     public boolean hasSpaceForChicken() {
         return chickensInside.size() < MAX_CHICKENS;
     }

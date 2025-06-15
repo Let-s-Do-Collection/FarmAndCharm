@@ -1,13 +1,19 @@
 [1.0.10]
 
+## This small update focuses on adding new mechanics that enhance loot from farm animals, selected F&C crops, and eggs through interaction, care, and environmental factors.
+
 **Added**
-* **A Pet Bowl!**
-Use a Pet Bowl to feed your favorite cat or dog. From time to time, your pets will wander over to an empty bowl and beg for food. Feeding them not only makes them happy but also grants temporary bonuses. You can even assign a Name Tag to reserve a specific bowl for your most beloved companion.
-* Chicken Nest: Place it near Chickens and layed Eggs from Chickens will be placed inside the Chicken Nest instead of the Floor. Has a maximum capacity of 2. 
-* Dungarees - farm in style!
+* A Pet Bowl! - Feed your cat or dog with a `Pet Bowl`. Occasionally, pets will walk up to an empty bowl and beg for food. Feeding grants temporary bonuses. You can assign a Name Tag to dedicate a bowl to a specific pet.
+* Chicken Nest: When placed near chickens, laid eggs are stored directly inside the nest instead of dropping to the ground. Maximum capacity: 2 eggs.
+* Chicken Coop: Works like similar to a bee nest. Chickens nearby will enter the coop when ready to lay an egg. Holds up to 6 chickens at once.
+* Farm animals can now be fed their preferred food. The more often they are fed, the more meat they will drop. Feeding progress is visible only when wearing...
+* `Dungarees`! – While equipped, shows feed levels above animals. Also prevents trampling farmland while wearing them. They can be bought from Farmer Villagers.
+* Certain F&C crops now have a small chance to grow into larger variants when near a water sprinkler or during rain. Larger crops have an increased chance of yielding multiple drops.
+* Farmer Villagers have now a Chance to offer several F&C related Items.
+* When placing SugarCare on Fertilized Soil it will grow 20% faster
+
 
 ***
-
 
 [1.0.9]
 

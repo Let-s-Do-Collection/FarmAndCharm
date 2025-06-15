@@ -6,6 +6,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -14,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -30,7 +32,7 @@ public class FertilizedSoilBlock extends Block {
     public static final IntegerProperty SIZE = IntegerProperty.create("size", 0, 3);
 
     public FertilizedSoilBlock(Properties properties) {
-        super(properties);
+        super(properties.randomTicks());
         this.registerDefaultState(this.stateDefinition.any().setValue(SIZE, 3));
     }
 
@@ -52,21 +54,23 @@ public class FertilizedSoilBlock extends Block {
     @Override
     public @NotNull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         ItemStack itemStack = player.getItemInHand(hand);
+        boolean hasSugarCaneAbove = level.getBlockState(pos.above()).is(Blocks.SUGAR_CANE);
+
         if (itemStack.getItem() == ObjectRegistry.PITCHFORK.get()) {
+            if (hasSugarCaneAbove) return InteractionResult.PASS;
             int newSize = state.getValue(SIZE) - 1;
             if (newSize < 0) {
                 level.removeBlock(pos, false);
-                spawnBreakParticles(level, pos, state);
-                level.playSound(null, pos, SoundEvents.SHOVEL_FLATTEN, SoundSource.BLOCKS, 1.0F, 1.0F);
             } else {
                 level.setBlock(pos, state.setValue(SIZE, newSize), 3);
                 applyBoneMealEffect(level, pos);
-                spawnBreakParticles(level, pos, state);
-                level.playSound(null, pos, SoundEvents.SHOVEL_FLATTEN, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
+            spawnParticles(level, pos, state, false);
+            level.playSound(null, pos, SoundEvents.SHOVEL_FLATTEN, SoundSource.BLOCKS, 1.0F, 1.0F);
             itemStack.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(hand));
             return InteractionResult.SUCCESS;
         } else if (itemStack.getItem() instanceof HoeItem) {
+            if (hasSugarCaneAbove) return InteractionResult.PASS;
             int currentSize = state.getValue(SIZE);
             if (currentSize == 3) {
                 level.setBlock(pos, ObjectRegistry.FERTILIZED_FARM_BLOCK.get().defaultBlockState(), 3);
@@ -78,13 +82,17 @@ public class FertilizedSoilBlock extends Block {
             }
             return InteractionResult.PASS;
         }
+
         return InteractionResult.PASS;
     }
 
-
-    private void spawnBreakParticles(Level level, BlockPos pos, BlockState state) {
+    private void spawnParticles(Level level, BlockPos pos, BlockState state, boolean happy) {
         if (!level.isClientSide) {
-            ((ServerLevel) level).sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, state), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 20, 0.5, 0.5, 0.5, 0.2);
+            ServerLevel server = (ServerLevel) level;
+            server.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, state), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 20, 0.5, 0.5, 0.5, 0.2);
+            if (happy) {
+                server.sendParticles(ParticleTypes.HAPPY_VILLAGER, pos.getX() + 0.5, pos.getY() + 0.25, pos.getZ() + 0.5, 4, 0.25, 0.1, 0.25, 0.01);
+            }
         }
     }
 
@@ -102,6 +110,35 @@ public class FertilizedSoilBlock extends Block {
                             }
                         }
                     });
+        }
+    }
+
+    @Override
+    public void randomTick(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, @NotNull RandomSource random) {
+        if (state.getValue(SIZE) != 3) return;
+        if (random.nextInt(4) != 0) return;
+        BlockPos.MutableBlockPos checkPos = new BlockPos.MutableBlockPos();
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                for (int dy = 0; dy <= 1; dy++) {
+                    if (dx == 0 && dz == 0 && dy == 0) continue;
+                    checkPos.set(pos.getX() + dx, pos.getY() + dy, pos.getZ() + dz);
+                    BlockState targetState = level.getBlockState(checkPos);
+                    if (targetState.is(Blocks.SUGAR_CANE)) {
+                        BlockPos above = checkPos.above();
+                        if (level.isEmptyBlock(above)) {
+                            int height = 1;
+                            while (level.getBlockState(checkPos.below(height)).is(Blocks.SUGAR_CANE)) {
+                                height++;
+                            }
+                            if (height < 3) {
+                                level.setBlock(above, Blocks.SUGAR_CANE.defaultBlockState(), 2);
+                                spawnParticles(level, above, Blocks.SUGAR_CANE.defaultBlockState(), true);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

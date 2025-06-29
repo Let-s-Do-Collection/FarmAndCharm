@@ -17,6 +17,7 @@ import net.satisfy.farm_and_charm.core.recipe.CookingPotRecipe;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class CookingPotDisplay extends BasicDisplay {
 
@@ -27,17 +28,9 @@ public class CookingPotDisplay extends BasicDisplay {
     }
 
     private static List<EntryIngredient> createInputs(Recipe<Container> recipe) {
-        List<EntryIngredient> inputs = new ArrayList<>();
-        ItemStack container = getContainer(recipe);
-        int ingredientIndex = 0;
-        for (net.minecraft.world.item.crafting.Ingredient ingredient : recipe.getIngredients()) {
-            for (ItemStack stack : ingredient.getItems()) {
-                if (ingredientIndex < 6) {
-                    inputs.add(EntryIngredients.of(stack));
-                    ingredientIndex++;
-                }
-            }
-        }
+        List<EntryIngredient> inputs = new ArrayList<>(recipe.getIngredients().stream()
+                .map(EntryIngredients::ofIngredient)
+                .collect(Collectors.toList()));
         while (inputs.size() < 6) {
             inputs.add(EntryIngredients.of(new ItemStack(Items.AIR)));
         }

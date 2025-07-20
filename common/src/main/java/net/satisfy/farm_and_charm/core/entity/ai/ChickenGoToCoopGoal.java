@@ -27,7 +27,7 @@ public class ChickenGoToCoopGoal extends Goal {
             return false;
 
         BlockEntity be = chicken.level().getBlockEntity(coopPos);
-        return be instanceof ChickenCoopBlockEntity coop && coop.hasSpaceForChicken() && chicken.eggTime == 0;// @author wdog5 - check the egg lay timer is 0
+        return be instanceof ChickenCoopBlockEntity coop && coop.hasSpaceForChicken() && --chicken.eggTime <= 0;// @author wdog5 - check the egg lay timer is 0
     }
 
     @Override

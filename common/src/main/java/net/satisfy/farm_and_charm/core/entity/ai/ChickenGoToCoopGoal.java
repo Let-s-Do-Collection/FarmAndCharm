@@ -61,7 +61,7 @@ public class ChickenGoToCoopGoal extends Goal {
         }
 
         // @author wdog5 - make chicken stay for 15 secs and reduce egg count
-        if (success && be instanceof ChickenCoopBlockEntity chickenCoopBlockEntity) {
+        if (success && be instanceof ChickenCoopBlockEntity chickenCoopBlockEntity && chicken.onGround()) {
             for (int i = 1; i <= 15; i++) {
                 chicken.setNoAi(true);
             }

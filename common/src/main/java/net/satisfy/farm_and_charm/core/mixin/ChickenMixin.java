@@ -1,7 +1,10 @@
 package net.satisfy.farm_and_charm.core.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.satisfy.farm_and_charm.core.block.entity.StorageBlockEntity;
@@ -15,6 +18,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Chicken.class)
@@ -52,6 +56,9 @@ public class ChickenMixin implements ChickenCoopAccess {
         accessor.farmAndCharm$getGoalSelector().addGoal(10, new ChickenEnterCoopGoal(chicken));
     }
 
+    @Unique
+    private boolean isNestFounded = false;
+
     @Inject(method = "aiStep", at = @At("HEAD"), cancellable = true)
     private void farmAndCharm$redirectEggLaying(CallbackInfo ci) {
         Chicken chicken = (Chicken)(Object)this;
@@ -68,6 +75,7 @@ public class ChickenMixin implements ChickenCoopAccess {
                 for (int dz = -6; dz <= 6; dz++) {
                     mutable.set(origin.getX() + dx, origin.getY() + dy, origin.getZ() + dz);
                     if (level.getBlockState(mutable).is(ObjectRegistry.CHICKEN_NEST.get())) {
+                        isNestFounded = true;
                         BlockEntity be = level.getBlockEntity(mutable);
                         if (be instanceof StorageBlockEntity storage) {
                             for (int i = 0; i < storage.getInventory().size(); i++) {
@@ -81,5 +89,10 @@ public class ChickenMixin implements ChickenCoopAccess {
                 }
             }
         }
+    }
+
+    @ModifyExpressionValue(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Chicken;isAlive()Z"))
+    private boolean farmAndCharm$checkNestFounded(boolean original) {
+        return original && !isNestFounded;
     }
 }

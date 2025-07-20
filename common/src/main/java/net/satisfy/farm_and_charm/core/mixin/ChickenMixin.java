@@ -19,6 +19,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 @Mixin(Chicken.class)
 public class ChickenMixin implements ChickenCoopAccess {
     @Unique
@@ -55,7 +57,7 @@ public class ChickenMixin implements ChickenCoopAccess {
     }
 
     @Unique
-    private boolean isNestFounded = false;
+    private AtomicBoolean isNestFounded = new AtomicBoolean(false);
 
     @Inject(method = "aiStep", at = @At("HEAD"), cancellable = true)
     private void farmAndCharm$redirectEggLaying(CallbackInfo ci) {
@@ -73,7 +75,7 @@ public class ChickenMixin implements ChickenCoopAccess {
                 for (int dz = -6; dz <= 6; dz++) {
                     mutable.set(origin.getX() + dx, origin.getY() + dy, origin.getZ() + dz);
                     if (level.getBlockState(mutable).is(ObjectRegistry.CHICKEN_NEST.get())) {
-                        isNestFounded = true;
+                        isNestFounded.getAndSet(true);
                         BlockEntity be = level.getBlockEntity(mutable);
                         if (be instanceof StorageBlockEntity storage) {
                             for (int i = 0; i < storage.getInventory().size(); i++) {
@@ -91,6 +93,6 @@ public class ChickenMixin implements ChickenCoopAccess {
 
     @ModifyExpressionValue(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Chicken;isAlive()Z"))
     private boolean farmAndCharm$checkNestFounded(boolean original) {
-        return original && !isNestFounded;
+        return original && !isNestFounded.get();
     }
 }

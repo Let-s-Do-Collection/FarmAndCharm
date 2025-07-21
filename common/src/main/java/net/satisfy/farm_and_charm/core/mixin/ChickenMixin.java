@@ -13,6 +13,7 @@ import net.satisfy.farm_and_charm.core.entity.ai.LayEggInNestGoal;
 import net.satisfy.farm_and_charm.core.entity.ChickenCoopAccess;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -23,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mixin(Chicken.class)
 public class ChickenMixin implements ChickenCoopAccess {
+    @Shadow public float flap;
     @Unique
     private BlockPos farmAndCharm$coopTarget;
 
@@ -93,6 +95,6 @@ public class ChickenMixin implements ChickenCoopAccess {
 
     @ModifyExpressionValue(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Chicken;isAlive()Z"))
     private boolean farmAndCharm$checkNestFounded(boolean original) {
-        return original && !isNestFounded.get();
+        return original && !isNestFounded.getAndSet(false);
     }
 }

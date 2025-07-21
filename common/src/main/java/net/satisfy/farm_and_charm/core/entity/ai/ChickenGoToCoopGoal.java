@@ -44,6 +44,7 @@ public class ChickenGoToCoopGoal extends Goal {
         tickCounter++;
 
         BlockPos coop = ((ChickenCoopAccess) chicken).farmAndCharm$getCoopTarget();
+        BlockEntity be = chicken.level().getBlockEntity(coop);
 
         if (!chicken.level().getBlockState(coop).is(ObjectRegistry.CHICKEN_COOP.get())) {
             ((ChickenCoopAccess) chicken).farmAndCharm$clearCoopTarget();

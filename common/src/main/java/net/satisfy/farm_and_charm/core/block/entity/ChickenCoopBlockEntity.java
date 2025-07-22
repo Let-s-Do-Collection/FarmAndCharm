@@ -84,9 +84,11 @@ public class ChickenCoopBlockEntity extends BlockEntity {
         return eggCount;
     }
 
-    // @author wdog5 - add method to allow set egg count.
-    public void setEggCount(int count) {
-        this.eggCount = count;
+    // @author wdog5 - add method to allow add egg count.
+    public void addEggCount(int count) {
+        if (eggCount <= MAX_EGGS) {
+            this.eggCount = eggCount + count;
+        }
     }
 
     public void clearEggs() {

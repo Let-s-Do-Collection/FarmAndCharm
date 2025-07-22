@@ -66,7 +66,6 @@ public class ChickenEnterCoopGoal extends Goal {
                 }
             }, 15000);
         }
-
         return result && willLayEgg;
     }
 
@@ -75,7 +74,16 @@ public class ChickenEnterCoopGoal extends Goal {
         BlockPos target = ((ChickenCoopAccess) chicken).farmAndCharm$getCoopTarget();
         if (target != null && chicken.level().getBlockEntity(target) instanceof ChickenCoopBlockEntity coop && coop.hasSpaceForChicken()) {
             chicken.level().playSound(null, chicken.blockPosition(), SoundEvents.BEEHIVE_ENTER, chicken.getSoundSource(), 1.0F, 1.0F);
-            coop.addChicken(chicken);
+            // @author wdog5 - make chicken stay for 15 secs and reduce egg count
+            boolean checkPosValid = chicken.onGround() && !chicken.isInWall() && !chicken.isInPowderSnow && !chicken.isInLava() && !chicken.isInWaterOrBubble() && !chicken.isOnFire();
+            if (checkPosValid) {
+                for (int i = 1; i <= 15; i++) {
+                    chicken.setNoAi(true);
+                }
+                coop.addChicken(chicken);
+                coop.setEggCount(coop.getEggCount() - 1);
+            }
+
             ((ChickenCoopAccess) chicken).farmAndCharm$clearCoopTarget();
         }
     }

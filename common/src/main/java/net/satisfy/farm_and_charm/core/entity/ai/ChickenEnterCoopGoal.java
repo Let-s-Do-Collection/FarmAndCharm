@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Chicken;
-import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.farm_and_charm.core.block.ChickenCoopBlock;
 import net.satisfy.farm_and_charm.core.block.entity.ChickenCoopBlockEntity;
@@ -38,9 +37,7 @@ public class ChickenEnterCoopGoal extends Goal {
                 && coop.hasSpaceForChicken()
                 && !coop.containsChicken(chicken);
 
-        boolean willLayEgg = !chicken.level().isClientSide && chicken.isAlive() && !chicken.isBaby() && !chicken.isChickenJockey() && --chicken.eggTime <= 0;// @author wdog5 - check the egg lay timer is 0 and it will be lay eggs
-
-        if (result && willLayEgg) {
+        if (result) {
             chicken.setInvisible(true);
             chicken.setNoAi(true);
             System.out.println("ChickenEnterCoopGoal triggered for " + chicken.getUUID());
@@ -63,11 +60,12 @@ public class ChickenEnterCoopGoal extends Goal {
                     chicken.moveTo(e, g, h, chicken.getYRot(), chicken.getXRot());
                     ChickenAccessor accessor = (ChickenAccessor) chicken;
                     accessor.farmAndCharm$setEggTime(chicken.getRandom().nextInt(6000) + 6000);
+                    System.out.println("Chicken Outside triggered for " + chicken.getUUID());
                 }
             }, 15000);
         }
 
-        return result && willLayEgg;
+        return result;
     }
 
     @Override

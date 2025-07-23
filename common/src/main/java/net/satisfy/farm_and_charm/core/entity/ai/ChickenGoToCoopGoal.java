@@ -27,7 +27,12 @@ public class ChickenGoToCoopGoal extends Goal {
 
         BlockEntity be = chicken.level().getBlockEntity(coopPos);
         boolean willLayEgg = !chicken.level().isClientSide && chicken.isAlive() && !chicken.isBaby() && !chicken.isChickenJockey() && --chicken.eggTime <= 0;// @author wdog5 - they should only walk towards it when the EggLayingCounter is going towards 0
-        return be instanceof ChickenCoopBlockEntity coop && coop.hasSpaceForChicken() && willLayEgg;
+
+        boolean result = be instanceof ChickenCoopBlockEntity coop && coop.hasSpaceForChicken() && willLayEgg;
+        if (result) {
+            System.out.println("ChickenGoToCoopGoal triggered for " + chicken.getUUID());
+        }
+        return result;
     }
 
     @Override

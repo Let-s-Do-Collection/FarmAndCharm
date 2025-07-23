@@ -37,7 +37,9 @@ public class ChickenEnterCoopGoal extends Goal {
                 && coop.hasSpaceForChicken()
                 && !coop.containsChicken(chicken);
 
-        if (result) {
+        boolean willLayEgg = !chicken.level().isClientSide && chicken.isAlive() && !chicken.isBaby() && !chicken.isChickenJockey() && --chicken.eggTime <= 0;// @author wdog5 - check the egg lay timer is 0 and it will be lay eggs
+
+        if (result && willLayEgg) {
             chicken.setInvisible(true);
             chicken.setNoAi(true);
             System.out.println("ChickenEnterCoopGoal triggered for " + chicken.getUUID());
@@ -64,7 +66,6 @@ public class ChickenEnterCoopGoal extends Goal {
                 }
             }, 15000);
         }
-
         return result;
     }
 

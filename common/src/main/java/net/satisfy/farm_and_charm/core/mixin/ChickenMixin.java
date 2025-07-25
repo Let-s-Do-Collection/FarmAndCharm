@@ -13,18 +13,15 @@ import net.satisfy.farm_and_charm.core.entity.ai.LayEggInNestGoal;
 import net.satisfy.farm_and_charm.core.entity.ChickenCoopAccess;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mixin(Chicken.class)
 public class ChickenMixin implements ChickenCoopAccess {
-    @Shadow public float flap;
     @Unique
     private BlockPos farmAndCharm$coopTarget;
 
@@ -55,11 +52,11 @@ public class ChickenMixin implements ChickenCoopAccess {
         accessor.farmAndCharm$getGoalSelector().addGoal(5, new LayEggInNestGoal(chicken));
         accessor.farmAndCharm$getGoalSelector().addGoal(8, new ChickenLocateCoopGoal(chicken));
         accessor.farmAndCharm$getGoalSelector().addGoal(9, new ChickenGoToCoopGoal(chicken));
-        accessor.farmAndCharm$getGoalSelector().addGoal(10, new ChickenEnterCoopGoal(chicken));
+        accessor.farmAndCharm$getGoalSelector().addGoal(9, new ChickenEnterCoopGoal(chicken));
     }
 
     @Unique
-    private AtomicBoolean isNestFounded = new AtomicBoolean(false);
+    private AtomicBoolean isNestAndCoopFounded = new AtomicBoolean(false);
 
     @Inject(method = "aiStep", at = @At("HEAD"), cancellable = true)
     private void farmAndCharm$redirectEggLaying(CallbackInfo ci) {
@@ -76,8 +73,8 @@ public class ChickenMixin implements ChickenCoopAccess {
             for (int dy = -2; dy <= 2; dy++) {
                 for (int dz = -6; dz <= 6; dz++) {
                     mutable.set(origin.getX() + dx, origin.getY() + dy, origin.getZ() + dz);
-                    if (level.getBlockState(mutable).is(ObjectRegistry.CHICKEN_NEST.get())) {
-                        isNestFounded.getAndSet(true);
+                    if (level.getBlockState(mutable).is(ObjectRegistry.CHICKEN_NEST.get()) || level.getBlockState(mutable).is(ObjectRegistry.CHICKEN_COOP.get())) {
+                        isNestAndCoopFounded.getAndSet(true);
                         BlockEntity be = level.getBlockEntity(mutable);
                         if (be instanceof StorageBlockEntity storage) {
                             for (int i = 0; i < storage.getInventory().size(); i++) {
@@ -95,6 +92,6 @@ public class ChickenMixin implements ChickenCoopAccess {
 
     @ModifyExpressionValue(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Chicken;isAlive()Z"))
     private boolean farmAndCharm$checkNestFounded(boolean original) {
-        return original && !isNestFounded.getAndSet(false);
+        return original && !isNestAndCoopFounded.getAndSet(false);
     }
 }

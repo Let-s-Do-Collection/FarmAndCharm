@@ -24,11 +24,11 @@ public class ChickenEnterCoopGoal extends Goal {
 
     @Override
     public boolean canUse() {
+        //if (!ChickenLayEggUtil.willLayEgg(chicken)) return false;
         if (!((ChickenCoopAccess) chicken).farmAndCharm$hasCoopTarget()) return false;
         BlockPos target = ((ChickenCoopAccess) chicken).farmAndCharm$getCoopTarget();
 
         if (!(chicken.level().getBlockEntity(target) instanceof ChickenCoopBlockEntity coop)) return false;
-
         Vec3 chickenPos = chicken.position();
         Vec3 targetCenter = new Vec3(target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5);
         double distance = chickenPos.distanceTo(targetCenter);
@@ -37,9 +37,7 @@ public class ChickenEnterCoopGoal extends Goal {
                 && coop.hasSpaceForChicken()
                 && !coop.containsChicken(chicken);
 
-        boolean willLayEgg = !chicken.level().isClientSide && chicken.isAlive() && !chicken.isBaby() && !chicken.isChickenJockey() && --chicken.eggTime <= 0;// @author wdog5 - check the egg lay timer is 0 and it will be lay eggs
-
-        if (result && willLayEgg) {
+        if (result) {
             chicken.setInvisible(true);
             chicken.setNoAi(true);
             System.out.println("ChickenEnterCoopGoal triggered for " + chicken.getUUID());
@@ -60,6 +58,8 @@ public class ChickenEnterCoopGoal extends Goal {
                     double g = chicken.getY() + 1.5 - (double)(chicken.getBbHeight() / 2.0F);
                     double h = chicken.getZ() + 1.5 + d * (double)coop.getBlockState().getValue(ChickenCoopBlock.FACING).getStepZ();
                     chicken.moveTo(e, g, h, chicken.getYRot(), chicken.getXRot());
+                    coop.removeChicken(chicken);
+                    chicken.level().playSound(null, chicken.blockPosition(), SoundEvents.CHICKEN_EGG, chicken.getSoundSource(), 1.0F, 1.0F);
                     ChickenAccessor accessor = (ChickenAccessor) chicken;
                     accessor.farmAndCharm$setEggTime(chicken.getRandom().nextInt(6000) + 6000);
                     System.out.println("Chicken Outside triggered for " + chicken.getUUID());

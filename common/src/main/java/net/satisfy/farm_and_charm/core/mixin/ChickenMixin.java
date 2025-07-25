@@ -6,8 +6,7 @@ import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.satisfy.farm_and_charm.core.block.entity.StorageBlockEntity;
-import net.satisfy.farm_and_charm.core.entity.ai.ChickenEnterCoopGoal;
-import net.satisfy.farm_and_charm.core.entity.ai.ChickenGoToCoopGoal;
+import net.satisfy.farm_and_charm.core.entity.ai.ChickenGotoAndEnterCoopGoal;
 import net.satisfy.farm_and_charm.core.entity.ai.ChickenLocateCoopGoal;
 import net.satisfy.farm_and_charm.core.entity.ai.LayEggInNestGoal;
 import net.satisfy.farm_and_charm.core.entity.ChickenCoopAccess;
@@ -51,8 +50,7 @@ public class ChickenMixin implements ChickenCoopAccess {
         MobAccessor accessor = (MobAccessor) chicken;
         accessor.farmAndCharm$getGoalSelector().addGoal(5, new LayEggInNestGoal(chicken));
         accessor.farmAndCharm$getGoalSelector().addGoal(8, new ChickenLocateCoopGoal(chicken));
-        accessor.farmAndCharm$getGoalSelector().addGoal(9, new ChickenGoToCoopGoal(chicken));
-        accessor.farmAndCharm$getGoalSelector().addGoal(9, new ChickenEnterCoopGoal(chicken));
+        accessor.farmAndCharm$getGoalSelector().addGoal(9, new ChickenGotoAndEnterCoopGoal(chicken));
     }
 
     @Unique

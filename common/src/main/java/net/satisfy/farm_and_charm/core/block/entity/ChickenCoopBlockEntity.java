@@ -31,6 +31,7 @@ public class ChickenCoopBlockEntity extends BlockEntity {
     public static void tick(Level level, BlockPos pos, ChickenCoopBlockEntity coop) {
         if (level.isClientSide) return;
 
+        /*
         Iterator<Map.Entry<UUID, Integer>> iterator = coop.chickensInside.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<UUID, Integer> entry = iterator.next();
@@ -42,16 +43,14 @@ public class ChickenCoopBlockEntity extends BlockEntity {
 
                 if (entity instanceof Chicken chicken) {
                     coop.removeChicken(chicken);
-                    chicken.moveTo(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, level.random.nextFloat() * 360F, 0);
-                    level.addFreshEntity(chicken);
-                    coop.addEgg();
+                    //level.addFreshEntity(chicken); - do not add
+                    //coop.addEgg(); - do not add
                 }
-
-                iterator.remove();
+                //iterator.remove(); - do not remove
             } else {
                 entry.setValue(time);
             }
-        }
+        }*/
     }
 
     public boolean hasSpaceForChicken() {
@@ -60,7 +59,7 @@ public class ChickenCoopBlockEntity extends BlockEntity {
 
     public void addChicken(Chicken chicken) {
         if (hasSpaceForChicken()) {
-            chicken.discard();
+            //chicken.discard(); - @author wdog5 - not discard
             chickensInside.put(chicken.getUUID(), STAY_TICKS);
             addEgg();
         }
@@ -84,9 +83,11 @@ public class ChickenCoopBlockEntity extends BlockEntity {
         return eggCount;
     }
 
-    // @author wdog5 - add method to allow set egg count.
-    public void setEggCount(int count) {
-        this.eggCount = count;
+    // @author wdog5 - add method to allow add egg count.
+    public void addEggCount(int count) {
+        if (eggCount <= MAX_EGGS) {
+            this.eggCount = eggCount + count;
+        }
     }
 
     public void clearEggs() {

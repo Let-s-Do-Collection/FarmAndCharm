@@ -54,7 +54,7 @@ public class EffectFoodItem extends Item implements EffectFood {
                 }
             }
         }
-        return returnStack;
+        return user.eat(world, returnStack);// Should Eat ItemStack because this is Food
     }
 
     @Override

@@ -58,7 +58,7 @@ public class EffectFoodItem extends Item implements EffectFood {
                 playerInventory.add(slot, itemStack);
             }
         }
-        return returnStack;
+        return user.eat(world, returnStack);// Should Eat ItemStack because this is Food
     }
 
     @Override

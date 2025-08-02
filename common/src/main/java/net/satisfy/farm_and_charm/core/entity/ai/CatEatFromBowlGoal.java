@@ -37,21 +37,30 @@ public class CatEatFromBowlGoal extends Goal {
 
         Level level = cat.level();
         BlockPos catPos = cat.blockPosition();
+        double closestDist = Double.MAX_VALUE;
+        BlockPos closest = null;
+        ItemStack candidateFood = ItemStack.EMPTY;
 
         for (BlockPos pos : BlockPos.betweenClosed(catPos.offset(-16, -4, -16), catPos.offset(16, 4, 16))) {
             BlockState state = level.getBlockState(pos);
-            if (!state.is(ObjectRegistry.PET_BOWL.get())) continue;
-            if (!state.hasProperty(PetBowlBlock.FOOD_TYPE)) continue;
+            if (!state.is(ObjectRegistry.PET_BOWL.get()) || !state.hasProperty(PetBowlBlock.FOOD_TYPE)) continue;
             if (state.getValue(PetBowlBlock.FOOD_TYPE) != GeneralUtil.FoodType.CAT) continue;
 
             BlockEntity be = level.getBlockEntity(pos);
-            if (!(be instanceof PetBowlBlockEntity bowl)) continue;
-            if (bowl.isEmpty()) continue;
-            if (!bowl.canBeUsedBy(cat)) continue;
+            if (!(be instanceof PetBowlBlockEntity bowl) || bowl.isEmpty() || !bowl.canBeUsedBy(cat)) continue;
 
-            targetBowl = pos.immutable();
-            foodStack = bowl.getItem(0).copy();
-            targetVec = new Vector3f(pos.getX() + 0.5F, pos.getY(), pos.getZ() + 0.5F);
+            double dist = pos.distSqr(catPos);
+            if (dist < closestDist) {
+                closestDist = dist;
+                closest = pos.immutable();
+                candidateFood = bowl.getItem(0).copy();
+            }
+        }
+
+        if (closest != null) {
+            targetBowl = closest;
+            targetVec = new Vector3f(closest.getX() + 0.5F, closest.getY(), closest.getZ() + 0.5F);
+            foodStack = candidateFood;
             return true;
         }
 
@@ -67,8 +76,13 @@ public class CatEatFromBowlGoal extends Goal {
     @Override
     public boolean canContinueToUse() {
         if (targetBowl == null) return false;
-        BlockState state = cat.level().getBlockState(targetBowl);
-        if (!(state.getBlock() instanceof PetBowlBlock)) return false;
+
+        Level level = cat.level();
+        BlockState state = level.getBlockState(targetBowl);
+        if (!(state.getBlock() instanceof PetBowlBlock) || !state.hasProperty(PetBowlBlock.FOOD_TYPE)) return false;
+
+        BlockEntity be = level.getBlockEntity(targetBowl);
+        if (!(be instanceof PetBowlBlockEntity bowl) || bowl.isEmpty() || !bowl.canBeUsedBy(cat)) return false;
 
         float distSqr = targetVec.distanceSquared((float) cat.getX(), (float) cat.getY(), (float) cat.getZ());
         return distSqr > 4.0F || eatTicks < 60;
@@ -76,7 +90,17 @@ public class CatEatFromBowlGoal extends Goal {
 
     @Override
     public void tick() {
-        if (targetBowl == null) return;
+        if (targetBowl == null) {
+            stop();
+            return;
+        }
+
+        Level level = cat.level();
+        BlockEntity be = level.getBlockEntity(targetBowl);
+        if (!(be instanceof PetBowlBlockEntity bowl) || bowl.isEmpty()) {
+            stop();
+            return;
+        }
 
         float distSqr = targetVec.distanceSquared((float) cat.getX(), (float) cat.getY(), (float) cat.getZ());
         if (distSqr <= 4.0F) {
@@ -84,16 +108,10 @@ public class CatEatFromBowlGoal extends Goal {
             cat.setOrderedToSit(true);
             cat.getLookControl().setLookAt(targetVec.x(), targetVec.y(), targetVec.z());
 
-            Level level = cat.level();
-
             if (!level.isClientSide && eatTicks <= 40) {
                 ParticleOptions particle = getParticleFromFood();
                 if (particle != null) {
-                    ((ServerLevel) level).sendParticles(
-                            particle,
-                            targetVec.x(), targetVec.y() + 0.09375F, targetVec.z(),
-                            3, 0.2, 0.2, 0.2, 0.05
-                    );
+                    ((ServerLevel) level).sendParticles(particle, targetVec.x(), targetVec.y() + 0.09375F, targetVec.z(), 3, 0.2, 0.2, 0.2, 0.05);
                 }
 
                 if (eatTicks % 10 == 0) {
@@ -102,24 +120,16 @@ public class CatEatFromBowlGoal extends Goal {
             }
 
             if (eatTicks == 40) {
-                BlockEntity be = level.getBlockEntity(targetBowl);
-                if (be instanceof PetBowlBlockEntity bowl) {
-                    bowl.decreaseFood();
-                    ((BowlAccessor.FedTracker) cat).farmAndCharm$$markAsFed();
-                }
+                bowl.decreaseFood();
+                ((BowlAccessor.FedTracker) cat).farmAndCharm$$markAsFed();
 
                 if (!level.isClientSide) {
-                    ((ServerLevel) level).sendParticles(
-                            ParticleTypes.HEART,
-                            cat.getX(), cat.getY() + 0.5F, cat.getZ(),
-                            3, 0.3, 0.3, 0.3, 0.01
-                    );
+                    ((ServerLevel) level).sendParticles(ParticleTypes.HEART, cat.getX(), cat.getY() + 0.5F, cat.getZ(), 3, 0.3, 0.3, 0.3, 0.01);
                     level.playSound(null, cat.blockPosition(), SoundEvents.CAT_PURR, cat.getSoundSource(), 1.0F, 1.0F);
 
                     BlockState old = level.getBlockState(targetBowl);
                     if (old.getBlock() instanceof PetBowlBlock && old.hasProperty(PetBowlBlock.FOOD_TYPE)) {
-                        BlockState nw = old.setValue(PetBowlBlock.FOOD_TYPE, GeneralUtil.FoodType.NONE);
-                        level.setBlockAndUpdate(targetBowl, nw);
+                        level.setBlockAndUpdate(targetBowl, old.setValue(PetBowlBlock.FOOD_TYPE, GeneralUtil.FoodType.NONE));
                     }
                 }
             }

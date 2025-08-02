@@ -19,7 +19,6 @@ public class WhineAtBowlGoal extends Goal {
     private BlockPos bowlPos;
     private int whineTicks;
     private long lastCheckTime;
-    private int cooldownTicks;
     private boolean active;
 
     private static final int CHECK_INTERVAL_TICKS = 20;
@@ -32,17 +31,13 @@ public class WhineAtBowlGoal extends Goal {
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
         this.whineTicks = 0;
         this.lastCheckTime = -1;
-        this.cooldownTicks = 0;
         this.active = false;
     }
 
     @Override
     public boolean canUse() {
-        if (cooldownTicks > 0) {
-            cooldownTicks--;
-            return false;
-        }
         if (!wolf.isTame() || wolf.isOrderedToSit()) return false;
+
         Level level = wolf.level();
         if (!(level instanceof ServerLevel server)) return false;
 
@@ -57,13 +52,13 @@ public class WhineAtBowlGoal extends Goal {
 
         BlockPos wolfPos = wolf.blockPosition();
         for (BlockPos pos : BlockPos.betweenClosed(wolfPos.offset(-32, -4, -32), wolfPos.offset(32, 4, 32))) {
-            if (level.getBlockState(pos).is(ObjectRegistry.PET_BOWL.get())) {
-                BlockEntity be = level.getBlockEntity(pos);
-                if (be instanceof PetBowlBlockEntity bowl && bowl.isEmpty() && bowl.canBeUsedBy(wolf)) {
-                    bowlPos = pos.immutable();
-                    lastCheckTime = gameTime;
-                    return true;
-                }
+            if (!level.getBlockState(pos).is(ObjectRegistry.PET_BOWL.get())) continue;
+
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof PetBowlBlockEntity bowl && bowl.isEmpty() && bowl.canBeUsedBy(wolf)) {
+                bowlPos = pos.immutable();
+                lastCheckTime = gameTime;
+                return true;
             }
         }
         return false;
@@ -71,13 +66,13 @@ public class WhineAtBowlGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        if (!active || whineTicks >= MAX_WHINE_TICKS) return false;
+        if (!active || whineTicks >= MAX_WHINE_TICKS || bowlPos == null) return false;
+
         Level level = wolf.level();
-        if (level instanceof ServerLevel server && bowlPos != null) {
-            BlockEntity be = server.getBlockEntity(bowlPos);
-            return be instanceof PetBowlBlockEntity bowl && bowl.isEmpty();
-        }
-        return false;
+        if (!(level instanceof ServerLevel server)) return false;
+
+        BlockEntity be = server.getBlockEntity(bowlPos);
+        return be instanceof PetBowlBlockEntity bowl && bowl.isEmpty() && bowl.canBeUsedBy(wolf);
     }
 
     @Override
@@ -103,12 +98,19 @@ public class WhineAtBowlGoal extends Goal {
 
     @Override
     public void tick() {
-        if (bowlPos == null) return;
+        if (bowlPos == null) {
+            stop();
+            return;
+        }
+
         Level level = wolf.level();
-        if (!(level instanceof ServerLevel server)) return;
+        if (!(level instanceof ServerLevel server)) {
+            stop();
+            return;
+        }
 
         BlockEntity be = server.getBlockEntity(bowlPos);
-        if (be instanceof PetBowlBlockEntity bowl && !bowl.isEmpty()) {
+        if (!(be instanceof PetBowlBlockEntity bowl) || !bowl.isEmpty()) {
             stop();
             return;
         }
@@ -118,6 +120,7 @@ public class WhineAtBowlGoal extends Goal {
                 if (!wolf.isOrderedToSit()) {
                     wolf.setOrderedToSit(true);
                 }
+                wolf.getLookControl().setLookAt(bowlPos.getX() + 0.5, bowlPos.getY() + 0.5, bowlPos.getZ() + 0.5);
             }
         } else {
             if (!wolf.getNavigation().isInProgress()) {
@@ -136,45 +139,25 @@ public class WhineAtBowlGoal extends Goal {
 
         if (whineTicks % ANGRY_PARTICLE_INTERVAL == 0) {
             Vec3 pos = wolf.position().add(0, 0.5, 0);
-            server.sendParticles(ParticleTypes.ANGRY_VILLAGER, pos.x, pos.y, pos.z,
-                    6, 0.3, 0.3, 0.3, 0.01);
+            server.sendParticles(ParticleTypes.ANGRY_VILLAGER, pos.x, pos.y, pos.z, 6, 0.3, 0.3, 0.3, 0.01);
         }
 
         if (++whineTicks >= MAX_WHINE_TICKS) {
             wolf.playSound(SoundEvents.WOLF_GROWL, 0.4f, 0.4f);
             Vec3 pos = wolf.position().add(0, 0.5, 0);
-            server.sendParticles(ParticleTypes.ANGRY_VILLAGER, pos.x, pos.y, pos.z,
-                    15, 0.3, 0.3, 0.3, 0.01);
+            server.sendParticles(ParticleTypes.ANGRY_VILLAGER, pos.x, pos.y, pos.z, 15, 0.3, 0.3, 0.3, 0.01);
             stop();
         }
     }
 
     @Override
     public void stop() {
-        boolean bowlStillEmpty = true;
-        if (bowlPos != null) {
-            BlockEntity be = wolf.level().getBlockEntity(bowlPos);
-            if (be instanceof PetBowlBlockEntity bowl && !bowl.isEmpty()) {
-                bowlStillEmpty = false;
-            }
-        }
-
         bowlPos = null;
         whineTicks = 0;
         active = false;
-        cooldownTicks = bowlStillEmpty ? 400 : CHECK_INTERVAL_TICKS;
 
         if (wolf.isOrderedToSit()) {
             wolf.setOrderedToSit(false);
-        }
-
-        if (!bowlStillEmpty) {
-            wolf.playSound(SoundEvents.WOLF_PANT, 1.0f, 1.0f);
-            if (wolf.level() instanceof ServerLevel server) {
-                Vec3 pos = wolf.position().add(0, 0.5, 0);
-                server.sendParticles(ParticleTypes.HEART, pos.x, pos.y, pos.z,
-                        5, 0.3, 0.3, 0.3, 0.0);
-            }
         }
     }
 }

@@ -11,9 +11,14 @@
 * Certain F&C crops now have a small chance to grow into larger variants when near a water sprinkler or during rain. Larger crops have an increased chance of yielding multiple drops.
 * Farmer Villagers have now a Chance to offer several F&C related Items.
 * When placing SugarCare on Fertilized Soil it will grow 20% faster
+* Support for DoggyTalents
 
 **Fixed**
-* JEI showing 
+* Recipe for Yeast had wrong tags as Ingredients
+* fr_fr translation
+* EffectFood returns itself after being consumed, which is likely unintended.
+
+
 ***
 
 [1.0.9]

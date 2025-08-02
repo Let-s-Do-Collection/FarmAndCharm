@@ -2,6 +2,7 @@ package net.satisfy.farm_and_charm.core.registry;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
@@ -16,4 +17,5 @@ public class TagRegistry {
     public static final TagKey<Item> HANGABLE = TagKey.create(Registries.ITEM, new FarmAndCharmIdentifier("hangable"));
     public static final TagKey<Item> CONTAINER = TagKey.create(Registries.ITEM, new FarmAndCharmIdentifier("container"));
     public static final TagKey<Item> FEEDING_TROUGH_FODDER = TagKey.create(Registries.ITEM, new FarmAndCharmIdentifier("feeding_trough_fodder"));
+    public static final TagKey<EntityType<?>> IS_WOLF = TagKey.create(Registries.ENTITY_TYPE, new FarmAndCharmIdentifier("is_wolf"));
 }

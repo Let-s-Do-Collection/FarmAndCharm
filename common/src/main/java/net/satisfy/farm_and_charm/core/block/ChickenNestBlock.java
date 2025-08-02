@@ -39,7 +39,7 @@ public class ChickenNestBlock extends StorageBlock {
 
     @Override
     public boolean canInsertStack(ItemStack stack) {
-        return stack.is(Items.EGG);
+        return stack.is(Items.EGG) || stack.is(Items.FEATHER);
     }
 
     @Override

@@ -12,7 +12,8 @@
 * Farmer Villagers have now a Chance to offer several F&C related Items.
 * When placing SugarCare on Fertilized Soil it will grow 20% faster
 
-
+**Fixed**
+* JEI showing 
 ***
 
 [1.0.9]

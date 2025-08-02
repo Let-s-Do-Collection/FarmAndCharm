@@ -16,15 +16,19 @@ public class PetBowlBlockRenderer implements BlockEntityRenderer<PetBowlBlockEnt
     @Override
     public void render(PetBowlBlockEntity entity, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int light, int overlay) {
         poseStack.pushPose();
-        poseStack.translate(0.5, 0.165, 0.2475);
+
+        poseStack.translate(0.5, 0.165, 0.5);
+
         Direction facing = entity.getBlockState().getValue(PetBowlBlock.FACING);
         float rotation = switch (facing) {
-            case NORTH -> 180f;
+            case SOUTH -> 180f;
             case WEST -> -90f;
             case EAST -> 90f;
             default -> 0f;
         };
         poseStack.mulPose(Axis.YP.rotationDegrees(rotation));
+        poseStack.translate(0.0, 0.0, 0.2505);
+
         poseStack.scale(0.01f, -0.01f, 0.01f);
 
         Font font = Minecraft.getInstance().font;
@@ -37,4 +41,6 @@ public class PetBowlBlockRenderer implements BlockEntityRenderer<PetBowlBlockEnt
 
         poseStack.popPose();
     }
+
+
 }

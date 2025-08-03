@@ -3,8 +3,10 @@ package net.satisfy.farm_and_charm.core.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -25,12 +27,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.farm_and_charm.core.block.entity.ChickenCoopBlockEntity;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
+import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -94,11 +98,20 @@ public class ChickenCoopBlock extends BaseEntityBlock {
     }
 
     @Override
-    public @NotNull InteractionResult use(BlockState state, Level level, BlockPos pos,
-                                          Player player, InteractionHand hand, BlockHitResult hit) {
+    public @NotNull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!level.isClientSide) {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof ChickenCoopBlockEntity coop) {
+                ItemStack heldItem = player.getItemInHand(hand);
+
+                if (heldItem.is(ObjectRegistry.PITCHFORK.get()) && !coop.getStoredChickens().isEmpty()) {
+                    coop.releaseAllChickens();
+                    level.playSound(null, pos, SoundEvents.ANVIL_FALL, player.getSoundSource(), 1.0F, 1.1F);
+                    level.playSound(null, pos, SoundEvents.CHICKEN_HURT, player.getSoundSource(), 0.325F, 0.825F);
+                    level.playSound(null, pos, SoundEvents.BEEHIVE_EXIT, player.getSoundSource(), 0.7F, 1.1F);
+                    return InteractionResult.SUCCESS;
+                }
+
                 int eggCount = coop.getEggCount();
                 if (eggCount > 0) {
                     player.addItem(Items.EGG.getDefaultInstance().copyWithCount(eggCount));
@@ -106,6 +119,17 @@ public class ChickenCoopBlock extends BaseEntityBlock {
                     coop.setChanged();
                     level.setBlock(pos, state.setValue(EGGS, 0), Block.UPDATE_CLIENTS);
                     return InteractionResult.SUCCESS;
+                }
+
+                if (coop.hasSpaceForChicken()) {
+                    for (Chicken chicken : level.getEntitiesOfClass(Chicken.class, new AABB(pos).inflate(7.0))) {
+                        if (chicken.isLeashed() && chicken.getLeashHolder() == player && chicken.isAlive()) {
+                            coop.addChicken(chicken);
+                            chicken.dropLeash(true, true);
+                            level.playSound(null, pos, SoundEvents.BEEHIVE_ENTER, player.getSoundSource(), 1.0F, 1.0F);
+                            return InteractionResult.SUCCESS;
+                        }
+                    }
                 }
             }
         }

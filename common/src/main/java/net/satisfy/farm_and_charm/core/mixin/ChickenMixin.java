@@ -1,6 +1,7 @@
 package net.satisfy.farm_and_charm.core.mixin;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.ai.goal.GoalSelector;
 import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -26,9 +27,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ChickenMixin implements ChickenCoopAccess {
     @Unique
     private BlockPos farmAndCharm$coopTarget;
-
     @Unique
     private boolean farmAndCharm$searchedForCoop = false;
+    @Unique
+    private int farmAndCharm$coopCooldown = 0;
 
     @Override
     public BlockPos farmAndCharm$getCoopTarget() {
@@ -46,13 +48,11 @@ public class ChickenMixin implements ChickenCoopAccess {
     }
 
     @Override
-    public boolean farmAndCharm$hasCoopTarget() {
-        return this.farmAndCharm$coopTarget != null;
-    }
+    public boolean farmAndCharm$searchedForCoop() { return this.farmAndCharm$searchedForCoop;}
 
     @Override
-    public boolean farmAndCharm$hasSearchedForCoop() {
-        return this.farmAndCharm$searchedForCoop;
+    public boolean farmAndCharm$hasCoopTarget() {
+        return this.farmAndCharm$coopTarget != null;
     }
 
     @Override
@@ -60,10 +60,25 @@ public class ChickenMixin implements ChickenCoopAccess {
         this.farmAndCharm$searchedForCoop = value;
     }
 
+    @Override
+    public int farmAndCharm$getCoopCooldown() {
+        return this.farmAndCharm$coopCooldown;
+    }
+
+    @Override
+    public void farmAndCharm$setCoopCooldown(int cooldown) {
+        this.farmAndCharm$coopCooldown = cooldown;
+    }
+
+    @Inject(method = "aiStep", at = @At("HEAD"))
+    private void farmAndCharm$tickCoopCooldown(CallbackInfo ci) {
+        if (farmAndCharm$coopCooldown > 0) farmAndCharm$coopCooldown--;
+    }
+
     @Inject(method = "registerGoals", at = @At("TAIL"))
     private void addCustomGoals(CallbackInfo ci) {
-        Chicken chicken = (Chicken)(Object)this;
-        GoalSelector goalSelector = ((MobAccessor)chicken).farmAndCharm$getGoalSelector();
+        Chicken chicken = (Chicken) (Object) this;
+        GoalSelector goalSelector = ((MobAccessor) chicken).farmAndCharm$getGoalSelector();
         goalSelector.addGoal(8, new ChickenLocateCoopGoal(chicken));
         goalSelector.addGoal(9, new ChickenGotoAndEnterCoopGoal(chicken));
     }
@@ -71,11 +86,12 @@ public class ChickenMixin implements ChickenCoopAccess {
     @Redirect(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/animal/Chicken;spawnAtLocation(Lnet/minecraft/world/level/ItemLike;)Lnet/minecraft/world/entity/item/ItemEntity;"))
     private ItemEntity redirectEggLaying(Chicken instance, ItemLike item) {
         if (!item.equals(Items.EGG)) return instance.spawnAtLocation(item);
-        if (((ChickenCoopAccess) instance).farmAndCharm$hasCoopTarget()) return null;
+
         Level level = instance.level();
         if (level.isClientSide() || instance.isBaby() || !instance.isAlive() || instance.isChickenJockey()) {
             return instance.spawnAtLocation(item);
         }
+
         BlockPos origin = instance.blockPosition();
         for (BlockPos pos : BlockPos.betweenClosed(origin.offset(-6, -2, -6), origin.offset(6, 2, 6))) {
             if (level.getBlockState(pos).is(ObjectRegistry.CHICKEN_NEST.get())) {
@@ -94,6 +110,34 @@ public class ChickenMixin implements ChickenCoopAccess {
                 }
             }
         }
+
         return instance.spawnAtLocation(item);
+    }
+
+    @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
+    private void farmAndCharm$saveCoopData(CompoundTag tag, CallbackInfo ci) {
+        tag.putInt("CoopCooldown", farmAndCharm$coopCooldown);
+        tag.putBoolean("SearchedForCoop", farmAndCharm$searchedForCoop);
+        if (farmAndCharm$coopTarget != null) {
+            tag.putInt("CoopTargetX", farmAndCharm$coopTarget.getX());
+            tag.putInt("CoopTargetY", farmAndCharm$coopTarget.getY());
+            tag.putInt("CoopTargetZ", farmAndCharm$coopTarget.getZ());
+        }
+    }
+
+    @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
+    private void farmAndCharm$loadCoopData(CompoundTag tag, CallbackInfo ci) {
+        if (tag.contains("CoopCooldown")) {
+            farmAndCharm$coopCooldown = tag.getInt("CoopCooldown");
+        }
+        if (tag.contains("SearchedForCoop")) {
+            farmAndCharm$searchedForCoop = tag.getBoolean("SearchedForCoop");
+        }
+        if (tag.contains("CoopTargetX") && tag.contains("CoopTargetY") && tag.contains("CoopTargetZ")) {
+            int x = tag.getInt("CoopTargetX");
+            int y = tag.getInt("CoopTargetY");
+            int z = tag.getInt("CoopTargetZ");
+            farmAndCharm$coopTarget = new BlockPos(x, y, z);
+        }
     }
 }

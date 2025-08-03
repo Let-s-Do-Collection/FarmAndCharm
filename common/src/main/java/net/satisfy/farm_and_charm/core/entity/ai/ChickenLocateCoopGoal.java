@@ -7,7 +7,6 @@ import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.satisfy.farm_and_charm.core.block.entity.ChickenCoopBlockEntity;
 import net.satisfy.farm_and_charm.core.entity.ChickenCoopAccess;
-import net.satisfy.farm_and_charm.core.mixin.ChickenAccessor;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 
 import java.util.ArrayList;
@@ -28,9 +27,12 @@ public class ChickenLocateCoopGoal extends Goal {
     @Override
     public boolean canUse() {
         if (chicken.isBaby()) return false;
-        if (((ChickenCoopAccess) chicken).farmAndCharm$hasCoopTarget()) return false;
-        if (((ChickenCoopAccess) chicken).farmAndCharm$hasSearchedForCoop()) return false;
-        if (((ChickenAccessor) chicken).farmAndCharm$getEggTime() > 300) return false;
+
+        ChickenCoopAccess access = (ChickenCoopAccess) chicken;
+
+        if (access.farmAndCharm$hasCoopTarget()) return false;
+        if (access.farmAndCharm$searchedForCoop()) return false;
+        if (access.farmAndCharm$getCoopCooldown() > 0) return false;
 
         ServerLevel level = (ServerLevel) chicken.level();
 
@@ -58,7 +60,6 @@ public class ChickenLocateCoopGoal extends Goal {
             BlockEntity be = level.getBlockEntity(check);
             if (!(be instanceof ChickenCoopBlockEntity coop) || !coop.hasSpaceForChicken()) return false;
             if (chicken.getNavigation().createPath(check, 0) == null) return false;
-
             if (!cachedCoops.contains(check)) cachedCoops.add(check);
             return true;
         }).orElse(null);
@@ -70,5 +71,6 @@ public class ChickenLocateCoopGoal extends Goal {
     public void start() {
         ((ChickenCoopAccess) chicken).farmAndCharm$setCoopTarget(foundCoop);
         ((ChickenCoopAccess) chicken).farmAndCharm$setSearchedForCoop(true);
+        chicken.getNavigation().moveTo(foundCoop.getX() + 0.5, foundCoop.getY() + 0.5, foundCoop.getZ() + 0.5, 1.0);
     }
 }

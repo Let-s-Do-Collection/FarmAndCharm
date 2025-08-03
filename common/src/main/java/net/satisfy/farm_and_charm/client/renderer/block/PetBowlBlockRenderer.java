@@ -21,10 +21,10 @@ public class PetBowlBlockRenderer implements BlockEntityRenderer<PetBowlBlockEnt
 
         Direction facing = entity.getBlockState().getValue(PetBowlBlock.FACING);
         float rotation = switch (facing) {
-            case SOUTH -> 180f;
+            case SOUTH -> 0f;
             case WEST -> -90f;
             case EAST -> 90f;
-            default -> 0f;
+            default -> 180f;
         };
         poseStack.mulPose(Axis.YP.rotationDegrees(rotation));
         poseStack.translate(0.0, 0.0, 0.2505);

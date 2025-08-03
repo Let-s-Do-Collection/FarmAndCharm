@@ -8,14 +8,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.farm_and_charm.core.block.entity.ChickenCoopBlockEntity;
 import net.satisfy.farm_and_charm.core.entity.ChickenCoopAccess;
-import net.satisfy.farm_and_charm.core.mixin.ChickenAccessor;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 
 import java.util.EnumSet;
 
 public class ChickenGotoAndEnterCoopGoal extends Goal {
     private final Chicken chicken;
-    private int tickCounter;
 
     public ChickenGotoAndEnterCoopGoal(Chicken chicken) {
         this.chicken = chicken;
@@ -24,60 +22,56 @@ public class ChickenGotoAndEnterCoopGoal extends Goal {
 
     @Override
     public boolean canUse() {
+        if (((ChickenCoopAccess) chicken).farmAndCharm$getCoopCooldown() > 0) return false;
         if (!((ChickenCoopAccess) chicken).farmAndCharm$hasCoopTarget()) return false;
-
         BlockPos target = ((ChickenCoopAccess) chicken).farmAndCharm$getCoopTarget();
         BlockEntity be = chicken.level().getBlockEntity(target);
-        if (!(be instanceof ChickenCoopBlockEntity coop)) return false;
-
-        Vec3 targetCenter = new Vec3(target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5);
-        double distance = chicken.position().distanceTo(targetCenter);
-
-        int eggTime = ((ChickenAccessor) chicken).farmAndCharm$getEggTime();
-
-        return coop.hasSpaceForChicken()
-                && !coop.containsChicken(chicken)
-                && eggTime <= 0
-                && distance <= 1.5;
+        return be instanceof ChickenCoopBlockEntity coop && coop.hasSpaceForChicken() && !coop.containsChicken(chicken);
     }
 
     @Override
     public void start() {
-        tickCounter = 0;
+        BlockPos coopPos = ((ChickenCoopAccess) chicken).farmAndCharm$getCoopTarget();
+        if (coopPos == null) return;
+        double distance = chicken.position().distanceTo(Vec3.atCenterOf(coopPos));
+        if (distance <= 1.2) {
+            BlockEntity be = chicken.level().getBlockEntity(coopPos);
+            if (be instanceof ChickenCoopBlockEntity coop && coop.hasSpaceForChicken()) {
+                chicken.level().playSound(null, chicken.blockPosition(), SoundEvents.BEEHIVE_ENTER, chicken.getSoundSource(), 1.0F, 1.0F);
+                coop.addChicken(chicken);
+                ((ChickenCoopAccess) chicken).farmAndCharm$clearCoopTarget();
+                ((ChickenCoopAccess) chicken).farmAndCharm$setCoopCooldown(20 * 60 * (3 + chicken.getRandom().nextInt(10)));
+                chicken.getNavigation().stop();
+                return;
+            }
+        }
+        chicken.getNavigation().moveTo(coopPos.getX() + 0.5, coopPos.getY() + 0.5, coopPos.getZ() + 0.5, 1.0);
+    }
 
-        BlockPos target = ((ChickenCoopAccess) chicken).farmAndCharm$getCoopTarget();
-        BlockEntity be = chicken.level().getBlockEntity(target);
-        if (!(be instanceof ChickenCoopBlockEntity coop)) return;
-
-        if (coop.hasSpaceForChicken()) {
-            chicken.level().playSound(null, chicken.blockPosition(), SoundEvents.BEEHIVE_ENTER, chicken.getSoundSource(), 1.0F, 1.0F);
-            coop.addChicken(chicken);
-
-            ((ChickenAccessor) chicken).farmAndCharm$setEggTime(chicken.getRandom().nextInt(6000) + 6000);
+    @Override
+    public void tick() {
+        BlockPos coopPos = ((ChickenCoopAccess) chicken).farmAndCharm$getCoopTarget();
+        if (coopPos == null) return;
+        if (!chicken.level().getBlockState(coopPos).is(ObjectRegistry.CHICKEN_COOP.get())) {
             ((ChickenCoopAccess) chicken).farmAndCharm$clearCoopTarget();
-            ((ChickenCoopAccess) chicken).farmAndCharm$setSearchedForCoop(false);
+            chicken.getNavigation().stop();
+            return;
+        }
+        double distance = chicken.position().distanceTo(Vec3.atCenterOf(coopPos));
+        if (distance <= 1.2) {
+            BlockEntity be = chicken.level().getBlockEntity(coopPos);
+            if (be instanceof ChickenCoopBlockEntity coop && coop.hasSpaceForChicken()) {
+                chicken.level().playSound(null, chicken.blockPosition(), SoundEvents.BEEHIVE_ENTER, chicken.getSoundSource(), 1.0F, 1.0F);
+                coop.addChicken(chicken);
+                ((ChickenCoopAccess) chicken).farmAndCharm$clearCoopTarget();
+                ((ChickenCoopAccess) chicken).farmAndCharm$setCoopCooldown(20 * 60 * (3 + chicken.getRandom().nextInt(10)));
+                chicken.getNavigation().stop();
+            }
         }
     }
 
     @Override
     public void stop() {
-        tickCounter = 0;
         chicken.getNavigation().stop();
-    }
-
-    @Override
-    public void tick() {
-        tickCounter++;
-
-        BlockPos coop = ((ChickenCoopAccess) chicken).farmAndCharm$getCoopTarget();
-        if (coop == null) return;
-
-        if (!chicken.level().getBlockState(coop).is(ObjectRegistry.CHICKEN_COOP.get())) {
-            ((ChickenCoopAccess) chicken).farmAndCharm$clearCoopTarget();
-            chicken.getNavigation().stop();
-            return;
-        }
-
-        chicken.getNavigation().moveTo(coop.getX(), coop.getY(), coop.getZ(), 1.0);
     }
 }

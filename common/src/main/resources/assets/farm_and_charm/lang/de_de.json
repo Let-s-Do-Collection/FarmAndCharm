@@ -302,8 +302,8 @@
   "block.farm_and_charm.cat_food_bag": "Sack Katzenfutter",
   "block.farm_and_charm.chicken_coop": "Hühnerstall",
   "item.farm_and_charm.chicken_coop": "Hühnerstall",
-  "tooltip.farm_and_charm.chickencoop_hens": "Hühner: %s/3",
-  "tooltip.farm_and_charm.chickencoop_eggs": "Eier: %s/9",
+  "tooltip.farm_and_charm.chickencoop_chickens": "%s von %s Hühnern im Stall",
+  "tooltip.farm_and_charm.chickencoop_eggs": "%s of %s Eier gelagert",
   "tooltip.farm_and_charm.dungarees_1": "When on Legs:",
   "tooltip.farm_and_charm.dungarees_2": "Verhindert das Zertrampeln von Ackerboden ",
   "tooltip.farm_and_charm.dungarees_3": "Shows Feeding Level of Farm Animals"

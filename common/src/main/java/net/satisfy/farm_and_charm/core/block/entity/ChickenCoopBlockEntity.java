@@ -1,9 +1,9 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Chicken;
@@ -11,6 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
+import net.satisfy.farm_and_charm.core.entity.ChickenCoopAccess;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,19 +34,42 @@ public class ChickenCoopBlockEntity extends BlockEntity {
         while (iterator.hasNext()) {
             CompoundTag chickenTag = iterator.next();
             int ticks = chickenTag.getInt("CoopTime") - 1;
+
             if (ticks <= 0) {
                 chickenTag.remove("CoopTime");
-                Entity chicken = EntityType.CHICKEN.create((ServerLevel) level);
-                if (chicken != null) {
-                    chicken.load(chickenTag);
-                    chicken.moveTo(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, chicken.getYRot(), chicken.getXRot());
-                    level.addFreshEntity(chicken);
+                Entity chicken = EntityType.CHICKEN.create(level);
+                if (chicken instanceof Chicken spawned) {
+                    int coopCooldown = 20 * 60 * (4 + level.getRandom().nextInt(2));
+                    spawned.load(chickenTag);
+                    spawned.setHealth(spawned.getMaxHealth());
+                    spawned.setInvisible(false);
+                    spawned.setNoAi(false);
+                    spawned.setSilent(false);
+                    if (spawned instanceof ChickenCoopAccess coopChicken) {
+                        coopChicken.farmAndCharm$setCoopCooldown(coopCooldown);
+                    }
+
+                    BlockPos spawnPos = findSafeSpawnPosition(level, pos);
+                    spawned.moveTo(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5, spawned.getYRot(), spawned.getXRot());
+                    level.addFreshEntity(spawned);
+                    iterator.remove();
+                    coop.setChanged();
+                    level.sendBlockUpdated(pos, coop.getBlockState(), coop.getBlockState(), 3);
                 }
-                iterator.remove();
             } else {
                 chickenTag.putInt("CoopTime", ticks);
             }
         }
+    }
+
+    private static BlockPos findSafeSpawnPosition(Level level, BlockPos center) {
+        for (Direction dir : Direction.Plane.HORIZONTAL) {
+            BlockPos offset = center.relative(dir);
+            if (level.getBlockState(offset).isAir() && level.getBlockState(offset.above()).isAir()) {
+                return offset;
+            }
+        }
+        return center.above();
     }
 
     public boolean hasSpaceForChicken() {
@@ -53,14 +77,52 @@ public class ChickenCoopBlockEntity extends BlockEntity {
     }
 
     public void addChicken(Chicken chicken) {
-        if (hasSpaceForChicken()) {
-            CompoundTag tag = new CompoundTag();
-            chicken.save(tag);
-            tag.putInt("CoopTime", 200);
-            storedChickens.add(tag);
-            chicken.discard();
-            addEgg();
+        if (this.level == null || this.level.isClientSide) return;
+        if (!hasSpaceForChicken()) return;
+
+        CompoundTag tag = new CompoundTag();
+        chicken.save(tag);
+        tag.putInt("CoopTime", 200 + chicken.getRandom().nextInt(200));
+        storedChickens.add(tag);
+
+        chicken.stopRiding();
+        chicken.ejectPassengers();
+        chicken.setNoAi(true);
+        chicken.setSilent(true);
+        chicken.setInvisible(true);
+        chicken.discard();
+
+        addEgg();
+        this.setChanged();
+        this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
+    }
+
+    public void releaseAllChickens() {
+        if (this.level == null || this.level.isClientSide) return;
+
+        for (CompoundTag tag : new ArrayList<>(storedChickens)) {
+            tag.remove("CoopTime");
+            Entity chicken = EntityType.CHICKEN.create(level);
+            if (chicken instanceof Chicken spawned) {
+                int coopCooldown = 20 * 60 * (4 + level.getRandom().nextInt(2));
+                spawned.load(tag);
+                spawned.setHealth(spawned.getMaxHealth());
+                spawned.setInvisible(false);
+                spawned.setNoAi(false);
+                spawned.setSilent(false);
+                if (spawned instanceof ChickenCoopAccess coopChicken) {
+                    coopChicken.farmAndCharm$setCoopCooldown(coopCooldown);
+                }
+
+                BlockPos spawnPos = findSafeSpawnPosition(level, worldPosition);
+                spawned.moveTo(spawnPos.getX() + 0.5, spawnPos.getY(), spawnPos.getZ() + 0.5, spawned.getYRot(), spawned.getXRot());
+                level.addFreshEntity(spawned);
+            }
         }
+
+        storedChickens.clear();
+        setChanged();
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
 
     public boolean containsChicken(Chicken chicken) {
@@ -73,6 +135,7 @@ public class ChickenCoopBlockEntity extends BlockEntity {
     public void addEgg() {
         if (eggCount < MAX_EGGS) {
             eggCount++;
+            setChanged();
         }
     }
 
@@ -80,12 +143,13 @@ public class ChickenCoopBlockEntity extends BlockEntity {
         return eggCount;
     }
 
-    public void addEggCount(int count) {
-        eggCount = Math.min(eggCount + count, MAX_EGGS);
-    }
-
     public void clearEggs() {
         eggCount = 0;
+        setChanged();
+    }
+
+    public List<CompoundTag> getStoredChickens() {
+        return this.storedChickens;
     }
 
     @Override

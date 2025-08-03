@@ -7,6 +7,7 @@ import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.satisfy.farm_and_charm.core.block.entity.ChickenCoopBlockEntity;
 import net.satisfy.farm_and_charm.core.entity.ChickenCoopAccess;
+import net.satisfy.farm_and_charm.core.mixin.ChickenAccessor;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 
 import java.util.ArrayList;
@@ -26,8 +27,10 @@ public class ChickenLocateCoopGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        if (chicken.isBaby() || ((ChickenCoopAccess) chicken).farmAndCharm$hasCoopTarget())
-            return false;
+        if (chicken.isBaby()) return false;
+        if (((ChickenCoopAccess) chicken).farmAndCharm$hasCoopTarget()) return false;
+        if (((ChickenCoopAccess) chicken).farmAndCharm$hasSearchedForCoop()) return false;
+        if (((ChickenAccessor) chicken).farmAndCharm$getEggTime() > 300) return false;
 
         ServerLevel level = (ServerLevel) chicken.level();
 
@@ -66,5 +69,6 @@ public class ChickenLocateCoopGoal extends Goal {
     @Override
     public void start() {
         ((ChickenCoopAccess) chicken).farmAndCharm$setCoopTarget(foundCoop);
+        ((ChickenCoopAccess) chicken).farmAndCharm$setSearchedForCoop(true);
     }
 }

@@ -2,9 +2,13 @@ package net.satisfy.farm_and_charm.core.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -22,23 +26,22 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.farm_and_charm.core.block.entity.ChickenCoopBlockEntity;
+import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("deprecation")
 public class ChickenCoopBlock extends BaseEntityBlock {
-
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final IntegerProperty EGGS = IntegerProperty.create("eggs", 0, 3);
 
     public ChickenCoopBlock(BlockBehaviour.Properties settings) {
         super(settings);
-        this.registerDefaultState(this.stateDefinition.any()
-                .setValue(FACING, Direction.NORTH)
-                .setValue(EGGS, 0));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(EGGS, 0));
     }
 
     @Override
@@ -48,9 +51,7 @@ public class ChickenCoopBlock extends BaseEntityBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        return this.defaultBlockState()
-                .setValue(FACING, ctx.getHorizontalDirection().getOpposite())
-                .setValue(EGGS, 0);
+        return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite()).setValue(EGGS, 0);
     }
 
     @Override
@@ -78,6 +79,21 @@ public class ChickenCoopBlock extends BaseEntityBlock {
     }
 
     @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+        if (!level.isClientSide && !state.is(newState.getBlock())) {
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof ChickenCoopBlockEntity coop) {
+                ItemStack stack = new ItemStack(this);
+                CompoundTag nbt = new CompoundTag();
+                coop.saveAdditional(nbt);
+                BlockItem.setBlockEntityData(stack, EntityTypeRegistry.CHICKEN_COOP_BLOCK_ENTITY.get(), nbt);
+                level.addFreshEntity(new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), stack));
+            }
+        }
+        super.onRemove(state, level, pos, newState, moved);
+    }
+
+    @Override
     public @NotNull InteractionResult use(BlockState state, Level level, BlockPos pos,
                                           Player player, InteractionHand hand, BlockHitResult hit) {
         if (!level.isClientSide) {
@@ -97,9 +113,7 @@ public class ChickenCoopBlock extends BaseEntityBlock {
     }
 
     @Override
-    public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, net.minecraft.world.phys.shapes.CollisionContext context) {
-        VoxelShape base = Block.box(1.0, 0.0, 1.0, 15.0, 12.0, 15.0);
-        VoxelShape top = Block.box(0.0, 12.0, 0.0, 16.0, 14.0, 16.0);
-        return Shapes.or(base, top);
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return Shapes.or(Block.box(1, 0, 1, 15, 12, 15), Block.box(0, 12, 0, 16, 14, 16));
     }
 }

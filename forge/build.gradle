@@ -25,6 +25,10 @@ loom {
 
 repositories {
     maven { url 'https://jitpack.io' }
+    maven {
+        name = "Velocity"
+        url = "https://nexus.velocitypowered.com/repository/maven-public/"
+    }
 }
 
 configurations {

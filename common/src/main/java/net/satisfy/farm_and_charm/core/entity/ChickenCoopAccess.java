@@ -7,4 +7,7 @@ public interface ChickenCoopAccess {
     void farmAndCharm$setCoopTarget(BlockPos pos);
     void farmAndCharm$clearCoopTarget();
     boolean farmAndCharm$hasCoopTarget();
+
+    boolean farmAndCharm$hasSearchedForCoop();
+    void farmAndCharm$setSearchedForCoop(boolean value);
 }

@@ -299,9 +299,13 @@
   "tooltip.farm_and_charm.dungarees_2": "Prevents Farmland Trampling",
   "tooltip.farm_and_charm.dungarees_3": "Shows Feeding Level of Farm Animals",
   "item.farm_and_charm.dungarees": "Dungarees",
+  "item.farm_and_charm.chicken_coop": "Chicken Coop",
   "block.farm_and_charm.chicken_nest": "Chicken Nest",
   "block.farm_and_charm.pet_bowl": "Pet Bowl",
   "block.farm_and_charm.dog_food_bag": "Dog Food Bag",
   "block.farm_and_charm.cat_food_bag": "Cat Food Bag",
-  "block.farm_and_charm.chicken_coop": "Chicken Coop"
+  "block.farm_and_charm.chicken_coop": "Chicken Coop",
+  "tooltip.farm_and_charm.chickencoop_hens": "Chickens: %s/3",
+  "tooltip.farm_and_charm.chickencoop_eggs": "Eggs: %s/9"
+
 }

@@ -293,7 +293,6 @@
   "tooltip.farm_and_charm.recipe_unlocker.already_unlocked": "Du hast dieses Rezept bereits erlernt!",
   "tooltip.farm_and_charm.recipe_unlocker.unlocked.prefix": "Rezept freigeschaltet:",
   "tooltip.farm_and_charm.recipe_unlocker.recipe_suffix": " Rezept",
-  "tooltip.farm_and_charm.dungarees": "Verhindert das Zertrampeln von Ackerboden beim Tragen",
   "gui.farm_and_charm.pet_bowl.edit": "Napf zuweisen",
   "gui.farm_and_charm.text_edit.done": "Fertig",
   "item.farm_and_charm.dungarees": "Latzhosen",
@@ -301,6 +300,12 @@
   "block.farm_and_charm.pet_bowl": "Napf",
   "block.farm_and_charm.dog_food_bag": "Sack Hundefutter",
   "block.farm_and_charm.cat_food_bag": "Sack Katzenfutter",
-  "block.farm_and_charm.chicken_coop": "Hühnerstall"
+  "block.farm_and_charm.chicken_coop": "Hühnerstall",
+  "item.farm_and_charm.chicken_coop": "Hühnerstall",
+  "tooltip.farm_and_charm.chickencoop_hens": "Hühner: %s/3",
+  "tooltip.farm_and_charm.chickencoop_eggs": "Eier: %s/9",
+  "tooltip.farm_and_charm.dungarees_1": "When on Legs:",
+  "tooltip.farm_and_charm.dungarees_2": "Verhindert das Zertrampeln von Ackerboden ",
+  "tooltip.farm_and_charm.dungarees_3": "Shows Feeding Level of Farm Animals"
 }
 

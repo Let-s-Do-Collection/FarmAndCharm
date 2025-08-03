@@ -5,23 +5,21 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.UUID;
+import java.util.List;
 
 public class ChickenCoopBlockEntity extends BlockEntity {
     private static final int MAX_CHICKENS = 3;
-    private static final int STAY_TICKS = 200;
     private static final int MAX_EGGS = 9;
-
-    private final Map<UUID, Integer> chickensInside = new HashMap<>();
+    private final List<CompoundTag> storedChickens = new ArrayList<>();
     private int eggCount = 0;
 
     public ChickenCoopBlockEntity(BlockPos pos, BlockState state) {
@@ -31,46 +29,45 @@ public class ChickenCoopBlockEntity extends BlockEntity {
     public static void tick(Level level, BlockPos pos, ChickenCoopBlockEntity coop) {
         if (level.isClientSide) return;
 
-        /*
-        Iterator<Map.Entry<UUID, Integer>> iterator = coop.chickensInside.entrySet().iterator();
+        Iterator<CompoundTag> iterator = coop.storedChickens.iterator();
         while (iterator.hasNext()) {
-            Map.Entry<UUID, Integer> entry = iterator.next();
-            int time = entry.getValue() - 1;
-
-            if (time <= 0) {
-                UUID chickenId = entry.getKey();
-                Entity entity = ((ServerLevel) level).getEntity(chickenId);
-
-                if (entity instanceof Chicken chicken) {
-                    coop.removeChicken(chicken);
-                    //level.addFreshEntity(chicken); - do not add
-                    //coop.addEgg(); - do not add
+            CompoundTag chickenTag = iterator.next();
+            int ticks = chickenTag.getInt("CoopTime") - 1;
+            if (ticks <= 0) {
+                chickenTag.remove("CoopTime");
+                Entity chicken = EntityType.CHICKEN.create((ServerLevel) level);
+                if (chicken != null) {
+                    chicken.load(chickenTag);
+                    chicken.moveTo(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, chicken.getYRot(), chicken.getXRot());
+                    level.addFreshEntity(chicken);
                 }
-                //iterator.remove(); - do not remove
+                iterator.remove();
             } else {
-                entry.setValue(time);
+                chickenTag.putInt("CoopTime", ticks);
             }
-        }*/
+        }
     }
 
     public boolean hasSpaceForChicken() {
-        return chickensInside.size() < MAX_CHICKENS;
+        return storedChickens.size() < MAX_CHICKENS;
     }
 
     public void addChicken(Chicken chicken) {
         if (hasSpaceForChicken()) {
-            //chicken.discard(); - @author wdog5 - not discard
-            chickensInside.put(chicken.getUUID(), STAY_TICKS);
+            CompoundTag tag = new CompoundTag();
+            chicken.save(tag);
+            tag.putInt("CoopTime", 200);
+            storedChickens.add(tag);
+            chicken.discard();
             addEgg();
         }
     }
 
-    public void removeChicken(Chicken chicken) {
-        chickensInside.remove(chicken.getUUID());
-    }
-
     public boolean containsChicken(Chicken chicken) {
-        return chickensInside.containsKey(chicken.getUUID());
+        for (CompoundTag tag : storedChickens) {
+            if (tag.getUUID("UUID").equals(chicken.getUUID())) return true;
+        }
+        return false;
     }
 
     public void addEgg() {
@@ -83,11 +80,8 @@ public class ChickenCoopBlockEntity extends BlockEntity {
         return eggCount;
     }
 
-    // @author wdog5 - add method to allow add egg count.
     public void addEggCount(int count) {
-        if (eggCount <= MAX_EGGS) {
-            this.eggCount = eggCount + count;
-        }
+        eggCount = Math.min(eggCount + count, MAX_EGGS);
     }
 
     public void clearEggs() {
@@ -98,26 +92,21 @@ public class ChickenCoopBlockEntity extends BlockEntity {
     public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         ListTag chickenList = new ListTag();
-        for (Map.Entry<UUID, Integer> entry : chickensInside.entrySet()) {
-            CompoundTag entryTag = new CompoundTag();
-            entryTag.putUUID("Id", entry.getKey());
-            entryTag.putInt("Time", entry.getValue());
-            chickenList.add(entryTag);
+        for (CompoundTag chickenTag : storedChickens) {
+            chickenList.add(chickenTag.copy());
         }
-        tag.put("ChickensInside", chickenList);
+        tag.put("Chickens", chickenList);
         tag.putInt("EggCount", eggCount);
     }
 
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
-        chickensInside.clear();
-        ListTag chickenList = tag.getList("ChickensInside", 10);
+        storedChickens.clear();
+        ListTag chickenList = tag.getList("Chickens", 10);
         for (int i = 0; i < chickenList.size(); i++) {
-            CompoundTag entryTag = chickenList.getCompound(i);
-            UUID id = entryTag.getUUID("Id");
-            int time = entryTag.getInt("Time");
-            chickensInside.put(id, time);
+            CompoundTag chickenTag = chickenList.getCompound(i);
+            storedChickens.add(chickenTag);
         }
         eggCount = tag.getInt("EggCount");
     }

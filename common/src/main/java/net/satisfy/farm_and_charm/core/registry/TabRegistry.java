@@ -122,7 +122,7 @@ public class TabRegistry {
                 output.accept(ObjectRegistry.DOG_FOOD_BAG.get());
                 output.accept(ObjectRegistry.CAT_FOOD_BAG.get());
                 output.accept(ObjectRegistry.CHICKEN_NEST.get());
-                output.accept(ObjectRegistry.CHICKEN_COOP.get());
+                output.accept(ObjectRegistry.CHICKEN_COOP_ITEM.get());
                 output.accept(ObjectRegistry.DUNGAREES.get());
                 output.accept(ObjectRegistry.SCARECROW.get());
             })

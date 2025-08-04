@@ -22,13 +22,13 @@ public class TomatoCropHeadBlock extends TomatoCropBlock implements Bonemealable
     }
 
     public static boolean canGrowInto(ServerLevel serverLevel, BlockPos blockPos) {
-        return serverLevel.getBlockState(blockPos).isAir() && (isRopeAbove(serverLevel, blockPos) || getHeight(blockPos.below(), serverLevel) < 2);
+        return serverLevel.getBlockState(blockPos).isAir() && (isRopeAbove(serverLevel, blockPos) || getHeight(blockPos.below(), serverLevel) < getMaxHeight(serverLevel, blockPos));
     }
 
     @Override
     public void tick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource) {
         super.tick(blockState, serverLevel, blockPos, randomSource);
-        if (getHeight(blockPos, serverLevel) > 2 && !isRopeAbove(serverLevel, blockPos)) {
+        if (getHeight(blockPos, serverLevel) > getMaxHeight(serverLevel, blockPos) && !isRopeAbove(serverLevel, blockPos)) {
             serverLevel.destroyBlock(blockPos, true);
         }
     }
@@ -82,5 +82,9 @@ public class TomatoCropHeadBlock extends TomatoCropBlock implements Bonemealable
         } else {
             dropTomatoes(serverLevel, blockPos, blockState);
         }
+    }
+
+    public static int getMaxHeight(LevelAccessor levelAccessor, BlockPos blockPos) {
+        return isRopeAbove(levelAccessor, blockPos) ? 4 : 2;
     }
 }

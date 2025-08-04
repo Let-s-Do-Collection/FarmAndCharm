@@ -90,7 +90,7 @@ public abstract class TomatoCropBlock extends Block {
     }
 
     protected boolean mayPlaceOn(BlockState blockState) {
-        return blockState.is(Blocks.FARMLAND) || blockState.is(FERTILIZED_FARM_BLOCK.get());
+        return blockState.is(Blocks.FARMLAND) || blockState.is(ObjectRegistry.FERTILIZED_FARM_BLOCK.get());
     }
 
     protected boolean canGrow(BlockState blockState) {

@@ -48,18 +48,22 @@ public class CookingPotCategory implements IRecipeCategory<CookingPotRecipe> {
         NonNullList<Ingredient> ingredients = recipe.getIngredients();
         int s = ingredients.size();
 
-        builder.addSlot(RecipeIngredientRole.INPUT, 95 - WIDTH_OF, 55 - HEIGHT_OF).addItemStack(recipe.getContainer());
+        if (recipe.isContainerRequired()) {
+            builder.addSlot(RecipeIngredientRole.INPUT, 95 - WIDTH_OF, 55 - HEIGHT_OF)
+                    .addItemStack(recipe.getContainerItem());
+        }
 
         for (int row = 0; row < 2; row++) {
             for (int slot = 0; slot < 3; slot++) {
-                int current = slot + row + (row * 2);
-                if (s - 1 < current) break;
+                int current = slot + row * 3;
+                if (current >= s) break;
                 Farm_And_Charm_JEIPlugin.addSlot(builder, 30 + (slot * 18) - WIDTH_OF, 17 + (row * 18) - HEIGHT_OF, ingredients.get(current));
             }
         }
 
         assert Minecraft.getInstance().level != null;
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 124 - WIDTH_OF, 28 - HEIGHT_OF).addItemStack(recipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 124 - WIDTH_OF, 28 - HEIGHT_OF)
+                .addItemStack(recipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
     }
 
     @Override

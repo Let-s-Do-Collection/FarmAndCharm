@@ -17,6 +17,7 @@
       "item": "minecraft:potato"
     }
   ],
+  "requireContainer": false,
   "container": {
     "id": "minecraft:bowl",
     "count": 1

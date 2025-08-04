@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.recipe;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -18,12 +19,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class CookingPotRecipe implements Recipe<RecipeInput> {
     private final NonNullList<Ingredient> inputs;
-    private final ItemStack container;
+    private final boolean containerRequired;
+    private final ItemStack containerItem;
     private final ItemStack output;
 
-    public CookingPotRecipe(NonNullList<Ingredient> inputs, ItemStack container, ItemStack output) {
+    public CookingPotRecipe(NonNullList<Ingredient> inputs, boolean containerRequired, ItemStack containerItem, ItemStack output) {
         this.inputs = inputs;
-        this.container = container;
+        this.containerRequired = containerRequired;
+        this.containerItem = containerItem;
         this.output = output;
     }
 
@@ -66,8 +69,16 @@ public class CookingPotRecipe implements Recipe<RecipeInput> {
         return this.inputs;
     }
 
-    public ItemStack getContainer() {
-        return container;
+    public boolean isContainerRequired() {
+        return containerRequired;
+    }
+
+    public ItemStack getContainerItem() {
+        return containerItem;
+    }
+
+    public static ResourceLocation getIdStatic() {
+        return RecipeTypeRegistry.COOKING_POT_RECIPE_TYPE.getId();
     }
 
     @Override
@@ -84,17 +95,34 @@ public class CookingPotRecipe implements Recipe<RecipeInput> {
                             }
                             return DataResult.success(NonNullList.of(Ingredient.EMPTY, ingredients));
                         }, DataResult::success).forGetter(CookingPotRecipe::getIngredients),
-                        ItemStack.CODEC.fieldOf("container").forGetter(CookingPotRecipe::getContainer),
+                        Codec.BOOL.fieldOf("requireContainer").forGetter(CookingPotRecipe::isContainerRequired),
+                        ItemStack.CODEC.fieldOf("container").forGetter(CookingPotRecipe::getContainerItem),
                         ItemStack.CODEC.fieldOf("result").forGetter(recipe -> recipe.output)
                 ).apply(instance, CookingPotRecipe::new)
         );
+        public static final StreamCodec<RegistryFriendlyByteBuf, CookingPotRecipe> STREAM_CODEC =
+                StreamCodec.of(Serializer::toNetwork, Serializer::fromNetwork);
 
-        public static final StreamCodec<RegistryFriendlyByteBuf, CookingPotRecipe> STREAM_CODEC = StreamCodec.composite(
-                StreamCodecUtil.nonNullList(Ingredient.CONTENTS_STREAM_CODEC, Ingredient.EMPTY), CookingPotRecipe::getIngredients,
-                ItemStack.STREAM_CODEC, CookingPotRecipe::getContainer,
-                ItemStack.STREAM_CODEC, recipe -> recipe.output,
-                CookingPotRecipe::new
-        );
+        public static @NotNull CookingPotRecipe fromNetwork(RegistryFriendlyByteBuf registryFriendlyByteBuf) {
+            int i = registryFriendlyByteBuf.readVarInt();
+            NonNullList<Ingredient> nonNullList = NonNullList.withSize(i, Ingredient.EMPTY);
+            nonNullList.replaceAll((ingredient) -> Ingredient.CONTENTS_STREAM_CODEC.decode(registryFriendlyByteBuf));
+            boolean containerRequired = registryFriendlyByteBuf.readBoolean();
+            ItemStack containerItem = ItemStack.STREAM_CODEC.decode(registryFriendlyByteBuf);
+            ItemStack itemStack = ItemStack.STREAM_CODEC.decode(registryFriendlyByteBuf);
+            return new CookingPotRecipe(nonNullList, containerRequired, containerItem, itemStack);
+        }
+
+        public static void toNetwork(RegistryFriendlyByteBuf registryFriendlyByteBuf, CookingPotRecipe recipe) {
+            registryFriendlyByteBuf.writeVarInt(recipe.getIngredients().size());
+
+            for (Ingredient ingredient : recipe.getIngredients()) {
+                Ingredient.CONTENTS_STREAM_CODEC.encode(registryFriendlyByteBuf, ingredient);
+            }
+            registryFriendlyByteBuf.writeBoolean(recipe.containerRequired);
+            ItemStack.STREAM_CODEC.encode(registryFriendlyByteBuf, recipe.containerItem);
+            ItemStack.STREAM_CODEC.encode(registryFriendlyByteBuf, recipe.output);
+        }
 
         @Override
         public @NotNull MapCodec<CookingPotRecipe> codec() {

@@ -8,6 +8,7 @@
       "tag": "farm_and_charm:onion"
     }
   ],
+  "requireContainer": true,
   "container": {
     "id": "minecraft:bowl",
     "count": 1

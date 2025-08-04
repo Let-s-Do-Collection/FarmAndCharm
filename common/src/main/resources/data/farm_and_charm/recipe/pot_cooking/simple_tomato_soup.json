@@ -11,6 +11,7 @@
       "item": "minecraft:sugar"
     }
   ],
+  "requireContainer": true,
   "container": {
     "id": "minecraft:bowl",
     "count": 1

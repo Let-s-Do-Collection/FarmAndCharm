@@ -11,6 +11,7 @@
       "item": "farm_and_charm:strawberry"
     }
   ],
+  "requireContainer": true,
   "container": {
     "id": "minecraft:glass_bottle",
     "count": 1

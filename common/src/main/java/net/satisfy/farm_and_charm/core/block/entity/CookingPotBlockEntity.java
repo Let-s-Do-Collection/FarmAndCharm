@@ -38,7 +38,7 @@ import java.util.Optional;
 
 public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTicker<CookingPotBlockEntity>, ImplementedInventory, MenuProvider, Container {
     private static final int MAX_CAPACITY = 8, CONTAINER_SLOT = 6, OUTPUT_SLOT = 7, INGREDIENTS_AREA = 2 * 3;
-    private static final int[] SLOTS_FOR_UP = new int[]{0, 1, 2, 3, 4, 5, 6};
+    private static final int[] SLOTS_FOR_UP = new int[]{0, 1, 2, 3, 4, 5};
     private static final int MAX_COOKING_TIME = 900;
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(MAX_CAPACITY, ItemStack.EMPTY);
     private int cookingTime;
@@ -103,8 +103,12 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
     private boolean canCraft(Recipe<?> recipe, RegistryAccess access) {
         if (recipe == null || recipe.getResultItem(access).isEmpty()) return false;
         if (recipe instanceof CookingPotRecipe cookingRecipe) {
+            if (cookingRecipe.isContainerRequired()) {
+                ItemStack containerSlotStack = getItem(CONTAINER_SLOT);
+                if (!containerSlotStack.is(cookingRecipe.getContainerItem().getItem())) return false;
+            }
             ItemStack outputSlotStack = getItem(OUTPUT_SLOT), containerSlotStack = getItem(CONTAINER_SLOT);
-            boolean isContainerCorrect = containerSlotStack.is(cookingRecipe.getContainer().getItem()), isOutputSlotCompatible = outputSlotStack.isEmpty() || ItemStack.isSameItemSameComponents(outputSlotStack, generateOutputItem(recipe, access)) && outputSlotStack.getCount() < outputSlotStack.getMaxStackSize();
+            boolean isContainerCorrect = containerSlotStack.is(cookingRecipe.getContainerItem().getItem()), isOutputSlotCompatible = outputSlotStack.isEmpty() || ItemStack.isSameItemSameComponents(outputSlotStack, generateOutputItem(recipe, access)) && outputSlotStack.getCount() < outputSlotStack.getMaxStackSize();
             return isContainerCorrect && isOutputSlotCompatible;
         }
         return false;
@@ -129,10 +133,12 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
                 }
             }
         });
-        ItemStack containerSlotStack = getItem(CONTAINER_SLOT);
-        if (!containerSlotStack.isEmpty()) {
-            containerSlotStack.shrink(1);
-            if (containerSlotStack.isEmpty()) setItem(CONTAINER_SLOT, ItemStack.EMPTY);
+        if (recipe instanceof CookingPotRecipe cookingPotRecipe && cookingPotRecipe.isContainerRequired()) {
+            ItemStack containerSlotStack = getItem(CONTAINER_SLOT);
+            if (!containerSlotStack.isEmpty()) {
+                containerSlotStack.shrink(1);
+                if (containerSlotStack.isEmpty()) setItem(CONTAINER_SLOT, ItemStack.EMPTY);
+            }
         }
     }
 

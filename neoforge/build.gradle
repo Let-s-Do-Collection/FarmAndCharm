@@ -1,8 +1,9 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "com.github.johnrengelman.shadow" version "8.0.0"
 }
 architectury {
     platformSetupLoomIde()
+    accessWidenerPath = project(":common").loom.accessWidenerPath
     neoForge()
 }
 
@@ -67,6 +68,7 @@ remapJar {
     input.set shadowJar.archiveFile
     dependsOn shadowJar
     archiveClassifier.set(null)
+    atAccessWideners.add(loom.accessWidenerPath.get().asFile.getName())
 }
 
 jar {

@@ -34,5 +34,11 @@
     "sounds": [
       "farm_and_charm:water_sprinkler"
     ]
+  },
+  "cart_moving": {
+    "subtitle": "sound.farm_and_charm.cart_moving",
+    "sounds": [
+      "farm_and_charm:cart_moving"
+    ]
   }
 }

@@ -21,9 +21,6 @@
     "client": [
       "net.satisfy.farm_and_charm.fabric.client.FarmAndCharmClientFabric"
     ],
-    "doapi": [
-      "net.satisfy.farm_and_charm.util.api.FarmAndCharmDoAPI"
-    ],
     "rei_client": [
       "net.satisfy.farm_and_charm.fabric.rei.FarmAndCharmReiClientPluginFabric"
     ],

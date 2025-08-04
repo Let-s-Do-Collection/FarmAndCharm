@@ -39,7 +39,7 @@ import java.util.stream.IntStream;
 public class MincerBlockEntity extends RandomizableContainerBlockEntity implements WorldlyContainer, BlockEntityTicker<MincerBlockEntity> {
     public final int SLOT_COUNT = 2;
     public final int INPUT_SLOT = 0;
-    public final int 0 = 1;
+    public final int OUTPUT_SLOT = 1;
 
     private NonNullList<ItemStack> stacks = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
 

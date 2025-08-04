@@ -104,12 +104,11 @@ public abstract class TomatoCropBlock extends Block {
             return InteractionResult.PASS;
         }
         int age = blockState.getValue(AGE);
-        if (age > 1) {
+        if (age == MAX_AGE) {
             dropTomatoes(level, blockPos, blockState);
             return InteractionResult.sidedSuccess(level.isClientSide);
-        } else {
-            return super.useWithoutItem(blockState, level, blockPos, player, blockHitResult);
         }
+        return super.useWithoutItem(blockState, level, blockPos, player, blockHitResult);
     }
 
     protected void dropTomatoes(Level level, BlockPos blockPos, BlockState blockState) {

@@ -6,6 +6,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
@@ -213,15 +214,23 @@ public class SiloBlockEntity extends BlockEntity implements IMultiBlockEntityCon
             if (recipe.isPresent() && !freshStack.isEmpty()) {
                 int dryTime = this.times[fresh];
                 dryTime++;
-                if (dryTime >= DRY_TIME)
-                    for (int finish = MAX_CAPACITY; finish < MAX_CAPACITY + this.getCapacity(); finish++)
+                if (dryTime >= DRY_TIME) {
+                    for (int finish = MAX_CAPACITY; finish < MAX_CAPACITY + this.getCapacity(); finish++) {
                         if (this.getItem(finish).isEmpty()) {
                             ItemStack finishStack = this.removeItem(fresh, freshStack.getCount());
                             ItemStack outputStack = recipe.get().value().getResultItem(level.registryAccess()).copyWithCount(finishStack.getCount());
                             this.setItem(finish, SiloBlock.isDryItem(level, finishStack) ? outputStack : finishStack);
                             dryTime = 0;
+
+
+                            if (level != null && !level.isClientSide) {
+                                level.playSound(null, worldPosition, SoundEvents.COMPOSTER_FILL_SUCCESS,
+                                        net.minecraft.sounds.SoundSource.BLOCKS, 0.7f, 1.0f);
+                            }
                             break;
                         }
+                    }
+                }
                 this.times[fresh] = dryTime;
             }
         }

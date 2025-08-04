@@ -51,17 +51,13 @@ public class StrawberryCropBlock extends CropBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult blockHitResult) {
         InteractionHand hand = player.getUsedItemHand();
         int i = state.getValue(AGE);
-        boolean bl = i == getMaxAge();
-        if (!bl && player.getItemInHand(hand).is(Items.BONE_MEAL)) {
-            return InteractionResult.PASS;
-        } else if (i > 1) {
-            int strawberryCount = world.random.nextInt(2) + (bl ? 1 : 0);
+        if (i == getMaxAge()) {
+            int strawberryCount = world.random.nextInt(2) + 1;
             popResource(world, pos, new ItemStack(ObjectRegistry.STRAWBERRY.get(), strawberryCount));
             world.playSound(null, pos, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.8F + world.random.nextFloat() * 0.4F);
             world.setBlock(pos, state.setValue(AGE, 1), 2);
             return InteractionResult.sidedSuccess(world.isClientSide);
-        } else {
-            return super.useWithoutItem(state, world, pos, player, blockHitResult);
         }
+        return super.useWithoutItem(state, world, pos, player, blockHitResult);
     }
 }

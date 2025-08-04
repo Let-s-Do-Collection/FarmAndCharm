@@ -37,7 +37,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTicker<CookingPotBlockEntity>, ImplementedInventory, MenuProvider, Container {
-    private static final int MAX_CAPACITY = 8, CONTAINER_SLOT = 6, 0 = 7, INGREDIENTS_AREA = 2 * 3;
+    private static final int MAX_CAPACITY = 8, CONTAINER_SLOT = 6, OUTPUT_SLOT = 7, INGREDIENTS_AREA = 2 * 3;
     private static final int[] SLOTS_FOR_UP = new int[]{0, 1, 2, 3, 4, 5};
     private static final int MAX_COOKING_TIME = 900;
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(MAX_CAPACITY, ItemStack.EMPTY);

@@ -1,6 +1,5 @@
 package net.satisfy.farm_and_charm.block.entity;
 
-import de.cristelknight.doapi.common.world.ImplementedInventory;
 import net.minecraft.core.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -29,6 +28,7 @@ import net.satisfy.farm_and_charm.recipe.CookingPotRecipe;
 import net.satisfy.farm_and_charm.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.registry.RecipeTypeRegistry;
 import net.satisfy.farm_and_charm.registry.TagRegistry;
+import net.satisfy.farm_and_charm.world.ImplementedInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

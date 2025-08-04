@@ -23,7 +23,7 @@ public class CartItem extends Item {
         if (!world.isClientSide) {
             Entity entity = null;
             if (this == ObjectRegistry.SUPPLY_CART.get()) {
-                entity = EntityTypeRegistry.CHEST_CART.get().create(world);
+                entity = EntityTypeRegistry.SUPPLY_CART.get().create(world);
             } else if (this == ObjectRegistry.PLOW.get()) {
                 entity = EntityTypeRegistry.PLOW.get().create(world);
             }

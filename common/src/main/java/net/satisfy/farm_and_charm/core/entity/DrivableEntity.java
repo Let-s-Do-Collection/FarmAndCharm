@@ -12,7 +12,7 @@ import java.util.List;
 public abstract class DrivableEntity extends Entity {
     public static final String DRIVER_TAG = "Driver";
     @Nullable
-    private Entity driver;
+    public Entity driver;
 
     protected DrivableEntity(EntityType<?> entityType, Level level) {
         super(entityType, level);

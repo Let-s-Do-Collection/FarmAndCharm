@@ -45,6 +45,7 @@ import net.satisfy.farm_and_charm.core.block.crops.OnionCropBlock;
 import net.satisfy.farm_and_charm.core.block.crops.StrawberryCropBlock;
 import net.satisfy.farm_and_charm.core.block.crops.TomatoCropBodyBlock;
 import net.satisfy.farm_and_charm.core.block.crops.TomatoCropHeadBlock;
+import net.satisfy.farm_and_charm.core.item.CartItem;
 import net.satisfy.farm_and_charm.core.item.CatFoodItem;
 import net.satisfy.farm_and_charm.core.item.ChickenFeedItem;
 import net.satisfy.farm_and_charm.core.item.DogFoodItem;
@@ -71,8 +72,8 @@ public class ObjectRegistry {
     public static final Registrar<Block> BLOCK_REGISTRAR = BLOCKS.getRegistrar();
     public static final RegistrySupplier<Item> FERTILIZER = registerItem("fertilizer", () -> new FertilizerItem(getSettings()));
     public static final RegistrySupplier<Item> PITCHFORK = registerItem("pitchfork", () -> new HoeItem(Tiers.IRON, new Item.Properties()));
-    public static final RegistrySupplier<Item> SUPPLY_CART = registerItem("supply_cart", () -> new Item(getSettings()));
-    public static final RegistrySupplier<Item> PLOW = registerItem("plow", () -> new Item(getSettings()));
+    public static final RegistrySupplier<Item> SUPPLY_CART = registerItem("supply_cart", () -> new CartItem(getSettings()));
+    public static final RegistrySupplier<Item> PLOW = registerItem("plow", () -> new CartItem(getSettings()));
     public static final RegistrySupplier<Item> YEAST = registerItem("yeast", () -> new Item(getSettings()));
     public static final RegistrySupplier<Item> BUTTER = registerItem("butter", () -> new Item(getSettings().food(Foods.CHICKEN)));
     public static final RegistrySupplier<Item> DOUGH = registerItem("dough", () -> new Item(getSettings().food(Foods.SWEET_BERRIES)));

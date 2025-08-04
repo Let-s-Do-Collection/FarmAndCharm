@@ -7,27 +7,27 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.satisfy.farm_and_charm.client.model.PlowModel;
-import net.satisfy.farm_and_charm.core.entity.CartEntity;
+import net.satisfy.farm_and_charm.client.model.PlowCartModel;
+import net.satisfy.farm_and_charm.core.entity.PlowCartEntity;
 import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 import org.jetbrains.annotations.NotNull;
 
-public class PlowRenderer extends EntityRenderer<CartEntity> {
+public class PlowCartRenderer extends EntityRenderer<PlowCartEntity> {
     private static final ResourceLocation CART_TEXTURE = FarmAndCharmIdentifier.of("textures/entity/supply_cart.png");
-    private final PlowModel<CartEntity> model;
+    private final PlowCartModel<PlowCartEntity> model;
 
-    public PlowRenderer(EntityRendererProvider.Context context) {
+    public PlowCartRenderer(EntityRendererProvider.Context context) {
         super(context);
-        this.model = new PlowModel<>(context.bakeLayer(PlowModel.LAYER_LOCATION));
+        this.model = new PlowCartModel<>(context.bakeLayer(PlowCartModel.LAYER_LOCATION));
     }
 
     @Override
-    public @NotNull ResourceLocation getTextureLocation(CartEntity entity) {
+    public @NotNull ResourceLocation getTextureLocation(PlowCartEntity entity) {
         return CART_TEXTURE;
     }
 
     @Override
-    public void render(CartEntity cart, float yaw, float g, PoseStack poseStack, MultiBufferSource multiBufferSource, int light) {
+    public void render(PlowCartEntity cart, float yaw, float g, PoseStack poseStack, MultiBufferSource multiBufferSource, int light) {
         super.render(cart, yaw, g, poseStack, multiBufferSource, light);
         poseStack.pushPose();
         poseStack.translate(0.0D, 1.4D, 0.0D);

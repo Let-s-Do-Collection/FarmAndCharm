@@ -5,6 +5,6 @@ import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 
 public enum ModelRegistry {
     ;
-    public static final ModelLayerLocation CART = new ModelLayerLocation(FarmAndCharmIdentifier.of("cart"), "main");
+    ModelLayerLocation CART = new ModelLayerLocation(FarmAndCharmIdentifier.of("supply_cart"), "main");
     public static final ModelLayerLocation PLOW = new ModelLayerLocation(FarmAndCharmIdentifier.of("plow"), "main");
 }

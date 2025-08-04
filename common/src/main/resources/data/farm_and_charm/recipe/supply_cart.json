@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "I I",
+    "IAI",
     "UUU",
     "# #"
   ],
@@ -14,6 +14,9 @@
     },
     "I": {
       "item": "minecraft:iron_ingot"
+    },
+    "A": {
+      "item": "minecraft:chest"
     }
   },
   "result": {

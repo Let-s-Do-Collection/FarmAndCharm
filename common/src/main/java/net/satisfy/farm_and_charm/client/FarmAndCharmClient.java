@@ -18,6 +18,8 @@ import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.ModelRegistry;
 import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
 
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.*;
+
 @Environment(EnvType.CLIENT)
 public class FarmAndCharmClient {
 
@@ -51,8 +53,8 @@ public class FarmAndCharmClient {
 
     public static void registerEntityRenderers() {
         EntityRendererRegistry.register(EntityTypeRegistry.ROTTEN_TOMATO, ThrownItemRenderer::new);
-        EntityRendererRegistry.register(EntityTypeRegistry.CHEST_CART, CartRenderer::new);
-        EntityRendererRegistry.register(EntityTypeRegistry.PLOW, PlowRenderer::new);
+        EntityRendererRegistry.register(EntityTypeRegistry.SUPPLY_CART, SupplyCartRenderer::new);
+        EntityRendererRegistry.register(EntityTypeRegistry.PLOW, PlowCartRenderer::new);
     }
 
 
@@ -66,7 +68,7 @@ public class FarmAndCharmClient {
         EntityModelLayerRegistry.register(CraftingBowlModel.LAYER_LOCATION, CraftingBowlModel::getTexturedModelData);
         EntityModelLayerRegistry.register(MincerModel.LAYER_LOCATION, MincerModel::getTexturedModelData);
         EntityModelLayerRegistry.register(ScarecrowModel.LAYER_LOCATION, ScarecrowModel::getTexturedModelData);
-        EntityModelLayerRegistry.register(ModelRegistry.CART, CartModel::createBodyLayer);
-        EntityModelLayerRegistry.register(ModelRegistry.PLOW, PlowModel::createBodyLayer);
+        EntityModelLayerRegistry.register(ModelRegistry.CART, SupplyCartModel::createBodyLayer);
+        EntityModelLayerRegistry.register(ModelRegistry.PLOW, PlowCartModel::createBodyLayer);
     }
 }

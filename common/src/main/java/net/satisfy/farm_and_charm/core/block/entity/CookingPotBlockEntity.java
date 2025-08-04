@@ -137,7 +137,7 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
     }
 
     private ItemStack generateOutputItem(Recipe<?> recipe, RegistryAccess access) {
-        ItemStack outputStack = recipe.getResultItem(access);
+        ItemStack outputStack = recipe.getResultItem(access).copy();
         if (outputStack.getItem() instanceof EffectFood) {
             recipe.getIngredients().forEach(ingredient -> {
                 for (int slot = 0; slot < INGREDIENTS_AREA; slot++) {

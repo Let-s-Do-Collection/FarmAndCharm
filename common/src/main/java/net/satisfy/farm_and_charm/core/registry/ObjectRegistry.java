@@ -1,7 +1,5 @@
 package net.satisfy.farm_and_charm.core.registry;
 
-import de.cristelknight.doapi.common.block.FacingBlock;
-import de.cristelknight.doapi.common.block.StackableEatableBlock;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.Registrar;
 import dev.architectury.registry.registries.RegistrySupplier;
@@ -24,6 +22,7 @@ import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.core.block.BonemealableFlowerBlock;
 import net.satisfy.farm_and_charm.core.block.CookingPotBlock;
 import net.satisfy.farm_and_charm.core.block.CraftingBowlBlock;
+import net.satisfy.farm_and_charm.core.block.FacingBlock;
 import net.satisfy.farm_and_charm.core.block.FeedingTroughBlock;
 import net.satisfy.farm_and_charm.core.block.FertilizedFarmlandBlock;
 import net.satisfy.farm_and_charm.core.block.FertilizedSoilBlock;
@@ -32,6 +31,7 @@ import net.satisfy.farm_and_charm.core.block.MincerBlock;
 import net.satisfy.farm_and_charm.core.block.RoasterBlock;
 import net.satisfy.farm_and_charm.core.block.ScarecrowBlock;
 import net.satisfy.farm_and_charm.core.block.SiloBlock;
+import net.satisfy.farm_and_charm.core.block.StackableEatableBlock;
 import net.satisfy.farm_and_charm.core.block.StoveBlock;
 import net.satisfy.farm_and_charm.core.block.TeaJugBlock;
 import net.satisfy.farm_and_charm.core.block.ToolRackBlock;

@@ -38,11 +38,11 @@ public class StoveCategory implements IRecipeCategory<StoveRecipe> {
     private final Component localizedName;
 
     public StoveCategory(IGuiHelper helper) {
-        this.background = helper.createDrawable(StoveGui.BG, WIDTH_OF, HEIGHT_OF, WIDTH, HEIGHT);
-        this.arrow = helper.drawableBuilder(StoveGui.BG, 178, 20, 18, 25)
+        this.background = helper.createDrawable(StoveGui.BACKGROUND, WIDTH_OF, HEIGHT_OF, WIDTH, HEIGHT);
+        this.arrow = helper.drawableBuilder(StoveGui.BACKGROUND, 178, 20, 18, 25)
                 .buildAnimated(StoveBlockEntity.TOTAL_COOKING_TIME, IDrawableAnimated.StartDirection.LEFT, false);
         this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, ObjectRegistry.STOVE.get().asItem().getDefaultInstance());
-        this.burnIcon = helper.createDrawable(StoveGui.BG, 176, 0, 17, 15);
+        this.burnIcon = helper.createDrawable(StoveGui.BACKGROUND, 176, 0, 17, 15);
         this.localizedName = Component.translatable("rei.farm_and_charm.stove_category");
     }
 

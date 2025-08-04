@@ -1,8 +1,5 @@
 package net.satisfy.farm_and_charm.client.gui.handler;
 
-
-import de.cristelknight.doapi.client.recipebook.IRecipeBookGroup;
-import de.cristelknight.doapi.client.recipebook.handler.AbstractRecipeBookGUIScreenHandler;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -15,7 +12,6 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.satisfy.farm_and_charm.client.gui.handler.slot.ExtendedSlot;
 import net.satisfy.farm_and_charm.client.gui.handler.slot.StoveOutputSlot;
-import net.satisfy.farm_and_charm.client.recipebook.group.StoveRecipeBookGroup;
 import net.satisfy.farm_and_charm.recipe.StoveRecipe;
 import net.satisfy.farm_and_charm.registry.RecipeTypeRegistry;
 import net.satisfy.farm_and_charm.registry.ScreenhandlerTypeRegistry;
@@ -79,11 +75,6 @@ public class StoveGuiHandler extends AbstractRecipeBookGUIScreenHandler {
 
     public boolean isBeingBurned() {
         return propertyDelegate.get(1) != 0;
-    }
-
-    @Override
-    public List<IRecipeBookGroup> getGroups() {
-        return StoveRecipeBookGroup.STOVE_GROUPS;
     }
 
     @Override

@@ -1,7 +1,5 @@
 package net.satisfy.farm_and_charm.client.gui.handler;
 
-import de.cristelknight.doapi.client.recipebook.IRecipeBookGroup;
-import de.cristelknight.doapi.client.recipebook.handler.AbstractRecipeBookGUIScreenHandler;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -13,7 +11,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.satisfy.farm_and_charm.block.entity.RoasterBlockEntity;
 import net.satisfy.farm_and_charm.client.gui.handler.slot.ExtendedSlot;
-import net.satisfy.farm_and_charm.client.recipebook.group.RoasterRecipeBookGroup;
 import net.satisfy.farm_and_charm.recipe.RoasterRecipe;
 import net.satisfy.farm_and_charm.registry.ScreenhandlerTypeRegistry;
 import net.satisfy.farm_and_charm.registry.TagRegistry;
@@ -77,11 +74,6 @@ public class RoasterGuiHandler extends AbstractRecipeBookGUIScreenHandler {
             return 0;
         }
         return progress * arrowWidth / totalProgress + 1;
-    }
-
-    @Override
-    public List<IRecipeBookGroup> getGroups() {
-        return RoasterRecipeBookGroup.ROASTER_GROUPS;
     }
 
     @Override

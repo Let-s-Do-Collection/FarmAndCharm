@@ -3,8 +3,14 @@ plugins {
 }
 architectury {
     platformSetupLoomIde()
-    accessWidenerPath = project(":common").loom.accessWidenerPath
     neoForge()
+}
+
+loom {
+    accessWidenerPath = project(":common").loom.accessWidenerPath
+
+    neoForge {
+    }
 }
 
 def jarFileName = 'letsdo-farm_and_charm-neoforge'

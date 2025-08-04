@@ -31,13 +31,6 @@ ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.farm_and_charm]]
-modId = "doapi"
-type = "required"
-versionRange = "[1.2.0,)"
-ordering = "NONE"
-side = "BOTH"
-
-[[dependencies.farm_and_charm]]
 modId = "architectury"
 type = "required"
 versionRange = "[9.0.8,)"

@@ -2,7 +2,6 @@ package net.satisfy.farm_and_charm.block;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.MapCodec;
-import de.cristelknight.doapi.common.util.GeneralUtil;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -34,6 +33,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.farm_and_charm.block.entity.EffectFoodBlockEntity;
 import net.satisfy.farm_and_charm.item.food.EffectFoodHelper;
+import net.satisfy.farm_and_charm.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

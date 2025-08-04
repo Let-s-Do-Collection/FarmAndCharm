@@ -1,7 +1,6 @@
 package net.satisfy.farm_and_charm.block;
 
 import com.mojang.serialization.MapCodec;
-import de.cristelknight.doapi.common.registry.DoApiSoundEventRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -19,6 +18,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.farm_and_charm.block.entity.WaterSprinklerBlockEntity;
+import net.satisfy.farm_and_charm.registry.SoundEventRegistry;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("deprecation")
@@ -105,7 +105,7 @@ public class WaterSprinklerBlock extends BaseEntityBlock {
     }
 
     private void playContinuousSound(ServerLevel world, BlockPos pos) {
-        world.playSound(null, pos, DoApiSoundEventRegistry.WATER_SPRINKLER.get(), SoundSource.BLOCKS, 0.25F, 0.75F);
+        world.playSound(null, pos, SoundEventRegistry.WATER_SPRINKLER.get(), SoundSource.BLOCKS, 0.25F, 0.75F);
         world.scheduleTick(pos, this, 80);
     }
 

@@ -1,12 +1,12 @@
 package net.satisfy.farm_and_charm.item.food;
 
-import de.cristelknight.doapi.common.util.GeneralUtil;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.satisfy.farm_and_charm.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")

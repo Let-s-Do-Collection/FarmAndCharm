@@ -1,6 +1,5 @@
 package net.satisfy.farm_and_charm.block;
 
-import de.cristelknight.doapi.common.block.FacingBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.StringRepresentable;

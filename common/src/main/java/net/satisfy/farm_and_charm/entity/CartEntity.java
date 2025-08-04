@@ -1,6 +1,5 @@
 package net.satisfy.farm_and_charm.entity;
 
-import de.cristelknight.doapi.common.registry.DoApiSoundEventRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -23,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.farm_and_charm.registry.ObjectRegistry;
+import net.satisfy.farm_and_charm.registry.SoundEventRegistry;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class CartEntity extends DrivableEntity {
@@ -163,7 +163,7 @@ public abstract class CartEntity extends DrivableEntity {
 
     private void playMovementSound() {
         if (soundCooldown <= 0) {
-            SoundEvent sound = DoApiSoundEventRegistry.CART_MOVING.get();
+            SoundEvent sound = SoundEventRegistry.CART_MOVING.get();
             this.level().playSound(null, this.getX(), this.getY(), this.getZ(), sound, SoundSource.NEUTRAL, 0.1F, 1.0F);
             soundCooldown = 55;
         }

@@ -1,6 +1,5 @@
 package net.satisfy.farm_and_charm.block.entity;
 
-import de.cristelknight.doapi.common.util.GeneralUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -25,6 +24,7 @@ import net.satisfy.farm_and_charm.block.SiloBlock;
 import net.satisfy.farm_and_charm.recipe.SiloRecipe;
 import net.satisfy.farm_and_charm.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.util.ConnectivityHandler;
+import net.satisfy.farm_and_charm.util.GeneralUtil;
 import net.satisfy.farm_and_charm.util.IMultiBlockEntityContainer;
 import net.satisfy.farm_and_charm.world.ImplementedInventory;
 import org.jetbrains.annotations.NotNull;

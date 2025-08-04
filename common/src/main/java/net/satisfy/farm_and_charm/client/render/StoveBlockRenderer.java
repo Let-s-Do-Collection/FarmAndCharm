@@ -2,7 +2,6 @@ package net.satisfy.farm_and_charm.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import de.cristelknight.doapi.client.ClientUtil;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
@@ -11,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.farm_and_charm.block.StoveBlock;
 import net.satisfy.farm_and_charm.block.entity.StoveBlockEntity;
+import net.satisfy.farm_and_charm.client.util.ClientUtil;
 
 import java.util.Arrays;
 

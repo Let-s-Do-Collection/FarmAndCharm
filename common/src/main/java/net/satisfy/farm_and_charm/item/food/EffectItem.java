@@ -2,7 +2,6 @@ package net.satisfy.farm_and_charm.item.food;
 
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
-import de.cristelknight.doapi.common.util.GeneralUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
@@ -20,6 +19,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
+import net.satisfy.farm_and_charm.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

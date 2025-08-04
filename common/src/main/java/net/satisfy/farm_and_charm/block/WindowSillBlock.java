@@ -1,7 +1,5 @@
 package net.satisfy.farm_and_charm.block;
 
-import de.cristelknight.doapi.common.block.StorageBlock;
-import de.cristelknight.doapi.common.util.GeneralUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -26,6 +24,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.farm_and_charm.registry.StorageTypeRegistry;
+import net.satisfy.farm_and_charm.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

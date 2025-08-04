@@ -3,7 +3,6 @@ package net.satisfy.farm_and_charm.recipe;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import de.cristelknight.doapi.common.util.GeneralUtil;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -13,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.satisfy.farm_and_charm.registry.RecipeTypeRegistry;
+import net.satisfy.farm_and_charm.util.GeneralUtil;
 import net.satisfy.farm_and_charm.util.StreamCodecUtil;
 import org.jetbrains.annotations.NotNull;
 

@@ -1,6 +1,5 @@
 package net.satisfy.farm_and_charm.block;
 
-import de.cristelknight.doapi.common.registry.DoApiSoundEventRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -28,6 +27,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.farm_and_charm.block.entity.StoveBlockEntity;
+import net.satisfy.farm_and_charm.registry.SoundEventRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -116,7 +116,7 @@ public class StoveBlock extends Block implements EntityBlock {
         double j = random.nextDouble() * 6.0 / 16.0;
         double k = direction.getAxis() == Direction.Axis.Z ? (double) direction.getStepZ() * 0.52 : h;
 
-        world.playLocalSound(d, e, f, DoApiSoundEventRegistry.STOVE_CRACKLING.get(), SoundSource.BLOCKS, 0.05f, 1.0f, false);
+        world.playLocalSound(d, e, f, SoundEventRegistry.STOVE_CRACKLING.get(), SoundSource.BLOCKS, 0.05f, 1.0f, false);
 
         for (int l = 0; l < 2; ++l) {
             world.addParticle(ParticleTypes.SMOKE, d + i, e + j, f + k, 0.0, 0.0, 0.0);

@@ -1,8 +1,6 @@
 package net.satisfy.farm_and_charm.block;
 
 import com.mojang.serialization.MapCodec;
-import de.cristelknight.doapi.common.registry.DoApiSoundEventRegistry;
-import de.cristelknight.doapi.common.util.GeneralUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -40,6 +38,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.farm_and_charm.block.entity.RoasterBlockEntity;
+import net.satisfy.farm_and_charm.registry.SoundEventRegistry;
+import net.satisfy.farm_and_charm.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -157,7 +157,7 @@ public class RoasterBlock extends BaseEntityBlock {
         double e = pos.getY() + 0.7;
         double f = pos.getZ() + 0.5;
 
-        world.playLocalSound(d, e, f, DoApiSoundEventRegistry.ROASTER_COOKING.get(), SoundSource.BLOCKS, 0.05f, 1.0f, false);
+        world.playLocalSound(d, e, f, SoundEventRegistry.ROASTER_COOKING.get(), SoundSource.BLOCKS, 0.05f, 1.0f, false);
 
 
         double h = random.nextDouble() * 0.6 - 0.3;

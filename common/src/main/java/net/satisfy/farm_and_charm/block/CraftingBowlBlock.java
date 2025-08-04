@@ -1,7 +1,6 @@
 package net.satisfy.farm_and_charm.block;
 
 import com.mojang.serialization.MapCodec;
-import de.cristelknight.doapi.common.registry.DoApiSoundEventRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -40,6 +39,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.farm_and_charm.block.entity.CraftingBowlBlockEntity;
 import net.satisfy.farm_and_charm.registry.EntityTypeRegistry;
+import net.satisfy.farm_and_charm.registry.SoundEventRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -141,7 +141,7 @@ public class CraftingBowlBlock extends BaseEntityBlock {
                 }
                 if (stirring <= 6) {
                     world.setBlock(pos, blockState.setValue(STIRRING, 10), 3);
-                    world.playSound(null, pos, DoApiSoundEventRegistry.CRAFTING_BOWL_STIRRING.get(), SoundSource.BLOCKS, 0.05f, 1.0F);
+                    world.playSound(null, pos, SoundEventRegistry.CRAFTING_BOWL_STIRRING.get(), SoundSource.BLOCKS, 0.05f, 1.0F);
                     return InteractionResult.SUCCESS;
                 }
             }

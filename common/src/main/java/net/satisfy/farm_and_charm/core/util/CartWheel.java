@@ -70,9 +70,6 @@ public final class CartWheel {
                     );
                 }
             }
-            if (!this.cart.level().isClientSide()) {
-                this.cart.level().playSound(null, this.cart.blockPosition(), SoundEventRegistry.CART_MOVING.get(), net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 1.0F);
-            }
         }
         this.rotationIncrement = travelledForward * distanceTravelled * this.circumference * 0.2F;
     }

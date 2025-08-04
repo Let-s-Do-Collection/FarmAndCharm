@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.util;
 
+import com.mojang.datafixers.util.Pair;
 import dev.architectury.registry.client.rendering.ColorHandlerRegistry;
 import io.netty.buffer.Unpooled;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -10,6 +11,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -19,6 +21,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -41,9 +44,12 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.satisfy.farm_and_charm.core.entity.ChairEntity;
+import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,6 +60,7 @@ public class GeneralUtil {
     private static final String BLOCK_POS_KEY = "block_pos";
     private static final String BLOCK_POSES_KEY = "block_poses";
     public static final EnumProperty<GeneralUtil.LineConnectingType> LINE_CONNECTING_TYPE = EnumProperty.create("type", GeneralUtil.LineConnectingType.class);
+    private static final Map<ResourceLocation, Map<BlockPos, Pair<ChairEntity, BlockPos>>> CHAIRS = new HashMap<>();
 
     public GeneralUtil() {
     }
@@ -175,6 +182,82 @@ public class GeneralUtil {
 
             return used;
         }
+    }
+
+    public static ItemInteractionResult onUse(Level world, Player player, InteractionHand hand, BlockHitResult hit, double extraHeight) {
+        if (world.isClientSide) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (player.isShiftKeyDown()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (GeneralUtil.isPlayerSitting(player)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (hit.getDirection() == Direction.DOWN) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        BlockPos hitPos = hit.getBlockPos();
+        if (!GeneralUtil.isOccupied(world, hitPos) && player.getItemInHand(hand).isEmpty()) {
+            ChairEntity chair = EntityTypeRegistry.CHAIR.get().create(world);
+            assert chair != null;
+            chair.moveTo(hitPos.getX() + 0.5D, hitPos.getY() + 0.25D + extraHeight, hitPos.getZ() + 0.5D, 0, 0);
+            if (GeneralUtil.addChairEntity(world, hitPos, chair, player.blockPosition())) {
+                world.addFreshEntity(chair);
+                player.startRiding(chair);
+                return ItemInteractionResult.SUCCESS;
+            }
+        }
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    public static boolean isOccupied(Level world, BlockPos pos) {
+        ResourceLocation id = getDimensionTypeId(world);
+        return GeneralUtil.CHAIRS.containsKey(id) && GeneralUtil.CHAIRS.get(id).containsKey(pos);
+    }
+
+    public static boolean isPlayerSitting(Player player) {
+        for (ResourceLocation i : CHAIRS.keySet()) {
+            for (Pair<ChairEntity, BlockPos> pair : CHAIRS.get(i).values()) {
+                if (pair.getFirst().hasPassenger(player))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    private static ResourceLocation getDimensionTypeId(Level world) {
+        return world.dimension().location();
+    }
+
+    public static void onStateReplaced(Level world, BlockPos pos) {
+        if (!world.isClientSide) {
+            ChairEntity entity = GeneralUtil.getChairEntity(world, pos);
+            if (entity != null) {
+                GeneralUtil.removeChairEntity(world, pos);
+                entity.ejectPassengers();
+            }
+        }
+    }
+
+    public static boolean addChairEntity(Level world, BlockPos blockPos, ChairEntity entity, BlockPos playerPos) {
+        if (!world.isClientSide) {
+            ResourceLocation id = getDimensionTypeId(world);
+            if (!CHAIRS.containsKey(id)) CHAIRS.put(id, new HashMap<>());
+            CHAIRS.get(id).put(blockPos, Pair.of(entity, playerPos));
+            return true;
+        }
+        return false;
+    }
+
+    public static void removeChairEntity(Level world, BlockPos pos) {
+        if (!world.isClientSide) {
+            ResourceLocation id = getDimensionTypeId(world);
+            if (CHAIRS.containsKey(id)) {
+                CHAIRS.get(id).remove(pos);
+            }
+        }
+    }
+
+    public static ChairEntity getChairEntity(Level world, BlockPos pos) {
+        if (!world.isClientSide()) {
+            ResourceLocation id = getDimensionTypeId(world);
+            if (CHAIRS.containsKey(id) && CHAIRS.get(id).containsKey(pos))
+                return CHAIRS.get(id).get(pos).getFirst();
+        }
+        return null;
     }
 
     public static InteractionResult fillBucket(Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, ItemStack itemStack, ItemStack returnItem, BlockState blockState, SoundEvent soundEvent) {

@@ -14,6 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.satisfy.farm_and_charm.core.registry.SoundEventRegistry;
 import net.satisfy.farm_and_charm.core.util.CartWheel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,15 +23,20 @@ import java.util.List;
 
 public abstract class AbstractTowableEntity extends Entity {
     public static final String DRIVER = "Driver";
-    public @Nullable Entity driver;
+    @Nullable
+    public Entity driver;
     private int lerpSteps;
     private double lerpX;
     private double lerpY;
     private double lerpZ;
     private double lerpYaw;
     private double lerpPitch;
+    private int soundCooldownTicks = 0;
     final CartWheel leftWheel;
     final CartWheel rightWheel;
+    private float health = 10.0F;
+    private int wobbleTicks = 0;
+    private float wobbleDirection = 0.0F;
 
     public AbstractTowableEntity(EntityType<?> entityType, Level level) {
         super(entityType, level);
@@ -42,7 +48,7 @@ public abstract class AbstractTowableEntity extends Entity {
         return this.driver != null;
     }
 
-    public final @Nullable Entity getDriver() {
+    public @Nullable Entity getDriver() {
         return this.driver;
     }
 
@@ -60,7 +66,6 @@ public abstract class AbstractTowableEntity extends Entity {
             for (Entity ent : entities) {
                 if (ent instanceof DrivableEntity drivable) {
                     if (drivable.hasDriver()) {
-                        assert drivable.getDriver() != null;
                         if (drivable.getDriver().equals(entity)) {
                             return false;
                         }
@@ -88,14 +93,12 @@ public abstract class AbstractTowableEntity extends Entity {
     @Override
     protected void addAdditionalSaveData(CompoundTag compoundTag) {
         if (this.hasDriver()) {
-            assert this.getDriver() != null;
             compoundTag.putInt(DRIVER, this.getDriver().getId());
         }
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compoundTag) {
-
         if (compoundTag.contains(DRIVER)) {
             this.driver = this.level().getEntity(compoundTag.getInt(DRIVER));
         }
@@ -122,7 +125,9 @@ public abstract class AbstractTowableEntity extends Entity {
         final double x;
         final double y;
         final double z;
-        assert this.driver != null;
+        if (this.driver == null) {
+            return Vec3.ZERO;
+        }
         if (delta == 1.0F) {
             x = this.driver.getX() - this.getX();
             y = this.driver.getY() - this.getY();
@@ -194,7 +199,7 @@ public abstract class AbstractTowableEntity extends Entity {
     }
 
     private void addStats() {
-        this.level();
+        // Implementiere hier deine Logik zur Statistikerfassung, falls nötig
     }
 
     void tickLerp() {
@@ -235,6 +240,19 @@ public abstract class AbstractTowableEntity extends Entity {
         this.rightWheel.tick();
         this.move(MoverType.SELF, this.getDeltaMovement());
 
+        double dx = this.getX() - this.xOld;
+        double dz = this.getZ() - this.zOld;
+        double distanceTravelled = Math.sqrt(dx * dx + dz * dz);
+
+        if (distanceTravelled > 0.2 && soundCooldownTicks <= 0 && !this.level().isClientSide()) {
+            this.level().playSound(null, this.blockPosition(), SoundEventRegistry.CART_MOVING.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+            soundCooldownTicks = 45;
+        }
+
+        if (soundCooldownTicks > 0) {
+            soundCooldownTicks--;
+        }
+
         if (this.wobbleTicks > 0) {
             float wobbleAmount = (float) Math.sin((10 - this.wobbleTicks) * Math.PI / 10) * wobbleDirection;
             this.setYRot(this.getYRot() + wobbleAmount);
@@ -274,11 +292,6 @@ public abstract class AbstractTowableEntity extends Entity {
         }
         return false;
     }
-
-    private float health = 10.0F;
-    private int wobbleTicks = 0;
-    private float wobbleDirection = 0.0F;
-
 
     public float getHealth() {
         return this.health;

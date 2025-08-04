@@ -27,6 +27,7 @@ import net.satisfy.farm_and_charm.core.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("deprecation, unused")
 public abstract class StorageBlock extends FacingBlock implements EntityBlock {
     public static final SoundEvent event;
 
@@ -37,15 +38,15 @@ public abstract class StorageBlock extends FacingBlock implements EntityBlock {
     public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof StorageBlockEntity shelfBlockEntity) {
-            Optional optional = Util.getRelativeHitCoordinatesForBlockFace(hit, (Direction)state.getValue(FACING), this.unAllowedDirections());
+            Optional<Tuple<Float, Float>> optional = Util.getRelativeHitCoordinatesForBlockFace(hit, state.getValue(FACING), this.unAllowedDirections());
             if (optional.isEmpty()) {
                 return InteractionResult.PASS;
             } else {
-                Tuple<Float, Float> ff = (Tuple)optional.get();
-                int i = this.getSection((Float)ff.getA(), (Float)ff.getB());
+                Tuple<Float, Float> ff = optional.get();
+                int i = this.getSection(ff.getA(), ff.getB());
                 if (i == Integer.MIN_VALUE) {
                     return InteractionResult.PASS;
-                } else if (!((ItemStack)shelfBlockEntity.getInventory().get(i)).isEmpty()) {
+                } else if (!shelfBlockEntity.getInventory().get(i).isEmpty()) {
                     this.remove(world, pos, player, shelfBlockEntity, i);
                     return InteractionResult.sidedSuccess(world.isClientSide);
                 } else {
@@ -67,28 +68,26 @@ public abstract class StorageBlock extends FacingBlock implements EntityBlock {
         if (!level.isClientSide) {
             SoundEvent soundEvent = this.getAddSound(level, blockPos, player, i);
             shelfBlockEntity.setStack(i, itemStack.split(1));
-            level.playSound((Player)null, blockPos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
+            level.playSound(null, blockPos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
             if (player.isCreative()) {
                 itemStack.grow(1);
             }
 
             level.gameEvent(player, GameEvent.BLOCK_CHANGE, blockPos);
         }
-
     }
 
     public void remove(Level level, BlockPos blockPos, Player player, StorageBlockEntity shelfBlockEntity, int i) {
         if (!level.isClientSide) {
             ItemStack itemStack = shelfBlockEntity.removeStack(i);
             SoundEvent soundEvent = this.getRemoveSound(level, blockPos, player, i);
-            level.playSound((Player)null, blockPos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
+            level.playSound(null, blockPos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
             if (!player.getInventory().add(itemStack)) {
                 player.drop(itemStack, false);
             }
 
             level.gameEvent(player, GameEvent.BLOCK_CHANGE, blockPos);
         }
-
     }
 
     public SoundEvent getRemoveSound(Level level, BlockPos blockPos, Player player, int i) {
@@ -102,10 +101,9 @@ public abstract class StorageBlock extends FacingBlock implements EntityBlock {
     public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
         if (!state.is(newState.getBlock())) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof StorageBlockEntity) {
-                StorageBlockEntity shelf = (StorageBlockEntity)blockEntity;
-                if (world instanceof ServerLevel) {
-                    Containers.dropContents(world, pos, shelf.getInventory());
+            if (blockEntity instanceof StorageBlockEntity shelf) {
+                if (world instanceof ServerLevel serverLevel) {
+                    Containers.dropContents(serverLevel, pos, shelf.getInventory());
                 }
 
                 world.updateNeighbourForOutputSignal(pos, this);
@@ -113,7 +111,6 @@ public abstract class StorageBlock extends FacingBlock implements EntityBlock {
 
             super.onRemove(state, world, pos, newState, moved);
         }
-
     }
 
     public @NotNull RenderShape getRenderShape(BlockState state) {

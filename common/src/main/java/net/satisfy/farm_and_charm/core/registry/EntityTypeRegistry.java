@@ -20,6 +20,7 @@ import net.satisfy.farm_and_charm.core.block.entity.SiloBlockEntity;
 import net.satisfy.farm_and_charm.core.block.entity.StorageBlockEntity;
 import net.satisfy.farm_and_charm.core.block.entity.StoveBlockEntity;
 import net.satisfy.farm_and_charm.core.block.entity.WaterSprinklerBlockEntity;
+import net.satisfy.farm_and_charm.core.entity.ChairEntity;
 import net.satisfy.farm_and_charm.core.entity.PlowCartEntity;
 import net.satisfy.farm_and_charm.core.entity.RottenTomatoEntity;
 import net.satisfy.farm_and_charm.core.entity.SupplyCartEntity;
@@ -48,7 +49,7 @@ public class EntityTypeRegistry {
     public static final RegistrySupplier<EntityType<SupplyCartEntity>> SUPPLY_CART =
             registerEntityType("cart", () -> EntityType.Builder.of(SupplyCartEntity::new, MobCategory.MISC).sized(1.875f, 0.875f).clientTrackingRange(10).build(FarmAndCharmIdentifier.of("supply_cart").toString()));
     public static final RegistrySupplier<EntityType<PlowCartEntity>> PLOW = registerEntityType("plow", () -> EntityType.Builder.of(PlowCartEntity::new, MobCategory.MISC).sized(1.875f, 0.875f).clientTrackingRange(10).build(FarmAndCharmIdentifier.of("plow").toString()));
-
+    public static final RegistrySupplier<EntityType<ChairEntity>> CHAIR = registerEntityType("chair", () -> EntityType.Builder.of(ChairEntity::new, MobCategory.MISC).sized(0.001F, 0.001F).build((FarmAndCharmIdentifier.of("chair")).toString()));
 
     private static <T extends BlockEntityType<?>> RegistrySupplier<T> registerBlockEntity(final String path, final Supplier<T> type) {
         return BLOCK_ENTITY_TYPES.register(FarmAndCharmIdentifier.of(path), type);

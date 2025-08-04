@@ -25,8 +25,6 @@ public class SoundEventRegistry {
 
     private static RegistrySupplier<SoundEvent> create(String name) {
         ResourceLocation id = FarmAndCharmIdentifier.of(name);
-        return SOUND_EVENTS.register(id, () -> {
-            return SoundEvent.createVariableRangeEvent(id);
-        });
+        return SOUND_EVENTS.register(id, () -> SoundEvent.createVariableRangeEvent(id));
     }
 }

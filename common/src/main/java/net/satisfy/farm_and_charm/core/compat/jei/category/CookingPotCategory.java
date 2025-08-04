@@ -18,7 +18,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.core.block.entity.CookingPotBlockEntity;
 import net.satisfy.farm_and_charm.client.gui.CookingPotGui;
-import net.satisfy.farm_and_charm.core.compat.jei.Farm_And_Charm_JEIPlugin;
+import net.satisfy.farm_and_charm.core.compat.jei.FarmAndCharmJEIPlugin;
 import net.satisfy.farm_and_charm.core.recipe.CookingPotRecipe;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -57,7 +57,7 @@ public class CookingPotCategory implements IRecipeCategory<CookingPotRecipe> {
             for (int slot = 0; slot < 3; slot++) {
                 int current = slot + row * 3;
                 if (current >= s) break;
-                Farm_And_Charm_JEIPlugin.addSlot(builder, 30 + (slot * 18) - WIDTH_OF, 17 + (row * 18) - HEIGHT_OF, ingredients.get(current));
+                FarmAndCharmJEIPlugin.addSlot(builder, 30 + (slot * 18) - WIDTH_OF, 17 + (row * 18) - HEIGHT_OF, ingredients.get(current));
             }
         }
 

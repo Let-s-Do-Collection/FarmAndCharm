@@ -18,7 +18,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.core.block.entity.RoasterBlockEntity;
 import net.satisfy.farm_and_charm.client.gui.RoasterGui;
-import net.satisfy.farm_and_charm.core.compat.jei.Farm_And_Charm_JEIPlugin;
+import net.satisfy.farm_and_charm.core.compat.jei.FarmAndCharmJEIPlugin;
 import net.satisfy.farm_and_charm.core.recipe.RoasterRecipe;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +54,7 @@ public class RoasterCategory implements IRecipeCategory<RoasterRecipe> {
             for (int slot = 0; slot < 3; slot++) {
                 int current = slot + row + (row * 2);
                 if (s - 1 < current) break;
-                Farm_And_Charm_JEIPlugin.addSlot(builder, 30 + (slot * 18) - WIDTH_OF, 17 + (row * 18) - HEIGHT_OF, ingredients.get(current));
+                FarmAndCharmJEIPlugin.addSlot(builder, 30 + (slot * 18) - WIDTH_OF, 17 + (row * 18) - HEIGHT_OF, ingredients.get(current));
             }
         }
 

@@ -25,7 +25,7 @@
       "net.satisfy.farm_and_charm.fabric.core.rei.FarmAndCharmReiClientPluginFabric"
     ],
     "jei_mod_plugin": [
-      "net.satisfy.farm_and_charm.core.compat.jei.Farm_And_Charm_JEIPlugin"
+      "net.satisfy.farm_and_charm.core.compat.jei.FarmAndCharmJEIPlugin"
     ],
     "modmenu": [
       "net.satisfy.farm_and_charm.fabric.core.config.ModMenu"

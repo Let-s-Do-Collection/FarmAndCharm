@@ -19,7 +19,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.core.block.entity.StoveBlockEntity;
 import net.satisfy.farm_and_charm.client.gui.StoveGui;
-import net.satisfy.farm_and_charm.core.compat.jei.Farm_And_Charm_JEIPlugin;
+import net.satisfy.farm_and_charm.core.compat.jei.FarmAndCharmJEIPlugin;
 import net.satisfy.farm_and_charm.core.recipe.StoveRecipe;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -51,14 +51,14 @@ public class StoveCategory implements IRecipeCategory<StoveRecipe> {
     public void setRecipe(IRecipeLayoutBuilder builder, StoveRecipe recipe, IFocusGroup focuses) {
         NonNullList<Ingredient> ingredients = recipe.getIngredients();
 
-        Farm_And_Charm_JEIPlugin.addSlot(builder, 29 - WIDTH_OF, 18 - HEIGHT_OF, ingredients.get(0));
+        FarmAndCharmJEIPlugin.addSlot(builder, 29 - WIDTH_OF, 18 - HEIGHT_OF, ingredients.get(0));
 
         if (ingredients.size() > 1) {
-            Farm_And_Charm_JEIPlugin.addSlot(builder, 47 - WIDTH_OF, 18 - HEIGHT_OF, ingredients.get(1));
+            FarmAndCharmJEIPlugin.addSlot(builder, 47 - WIDTH_OF, 18 - HEIGHT_OF, ingredients.get(1));
         }
 
         if (ingredients.size() > 2) {
-            Farm_And_Charm_JEIPlugin.addSlot(builder, 65 - WIDTH_OF, 18 - HEIGHT_OF, ingredients.get(2));
+            FarmAndCharmJEIPlugin.addSlot(builder, 65 - WIDTH_OF, 18 - HEIGHT_OF, ingredients.get(2));
         }
 
         assert Minecraft.getInstance().level != null;

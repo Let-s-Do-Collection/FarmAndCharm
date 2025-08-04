@@ -42,7 +42,7 @@ import java.util.Objects;
 
 
 @JeiPlugin
-public class Farm_And_Charm_JEIPlugin implements IModPlugin {
+public class FarmAndCharmJEIPlugin implements IModPlugin {
 
     public static void addSlot(IRecipeLayoutBuilder builder, int x, int y, Ingredient ingredient) {
         builder.addSlot(RecipeIngredientRole.INPUT, x, y).addIngredients(ingredient);

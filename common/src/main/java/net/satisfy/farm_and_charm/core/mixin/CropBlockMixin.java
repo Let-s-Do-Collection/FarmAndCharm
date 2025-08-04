@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class CropBlockMixin {
 
     @Shadow
-    protected abstract BlockState getStateForAge(int age);
+    public abstract BlockState getStateForAge(int age);
 
     @Shadow
     public abstract int getAge(BlockState state);

@@ -27,7 +27,6 @@ import net.satisfy.farm_and_charm.core.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@SuppressWarnings("deprecation, unused")
 public abstract class StorageBlock extends FacingBlock implements EntityBlock {
     public static final SoundEvent event;
 

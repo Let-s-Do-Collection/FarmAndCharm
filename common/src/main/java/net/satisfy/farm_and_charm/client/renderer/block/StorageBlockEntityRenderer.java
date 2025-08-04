@@ -16,26 +16,24 @@ import net.satisfy.farm_and_charm.core.block.StorageBlock;
 import net.satisfy.farm_and_charm.core.block.entity.StorageBlockEntity;
 
 public class StorageBlockEntityRenderer implements BlockEntityRenderer<StorageBlockEntity> {
-    private static final HashMap<ResourceLocation, StorageTypeRenderer> STORAGE_TYPES = new HashMap();
+    private static final HashMap<ResourceLocation, StorageTypeRenderer> STORAGE_TYPES = new HashMap<>();
 
-    public static ResourceLocation registerStorageType(ResourceLocation name, StorageTypeRenderer renderer) {
+    public static void  registerStorageType(ResourceLocation name, StorageTypeRenderer renderer) {
         STORAGE_TYPES.put(name, renderer);
-        return name;
     }
 
     public static StorageTypeRenderer getRendererForId(ResourceLocation name) {
-        return (StorageTypeRenderer)STORAGE_TYPES.get(name);
+        return STORAGE_TYPES.get(name);
     }
 
-    public StorageBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
+    public StorageBlockEntityRenderer() {
     }
 
     public void render(StorageBlockEntity entity, float tickDelta, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay) {
         if (entity.hasLevel()) {
             BlockState state = entity.getBlockState();
             Block var9 = state.getBlock();
-            if (var9 instanceof StorageBlock) {
-                StorageBlock sB = (StorageBlock)var9;
+            if (var9 instanceof StorageBlock sB) {
                 NonNullList<ItemStack> itemStacks = entity.getInventory();
                 matrices.pushPose();
                 applyBlockAngle(matrices, state, 180.0F);
@@ -52,7 +50,7 @@ public class StorageBlockEntityRenderer implements BlockEntityRenderer<StorageBl
     }
 
     public static void applyBlockAngle(PoseStack matrices, BlockState state, float angleOffset) {
-        float angle = ((Direction)state.getValue(StorageBlock.FACING)).toYRot();
+        float angle = state.getValue(StorageBlock.FACING).toYRot();
         matrices.translate(0.5, 0.0, 0.5);
         matrices.mulPose(Axis.YP.rotationDegrees(angleOffset - angle));
     }

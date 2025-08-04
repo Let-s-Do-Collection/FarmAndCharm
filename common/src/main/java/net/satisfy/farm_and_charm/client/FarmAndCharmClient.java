@@ -17,13 +17,17 @@ import net.satisfy.farm_and_charm.client.renderer.block.CraftingBowlRenderer;
 import net.satisfy.farm_and_charm.client.renderer.block.MincerRenderer;
 import net.satisfy.farm_and_charm.client.renderer.block.PlowCartRenderer;
 import net.satisfy.farm_and_charm.client.renderer.block.ScarecrowRenderer;
+import net.satisfy.farm_and_charm.client.renderer.block.StorageBlockEntityRenderer;
 import net.satisfy.farm_and_charm.client.renderer.block.StoveBlockRenderer;
 import net.satisfy.farm_and_charm.client.renderer.block.SupplyCartRenderer;
+import net.satisfy.farm_and_charm.client.renderer.block.ToolRackRenderer;
 import net.satisfy.farm_and_charm.client.renderer.block.WaterSprinklerRenderer;
+import net.satisfy.farm_and_charm.client.renderer.block.WindowSillRenderer;
 import net.satisfy.farm_and_charm.client.renderer.entity.ChairRenderer;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.ModelRegistry;
 import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
+import net.satisfy.farm_and_charm.core.registry.StorageTypeRegistry;
 
 import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.*;
 
@@ -42,17 +46,8 @@ public class FarmAndCharmClient {
         );
 
         ClientStorageTypes.init();
-        RenderTypeRegistry.register(RenderType.translucent(), SCARECROW.get());
-        BlockEntityRendererRegistry.register(EntityTypeRegistry.STOVE_BLOCK_ENTITY.get(), StoveBlockRenderer::new);
-        BlockEntityRendererRegistry.register(EntityTypeRegistry.SCARECROW_BLOCK_ENTITY.get(), ScarecrowRenderer::new);
-        BlockEntityRendererRegistry.register(EntityTypeRegistry.MINCER_BLOCK_ENTITY.get(), MincerRenderer::new);
-        BlockEntityRendererRegistry.register(EntityTypeRegistry.CRAFTING_BOWL_BLOCK_ENTITY.get(), CraftingBowlRenderer::new);
-        BlockEntityRendererRegistry.register(EntityTypeRegistry.SPRINKLER_BLOCK_ENTITY.get(), WaterSprinklerRenderer::new);
-
-        registerMenu();
-    }
-
-    public static void registerMenu(){
+        registerStorageTypeRenderers();
+        registerBlockEntityRenderer();
         MenuRegistry.registerScreenFactory(ScreenhandlerTypeRegistry.COOKING_POT_SCREEN_HANDLER.get(), CookingPotGui::new);
         MenuRegistry.registerScreenFactory(ScreenhandlerTypeRegistry.STOVE_SCREEN_HANDLER.get(), StoveGui::new);
         MenuRegistry.registerScreenFactory(ScreenhandlerTypeRegistry.ROASTER_SCREEN_HANDLER.get(), RoasterGui::new);
@@ -78,5 +73,19 @@ public class FarmAndCharmClient {
         EntityModelLayerRegistry.register(ModelRegistry.SUPPLY_CART, SupplyCartModel::createBodyLayer);
         EntityModelLayerRegistry.register(ModelRegistry.PLOW, PlowCartModel::createBodyLayer);
         EntityRendererRegistry.register(EntityTypeRegistry.CHAIR, ChairRenderer::new);
+    }
+
+    public static void registerStorageTypeRenderers() {
+        StorageBlockEntityRenderer.registerStorageType(StorageTypeRegistry.TOOL_RACK, new ToolRackRenderer());
+        StorageBlockEntityRenderer.registerStorageType(StorageTypeRegistry.WINDOW_SILL, new WindowSillRenderer());
+    }
+
+    public static void registerBlockEntityRenderer() {
+        BlockEntityRendererRegistry.register(EntityTypeRegistry.STOVE_BLOCK_ENTITY.get(), StoveBlockRenderer::new);
+        BlockEntityRendererRegistry.register(EntityTypeRegistry.SCARECROW_BLOCK_ENTITY.get(), ScarecrowRenderer::new);
+        BlockEntityRendererRegistry.register(EntityTypeRegistry.MINCER_BLOCK_ENTITY.get(), MincerRenderer::new);
+        BlockEntityRendererRegistry.register(EntityTypeRegistry.CRAFTING_BOWL_BLOCK_ENTITY.get(), CraftingBowlRenderer::new);
+        BlockEntityRendererRegistry.register(EntityTypeRegistry.SPRINKLER_BLOCK_ENTITY.get(), WaterSprinklerRenderer::new);
+        BlockEntityRendererRegistry.register(EntityTypeRegistry.STORAGE_ENTITY.get(), context -> new StorageBlockEntityRenderer());
     }
 }

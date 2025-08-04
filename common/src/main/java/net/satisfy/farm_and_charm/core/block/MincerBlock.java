@@ -177,7 +177,7 @@ public class MincerBlock extends BaseEntityBlock {
                 }
                 if (level instanceof ServerLevel serverWorld) {
                     for (ItemStack stack : mincer.getItems()) {
-                        if (!stack.isEmpty() && mincer.getItem(mincer.OUTPUT_SLOT) != stack) {
+                        if (!stack.isEmpty() && mincer.getItem(mincer.0) != stack) {
                             ItemParticleOption particleOption = new ItemParticleOption(ParticleTypes.ITEM, stack);
                             serverWorld.sendParticles(particleOption, pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.4, 3, 0.2, 0.1, 0, 0.1);
                         }
@@ -198,7 +198,7 @@ public class MincerBlock extends BaseEntityBlock {
             }
             if (level instanceof ServerLevel serverWorld) {
                 for (ItemStack stack : mincer.getItems()) {
-                    if (!stack.isEmpty() && mincer.getItem(mincer.OUTPUT_SLOT) != stack) {
+                    if (!stack.isEmpty() && mincer.getItem(mincer.0) != stack) {
                         ItemParticleOption particleOption = new ItemParticleOption(ParticleTypes.ITEM, stack);
                         serverWorld.sendParticles(particleOption, pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.4, 3, 0.2, 0.1, 0, 0.1);
                     }

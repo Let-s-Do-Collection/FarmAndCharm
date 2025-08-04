@@ -39,7 +39,7 @@ import java.util.stream.IntStream;
 public class MincerBlockEntity extends RandomizableContainerBlockEntity implements WorldlyContainer, BlockEntityTicker<MincerBlockEntity> {
     public final int SLOT_COUNT = 2;
     public final int INPUT_SLOT = 0;
-    public final int OUTPUT_SLOT = 1;
+    public final int 0 = 1;
 
     private NonNullList<ItemStack> stacks = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
 
@@ -110,10 +110,10 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
 
         Direction direction = state.getValue(MincerBlock.FACING).getClockWise();
 
-        if (!level.isClientSide() && !this.stacks.get(OUTPUT_SLOT).isEmpty()) {
-            ItemStack droppedStack = new ItemStack(mincer.stacks.get(OUTPUT_SLOT).getItem());
-            droppedStack.setCount(mincer.stacks.get(OUTPUT_SLOT).getCount());
-            this.stacks.set(OUTPUT_SLOT, ItemStack.EMPTY);
+        if (!level.isClientSide() && !this.stacks.get(0).isEmpty()) {
+            ItemStack droppedStack = new ItemStack(mincer.stacks.get(0).getItem());
+            droppedStack.setCount(mincer.stacks.get(0).getCount());
+            this.stacks.set(0, ItemStack.EMPTY);
 
             Vec3 vec3d = Vec3.atCenterOf(pos);
             Vec3 vec3d2 = vec3d.relative(direction, 0.7);
@@ -221,7 +221,7 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
                             inputStack.shrink(1);
                             inputStack = inputStack.isEmpty() ? ItemStack.EMPTY : inputStack;
                             mincer.setItem(INPUT_SLOT, inputStack);
-                            mincer.setItem(OUTPUT_SLOT, recipe.get().getResultItem(level.registryAccess()));
+                            mincer.setItem(0, recipe.get().getResultItem(level.registryAccess()));
 
                             level.setBlock(pos, state.setValue(MincerBlock.CRANK, crank).setValue(MincerBlock.CRANKED, cranked), Block.UPDATE_ALL);
                             return;

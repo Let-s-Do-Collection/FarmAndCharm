@@ -3,31 +3,34 @@ package net.satisfy.farm_and_charm.client.gui.handler;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.satisfy.farm_and_charm.client.gui.handler.slot.ExtendedSlot;
 import net.satisfy.farm_and_charm.client.gui.handler.slot.StoveOutputSlot;
-import net.satisfy.farm_and_charm.core.recipe.StoveRecipe;
-import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
+import org.jetbrains.annotations.NotNull;
 
-public class StoveGuiHandler extends AbstractRecipeBookGUIScreenHandler {
-    public static final int INPUTS = 4;
-    public static final int FUEL_SLOT = 4;
-    public static final int OUTPUT_SLOT = 0;
+public class StoveGuiHandler extends AbstractContainerMenu {
+    private final Container inventory;
+    private final ContainerData propertyDelegate;
 
     public StoveGuiHandler(int syncId, Inventory playerInventory) {
         this(syncId, playerInventory, new SimpleContainer(5), new SimpleContainerData(4));
     }
 
-    public StoveGuiHandler(int syncId, Inventory playerInventory, Container inventory, ContainerData delegate) {
-        super(ScreenhandlerTypeRegistry.STOVE_SCREEN_HANDLER.get(), syncId, INPUTS, playerInventory, inventory, delegate);
-        buildBlockEntityContainer(playerInventory, inventory);
+    public StoveGuiHandler(int syncId, Inventory playerInventory, Container inventory, ContainerData propertyDelegate) {
+        super(ScreenhandlerTypeRegistry.STOVE_SCREEN_HANDLER.get(), syncId);
+
+        this.inventory = inventory;
+        this.propertyDelegate = propertyDelegate;
+        this.addDataSlots(propertyDelegate);
+
+        buildBlockEntityContainer(playerInventory);
         buildPlayerContainer(playerInventory);
     }
 
@@ -35,31 +38,78 @@ public class StoveGuiHandler extends AbstractRecipeBookGUIScreenHandler {
         return AbstractFurnaceBlockEntity.isFuel(stack);
     }
 
-    private void buildBlockEntityContainer(Inventory playerInventory, Container inventory) {
+    private void buildBlockEntityContainer(Inventory playerInventory) {
         this.addSlot(new StoveOutputSlot(playerInventory.player, inventory, 0, 126, 42));
 
-        this.addSlot(new ExtendedSlot(inventory, 1, 29, 18, this::isIngredient));
-        this.addSlot(new ExtendedSlot(inventory, 2, 47, 18, this::isIngredient));
-        this.addSlot(new ExtendedSlot(inventory, 3, 65, 18, this::isIngredient));
+        this.addSlot(new ExtendedSlot(inventory, 1, 29, 18));
+        this.addSlot(new ExtendedSlot(inventory, 2, 47, 18));
+        this.addSlot(new ExtendedSlot(inventory, 3, 65, 18));
 
         this.addSlot(new ExtendedSlot(inventory, 4, 42, 48, StoveGuiHandler::isFuel));
 
     }
 
     private void buildPlayerContainer(Inventory playerInventory) {
-        int i;
-        for (i = 0; i < 3; ++i) {
-            for (int j = 0; j < 9; ++j) {
-                this.addSlot(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+        for (int row = 0; row < 3; ++row) {
+            for (int col = 0; col < 9; ++col) {
+                this.addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
             }
         }
-        for (i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 142));
+
+        for (int col = 0; col < 9; ++col) {
+            this.addSlot(new Slot(playerInventory, col, 8 + col * 18, 142));
         }
     }
 
-    private boolean isIngredient(ItemStack stack) {
-        return this.world.getRecipeManager().getAllRecipesFor(RecipeTypeRegistry.STOVE_RECIPE_TYPE.get()).stream().anyMatch(recipe -> recipe.value().getIngredients().stream().anyMatch(x -> x.test(stack)));
+    @Override
+    public @NotNull ItemStack quickMoveStack(Player player, int index) {
+        Slot slot = this.slots.get(index);
+        if (slot.hasItem()) {
+            ItemStack stack = slot.getItem();
+            ItemStack copy = stack.copy();
+
+            if (index == 0) {
+                if (!this.moveItemStackTo(stack, 5, 41, true)) {
+                    return ItemStack.EMPTY;
+                }
+                slot.onQuickCraft(stack, copy);
+            } else if (index >= 1 && index <= 3) {
+                if (!this.moveItemStackTo(stack, 5, 41, true)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (index == 4) {
+                if (!this.moveItemStackTo(stack, 5, 41, true)) {
+                    return ItemStack.EMPTY;
+                }
+            } else {
+                if (isFuel(stack)) {
+                    if (!this.moveItemStackTo(stack, 4, 5, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (!this.moveItemStackTo(stack, 1, 4, false)) {
+                    return ItemStack.EMPTY;
+                }
+            }
+
+            if (stack.isEmpty()) {
+                slot.set(ItemStack.EMPTY);
+            } else {
+                slot.setChanged();
+            }
+
+            if (stack.getCount() == copy.getCount()) {
+                return ItemStack.EMPTY;
+            }
+
+            slot.onTake(player, stack);
+            return copy;
+        }
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public boolean stillValid(Player player) {
+        return this.inventory.stillValid(player);
     }
 
     public int getScaledProgress(int arrowWidth) {
@@ -74,31 +124,5 @@ public class StoveGuiHandler extends AbstractRecipeBookGUIScreenHandler {
     public boolean isBeingBurned() {
         return propertyDelegate.get(1) != 0;
     }
-
-    @Override
-    public boolean hasIngredient(Recipe<?> recipe) {
-        if (recipe instanceof StoveRecipe StoveRecipe) {
-            for (Ingredient ingredient : StoveRecipe.getIngredients()) {
-                boolean found = false;
-                for (Slot slot : this.slots) {
-                    if (ingredient.test(slot.getItem())) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public int getCraftingSlotCount() {
-        return INPUTS;
-    }
-
 }
 

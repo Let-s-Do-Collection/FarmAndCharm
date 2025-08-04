@@ -3,19 +3,20 @@ package net.satisfy.farm_and_charm.client.gui.handler;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.satisfy.farm_and_charm.core.block.entity.CookingPotBlockEntity;
 import net.satisfy.farm_and_charm.client.gui.handler.slot.ExtendedSlot;
-import net.satisfy.farm_and_charm.core.recipe.CookingPotRecipe;
+import net.satisfy.farm_and_charm.core.block.entity.CookingPotBlockEntity;
 import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.TagRegistry;
+import org.jetbrains.annotations.NotNull;
 
-public class CookingPotGuiHandler extends AbstractRecipeBookGUIScreenHandler {
+public class CookingPotGuiHandler extends AbstractContainerMenu {
+    private final Container inventory;
     private final ContainerData propertyDelegate;
 
     public CookingPotGuiHandler(int syncId, Inventory playerInventory) {
@@ -23,16 +24,17 @@ public class CookingPotGuiHandler extends AbstractRecipeBookGUIScreenHandler {
     }
 
     public CookingPotGuiHandler(int syncId, Inventory playerInventory, Container inventory, ContainerData propertyDelegate) {
-        super(ScreenhandlerTypeRegistry.COOKING_POT_SCREEN_HANDLER.get(), syncId, 7, playerInventory, inventory, propertyDelegate);
+        super(ScreenhandlerTypeRegistry.COOKING_POT_SCREEN_HANDLER.get(), syncId);
 
-        this.buildBlockEntityContainer(inventory);
-        this.buildPlayerContainer(playerInventory);
-
+        this.inventory = inventory;
         this.propertyDelegate = propertyDelegate;
         this.addDataSlots(propertyDelegate);
+
+        this.buildBlockEntityContainer();
+        this.buildPlayerContainer(playerInventory);
     }
 
-    private void buildBlockEntityContainer(Container inventory) {
+    private void buildBlockEntityContainer() {
         this.addSlot(new ExtendedSlot(inventory, 6, 95, 55, stack -> stack.is(TagRegistry.CONTAINER)));
 
         for (int row = 0; row < 2; row++) {
@@ -55,6 +57,7 @@ public class CookingPotGuiHandler extends AbstractRecipeBookGUIScreenHandler {
                 this.addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
             }
         }
+
         for (int col = 0; col < 9; ++col) {
             this.addSlot(new Slot(playerInventory, col, 8 + col * 18, 142));
         }
@@ -74,39 +77,48 @@ public class CookingPotGuiHandler extends AbstractRecipeBookGUIScreenHandler {
     }
 
     @Override
-    public boolean hasIngredient(Recipe<?> recipe) {
-        if (recipe instanceof CookingPotRecipe cookingPotRecipe) {
-            for (Ingredient ingredient : cookingPotRecipe.getIngredients()) {
-                boolean found = false;
-                for (Slot slot : this.slots) {
-                    if (ingredient.test(slot.getItem())) {
-                        found = true;
-                        break;
+    public @NotNull ItemStack quickMoveStack(Player player, int index) {
+        Slot slot = this.slots.get(index);
+        if (slot.hasItem()) {
+            ItemStack stack = slot.getItem();
+            ItemStack copy = stack.copy();
+
+            if (index >= 0 && index <= 5) {
+                if (!this.moveItemStackTo(stack, 8, 44, true)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (index == 6) {
+                if (!this.moveItemStackTo(stack, 8, 44, true)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (index == 7) {
+                if (!this.moveItemStackTo(stack, 8, 44, true)) {
+                    return ItemStack.EMPTY;
+                }
+            } else {
+                if (stack.is(TagRegistry.CONTAINER)) {
+                    if (!this.moveItemStackTo(stack, 6, 7, false)) {
+                        return ItemStack.EMPTY;
                     }
+                } else if (!this.moveItemStackTo(stack, 0, 6, false)) {
+                    return ItemStack.EMPTY;
                 }
-                if (!found) {
-                    return false;
-                }
-            }
-            if (cookingPotRecipe.isContainerRequired()) {
-                ItemStack requiredContainer = cookingPotRecipe.getContainerItem();
-                boolean containerFound = false;
-                for (Slot slot : this.slots) {
-                    if (requiredContainer.getItem() == slot.getItem().getItem()) {
-                        containerFound = true;
-                        break;
-                    }
-                }
-                return containerFound;
             }
 
-            return true;
+            if (stack.isEmpty()) {
+                slot.set(ItemStack.EMPTY);
+            } else {
+                slot.setChanged();
+            }
+
+            slot.onTake(player, stack);
+            return copy;
         }
-        return false;
+        return ItemStack.EMPTY;
     }
 
     @Override
-    public int getCraftingSlotCount() {
-        return 7;
+    public boolean stillValid(Player player) {
+        return this.inventory.stillValid(player);
     }
 }

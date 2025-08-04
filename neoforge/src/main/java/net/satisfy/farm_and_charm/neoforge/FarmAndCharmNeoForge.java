@@ -4,7 +4,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.satisfy.farm_and_charm.FarmAndCharm;
-import net.satisfy.farm_and_charm.registry.CompostableRegistry;
+import net.satisfy.farm_and_charm.core.registry.CompostableRegistry;
 
 @Mod(FarmAndCharm.MOD_ID)
 public class FarmAndCharmNeoForge {

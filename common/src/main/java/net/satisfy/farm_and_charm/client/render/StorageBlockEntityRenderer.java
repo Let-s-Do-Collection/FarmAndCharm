@@ -12,8 +12,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.satisfy.farm_and_charm.block.StorageBlock;
-import net.satisfy.farm_and_charm.block.entity.StorageBlockEntity;
+import net.satisfy.farm_and_charm.core.block.StorageBlock;
+import net.satisfy.farm_and_charm.core.block.entity.StorageBlockEntity;
 
 public class StorageBlockEntityRenderer implements BlockEntityRenderer<StorageBlockEntity> {
     private static final HashMap<ResourceLocation, StorageTypeRenderer> STORAGE_TYPES = new HashMap();

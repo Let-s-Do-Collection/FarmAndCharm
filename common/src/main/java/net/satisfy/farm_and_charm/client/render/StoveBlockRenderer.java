@@ -8,8 +8,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Con
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.satisfy.farm_and_charm.block.StoveBlock;
-import net.satisfy.farm_and_charm.block.entity.StoveBlockEntity;
+import net.satisfy.farm_and_charm.core.block.StoveBlock;
+import net.satisfy.farm_and_charm.core.block.entity.StoveBlockEntity;
 import net.satisfy.farm_and_charm.client.util.ClientUtil;
 
 import java.util.Arrays;

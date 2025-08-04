@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.satisfy.farm_and_charm.client.gui.handler.StoveGuiHandler;
-import net.satisfy.farm_and_charm.util.FarmAndCharmIdentifier;
+import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 
 @Environment(EnvType.CLIENT)
 public class StoveGui extends AbstractContainerScreen<StoveGuiHandler> {

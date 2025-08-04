@@ -3,7 +3,7 @@ package net.satisfy.farm_and_charm.fabric.rei;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
-import net.satisfy.farm_and_charm.compat.rei.Farm_And_CharmREIClientPlugin;
+import net.satisfy.farm_and_charm.core.compat.rei.Farm_And_CharmREIClientPlugin;
 
 
 public class FarmAndCharmReiClientPluginFabric implements REIClientPlugin {

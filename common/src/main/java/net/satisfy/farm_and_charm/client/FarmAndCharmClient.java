@@ -14,11 +14,9 @@ import net.satisfy.farm_and_charm.client.gui.RoasterGui;
 import net.satisfy.farm_and_charm.client.gui.StoveGui;
 import net.satisfy.farm_and_charm.client.model.*;
 import net.satisfy.farm_and_charm.client.render.*;
-import net.satisfy.farm_and_charm.registry.EntityTypeRegistry;
-import net.satisfy.farm_and_charm.registry.ModelRegistry;
-import net.satisfy.farm_and_charm.registry.ScreenhandlerTypeRegistry;
-
-import static net.satisfy.farm_and_charm.registry.ObjectRegistry.*;
+import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
+import net.satisfy.farm_and_charm.core.registry.ModelRegistry;
+import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
 
 @Environment(EnvType.CLIENT)
 public class FarmAndCharmClient {

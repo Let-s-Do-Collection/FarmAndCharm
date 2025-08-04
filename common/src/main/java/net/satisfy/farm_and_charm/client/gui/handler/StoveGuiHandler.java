@@ -12,11 +12,9 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.satisfy.farm_and_charm.client.gui.handler.slot.ExtendedSlot;
 import net.satisfy.farm_and_charm.client.gui.handler.slot.StoveOutputSlot;
-import net.satisfy.farm_and_charm.recipe.StoveRecipe;
-import net.satisfy.farm_and_charm.registry.RecipeTypeRegistry;
-import net.satisfy.farm_and_charm.registry.ScreenhandlerTypeRegistry;
-
-import java.util.List;
+import net.satisfy.farm_and_charm.core.recipe.StoveRecipe;
+import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
+import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
 
 public class StoveGuiHandler extends AbstractRecipeBookGUIScreenHandler {
     public static final int INPUTS = 4;

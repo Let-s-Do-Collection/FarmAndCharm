@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.satisfy.farm_and_charm.block.entity.StorageBlockEntity;
+import net.satisfy.farm_and_charm.core.block.entity.StorageBlockEntity;
 import net.satisfy.farm_and_charm.client.util.ClientUtil;
 
 @Environment(EnvType.CLIENT)

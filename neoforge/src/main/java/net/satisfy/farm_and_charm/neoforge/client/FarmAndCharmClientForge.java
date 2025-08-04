@@ -11,7 +11,7 @@ import net.satisfy.farm_and_charm.client.FarmAndCharmClient;
 import net.satisfy.farm_and_charm.client.gui.CookingPotGui;
 import net.satisfy.farm_and_charm.client.gui.RoasterGui;
 import net.satisfy.farm_and_charm.client.gui.StoveGui;
-import net.satisfy.farm_and_charm.registry.ScreenhandlerTypeRegistry;
+import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
 
 @EventBusSubscriber(modid = FarmAndCharm.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public class FarmAndCharmClientForge {

@@ -4,8 +4,8 @@ import net.fabricmc.fabric.api.biome.v1.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.levelgen.GenerationStep;
-import net.satisfy.farm_and_charm.util.FarmAndCharmIdentifier;
-import net.satisfy.farm_and_charm.world.feature.FarmAndCharmPlacedFeature;
+import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
+import net.satisfy.farm_and_charm.core.world.feature.FarmAndCharmPlacedFeature;
 
 import java.util.function.Predicate;
 

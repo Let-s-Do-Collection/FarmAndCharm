@@ -4,7 +4,7 @@ import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.forge.REIPluginClient;
-import net.satisfy.farm_and_charm.compat.rei.Farm_And_CharmREIClientPlugin;
+import net.satisfy.farm_and_charm.core.compat.rei.Farm_And_CharmREIClientPlugin;
 
 @REIPluginClient
 @SuppressWarnings("unused")

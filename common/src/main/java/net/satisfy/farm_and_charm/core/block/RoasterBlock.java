@@ -1,0 +1,210 @@
+package net.satisfy.farm_and_charm.core.block;
+
+import com.mojang.serialization.MapCodec;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.satisfy.farm_and_charm.core.block.entity.RoasterBlockEntity;
+import net.satisfy.farm_and_charm.core.registry.SoundEventRegistry;
+import net.satisfy.farm_and_charm.core.util.GeneralUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+
+@SuppressWarnings("deprecation, unused")
+public class RoasterBlock extends BaseEntityBlock {
+    public static final MapCodec<RoasterBlock> CODEC = simpleCodec(RoasterBlock::new);
+
+    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final BooleanProperty LIT = BooleanProperty.create("lit");
+    public static final BooleanProperty ROASTING = BooleanProperty.create("roasting");
+    public static final BooleanProperty HANGING = BooleanProperty.create("hanging");
+    protected static final VoxelShape HANGING_SHAPE = Shapes.or(
+            Shapes.box(0.1875, 0.5, 0.25, 0.8125, 0.5625, 0.75),
+            Shapes.box(0.4375, 0.5625, 0.4375, 0.5625, 0.625, 0.5625),
+            Shapes.box(0, 0.3125, 0.3125, 0.125, 0.4375, 0.6875),
+            Shapes.box(0.125, 0.125, 0.1875, 0.875, 0.5, 0.8125),
+            Shapes.box(0.875, 0.3125, 0.3125, 1, 0.4375, 0.6875),
+            Shapes.box(0.0625, 0.4375, 0.4375, 0.0625, 0.875, 0.5625),
+            Shapes.box(0.9375, 0.4375, 0.4375, 0.9375, 0.875, 0.5625),
+            Shapes.box(0.0625, 0.875, 0.4375, 0.9375, 0.875, 0.5625)
+    );
+    private static final Map<Direction, VoxelShape> SHAPES = Util.make(new HashMap<>(), map -> {
+        Supplier<VoxelShape> voxelShapeSupplier = () -> Shapes.or(
+                Shapes.box(0.1875, 0.375, 0.25, 0.8125, 0.4375, 0.75),
+                Shapes.box(0.4375, 0.4375, 0.4375, 0.5625, 0.5, 0.5625),
+                Shapes.box(0, 0.1875, 0.3125, 0.125, 0.3125, 0.6875),
+                Shapes.box(0.125, 0, 0.1875, 0.875, 0.375, 0.8125),
+                Shapes.box(0.875, 0.1875, 0.3125, 1, 0.3125, 0.6875)
+        );
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            map.put(direction, GeneralUtil.rotateShape(Direction.NORTH, direction, voxelShapeSupplier.get()));
+        }
+    });
+
+    public RoasterBlock(Properties properties) {
+        super(properties);
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LIT, false).setValue(ROASTING, false).setValue(HANGING, false));
+    }
+
+    @Override
+    protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
+        return CODEC;
+    }
+
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FACING, LIT, ROASTING, HANGING);
+    }
+
+    @Override
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        Direction facing = state.getValue(FACING);
+        boolean hanging = state.getValue(HANGING);
+
+        if (hanging) {
+            return GeneralUtil.rotateShape(Direction.NORTH, facing, HANGING_SHAPE);
+        } else {
+            return SHAPES.get(facing);
+        }
+    }
+
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        Direction facing = context.getHorizontalDirection().getOpposite();
+        boolean hanging = context.getClickedFace() == Direction.DOWN;
+        return this.defaultBlockState().setValue(FACING, facing).setValue(HANGING, hanging);
+    }
+
+    @Override
+    public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
+        if (state.getValue(HANGING)) {
+            return !world.isEmptyBlock(pos.above());
+        } else {
+            VoxelShape shape = world.getBlockState(pos.below()).getShape(world, pos.below());
+            return Block.isFaceFull(shape, Direction.UP);
+        }
+    }
+
+    @Override
+    public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+        if (!state.canSurvive(world, pos)) {
+            world.destroyBlock(pos, true);
+        }
+    }
+
+    @Override
+    public @NotNull BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
+        if (!state.canSurvive(world, pos)) {
+            world.scheduleTick(pos, this, 1);
+        }
+        return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
+    }
+
+    @Override
+    public @NotNull InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
+        if (!world.isClientSide) {
+            BlockEntity entity = world.getBlockEntity(pos);
+            if (entity instanceof MenuProvider) {
+                player.openMenu((MenuProvider) entity);
+                return InteractionResult.CONSUME;
+            }
+        }
+        return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    public void animateTick(BlockState state, Level world, BlockPos pos, RandomSource random) {
+        if (!state.getValue(ROASTING) && !state.getValue(LIT)) return;
+
+        double d = pos.getX() + 0.5;
+        double e = pos.getY() + 0.7;
+        double f = pos.getZ() + 0.5;
+
+        world.playLocalSound(d, e, f, SoundEventRegistry.ROASTER_COOKING.get(), SoundSource.BLOCKS, 0.05f, 1.0f, false);
+
+
+        double h = random.nextDouble() * 0.6 - 0.3;
+        double i = h * (random.nextBoolean() ? 1 : -1);
+        double j = random.nextDouble() * 0.5625;
+        double k = h * (random.nextBoolean() ? 1 : -1);
+
+        world.addParticle(ParticleTypes.SMOKE, d + i, e + j, f + k, 0.0, 0.0, 0.0);
+    }
+
+    @Override
+    public @NotNull RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
+        return new RoasterBlockEntity(pos, state);
+    }
+
+    @Override
+    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (!state.is(newState.getBlock())) {
+            BlockEntity blockEntity = world.getBlockEntity(pos);
+            if (blockEntity instanceof RoasterBlockEntity) {
+                Containers.dropContents(world, pos, ((RoasterBlockEntity) blockEntity).getItems());
+                world.updateNeighbourForOutputSignal(pos, this);
+            }
+            super.onRemove(state, world, pos, newState, isMoving);
+        }
+    }
+
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
+        if (!world.isClientSide) {
+            return (lvl, pos, blkState, t) -> {
+                if (t instanceof RoasterBlockEntity roastingPot) {
+                    roastingPot.tick(lvl, pos, blkState, roastingPot);
+                }
+            };
+        }
+        return null;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Component> list, TooltipFlag tooltipFlag) {
+        list.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.GRAY));
+    }
+}

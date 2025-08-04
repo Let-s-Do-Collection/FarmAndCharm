@@ -2,7 +2,7 @@ package net.satisfy.farm_and_charm.fabric.mixin;
 
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Player;
-import net.satisfy.farm_and_charm.registry.MobEffectRegistry;
+import net.satisfy.farm_and_charm.core.registry.MobEffectRegistry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;

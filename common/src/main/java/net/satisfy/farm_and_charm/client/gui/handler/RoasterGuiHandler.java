@@ -9,13 +9,11 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
-import net.satisfy.farm_and_charm.block.entity.RoasterBlockEntity;
+import net.satisfy.farm_and_charm.core.block.entity.RoasterBlockEntity;
 import net.satisfy.farm_and_charm.client.gui.handler.slot.ExtendedSlot;
-import net.satisfy.farm_and_charm.recipe.RoasterRecipe;
-import net.satisfy.farm_and_charm.registry.ScreenhandlerTypeRegistry;
-import net.satisfy.farm_and_charm.registry.TagRegistry;
-
-import java.util.List;
+import net.satisfy.farm_and_charm.core.recipe.RoasterRecipe;
+import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
+import net.satisfy.farm_and_charm.core.registry.TagRegistry;
 
 public class RoasterGuiHandler extends AbstractRecipeBookGUIScreenHandler {
     private final ContainerData propertyDelegate;

@@ -3,6 +3,7 @@ package net.satisfy.farm_and_charm.core.mixin;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -13,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.satisfy.farm_and_charm.core.entity.ai.ApproachFeedingTroughGoal;
 import net.satisfy.farm_and_charm.core.network.PacketHandler;
-import net.satisfy.farm_and_charm.core.network.packets.SyncSaturationPacket;
+import net.satisfy.farm_and_charm.core.network.packet.SyncSaturationPacket;
 import net.satisfy.farm_and_charm.core.util.SaturationTracker;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -81,7 +82,10 @@ public abstract class AnimalEntityMixin extends Mob implements SaturationTracker
 
         if (!animal.level().isClientSide) {
             SyncSaturationPacket packet = new SyncSaturationPacket(this.getId(), tracker.level(), tracker.foodCounter());
-            PacketHandler.sendSaturationSync(packet, this);
+
+            if (player instanceof ServerPlayer serverPlayer) {
+                PacketHandler.sendToClient(serverPlayer, packet);
+            }
 
             ((ServerLevel)animal.level()).sendParticles(ParticleTypes.HAPPY_VILLAGER, animal.getX(), animal.getY() + 1.0, animal.getZ(), 5, 0.2, 0.2, 0.2, 0.05);
         }

@@ -1,3 +1,13 @@
+[1.0.11] – 2025.08.04
+
+**Fixed**
+* Fixed a critical issue where the game would crash on servers due to client-only code being called from the `AnimalEntityMixin`. Everything worked fine in singleplayer, but not on dedicated servers.  
+  This patch restores proper server compatibility for all new saturation mechanics. :) 
+
+_P.S.: Sorry for the hiccup – this ones on me_
+
+***
+
 [1.0.10]
 
 ## This small update focuses on adding new mechanics that enhance loot from farm animals, selected F&C crops, and eggs through interaction, care, and environmental factors.
@@ -41,7 +51,7 @@
 
 ***
 
-[1.0.7] – 2025.05.06
+[1.0.7] 
 
 **Added**
 * Tooltip showing remaining burn time when hovering over the stove burn icon
@@ -63,7 +73,7 @@
 
 ***
 
-[1.0.6] - 2025.02.15
+[1.0.6]
 
 **Added**
 * Added the ability to retrieve items from the MincerBlock by Shift-Right Clicking

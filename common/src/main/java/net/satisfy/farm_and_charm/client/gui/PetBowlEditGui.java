@@ -7,7 +7,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.satisfy.farm_and_charm.core.block.entity.PetBowlBlockEntity;
 import net.satisfy.farm_and_charm.core.network.PacketHandler;
-import net.satisfy.farm_and_charm.core.network.packets.SetTextPacket;
+import net.satisfy.farm_and_charm.core.network.packet.SetTextPacket;
 
 import java.util.List;
 

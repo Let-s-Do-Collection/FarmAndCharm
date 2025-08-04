@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.farm_and_charm.core.block.FeedingTroughBlock;
 import net.satisfy.farm_and_charm.core.network.PacketHandler;
-import net.satisfy.farm_and_charm.core.network.packets.SyncSaturationPacket;
+import net.satisfy.farm_and_charm.core.network.packet.SyncSaturationPacket;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.TagRegistry;
 import net.satisfy.farm_and_charm.core.util.SaturationTracker;

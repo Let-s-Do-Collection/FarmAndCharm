@@ -1,4 +1,4 @@
-package net.satisfy.farm_and_charm.client.render;
+package net.satisfy.farm_and_charm.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;

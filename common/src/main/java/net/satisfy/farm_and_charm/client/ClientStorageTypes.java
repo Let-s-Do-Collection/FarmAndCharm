@@ -2,10 +2,10 @@ package net.satisfy.farm_and_charm.client;
 
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.farm_and_charm.FarmAndCharm;
-import net.satisfy.farm_and_charm.client.render.StorageBlockEntityRenderer;
-import net.satisfy.farm_and_charm.client.render.StorageTypeRenderer;
-import net.satisfy.farm_and_charm.client.render.ToolRackRenderer;
-import net.satisfy.farm_and_charm.client.render.WindowSillRenderer;
+import net.satisfy.farm_and_charm.client.renderer.StorageBlockEntityRenderer;
+import net.satisfy.farm_and_charm.client.renderer.StorageTypeRenderer;
+import net.satisfy.farm_and_charm.client.renderer.ToolRackRenderer;
+import net.satisfy.farm_and_charm.client.renderer.WindowSillRenderer;
 import net.satisfy.farm_and_charm.core.registry.StorageTypeRegistry;
 
 public class ClientStorageTypes {

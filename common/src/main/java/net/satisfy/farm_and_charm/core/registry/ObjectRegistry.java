@@ -10,6 +10,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.food.Foods;
+import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
@@ -70,7 +71,7 @@ public class ObjectRegistry {
     public static final Registrar<Item> ITEM_REGISTRAR = ITEMS.getRegistrar();
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(FarmAndCharm.MOD_ID, Registries.BLOCK);
     public static final Registrar<Block> BLOCK_REGISTRAR = BLOCKS.getRegistrar();
-    public static final RegistrySupplier<Item> FERTILIZER = registerItem("fertilizer", () -> new FertilizerItem(getSettings()));
+    public static final RegistrySupplier<Item> FERTILIZER = registerItem("fertilizer", () -> new BoneMealItem(getSettings()));
     public static final RegistrySupplier<Item> PITCHFORK = registerItem("pitchfork", () -> new HoeItem(Tiers.IRON, new Item.Properties()));
     public static final RegistrySupplier<Item> SUPPLY_CART = registerItem("supply_cart", () -> new CartItem(getSettings()));
     public static final RegistrySupplier<Item> PLOW = registerItem("plow", () -> new CartItem(getSettings()));
@@ -90,6 +91,7 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> LETTUCE = registerItem("lettuce", () -> new Item(getSettings().food(Foods.CARROT)));
     public static final RegistrySupplier<Item> TOMATO = registerItem("tomato", () -> new Item(getSettings().food(Foods.APPLE)));
     public static final RegistrySupplier<Item> ROTTEN_TOMATO = registerItem("rotten_tomato", () -> new RottenTomatoItem(getSettings().food(Foods.POISONOUS_POTATO)));
+    public static final RegistrySupplier<Item> COMPOST = registerItem("compost", () -> new FertilizerItem(getSettings()));
     public static final RegistrySupplier<Item> STRAWBERRY_TEA_CUP = registerItem("strawberry_tea_cup", () -> new EffectJugItem(getFoodItemSettings(1, 0.05f, MobEffects.DIG_SPEED, 120), 120, true));
     public static final RegistrySupplier<Item> NETTLE_TEA_CUP = registerItem("nettle_tea_cup", () -> new EffectJugItem(getFoodItemSettings(1, 0.05f, MobEffects.HEAL, -0), -0, true));
     public static final RegistrySupplier<Item> RIBWORT_TEA_CUP = registerItem("ribwort_tea_cup", () -> new EffectJugItem(getFoodItemSettings(1, 0.05f, MobEffects.REGENERATION, 60), 60, true));

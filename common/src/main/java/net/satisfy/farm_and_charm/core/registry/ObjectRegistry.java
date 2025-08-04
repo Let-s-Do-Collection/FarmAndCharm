@@ -162,7 +162,6 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Block> CHICKEN_COOP = registerWithoutItem("chicken_coop", () -> new ChickenCoopBlock(BlockBehaviour.Properties.copy(Blocks.OAK_PLANKS).strength(1.0F).sound(SoundType.WOOD)));
     public static final RegistrySupplier<Item> CHICKEN_COOP_ITEM = registerItem("chicken_coop", () -> new ChickenCoopBlockItem(ObjectRegistry.CHICKEN_COOP.get(), getSettings()));
 
-
     public static void init() {
         ITEMS.register();
         BLOCKS.register();

@@ -1,0 +1,37 @@
+{
+  "parent": "farm_and_charm:main/find_wild_crops",
+  "criteria": {
+    "chicken_nest": {
+      "conditions": {
+        "location": [
+          {
+            "block": "farm_and_charm:chicken_nest",
+            "condition": "minecraft:block_state_property"
+          }
+        ]
+      },
+      "trigger": "minecraft:placed_block"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.farm_and_charm.place_chicken_nest.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "farm_and_charm:chicken_nest"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.farm_and_charm.place_chicken_nest"
+    }
+  },
+  "requirements": [
+    [
+      "chicken_nest"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

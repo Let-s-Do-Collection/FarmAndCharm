@@ -6,11 +6,14 @@
 * A Pet Bowl! - Feed your cat or dog with a `Pet Bowl`. Occasionally, pets will walk up to an empty bowl and beg for food. Feeding grants temporary bonuses. You can assign a Name Tag to dedicate a bowl to a specific pet.
 * Chicken Nest: When placed near chickens, eggs are laid directly into the nest instead of falling to the ground. The nest can hold up to 2 eggs. Occasionally (5% chance), a feather may also be added.* Chicken Coop: Works like similar to a bee nest. Chickens nearby will enter the coop when ready to lay an egg. Holds up to 6 chickens at once.
 * Farm animals can now be fed their preferred food. The more often they are fed, the more meat they will drop. Feeding progress is visible only when wearing...
-* `Dungarees`! – While equipped, shows feed levels above animals. Also prevents trampling farmland while wearing them. They can be bought from Farmer Villagers.
+* ...`Dungarees`! – While equipped, shows feed levels above animals. Also prevents trampling farmland while wearing them. They can be bought from Farmer Villagers.
 * Certain F&C crops now have a small chance to grow into larger variants when near a water sprinkler or during rain. Larger crops have an increased chance of yielding multiple drops.
 * Farmer Villagers have now a Chance to offer several F&C related Items.
+* Chicken Coop: Functions similarly to a bee nest. Chickens enter on their own to lay eggs and rest. Up to 9 Eggs can be stored at once. Players can also manually insert a leashed chicken. Eggs are automatically collected, and chickens exit after a short time.
 * When placing SugarCare on Fertilized Soil it will grow 20% faster
+* Dog & Cat Food can now be crafted into Bags. These can be placed and stacked up to 3 times.
 * Support for DoggyTalents
+* Japanese translation _(Thanks to PExPE3)_
 
 **Fixed**
 * Recipe for Yeast had wrong tags as Ingredients

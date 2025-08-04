@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "UXU"
+  ],
+  "key": {
+    "U": {
+      "tag": "minecraft:wooden_slabs"
+    },
+    "#": {
+      "item": "minecraft:iron_ingot"
+    },
+    "X": {
+      "item": "farm_and_charm:chicken_nest"
+    }
+  },
+  "result": {
+    "item": "farm_and_charm:chicken_coop",
+    "count": 1
+  }
+}

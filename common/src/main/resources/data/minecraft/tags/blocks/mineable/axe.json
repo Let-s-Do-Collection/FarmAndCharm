@@ -3,6 +3,8 @@
   "values": [
     "farm_and_charm:feeding_trough",
     "farm_and_charm:water_sprinkler",
-    "farm_and_charm:silo_wood"
+    "farm_and_charm:silo_wood",
+    "farm_and_charm:chicken_coop",
+    "farm_and_charm:pet_bowl"
   ]
 }

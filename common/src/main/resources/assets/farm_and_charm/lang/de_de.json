@@ -306,6 +306,11 @@
   "tooltip.farm_and_charm.chickencoop_eggs": "%s of %s Eier gelagert",
   "tooltip.farm_and_charm.dungarees_1": "When on Legs:",
   "tooltip.farm_and_charm.dungarees_2": "Verhindert das Zertrampeln von Ackerboden ",
-  "tooltip.farm_and_charm.dungarees_3": "Shows Feeding Level of Farm Animals"
+  "tooltip.farm_and_charm.dungarees_3": "Shows Feeding Level of Farm Animals",
+  "advancement.farm_and_charm.place_chicken_coop": "Gackingham Palace",
+  "advancement.farm_and_charm.place_chicken_coop.desc": "Platziere einen Hühnerstall",
+  "advancement.farm_and_charm.place_chicken_nest": "Was war zuerst da...?",
+  "advancement.farm_and_charm.place_chicken_nest.desc": "Platziere ein Hühnernest"
+
 }
 

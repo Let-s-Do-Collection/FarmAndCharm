@@ -4,12 +4,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.animal.Chicken;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -33,7 +32,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.farm_and_charm.core.block.entity.ChickenCoopBlockEntity;
-import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -83,18 +81,31 @@ public class ChickenCoopBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
-        if (!level.isClientSide && !state.is(newState.getBlock())) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (!state.is(newState.getBlock())) {
+            super.onRemove(state, level, pos, newState, isMoving);
+        }
+    }
+
+    @Override
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (!level.isClientSide) {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof ChickenCoopBlockEntity coop) {
-                ItemStack stack = new ItemStack(this);
-                CompoundTag nbt = new CompoundTag();
-                coop.saveAdditional(nbt);
-                BlockItem.setBlockEntityData(stack, EntityTypeRegistry.CHICKEN_COOP_BLOCK_ENTITY.get(), nbt);
-                level.addFreshEntity(new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), stack));
+                boolean hasNbt = !coop.getStoredChickens().isEmpty() || coop.getEggCount() > 0;
+
+                if (hasNbt || !player.isCreative()) {
+                    ItemStack stack = new ItemStack(ObjectRegistry.CHICKEN_COOP_ITEM.get());
+                    if (hasNbt) {
+                        CompoundTag tag = new CompoundTag();
+                        coop.saveAdditional(tag);
+                        stack.addTagElement("BlockEntityTag", tag);
+                    }
+                    Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
+                }
             }
         }
-        super.onRemove(state, level, pos, newState, moved);
+        super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override

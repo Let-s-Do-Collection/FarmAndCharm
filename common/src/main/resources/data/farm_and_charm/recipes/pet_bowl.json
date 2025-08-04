@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "# #",
+    " U "
+  ],
+  "key": {
+    "U": {
+      "tag": "minecraft:wooden_slabs"
+    },
+    "#": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "farm_and_charm:pet_bowl",
+    "count": 1
+  }
+}

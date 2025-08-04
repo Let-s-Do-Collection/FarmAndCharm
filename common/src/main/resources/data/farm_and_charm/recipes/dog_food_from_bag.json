@@ -1,0 +1,12 @@
+{
+  "type": "crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "farm_and_charm:dog_food_bag"
+    }
+  ],
+  "result": {
+    "item": "farm_and_charm:dog_food",
+    "count": 9
+  }
+}

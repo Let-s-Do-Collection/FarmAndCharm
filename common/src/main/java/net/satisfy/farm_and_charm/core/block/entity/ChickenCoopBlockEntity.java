@@ -7,6 +7,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -82,8 +83,14 @@ public class ChickenCoopBlockEntity extends BlockEntity {
 
         CompoundTag tag = new CompoundTag();
         chicken.save(tag);
+        tag.remove("Leash");
         tag.putInt("CoopTime", 200 + chicken.getRandom().nextInt(200));
         storedChickens.add(tag);
+
+        if (chicken.getLeashHolder() != null) {
+            chicken.dropLeash(true, false);
+            chicken.spawnAtLocation(Items.LEAD);
+        }
 
         chicken.stopRiding();
         chicken.ejectPassengers();

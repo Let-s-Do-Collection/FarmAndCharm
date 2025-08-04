@@ -306,6 +306,9 @@
   "block.farm_and_charm.cat_food_bag": "Cat Food Bag",
   "block.farm_and_charm.chicken_coop": "Chicken Coop",
   "tooltip.farm_and_charm.chickencoop_chickens": "%s of %s Chickens inside",
-  "tooltip.farm_and_charm.chickencoop_eggs": "%s of %s Eggs stored"
-
+  "tooltip.farm_and_charm.chickencoop_eggs": "%s of %s Eggs stored",
+  "advancement.farm_and_charm.place_chicken_coop.desc": "Place a Chicken Coop",
+  "advancement.farm_and_charm.place_chicken_coop": "Cluckingham Palace",
+  "advancement.farm_and_charm.place_chicken_nest.desc": "Place a Chicken Nest",
+  "advancement.farm_and_charm.place_chicken_nest": "What Came First...?"
 }

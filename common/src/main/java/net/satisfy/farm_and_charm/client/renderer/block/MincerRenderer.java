@@ -1,4 +1,4 @@
-package net.satisfy.farm_and_charm.client.renderer;
+package net.satisfy.farm_and_charm.client.renderer.block;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

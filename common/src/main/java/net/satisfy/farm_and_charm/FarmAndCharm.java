@@ -16,7 +16,6 @@ import java.util.function.Supplier;
 
 public class FarmAndCharm {
     public static final String MOD_ID = "farm_and_charm";
-    public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
     public static Supplier<RegistrarManager> MANAGER;
 
     public static void init() {

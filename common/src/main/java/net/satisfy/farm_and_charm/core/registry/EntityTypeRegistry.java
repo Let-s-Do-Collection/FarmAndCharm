@@ -63,7 +63,6 @@ public class EntityTypeRegistry {
 
     public static void init() {
         ENTITY_TYPES.register();
-        FarmAndCharm.LOGGER.debug("Registering Mod Entities and Block Entities for " + FarmAndCharm.MOD_ID);
     }
 
 

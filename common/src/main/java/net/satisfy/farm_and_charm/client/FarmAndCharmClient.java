@@ -13,7 +13,14 @@ import net.satisfy.farm_and_charm.client.gui.CookingPotGui;
 import net.satisfy.farm_and_charm.client.gui.RoasterGui;
 import net.satisfy.farm_and_charm.client.gui.StoveGui;
 import net.satisfy.farm_and_charm.client.model.*;
-import net.satisfy.farm_and_charm.client.renderer.*;
+import net.satisfy.farm_and_charm.client.renderer.block.CraftingBowlRenderer;
+import net.satisfy.farm_and_charm.client.renderer.block.MincerRenderer;
+import net.satisfy.farm_and_charm.client.renderer.block.PlowCartRenderer;
+import net.satisfy.farm_and_charm.client.renderer.block.ScarecrowRenderer;
+import net.satisfy.farm_and_charm.client.renderer.block.StoveBlockRenderer;
+import net.satisfy.farm_and_charm.client.renderer.block.SupplyCartRenderer;
+import net.satisfy.farm_and_charm.client.renderer.block.WaterSprinklerRenderer;
+import net.satisfy.farm_and_charm.client.renderer.entity.ChairRenderer;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.ModelRegistry;
 import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
@@ -68,7 +75,8 @@ public class FarmAndCharmClient {
         EntityModelLayerRegistry.register(CraftingBowlModel.LAYER_LOCATION, CraftingBowlModel::getTexturedModelData);
         EntityModelLayerRegistry.register(MincerModel.LAYER_LOCATION, MincerModel::getTexturedModelData);
         EntityModelLayerRegistry.register(ScarecrowModel.LAYER_LOCATION, ScarecrowModel::getTexturedModelData);
-        EntityModelLayerRegistry.register(ModelRegistry.CART, SupplyCartModel::createBodyLayer);
+        EntityModelLayerRegistry.register(ModelRegistry.SUPPLY_CART, SupplyCartModel::createBodyLayer);
         EntityModelLayerRegistry.register(ModelRegistry.PLOW, PlowCartModel::createBodyLayer);
+        EntityRendererRegistry.register(EntityTypeRegistry.CHAIR, ChairRenderer::new);
     }
 }

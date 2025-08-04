@@ -1,4 +1,4 @@
-package net.satisfy.farm_and_charm.fabric.world;
+package net.satisfy.farm_and_charm.fabric.core.world;
 
 import net.fabricmc.fabric.api.biome.v1.*;
 import net.minecraft.core.registries.Registries;

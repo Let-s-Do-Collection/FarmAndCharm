@@ -13,6 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.satisfy.farm_and_charm.core.registry.MobEffectRegistry;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class HorseFodderItem extends Item {
     public @NotNull InteractionResult interactLivingEntity(ItemStack stack, net.minecraft.world.entity.player.Player player, LivingEntity entity, net.minecraft.world.InteractionHand hand) {
         if (entity instanceof Horse horse) {
             if (!entity.level().isClientSide) {
-                if (!horse.isTamed()) {
+                if (PlatformHelper.isHorseTamingEnabled() && !horse.isTamed()) {
                     horse.tameWithName(player);
                     horse.setOwnerUUID(player.getUUID());
                     if (!player.getAbilities().instabuild) {
@@ -34,10 +35,13 @@ public class HorseFodderItem extends Item {
                     }
                     return InteractionResult.sidedSuccess(entity.getCommandSenderWorld().isClientSide);
                 }
-                horse.addEffect(new MobEffectInstance(MobEffectRegistry.HORSE_FODDER, 6000, 0));
-                horse.heal(10.0F);
-                if (!player.getAbilities().instabuild) {
-                    stack.shrink(1);
+
+                if (PlatformHelper.isHorseEffectsEnabled()) {
+                    horse.addEffect(new MobEffectInstance(MobEffectRegistry.HORSE_FODDER, 6000, 0));
+                    horse.heal(10.0F);
+                    if (!player.getAbilities().instabuild) {
+                        stack.shrink(1);
+                    }
                 }
             } else {
                 Level world = entity.getCommandSenderWorld();
@@ -51,9 +55,11 @@ public class HorseFodderItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
-        tooltip.add(Component.translatable("tooltip.farm_and_charm.animal_fed_to_horse").withStyle(ChatFormatting.GRAY));
-        tooltip.add(Component.translatable("tooltip.farm_and_charm.horse_effect_1").withStyle(ChatFormatting.BLUE));
-        tooltip.add(Component.translatable("tooltip.farm_and_charm.horse_effect_2").withStyle(ChatFormatting.BLUE));
+        if (PlatformHelper.isHorseEffectsEnabled()) {
+            tooltip.add(Component.translatable("tooltip.farm_and_charm.animal_fed_to_horse").withStyle(ChatFormatting.GRAY));
+            tooltip.add(Component.translatable("tooltip.farm_and_charm.horse_effect_1").withStyle(ChatFormatting.BLUE));
+            tooltip.add(Component.translatable("tooltip.farm_and_charm.horse_effect_2").withStyle(ChatFormatting.BLUE));
+        }
     }
 }
 

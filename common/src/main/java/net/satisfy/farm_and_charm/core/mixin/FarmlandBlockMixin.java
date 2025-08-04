@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.FarmBlock;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,7 +16,8 @@ import java.util.Iterator;
 public class FarmlandBlockMixin {
     @Inject(method = "isNearWater", at = @At("HEAD"), cancellable = true)
     private static void injectWaterSprinklerCheck(LevelReader levelReader, BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
-        Iterator<BlockPos> var2 = BlockPos.betweenClosed(blockPos.offset(-8, 1, -8), blockPos.offset(8, 1, 8)).iterator();
+        int range = PlatformHelper.getWaterSprinklerRange();
+        Iterator<BlockPos> var2 = BlockPos.betweenClosed(blockPos.offset(-range, 1, -range), blockPos.offset(range, 1, range)).iterator();
 
         BlockPos blockPos2;
         do {

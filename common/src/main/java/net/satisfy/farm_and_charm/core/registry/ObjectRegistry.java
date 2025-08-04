@@ -57,12 +57,14 @@ import net.satisfy.farm_and_charm.core.item.food.EffectItem;
 import net.satisfy.farm_and_charm.core.item.food.EffectJugItem;
 import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 import net.satisfy.farm_and_charm.core.util.Util;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
 public class ObjectRegistry {
+
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(FarmAndCharm.MOD_ID, Registries.ITEM);
     public static final Registrar<Item> ITEM_REGISTRAR = ITEMS.getRegistrar();
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(FarmAndCharm.MOD_ID, Registries.BLOCK);
@@ -87,24 +89,6 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> LETTUCE = registerItem("lettuce", () -> new Item(getSettings().food(Foods.CARROT)));
     public static final RegistrySupplier<Item> TOMATO = registerItem("tomato", () -> new Item(getSettings().food(Foods.APPLE)));
     public static final RegistrySupplier<Item> ROTTEN_TOMATO = registerItem("rotten_tomato", () -> new RottenTomatoItem(getSettings().food(Foods.POISONOUS_POTATO)));
-    public static final RegistrySupplier<Item> FARMER_SALAD = registerItem("farmer_salad", () -> new EffectItem(getFoodItemSettings(7, 0.6f, MobEffectRegistry.SATIATION, 4800), 4800, false));
-    public static final RegistrySupplier<Item> GOULASH = registerItem("goulash", () -> new EffectItem(getFoodItemSettings(8, 0.9f, MobEffectRegistry.SATIATION, 6000), 6000, true));
-    public static final RegistrySupplier<Item> SIMPLE_TOMATO_SOUP = registerItem("simple_tomato_soup", () -> new EffectItem(getFoodItemSettings(6, 0.6f, MobEffectRegistry.RESTED, 1800), 1800, true));
-    public static final RegistrySupplier<Item> BARLEY_SOUP = registerItem("barley_soup", () -> new EffectItem(getFoodItemSettings(5, 0.8f, MobEffectRegistry.RESTED, 3000), 3000, true));
-    public static final RegistrySupplier<Item> ONION_SOUP = registerItem("onion_soup", () -> new EffectItem(getFoodItemSettings(7, 0.6f, MobEffectRegistry.RESTED, 2400), 2400, true));
-    public static final RegistrySupplier<Item> POTATO_SOUP = registerItem("potato_soup", () -> new EffectItem(getFoodItemSettings(5, 0.6f, MobEffectRegistry.RESTED, 2400), 2400, true));
-    public static final RegistrySupplier<Item> PASTA_WITH_ONION_SAUCE = registerItem("pasta_with_onion_sauce", () -> new EffectItem(getFoodItemSettings(6, 0.7f, MobEffectRegistry.SATIATION, 3600), 3600, false));
-    public static final RegistrySupplier<Item> CORN_GRITS = registerItem("corn_grits", () -> new EffectItem(getFoodItemSettings(6, 0.5f, MobEffectRegistry.SATIATION, 2400), 2400, true));
-    public static final RegistrySupplier<Item> OATMEAL_WITH_STRAWBERRIES = registerItem("oatmeal_with_strawberries", () -> new EffectItem(getFoodItemSettings(4, 0.8f, MobEffectRegistry.FARMERS_BLESSING, 900), 6000, false));
-    public static final RegistrySupplier<Item> SAUSAGE_WITH_OAT_PATTY = registerItem("sausage_with_oat_patty", () -> new EffectItem(getFoodItemSettings(8, 0.9f, MobEffectRegistry.SWEETS, 2400), 2400, true));
-    public static final RegistrySupplier<Item> LAMB_WITH_CORN = registerItem("lamb_with_corn", () -> new EffectItem(getFoodItemSettings(8, 0.8f, MobEffectRegistry.SATIATION, 3600), 3600, true));
-    public static final RegistrySupplier<Item> BEEF_PATTY_WITH_VEGETABLES = registerItem("beef_patty_with_vegetables", () -> new EffectItem(getFoodItemSettings(6, 0.8f, MobEffectRegistry.SUSTENANCE, 4800), 6000, true));
-    public static final RegistrySupplier<Item> BARLEY_PATTIES_WITH_POTATOES = registerItem("barley_patties_with_potatoes", () -> new EffectItem(getFoodItemSettings(5, 0.9f, MobEffectRegistry.SATIATION, 4800), 4800, true));
-    public static final RegistrySupplier<Item> BACON_WITH_EGGS = registerItem("bacon_with_eggs", () -> new EffectItem(getFoodItemSettings(6, 0.7f, MobEffectRegistry.SUSTENANCE, 3600), 3600, true));
-    public static final RegistrySupplier<Item> CHICKEN_WRAPPED_IN_BACON = registerItem("chicken_wrapped_in_bacon", () -> new EffectItem(getFoodItemSettings(9, 0.9f, MobEffectRegistry.SUSTENANCE, 6000), 6000, true));
-    public static final RegistrySupplier<Item> COOKED_SALMON = registerItem("cooked_salmon", () -> new EffectItem(getFoodItemSettings(7, 0.9f, MobEffectRegistry.SATIATION, 4800), 4800, true));
-    public static final RegistrySupplier<Item> COOKED_COD = registerItem("cooked_cod", () -> new EffectItem(getFoodItemSettings(7, 0.9f, MobEffectRegistry.SUSTENANCE, 4800), 4800, true));
-    public static final RegistrySupplier<Item> ROASTED_CHICKEN = registerItem("roasted_chicken", () -> new EffectItem(getFoodItemSettings(5, 0.8f, MobEffectRegistry.SATIATION, 4800), 4800, false));
     public static final RegistrySupplier<Item> STRAWBERRY_TEA_CUP = registerItem("strawberry_tea_cup", () -> new EffectJugItem(getFoodItemSettings(1, 0.05f, MobEffects.DIG_SPEED, 120), 120, true));
     public static final RegistrySupplier<Item> NETTLE_TEA_CUP = registerItem("nettle_tea_cup", () -> new EffectJugItem(getFoodItemSettings(1, 0.05f, MobEffects.HEAL, -0), -0, true));
     public static final RegistrySupplier<Item> RIBWORT_TEA_CUP = registerItem("ribwort_tea_cup", () -> new EffectJugItem(getFoodItemSettings(1, 0.05f, MobEffects.REGENERATION, 60), 60, true));
@@ -174,18 +158,37 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Block> STUFFED_RABBIT = registerWithoutItem("stuffed_rabbit_block", () -> new FoodBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 4, new FoodProperties.Builder().nutrition(9).saturationModifier(0.9F).build()));
     public static final RegistrySupplier<Block> GRANDMOTHERS_STRAWBERRY_CAKE = registerWithoutItem("grandmothers_strawberry_cake_block", () -> new FoodBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 4, new FoodProperties.Builder().nutrition(7).saturationModifier(0.6F).build()));
     public static final RegistrySupplier<Block> FARMERS_BREAD = registerWithoutItem("farmers_bread_block", () -> new FoodBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 4, new FoodProperties.Builder().nutrition(6).saturationModifier(0.8F).build()));
-    public static final RegistrySupplier<Item> OAT_PANCAKE = registerItem("oat_pancake", () -> new EffectBlockItem(OAT_PANCAKE_BLOCK.get(), getFoodItemSettings(5, 0.6f, MobEffectRegistry.SATIATION, 2400)));
-    public static final RegistrySupplier<Item> ROASTED_CORN = registerItem("roasted_corn", () -> new EffectBlockItem(ROASTED_CORN_BLOCK.get(), getFoodItemSettings(5, 0.5f, MobEffectRegistry.FEAST, 3600)));
-    public static final RegistrySupplier<Item> POTATO_WITH_ROAST_MEAT_ITEM = registerItem("potato_with_roast_meat", () -> new EffectBlockItem(POTATO_WITH_ROAST_MEAT.get(), getFoodItemSettings(7, 0.7f, MobEffectRegistry.SUSTENANCE, 3600)));
-    public static final RegistrySupplier<Item> BAKED_LAMB_HAM_ITEM = registerItem("baked_lamb_ham", () -> new EffectBlockItem(BAKED_LAMB_HAM.get(), getFoodItemSettings(8, 0.9f, MobEffectRegistry.FEAST, 4800)));
-    public static final RegistrySupplier<Item> FARMERS_BREAKFAST_ITEM = registerItem("farmers_breakfast", () -> new EffectBlockItem(FARMERS_BREAKFAST.get(), getFoodItemSettings(12, 1.2f, MobEffectRegistry.FARMERS_BLESSING, 9600)));
-    public static final RegistrySupplier<Item> STUFFED_CHICKEN_ITEM = registerItem("stuffed_chicken", () -> new EffectBlockItem(STUFFED_CHICKEN.get(), getFoodItemSettings(8, 0.8f, MobEffectRegistry.FEAST, 9600)));
-    public static final RegistrySupplier<Item> STUFFED_RABBIT_ITEM = registerItem("stuffed_rabbit", () -> new EffectBlockItem(STUFFED_RABBIT.get(), getFoodItemSettings(9, 0.9f, MobEffectRegistry.FEAST, 9600)));
-    public static final RegistrySupplier<Item> GRANDMOTHERS_STRAWBERRY_CAKE_ITEM = registerItem("grandmothers_strawberry_cake", () -> new EffectBlockItem(GRANDMOTHERS_STRAWBERRY_CAKE.get(), getFoodItemSettings(4, 0.7f, MobEffectRegistry.GRANDMAS_BLESSING, 2400)));
-    public static final RegistrySupplier<Item> FARMERS_BREAD_ITEM = registerItem("farmers_bread", () -> new EffectBlockItem(FARMERS_BREAD.get(), getFoodItemSettings(6, 0.8f, MobEffectRegistry.FARMERS_BLESSING, 3600)));
     public static final RegistrySupplier<Block> STRAWBERRY_TEA = registerTea("strawberry_tea", () -> new TeaJugBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS)), MobEffects.DIG_SPEED, 240);
     public static final RegistrySupplier<Block> NETTLE_TEA = registerTea("nettle_tea", () -> new TeaJugBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS)), MobEffects.HEAL, -0);
     public static final RegistrySupplier<Block> RIBWORT_TEA = registerTea("ribwort_tea", () -> new TeaJugBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS)), MobEffects.REGENERATION, 120);
+
+    public static final RegistrySupplier<Item> OAT_PANCAKE = registerItem("oat_pancake", () -> new EffectBlockItem(OAT_PANCAKE_BLOCK.get(), getFoodItemSettings(PlatformHelper.getNutrition("oat_pancake"), PlatformHelper.getSaturationMod("oat_pancake"), MobEffectRegistry.SATIATION, 2400)));
+    public static final RegistrySupplier<Item> ROASTED_CORN = registerItem("roasted_corn", () -> new EffectBlockItem(ROASTED_CORN_BLOCK.get(), getFoodItemSettings(PlatformHelper.getNutrition("roasted_corn"), PlatformHelper.getSaturationMod("roasted_corn"), MobEffectRegistry.FEAST, 3600)));
+    public static final RegistrySupplier<Item> POTATO_WITH_ROAST_MEAT_ITEM = registerItem("potato_with_roast_meat", () -> new EffectBlockItem(POTATO_WITH_ROAST_MEAT.get(), getFoodItemSettings(PlatformHelper.getNutrition("potato_with_roast_meat"), PlatformHelper.getSaturationMod("potato_with_roast_meat"), MobEffectRegistry.SUSTENANCE, 3600)));
+    public static final RegistrySupplier<Item> BAKED_LAMB_HAM_ITEM = registerItem("baked_lamb_ham", () -> new EffectBlockItem(BAKED_LAMB_HAM.get(), getFoodItemSettings(PlatformHelper.getNutrition("baked_lamb_ham"), PlatformHelper.getSaturationMod("baked_lamb_ham"), MobEffectRegistry.FEAST, 4800)));
+    public static final RegistrySupplier<Item> FARMERS_BREAKFAST_ITEM = registerItem("farmers_breakfast", () -> new EffectBlockItem(FARMERS_BREAKFAST.get(), getFoodItemSettings(PlatformHelper.getNutrition("farmers_breakfast"), PlatformHelper.getSaturationMod("farmers_breakfast"), MobEffectRegistry.FARMERS_BLESSING, 9600)));
+    public static final RegistrySupplier<Item> STUFFED_CHICKEN_ITEM = registerItem("stuffed_chicken", () -> new EffectBlockItem(STUFFED_CHICKEN.get(), getFoodItemSettings(PlatformHelper.getNutrition("stuffed_chicken"), PlatformHelper.getSaturationMod("stuffed_chicken"), MobEffectRegistry.FEAST, 9600)));
+    public static final RegistrySupplier<Item> STUFFED_RABBIT_ITEM = registerItem("stuffed_rabbit", () -> new EffectBlockItem(STUFFED_RABBIT.get(), getFoodItemSettings(PlatformHelper.getNutrition("stuffed_rabbit"), PlatformHelper.getSaturationMod("stuffed_rabbit"), MobEffectRegistry.FEAST, 9600)));
+    public static final RegistrySupplier<Item> GRANDMOTHERS_STRAWBERRY_CAKE_ITEM = registerItem("grandmothers_strawberry_cake", () -> new EffectBlockItem(GRANDMOTHERS_STRAWBERRY_CAKE.get(), getFoodItemSettings(PlatformHelper.getNutrition("grandmothers_strawberry_cake"), PlatformHelper.getSaturationMod("grandmothers_strawberry_cake"), MobEffectRegistry.GRANDMAS_BLESSING, 2400)));
+    public static final RegistrySupplier<Item> FARMERS_BREAD_ITEM = registerItem("farmers_bread", () -> new EffectBlockItem(FARMERS_BREAD.get(), getFoodItemSettings(PlatformHelper.getNutrition("farmers_bread"), PlatformHelper.getSaturationMod("farmers_bread"), MobEffectRegistry.FARMERS_BLESSING, 3600)));
+    public static final RegistrySupplier<Item> FARMER_SALAD = registerItem("farmer_salad", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("farmer_salad"), PlatformHelper.getSaturationMod("farmer_salad"), MobEffectRegistry.SATIATION, 4800), 4800, false));
+    public static final RegistrySupplier<Item> GOULASH = registerItem("goulash", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("goulash"), PlatformHelper.getSaturationMod("goulash"), MobEffectRegistry.SATIATION, 6000), 6000, true));
+    public static final RegistrySupplier<Item> SIMPLE_TOMATO_SOUP = registerItem("simple_tomato_soup", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("simple_tomato_soup"), PlatformHelper.getSaturationMod("simple_tomato_soup"), MobEffectRegistry.RESTED, 1800), 1800, true));
+    public static final RegistrySupplier<Item> BARLEY_SOUP = registerItem("barley_soup", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("barley_soup"), PlatformHelper.getSaturationMod("barley_soup"), MobEffectRegistry.RESTED, 3000), 3000, true));
+    public static final RegistrySupplier<Item> ONION_SOUP = registerItem("onion_soup", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("onion_soup"), PlatformHelper.getSaturationMod("onion_soup"), MobEffectRegistry.RESTED, 2400), 2400, true));
+    public static final RegistrySupplier<Item> POTATO_SOUP = registerItem("potato_soup", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("potato_soup"), PlatformHelper.getSaturationMod("potato_soup"), MobEffectRegistry.RESTED, 2400), 2400, true));
+    public static final RegistrySupplier<Item> PASTA_WITH_ONION_SAUCE = registerItem("pasta_with_onion_sauce", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("pasta_with_onion_sauce"), PlatformHelper.getSaturationMod("pasta_with_onion_sauce"), MobEffectRegistry.SATIATION, 3600), 3600, false));
+    public static final RegistrySupplier<Item> CORN_GRITS = registerItem("corn_grits", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("corn_grits"), PlatformHelper.getSaturationMod("corn_grits"), MobEffectRegistry.SATIATION, 2400), 2400, true));
+    public static final RegistrySupplier<Item> OATMEAL_WITH_STRAWBERRIES = registerItem("oatmeal_with_strawberries", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("oatmeal_with_strawberries"), PlatformHelper.getSaturationMod("oatmeal_with_strawberries"), MobEffectRegistry.FARMERS_BLESSING, 900), 6000, false));
+    public static final RegistrySupplier<Item> SAUSAGE_WITH_OAT_PATTY = registerItem("sausage_with_oat_patty", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("sausage_with_oat_patty"), PlatformHelper.getSaturationMod("sausage_with_oat_patty"), MobEffectRegistry.SWEETS, 2400), 2400, true));
+    public static final RegistrySupplier<Item> LAMB_WITH_CORN = registerItem("lamb_with_corn", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("lamb_with_corn"), PlatformHelper.getSaturationMod("lamb_with_corn"), MobEffectRegistry.SATIATION, 3600), 3600, true));
+    public static final RegistrySupplier<Item> BEEF_PATTY_WITH_VEGETABLES = registerItem("beef_patty_with_vegetables", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("beef_patty_with_vegetables"), PlatformHelper.getSaturationMod("beef_patty_with_vegetables"), MobEffectRegistry.SUSTENANCE, 4800), 6000, true));
+    public static final RegistrySupplier<Item> BARLEY_PATTIES_WITH_POTATOES = registerItem("barley_patties_with_potatoes", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("barley_patties_with_potatoes"), PlatformHelper.getSaturationMod("barley_patties_with_potatoes"), MobEffectRegistry.SATIATION, 4800), 4800, true));
+    public static final RegistrySupplier<Item> BACON_WITH_EGGS = registerItem("bacon_with_eggs", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("bacon_with_eggs"), PlatformHelper.getSaturationMod("bacon_with_eggs"), MobEffectRegistry.SUSTENANCE, 3600), 3600, true));
+    public static final RegistrySupplier<Item> CHICKEN_WRAPPED_IN_BACON = registerItem("chicken_wrapped_in_bacon", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("chicken_wrapped_in_bacon"), PlatformHelper.getSaturationMod("chicken_wrapped_in_bacon"), MobEffectRegistry.SUSTENANCE, 6000), 6000, true));
+    public static final RegistrySupplier<Item> COOKED_SALMON = registerItem("cooked_salmon", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("cooked_salmon"), PlatformHelper.getSaturationMod("cooked_salmon"), MobEffectRegistry.SATIATION, 4800), 4800, true));
+    public static final RegistrySupplier<Item> COOKED_COD = registerItem("cooked_cod", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("cooked_cod"), PlatformHelper.getSaturationMod("cooked_cod"), MobEffectRegistry.SUSTENANCE, 4800), 4800, true));
+    public static final RegistrySupplier<Item> ROASTED_CHICKEN = registerItem("roasted_chicken", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("roasted_chicken"), PlatformHelper.getSaturationMod("roasted_chicken"), MobEffectRegistry.SATIATION, 4800), 4800, false));
 
     public static void init() {
         FarmAndCharm.LOGGER.debug("Registering Mod Block and Items for " + FarmAndCharm.MOD_ID);

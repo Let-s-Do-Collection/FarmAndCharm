@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.FarmBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import org.jetbrains.annotations.Nullable;
 
 public class FertilizedFarmlandBlock extends FarmBlock {
@@ -47,6 +48,9 @@ public class FertilizedFarmlandBlock extends FarmBlock {
     }
 
     private void applyBonemealEffect(ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource) {
+        if (PlatformHelper.isBonemealEffectEnabled()) {
+            return;
+        }
         BlockPos posAbove = blockPos.above();
         BlockState stateAbove = serverLevel.getBlockState(posAbove);
         if (stateAbove.getBlock() instanceof BonemealableBlock bonemealableBlock && bonemealableBlock.isValidBonemealTarget(serverLevel, posAbove, stateAbove)) {

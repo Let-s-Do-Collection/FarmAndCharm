@@ -19,6 +19,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.satisfy.farm_and_charm.core.registry.MobEffectRegistry;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class ChickenFeedItem extends Item {
 
     @Override
     public @NotNull InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity entity, InteractionHand hand) {
-        if (!player.level().isClientSide && entity.getType() == EntityType.CHICKEN) {
+        if (PlatformHelper.isChickenEffectsEnabled() && !player.level().isClientSide && entity.getType() == EntityType.CHICKEN) {
             Chicken chicken = (Chicken) entity;
             chicken.addEffect(new MobEffectInstance(MobEffectRegistry.CLUCK, 1200));
             player.level().playSound(null, chicken.getX(), chicken.getY(), chicken.getZ(), SoundEvents.CHICKEN_AMBIENT, SoundSource.NEUTRAL, 1.0F, 1.0F);
@@ -45,7 +46,7 @@ public class ChickenFeedItem extends Item {
 
     @Override
     public @NotNull ItemStack finishUsingItem(ItemStack stack, Level world, LivingEntity entityLiving) {
-        if (entityLiving instanceof Player player && !world.isClientSide) {
+        if (PlatformHelper.isChickenEffectsEnabled() && entityLiving instanceof Player player && !world.isClientSide) {
             player.addEffect(new MobEffectInstance(MobEffectRegistry.CLUCK, 400));
             world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5F, world.random.nextFloat() * 0.1F + 0.9F);
             if (!player.getAbilities().instabuild) {
@@ -62,7 +63,9 @@ public class ChickenFeedItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
-        tooltip.add(Component.translatable("tooltip.farm_and_charm.animal_fed_to_chicken").withStyle(ChatFormatting.GRAY));
-        tooltip.add(Component.translatable("tooltip.farm_and_charm.cluck").withStyle(ChatFormatting.BLUE));
+        if (PlatformHelper.isChickenEffectsEnabled()) {
+            tooltip.add(Component.translatable("tooltip.farm_and_charm.animal_fed_to_chicken").withStyle(ChatFormatting.GRAY));
+            tooltip.add(Component.translatable("tooltip.farm_and_charm.cluck").withStyle(ChatFormatting.BLUE));
+        }
     }
 }

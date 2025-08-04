@@ -22,11 +22,14 @@
       "net.satisfy.farm_and_charm.fabric.client.FarmAndCharmClientFabric"
     ],
     "rei_client": [
-      "net.satisfy.farm_and_charm.fabric.rei.FarmAndCharmReiClientPluginFabric"
+      "net.satisfy.farm_and_charm.fabric.core.rei.FarmAndCharmReiClientPluginFabric"
     ],
     "jei_mod_plugin": [
       "net.satisfy.farm_and_charm.core.compat.jei.Farm_And_Charm_JEIPlugin"
-    ]
+    ],
+    "modmenu": [
+      "net.satisfy.farm_and_charm.fabric.core.config.ModMenu"
+      ]
   },
   "mixins": [
     "FarmAndCharm.mixins.json",

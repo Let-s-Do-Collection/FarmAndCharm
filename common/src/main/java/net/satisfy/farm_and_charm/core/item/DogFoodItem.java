@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.satisfy.farm_and_charm.core.registry.MobEffectRegistry;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class DogFoodItem extends Item {
 
     @Override
     public @NotNull InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity entity, net.minecraft.world.InteractionHand hand) {
-        if (entity instanceof Wolf wolf && !wolf.isTame()) {
+        if (PlatformHelper.isTamingEnabled() && entity instanceof Wolf wolf && !wolf.isTame()) {
             if (!entity.level().isClientSide) {
                 wolf.tame(player);
                 wolf.setOwnerUUID(player.getUUID());
@@ -47,10 +48,12 @@ public class DogFoodItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
-        tooltip.add(Component.translatable("tooltip.farm_and_charm.animal_fed_to_dog").withStyle(ChatFormatting.GRAY));
-        tooltip.add(Component.translatable("tooltip.farm_and_charm.dog_effect_1").withStyle(ChatFormatting.BLUE));
-        tooltip.add(Component.translatable("tooltip.farm_and_charm.dog_effect_2").withStyle(ChatFormatting.BLUE));
-        tooltip.add(Component.translatable("tooltip.farm_and_charm.dog_effect_3").withStyle(ChatFormatting.BLUE));
+        if (PlatformHelper.isTamingEnabled()) {
+            tooltip.add(Component.translatable("tooltip.farm_and_charm.animal_fed_to_dog").withStyle(ChatFormatting.GRAY));
+            tooltip.add(Component.translatable("tooltip.farm_and_charm.dog_effect_1").withStyle(ChatFormatting.BLUE));
+            tooltip.add(Component.translatable("tooltip.farm_and_charm.dog_effect_2").withStyle(ChatFormatting.BLUE));
+            tooltip.add(Component.translatable("tooltip.farm_and_charm.dog_effect_3").withStyle(ChatFormatting.BLUE));
+        }
     }
 }
 

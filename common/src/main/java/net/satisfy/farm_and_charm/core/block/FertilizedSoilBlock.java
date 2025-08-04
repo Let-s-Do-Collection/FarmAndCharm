@@ -22,6 +22,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("deprecation")
@@ -91,7 +92,8 @@ public class FertilizedSoilBlock extends Block {
     private void applyBoneMealEffect(Level level, BlockPos centerPos) {
         if (!level.isClientSide) {
             ServerLevel serverLevel = (ServerLevel) level;
-            BlockPos.betweenClosedStream(centerPos.offset(-5, -1, -5), centerPos.offset(5, 1, 5))
+            int range = PlatformHelper.getFertilizedSoilRange();
+            BlockPos.betweenClosedStream(centerPos.offset(-range, -1, -range), centerPos.offset(range, 1, range))
                     .forEach(pos -> {
                         if (serverLevel.random.nextInt(100) < 20) {
                             BlockState blockState = serverLevel.getBlockState(pos);

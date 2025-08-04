@@ -8,13 +8,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.level.GameRules;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 
 import java.util.Objects;
 
 public class FeastEffect extends MobEffect {
-
-    private static final int SATIATION_INTERVAL = 40;
-    private static final int SUSTENANCE_INTERVAL = 200;
 
     public FeastEffect() {
         super(MobEffectCategory.BENEFICIAL, 0);
@@ -22,20 +20,24 @@ public class FeastEffect extends MobEffect {
 
     @Override
     public boolean applyEffectTick(LivingEntity entity, int amplifier) {
+        int satiationInterval = PlatformHelper.getFeastEffectSatiationInterval();
+        int sustenanceInterval = PlatformHelper.getFeastEffectSustenanceInterval();
+        int healAmount = PlatformHelper.getFeastEffectHealAmount();
+
         if (!entity.level().isClientSide() && entity instanceof Player player) {
             int duration = this.getDuration(entity, this);
-            if (duration % SATIATION_INTERVAL == 0) {
+            if (duration % satiationInterval  == 0) {
                 if (!player.getFoodData().needsFood() &&
                         !player.hasEffect(MobEffects.REGENERATION) &&
                         player.getFoodData().getSaturationLevel() > 0f) {
-                    player.heal(1.0F + amplifier);
+                    player.heal(healAmount  + amplifier);
                 }
             }
 
-            if (duration % SUSTENANCE_INTERVAL == 0) {
+            if (duration % sustenanceInterval == 0) {
                 FoodData foodData = player.getFoodData();
                 if (foodData.getFoodLevel() >= 20) {
-                    player.heal(1.0F);
+                    player.heal(healAmount );
                 } else {
                     foodData.setFoodLevel(Math.min(foodData.getFoodLevel() + 1, 20));
                 }
@@ -46,7 +48,9 @@ public class FeastEffect extends MobEffect {
 
     @Override
     public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
-        return duration % SATIATION_INTERVAL == 0 || duration % SUSTENANCE_INTERVAL == 0;
+        int satiationInterval = PlatformHelper.getFeastEffectSatiationInterval();
+        int sustenanceInterval = PlatformHelper.getFeastEffectSustenanceInterval();
+        return duration % satiationInterval == 0 || duration % sustenanceInterval == 0;
     }
 
     private int getDuration(LivingEntity entity, MobEffect effect) {

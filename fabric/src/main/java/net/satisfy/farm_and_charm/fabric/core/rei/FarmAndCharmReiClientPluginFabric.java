@@ -1,4 +1,4 @@
-package net.satisfy.farm_and_charm.fabric.rei;
+package net.satisfy.farm_and_charm.fabric.core.rei;
 
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;

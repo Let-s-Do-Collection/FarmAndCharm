@@ -16,6 +16,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -29,6 +30,9 @@ public class FertilizerItem extends Item {
 
     @Override
     public @NotNull InteractionResult useOn(UseOnContext context) {
+        if (!PlatformHelper.isFertilizerEnabled()) {
+            return InteractionResult.PASS;
+        }
         Level world = context.getLevel();
         BlockPos pos = context.getClickedPos();
         if (!world.isClientSide && world instanceof ServerLevel serverWorld) {

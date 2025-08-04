@@ -9,9 +9,9 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 
 public class ChickenEffect extends MobEffect {
-    private static final int TICK_INTERVAL = 120;
 
     public ChickenEffect() {
         super(MobEffectCategory.BENEFICIAL, 0xFFFFFF);
@@ -20,13 +20,17 @@ public class ChickenEffect extends MobEffect {
     @Override
     public boolean applyEffectTick(LivingEntity entity, int amplifier) {
         if (!entity.level().isClientSide) {
-            if (entity.tickCount % TICK_INTERVAL == 0) {
-                if (entity.level().random.nextFloat() < 0.2) {
+            int tickInterval = PlatformHelper.getChickenEffectTickInterval();
+            float eggChance = PlatformHelper.getChickenEffectEggChance() / 100.0f;
+            float featherChance = PlatformHelper.getChickenEffectFeatherChance() / 100.0f;
+
+            if (entity.tickCount % tickInterval == 0) {
+                if (entity.level().random.nextFloat() < eggChance) {
                     ItemEntity eggEntity = new ItemEntity(entity.level(), entity.getX(), entity.getY(), entity.getZ(), new ItemStack(Items.EGG));
                     entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.CHICKEN_EGG, SoundSource.NEUTRAL, 1.0F, 1.0F);
                     entity.level().addFreshEntity(eggEntity);
                 }
-                if (entity.level().random.nextFloat() < 0.2) {
+                if (entity.level().random.nextFloat() < featherChance) {
                     ItemEntity featherEntity = new ItemEntity(entity.level(), entity.getX(), entity.getY(), entity.getZ(), new ItemStack(Items.FEATHER));
                     entity.level().addFreshEntity(featherEntity);
                 }

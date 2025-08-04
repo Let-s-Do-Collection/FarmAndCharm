@@ -8,12 +8,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.farm_and_charm.core.block.FeedingTroughBlock;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 
 public class ApproachFeedingTroughGoal extends MoveToBlockGoal {
     protected final Animal animal;
 
     public ApproachFeedingTroughGoal(Animal animal, double speed) {
-        super(animal, speed, 8);
+        super(animal, speed, PlatformHelper.getFeedingTroughRange());
         this.animal = animal;
     }
 

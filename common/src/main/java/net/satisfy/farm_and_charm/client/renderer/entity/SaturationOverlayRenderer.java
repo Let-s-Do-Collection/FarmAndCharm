@@ -16,6 +16,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
+import net.satisfy.farm_and_charm.core.util.SaturationTracker;
 
 public class SaturationOverlayRenderer {
 
@@ -91,5 +92,12 @@ public class SaturationOverlayRenderer {
         if (entity instanceof Sheep) return new ItemStack(Items.WHEAT);
         if (entity instanceof Chicken) return new ItemStack(Items.WHEAT_SEEDS);
         return new ItemStack(ObjectRegistry.HORSE_FODDER.get());
+    }
+
+    public static void renderIfApplicable(PoseStack poseStack, MultiBufferSource buffer, LivingEntity entity) {
+        if (!(entity instanceof SaturationTracker.SaturatedAnimal saturated)) return;
+
+        SaturationTracker tracker = saturated.farm_and_charm$getSaturationTracker();
+        render(poseStack, buffer, entity, tracker.level(), tracker.foodCounter());
     }
 }

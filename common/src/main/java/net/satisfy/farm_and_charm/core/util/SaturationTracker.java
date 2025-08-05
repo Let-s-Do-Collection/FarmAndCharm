@@ -101,8 +101,37 @@ public class SaturationTracker {
         }
     }
 
+    public int getDecayDelay() {
+        return decayDelay;
+    }
+
+    public void setDecayDelay(int delay) {
+        this.decayDelay = delay;
+    }
+
+    public long getLastFedTick() {
+        return lastFedTick;
+    }
+
+    public void setLastFedTick(long tick) {
+        this.lastFedTick = tick;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public void setFoodCounter(int count) {
+        this.foodCounter = count;
+    }
+
+    public void clientSync(int syncedLevel, int syncedFoodCounter) {
+        this.level = syncedLevel;
+        this.foodCounter = syncedFoodCounter;
+    }
 
     public interface SaturatedAnimal {
         SaturationTracker farm_and_charm$getSaturationTracker();
+        void farm_and_charm$setSaturationTracker(SaturationTracker tracker);
     }
 }

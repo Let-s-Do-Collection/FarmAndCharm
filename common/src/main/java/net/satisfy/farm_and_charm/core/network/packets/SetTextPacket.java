@@ -1,7 +1,7 @@
-package net.satisfy.farm_and_charm.core.network;
+package net.satisfy.farm_and_charm.core.network.packets;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
@@ -20,7 +20,7 @@ public class SetTextPacket {
         this.texts = texts;
     }
 
-    public static void encode(SetTextPacket msg, FriendlyByteBuf buf) {
+    public static void encode(SetTextPacket msg, RegistryFriendlyByteBuf buf) {
         buf.writeBlockPos(msg.pos);
         buf.writeInt(msg.texts.size());
         for (String text : msg.texts) {
@@ -28,7 +28,7 @@ public class SetTextPacket {
         }
     }
 
-    public static SetTextPacket decode(FriendlyByteBuf buf) {
+    public static SetTextPacket decode(RegistryFriendlyByteBuf buf) {
         BlockPos pos = buf.readBlockPos();
         int size = buf.readInt();
         List<String> texts = new ArrayList<>();

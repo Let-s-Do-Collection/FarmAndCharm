@@ -37,11 +37,11 @@ public class FarmlandBlockMixin {
 
 
     @Inject(method = "fallOn", at = @At("HEAD"), cancellable = true)
-    private void preventTrampleWhenWearingDungarees(Level level, BlockState blockState, BlockPos blockPos, Entity entity, float f, CallbackInfo ci) {
+    private void farm_and_charm$preventTrampleWithDungarees(Level level, BlockState blockState, BlockPos blockPos, Entity entity, float f, CallbackInfo ci) {
         if (!(entity instanceof Player player)) return;
 
-        ItemStack chest = player.getInventory().armor.get(2);
-        if (chest.is(ObjectRegistry.DUNGAREES.get())) {
+        ItemStack legs = player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.LEGS);
+        if (legs.getItem() == ObjectRegistry.DUNGAREES.get()) {
             ci.cancel();
         }
     }

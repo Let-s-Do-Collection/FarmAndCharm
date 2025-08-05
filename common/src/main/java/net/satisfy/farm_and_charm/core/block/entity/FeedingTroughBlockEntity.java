@@ -13,6 +13,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.farm_and_charm.core.block.FeedingTroughBlock;
+import net.satisfy.farm_and_charm.core.network.PacketHandler;
+import net.satisfy.farm_and_charm.core.network.packets.SyncSaturationPacket;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.TagRegistry;
 import net.satisfy.farm_and_charm.core.util.SaturationTracker;
@@ -142,6 +144,14 @@ public class FeedingTroughBlockEntity extends BlockEntity implements WorldlyCont
 
     public void onAnimalFed(Animal animal) {
         if (!(animal instanceof SaturationTracker.SaturatedAnimal saturated)) return;
-        saturated.farm_and_charm$getSaturationTracker().feedDirectly(animal, animal.tickCount, 5);
+        SaturationTracker tracker = saturated.farm_and_charm$getSaturationTracker();
+        tracker.feedDirectly(animal, animal.tickCount, 5);
+
+        if (!animal.level().isClientSide) {
+            PacketHandler.sendSaturationSync(
+                    new SyncSaturationPacket(animal.getId(), tracker.level(), tracker.foodCounter()),
+                    animal
+            );
+        }
     }
 }

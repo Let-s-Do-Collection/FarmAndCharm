@@ -26,8 +26,13 @@ public class ChickenLocateCoopGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        if (chicken.isBaby() || ((ChickenCoopAccess) chicken).farmAndCharm$hasCoopTarget())
-            return false;
+        if (chicken.isBaby()) return false;
+
+        ChickenCoopAccess access = (ChickenCoopAccess) chicken;
+
+        if (access.farmAndCharm$hasCoopTarget()) return false;
+        if (access.farmAndCharm$searchedForCoop()) return false;
+        if (access.farmAndCharm$getCoopCooldown() > 0) return false;
 
         ServerLevel level = (ServerLevel) chicken.level();
 
@@ -55,7 +60,6 @@ public class ChickenLocateCoopGoal extends Goal {
             BlockEntity be = level.getBlockEntity(check);
             if (!(be instanceof ChickenCoopBlockEntity coop) || !coop.hasSpaceForChicken()) return false;
             if (chicken.getNavigation().createPath(check, 0) == null) return false;
-
             if (!cachedCoops.contains(check)) cachedCoops.add(check);
             return true;
         }).orElse(null);
@@ -66,5 +70,7 @@ public class ChickenLocateCoopGoal extends Goal {
     @Override
     public void start() {
         ((ChickenCoopAccess) chicken).farmAndCharm$setCoopTarget(foundCoop);
+        ((ChickenCoopAccess) chicken).farmAndCharm$setSearchedForCoop(true);
+        chicken.getNavigation().moveTo(foundCoop.getX() + 0.5, foundCoop.getY() + 0.5, foundCoop.getZ() + 0.5, 1.0);
     }
 }

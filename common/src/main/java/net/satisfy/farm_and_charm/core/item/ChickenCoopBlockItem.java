@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.item;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -8,22 +9,40 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.block.Block;
+import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
+import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 
 import java.util.List;
 
 public class ChickenCoopBlockItem extends BlockItem {
+
     public ChickenCoopBlockItem(Block block, Properties properties) {
-        super(block, properties);
+        super(block, properties.rarity(GeneralUtil.getRarity(ObjectRegistry.CHICKEN_COOP_ITEM.get().getDefaultInstance())));
+    }
+
+    @Override
+    public boolean isFoil(ItemStack stack) {
+        CompoundTag tag = stack.get(DataComponents.BLOCK_ENTITY_DATA).copyTag();
+        return tag != null && tag.contains("BlockEntityTag");
     }
 
     @Override
     public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
+        tooltip.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+        tooltip.add(Component.empty());
+
         CompoundTag tag = itemStack.get(DataComponents.BLOCK_ENTITY_DATA).copyTag();
-        if (tag != null) {
-            int eggs = tag.getInt("eggCount");
-            ListTag chickens = tag.getList("stored_chickens", 10);
-            tooltip.add(Component.translatable("tooltip.farm_and_charm.chickencoop_hens", chickens.size(), 3));
-            tooltip.add(Component.translatable("tooltip.farm_and_charm.chickencoop_eggs", eggs, 9));
+        if (tag == null) return;
+
+        int eggCount = tag.getInt("EggCount");
+        ListTag chickens = tag.getList("Chickens", 10);
+
+        if (!chickens.isEmpty()) {
+            tooltip.add(Component.translatable("tooltip.farm_and_charm.chickencoop_chickens", chickens.size(), 3).withStyle(ChatFormatting.GRAY));
+        }
+
+        if (eggCount > 0) {
+            tooltip.add(Component.translatable("tooltip.farm_and_charm.chickencoop_eggs", eggCount, 9).withStyle(ChatFormatting.GRAY));
         }
     }
 }

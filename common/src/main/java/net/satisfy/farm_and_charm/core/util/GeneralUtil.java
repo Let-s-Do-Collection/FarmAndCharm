@@ -10,6 +10,7 @@ import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -37,6 +38,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.ChunkPos;
@@ -212,6 +214,14 @@ public class GeneralUtil {
 
     public static float getInPercent(int i) {
         return (float)i / 100.0F;
+    }
+
+    public static @NotNull Rarity getRarity(ItemStack stack) {
+        CompoundTag tag = stack.get(DataComponents.BLOCK_ENTITY_DATA).copyTag();
+        if (tag != null && tag.contains("BlockEntityTag")) {
+            return Rarity.COMMON;
+        }
+        return stack.getRarity();
     }
 
     public static ItemStack convertStackAfterFinishUsing(LivingEntity entity, ItemStack used, Item returnItem, Item usedItem) {

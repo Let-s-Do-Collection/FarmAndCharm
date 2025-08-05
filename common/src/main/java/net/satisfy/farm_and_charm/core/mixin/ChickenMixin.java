@@ -25,14 +25,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Chicken.class)
 public class ChickenMixin implements ChickenCoopAccess {
-
     @Unique
     private BlockPos farmAndCharm$coopTarget;
     @Unique
     private boolean farmAndCharm$searchedForCoop = false;
     @Unique
     private int farmAndCharm$coopCooldown = 0;
-
 
     @Override
     public BlockPos farmAndCharm$getCoopTarget() {

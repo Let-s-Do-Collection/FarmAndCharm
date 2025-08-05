@@ -1,14 +1,17 @@
 package net.satisfy.farm_and_charm.core.network;
 
 import dev.architectury.networking.NetworkManager;
+import dev.architectury.platform.Platform;
+import dev.architectury.utils.Env;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.satisfy.farm_and_charm.core.network.packets.SetTextPacket;
-import net.satisfy.farm_and_charm.core.network.packets.SyncSaturationPacket;
+import net.satisfy.farm_and_charm.core.network.handler.SyncSaturationPacketClientHandler;
+import net.satisfy.farm_and_charm.core.network.packet.SetTextPacket;
+import net.satisfy.farm_and_charm.core.network.packet.SyncSaturationPacket;
 import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 
 @SuppressWarnings("removal")
@@ -22,10 +25,12 @@ public class PacketHandler {
             context.queue(() -> SetTextPacket.handle(packet, (ServerPlayer) context.getPlayer()));
         });
 
-        NetworkManager.registerReceiver(NetworkManager.s2c(), SYNC_SATURATION, (buf, context) -> {
-            SyncSaturationPacket packet = SyncSaturationPacket.decode(buf);
-            context.queue(() -> SyncSaturationPacket.handle(packet));
-        });
+        if (Platform.getEnvironment() == Env.CLIENT) {
+            NetworkManager.registerReceiver(NetworkManager.s2c(), SYNC_SATURATION, (buf, context) -> {
+                SyncSaturationPacket packet = SyncSaturationPacket.decode(buf);
+                context.queue(() -> SyncSaturationPacketClientHandler.handle(packet));
+            });
+        }
     }
 
     public static void sendToServer(SetTextPacket packet) {

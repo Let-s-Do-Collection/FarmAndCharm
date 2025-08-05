@@ -1,4 +1,4 @@
-package net.satisfy.farm_and_charm.core.network.packets;
+package net.satisfy.farm_and_charm.core.network.packet;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;

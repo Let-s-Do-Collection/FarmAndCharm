@@ -19,7 +19,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -33,6 +32,7 @@ import net.satisfy.farm_and_charm.core.block.StoveBlock;
 import net.satisfy.farm_and_charm.client.gui.handler.StoveGuiHandler;
 import net.satisfy.farm_and_charm.core.item.food.EffectBlockItem;
 import net.satisfy.farm_and_charm.core.item.food.EffectFood;
+import net.satisfy.farm_and_charm.core.item.food.EffectFoodBlockItem;
 import net.satisfy.farm_and_charm.core.item.food.EffectFoodHelper;
 import net.satisfy.farm_and_charm.core.recipe.StoveRecipe;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
@@ -105,7 +105,9 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
             return INGREDIENT_SLOTS;
         } else if (side.equals(Direction.DOWN)) {
             return new int[]{0};
-        } else return new int[]{4};
+        } else {
+            return new int[]{4};
+        }
     }
 
     @Override
@@ -157,7 +159,7 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
             this.burnTime = this.burnTimeTotal = this.getTotalBurnTime(this.getItem(4));
             if (burnTime > 0) {
                 dirty = true;
-                final ItemStack fuelStack = this.getItem(4);
+                ItemStack fuelStack = this.getItem(4);
                 if (fuelStack.getItem().hasCraftingRemainingItem()) {
                     setItem(4, new ItemStack(Objects.requireNonNull(fuelStack.getItem().getCraftingRemainingItem())));
                 } else if (fuelStack.getCount() > 1) {
@@ -218,6 +220,9 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
             }
         }
 
+        if (recipeOutput.getItem() instanceof EffectFood || recipeOutput.getItem() instanceof EffectFoodBlockItem || recipeOutput.getItem() instanceof EffectFoodBlockItem) {
+            EffectFoodHelper.applyEffects(recipeOutput);
+        }
         if (outputSlotStack.isEmpty()) {
             return true;
         } else if (!ItemStack.isSameItemSameComponents(outputSlotStack, recipeOutput)) {

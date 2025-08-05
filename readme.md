@@ -1,3 +1,15 @@
+<p align="center"><img src="https://imgur.com/RRfGT1P.png" width="1200"></p>
+
+<div style="text-align: center;">
+
+<p>The farm calls: Experience the art of advanced agriculture and farmhouse cuisine! Use mincers, cooking pots, as well as new grains and fruit varieties to enhance your culinary and farming expertise.</p>
+
+<br> 
+
+<p>Refined farming and cooking with new tools, functional blocks, and rustic meals. Use sprinklers, scarecrows, and fertilized soil to improve crops. Process food with a mincer, transport goods with carts, and prepare simple farmhouse dishes. </p>
+
+</div>
+
 <h1 align="center">Be Part of Our Journey</h1>
 
 <p align="center">

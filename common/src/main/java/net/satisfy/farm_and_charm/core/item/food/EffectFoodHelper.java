@@ -172,6 +172,21 @@ public class EffectFoodHelper {
         return effects;
     }
 
+    public static void applyEffects(ItemStack stack) {
+        PotionContents potionContents = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+        if (!potionContents.hasEffects()) {
+            FoodProperties foodProperties = stack.get(DataComponents.FOOD);
+            if (foodProperties != null) {
+                FoodProperties.Builder builder = new FoodProperties.Builder();
+                for (FoodProperties.PossibleEffect possibleEffect : getPossibleEffects(stack)) {
+                    builder.effect(possibleEffect.effect(), possibleEffect.probability());
+                }
+                FoodProperties foodData = builder.build();
+                stack.set(DataComponents.FOOD, foodData);
+            }
+        }
+    }
+
     public static List<Pair<MobEffectInstance, Float>> fromNbt(ListTag list) {
         List<Pair<MobEffectInstance, Float>> effects = Lists.newArrayList();
         for (int i = 0; i < list.size(); ++i) {

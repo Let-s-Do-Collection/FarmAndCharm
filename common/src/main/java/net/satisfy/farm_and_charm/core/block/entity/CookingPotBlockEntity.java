@@ -126,7 +126,9 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
             for (int slot = 0; slot < INGREDIENTS_AREA; slot++) {
                 ItemStack stack = getItem(slot);
                 if (ingredient.test(stack)) {
-                    ItemStack remainderStack = stack.getItem().hasCraftingRemainingItem() ? new ItemStack(Objects.requireNonNull(stack.getItem().getCraftingRemainingItem())) : ItemStack.EMPTY;
+                    ItemStack remainderStack = stack.getItem().hasCraftingRemainingItem()
+                            ? new ItemStack(Objects.requireNonNull(stack.getItem().getCraftingRemainingItem()))
+                            : ItemStack.EMPTY;
                     stack.shrink(1);
                     if (!remainderStack.isEmpty()) setItem(slot, remainderStack);
                     break;

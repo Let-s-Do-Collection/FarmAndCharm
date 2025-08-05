@@ -6,6 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -55,8 +56,7 @@ public class FeedingTroughBlock extends LineConnectingBlock implements EntityBlo
     }
 
     @Override
-    public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        ItemStack itemStack = player.getItemInHand(hand);
+    protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!world.isClientSide && hand == InteractionHand.MAIN_HAND && itemStack.is(ItemTags.VILLAGER_PLANTABLE_SEEDS)) {
             int size = state.getValue(SIZE);
             if (size < 4) {
@@ -64,10 +64,10 @@ public class FeedingTroughBlock extends LineConnectingBlock implements EntityBlo
                 if (!player.getAbilities().instabuild) {
                     itemStack.shrink(1);
                 }
-                return InteractionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             }
         }
-        return InteractionResult.PASS;
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override

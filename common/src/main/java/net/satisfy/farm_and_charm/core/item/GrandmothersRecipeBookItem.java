@@ -11,7 +11,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -21,7 +20,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
@@ -39,10 +37,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
-public class RecipeUnlockerItem extends Item {
+public class GrandmothersRecipeBookItem extends Item {
     private static final Map<ServerLevel, Map<UUID, Set<ResourceLocation>>> worldUnlockedRecipes = new HashMap<>();
 
-    public RecipeUnlockerItem(Properties properties) {
+    public GrandmothersRecipeBookItem(Properties properties) {
         super(properties);
     }
 
@@ -131,7 +129,7 @@ public class RecipeUnlockerItem extends Item {
         return InteractionResultHolder.pass(player.getItemInHand(hand));
     }
 
-    public static ItemStack createUnlockerForRecipes(RecipeUnlockerItem item, String... recipeIds) {
+    public static ItemStack createUnlockerForRecipes(GrandmothersRecipeBookItem item, String... recipeIds) {
         ItemStack stack = new ItemStack(item);
         CompoundTag tag = new CompoundTag();
         if (recipeIds.length == 1) {

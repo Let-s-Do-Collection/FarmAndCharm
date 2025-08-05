@@ -53,7 +53,7 @@ import net.satisfy.farm_and_charm.core.item.ChickenFeedItem;
 import net.satisfy.farm_and_charm.core.item.DogFoodItem;
 import net.satisfy.farm_and_charm.core.item.FertilizerItem;
 import net.satisfy.farm_and_charm.core.item.HorseFodderItem;
-import net.satisfy.farm_and_charm.core.item.RecipeUnlockerItem;
+import net.satisfy.farm_and_charm.core.item.GrandmothersRecipeBookItem;
 import net.satisfy.farm_and_charm.core.item.RottenTomatoItem;
 import net.satisfy.farm_and_charm.core.item.TeaJugItem;
 import net.satisfy.farm_and_charm.core.item.food.EffectBlockItem;
@@ -194,8 +194,8 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> COOKED_COD = registerItem("cooked_cod", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("cooked_cod"), PlatformHelper.getSaturationMod("cooked_cod"), MobEffectRegistry.SUSTENANCE, 4800), 4800, true));
     public static final RegistrySupplier<Item> ROASTED_CHICKEN = registerItem("roasted_chicken", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("roasted_chicken"), PlatformHelper.getSaturationMod("roasted_chicken"), MobEffectRegistry.SATIATION, 4800), 4800, false));
     public static final RegistrySupplier<Item> ONION_SOUP = registerItem("onion_soup", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("onion_soup"), PlatformHelper.getSaturationMod("onion_soup"), MobEffectRegistry.RESTED, 2400), 2400, true));
-    public static final RegistrySupplier<RecipeUnlockerItem> RECIPE_UNLOCKER = registerItem("recipe_unlocker", () -> new RecipeUnlockerItem(new Item.Properties()));
-    public static final ItemStack ONION_SOUP_RECIPE_UNLOCKER_STACK = RecipeUnlockerItem.createUnlockerForRecipes(RECIPE_UNLOCKER.get(), "farm_and_charm:pot_cooking/onion_soup");
+    public static final RegistrySupplier<GrandmothersRecipeBookItem> RECIPE_UNLOCKER = registerItem("recipe_unlocker", () -> new GrandmothersRecipeBookItem(new Item.Properties()));
+    public static final ItemStack ONION_SOUP_RECIPE_UNLOCKER_STACK = GrandmothersRecipeBookItem.createUnlockerForRecipes(RECIPE_UNLOCKER.get(), "farm_and_charm:pot_cooking/onion_soup");
 
     public static void init() {
         ITEMS.register();

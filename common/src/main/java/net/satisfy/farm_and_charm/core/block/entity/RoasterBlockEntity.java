@@ -180,7 +180,7 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
         if (recipe.get() instanceof RoasterRecipe roastingRecipe) {
             if (roastingRecipe.requiresLearning()) {
                 ServerPlayer owner = Objects.requireNonNull(world.getServer()).getPlayerList().getPlayer(ownerUuid);
-                if (owner == null || !RecipeUnlockManager.isRecipeUnlocked(owner, BuiltInRegistries.RECIPE_TYPE.getKey(recipe.get().getType()))) {
+                if (owner == null || RecipeUnlockManager.isRecipeLocked(owner, BuiltInRegistries.RECIPE_TYPE.getKey(recipe.get().getType()))) {
                     roastingTime = 0;
                     if (state.getValue(RoasterBlock.ROASTING)) {
                         world.setBlock(pos, state.setValue(RoasterBlock.ROASTING, false), Block.UPDATE_ALL);

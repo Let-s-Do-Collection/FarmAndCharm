@@ -187,7 +187,7 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
         if (recipe.get() instanceof CookingPotRecipe cookingRecipe) {
             if (cookingRecipe.requiresLearning()) {
                 ServerPlayer owner = Objects.requireNonNull(world.getServer()).getPlayerList().getPlayer(ownerUuid);
-                if (owner == null || !RecipeUnlockManager.isRecipeUnlocked(owner, BuiltInRegistries.RECIPE_TYPE.getKey(recipe.get().getType()))) {
+                if (owner == null || RecipeUnlockManager.isRecipeLocked(owner, BuiltInRegistries.RECIPE_TYPE.getKey(recipe.get().getType()))) {
                     cookingTime = 0;
                     if (state.getValue(CookingPotBlock.COOKING)) {
                         world.setBlock(pos, state.setValue(CookingPotBlock.COOKING, false), Block.UPDATE_ALL);

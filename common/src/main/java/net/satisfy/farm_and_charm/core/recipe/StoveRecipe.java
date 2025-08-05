@@ -99,7 +99,6 @@ public class StoveRecipe implements Recipe<RecipeInput> {
 
         public static final StreamCodec<RegistryFriendlyByteBuf, StoveRecipe> STREAM_CODEC =
                 StreamCodec.of(Serializer::toNetwork, Serializer::fromNetwork);
-        );
 
         public static @NotNull StoveRecipe fromNetwork(RegistryFriendlyByteBuf registryFriendlyByteBuf) {
             int i = registryFriendlyByteBuf.readVarInt();

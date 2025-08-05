@@ -1,0 +1,100 @@
+{
+  "variants": {
+    "facing=north,food_type=none,has_name_tag=false": {
+      "model": "farm_and_charm:block/pet_bowl_empty",
+      "y": 0
+    },
+    "facing=east,food_type=none,has_name_tag=false": {
+      "model": "farm_and_charm:block/pet_bowl_empty",
+      "y": 90
+    },
+    "facing=south,food_type=none,has_name_tag=false": {
+      "model": "farm_and_charm:block/pet_bowl_empty",
+      "y": 180
+    },
+    "facing=west,food_type=none,has_name_tag=false": {
+      "model": "farm_and_charm:block/pet_bowl_empty",
+      "y": 270
+    },
+    "facing=north,food_type=none,has_name_tag=true": {
+      "model": "farm_and_charm:block/pet_bowl_empty_named",
+      "y": 0
+    },
+    "facing=east,food_type=none,has_name_tag=true": {
+      "model": "farm_and_charm:block/pet_bowl_empty_named",
+      "y": 90
+    },
+    "facing=south,food_type=none,has_name_tag=true": {
+      "model": "farm_and_charm:block/pet_bowl_empty_named",
+      "y": 180
+    },
+    "facing=west,food_type=none,has_name_tag=true": {
+      "model": "farm_and_charm:block/pet_bowl_empty_named",
+      "y": 270
+    },
+    "facing=north,food_type=cat,has_name_tag=false": {
+      "model": "farm_and_charm:block/pet_bowl_cat",
+      "y": 0
+    },
+    "facing=east,food_type=cat,has_name_tag=false": {
+      "model": "farm_and_charm:block/pet_bowl_cat",
+      "y": 90
+    },
+    "facing=south,food_type=cat,has_name_tag=false": {
+      "model": "farm_and_charm:block/pet_bowl_cat",
+      "y": 180
+    },
+    "facing=west,food_type=cat,has_name_tag=false": {
+      "model": "farm_and_charm:block/pet_bowl_cat",
+      "y": 270
+    },
+    "facing=north,food_type=cat,has_name_tag=true": {
+      "model": "farm_and_charm:block/pet_bowl_cat_named",
+      "y": 0
+    },
+    "facing=east,food_type=cat,has_name_tag=true": {
+      "model": "farm_and_charm:block/pet_bowl_cat_named",
+      "y": 90
+    },
+    "facing=south,food_type=cat,has_name_tag=true": {
+      "model": "farm_and_charm:block/pet_bowl_cat_named",
+      "y": 180
+    },
+    "facing=west,food_type=cat,has_name_tag=true": {
+      "model": "farm_and_charm:block/pet_bowl_cat_named",
+      "y": 270
+    },
+    "facing=north,food_type=dog,has_name_tag=false": {
+      "model": "farm_and_charm:block/pet_bowl_dog",
+      "y": 0
+    },
+    "facing=east,food_type=dog,has_name_tag=false": {
+      "model": "farm_and_charm:block/pet_bowl_dog",
+      "y": 90
+    },
+    "facing=south,food_type=dog,has_name_tag=false": {
+      "model": "farm_and_charm:block/pet_bowl_dog",
+      "y": 180
+    },
+    "facing=west,food_type=dog,has_name_tag=false": {
+      "model": "farm_and_charm:block/pet_bowl_dog",
+      "y": 270
+    },
+    "facing=north,food_type=dog,has_name_tag=true": {
+      "model": "farm_and_charm:block/pet_bowl_dog_named",
+      "y": 0
+    },
+    "facing=east,food_type=dog,has_name_tag=true": {
+      "model": "farm_and_charm:block/pet_bowl_dog_named",
+      "y": 90
+    },
+    "facing=south,food_type=dog,has_name_tag=true": {
+      "model": "farm_and_charm:block/pet_bowl_dog_named",
+      "y": 180
+    },
+    "facing=west,food_type=dog,has_name_tag=true": {
+      "model": "farm_and_charm:block/pet_bowl_dog_named",
+      "y": 270
+    }
+  }
+}

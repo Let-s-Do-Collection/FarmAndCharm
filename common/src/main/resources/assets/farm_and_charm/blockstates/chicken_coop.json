@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "facing=north,eggs=0": {
+      "model": "farm_and_charm:block/chicken_coop_stage0"
+    },
+    "facing=north,eggs=1": {
+      "model": "farm_and_charm:block/chicken_coop_stage1"
+    },
+    "facing=north,eggs=2": {
+      "model": "farm_and_charm:block/chicken_coop_stage2"
+    },
+    "facing=north,eggs=3": {
+      "model": "farm_and_charm:block/chicken_coop_stage3"
+    },
+    "facing=south,eggs=0": {
+      "model": "farm_and_charm:block/chicken_coop_stage0",
+      "y": 180
+    },
+    "facing=south,eggs=1": {
+      "model": "farm_and_charm:block/chicken_coop_stage1",
+      "y": 180
+    },
+    "facing=south,eggs=2": {
+      "model": "farm_and_charm:block/chicken_coop_stage2",
+      "y": 180
+    },
+    "facing=south,eggs=3": {
+      "model": "farm_and_charm:block/chicken_coop_stage3",
+      "y": 180
+    },
+    "facing=west,eggs=0": {
+      "model": "farm_and_charm:block/chicken_coop_stage0",
+      "y": 270
+    },
+    "facing=west,eggs=1": {
+      "model": "farm_and_charm:block/chicken_coop_stage1",
+      "y": 270
+    },
+    "facing=west,eggs=2": {
+      "model": "farm_and_charm:block/chicken_coop_stage2",
+      "y": 270
+    },
+    "facing=west,eggs=3": {
+      "model": "farm_and_charm:block/chicken_coop_stage3",
+      "y": 270
+    },
+    "facing=east,eggs=0": {
+      "model": "farm_and_charm:block/chicken_coop_stage0",
+      "y": 90
+    },
+    "facing=east,eggs=1": {
+      "model": "farm_and_charm:block/chicken_coop_stage1",
+      "y": 90
+    },
+    "facing=east,eggs=2": {
+      "model": "farm_and_charm:block/chicken_coop_stage2",
+      "y": 90
+    },
+    "facing=east,eggs=3": {
+      "model": "farm_and_charm:block/chicken_coop_stage3",
+      "y": 90
+    }
+  }
+}

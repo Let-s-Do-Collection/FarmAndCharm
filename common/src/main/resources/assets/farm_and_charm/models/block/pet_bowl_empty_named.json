@@ -1,0 +1,7 @@
+{
+	"parent": "farm_and_charm:block/template_pet_bowl_named",
+	"textures": {
+		"1": "farm_and_charm:block/pet_bowl_empty",
+		"particle": "farm_and_charm:block/pet_bowl_empty"
+	}
+}

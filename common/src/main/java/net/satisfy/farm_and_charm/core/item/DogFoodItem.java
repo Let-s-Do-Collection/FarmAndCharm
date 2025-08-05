@@ -7,13 +7,14 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.satisfy.farm_and_charm.core.registry.MobEffectRegistry;
+import net.satisfy.farm_and_charm.core.registry.TagRegistry;
 import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +27,8 @@ public class DogFoodItem extends Item {
 
     @Override
     public @NotNull InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity entity, net.minecraft.world.InteractionHand hand) {
-        if (PlatformHelper.isTamingEnabled() && entity instanceof Wolf wolf && !wolf.isTame()) {
+        boolean isWolf = entity.getType().is(TagRegistry.IS_WOLF);
+        if (PlatformHelper.isTamingEnabled() && entity instanceof TamableAnimal wolf && !wolf.isTame() && isWolf) {
             if (!entity.level().isClientSide) {
                 wolf.tame(player);
                 wolf.setOwnerUUID(player.getUUID());

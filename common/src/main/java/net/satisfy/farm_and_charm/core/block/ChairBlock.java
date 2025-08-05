@@ -106,6 +106,9 @@ public class ChairBlock extends Block {
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+        if (interactionHand == InteractionHand.OFF_HAND) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
         if (blockState.getValue(HALF) == DoubleBlockHalf.LOWER) {
             return GeneralUtil.onUse(level, player, interactionHand, blockHitResult, 0);
         }

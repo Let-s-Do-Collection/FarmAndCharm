@@ -29,6 +29,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.core.block.BonemealableFlowerBlock;
+import net.satisfy.farm_and_charm.core.block.ChickenCoopBlock;
 import net.satisfy.farm_and_charm.core.block.ChickenNestBlock;
 import net.satisfy.farm_and_charm.core.block.CookingPotBlock;
 import net.satisfy.farm_and_charm.core.block.CraftingBowlBlock;
@@ -181,6 +182,7 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Block> CAT_FOOD_BAG = registerWithItem("cat_food_bag", () -> new StackableBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.PINK_CARPET), 3));
     public static final RegistrySupplier<Block> CHICKEN_NEST = registerWithItem("chicken_nest", () -> new ChickenNestBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK).noCollission().instabreak()));
     public static final RegistrySupplier<Item> DUNGAREES = registerItem("dungarees", () -> new DungareesItem(ArmorMaterials.LEATHER, ArmorItem.Type.LEGGINGS, getSettings().rarity(Rarity.RARE), FarmAndCharmIdentifier.of("textures/models/armor/dungarees.png")));
+    public static final RegistrySupplier<Block> CHICKEN_COOP = registerWithItem("chicken_coop", () -> new ChickenCoopBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS).strength(1.0F).sound(SoundType.WOOD)));
 
     public static final RegistrySupplier<Item> OAT_PANCAKE = registerItem("oat_pancake", () -> new EffectBlockItem(OAT_PANCAKE_BLOCK.get(), getFoodItemSettings(PlatformHelper.getNutrition("oat_pancake"), PlatformHelper.getSaturationMod("oat_pancake"), MobEffectRegistry.SATIATION, 2400)));
     public static final RegistrySupplier<Item> ROASTED_CORN = registerItem("roasted_corn", () -> new EffectBlockItem(ROASTED_CORN_BLOCK.get(), getFoodItemSettings(PlatformHelper.getNutrition("roasted_corn"), PlatformHelper.getSaturationMod("roasted_corn"), MobEffectRegistry.FEAST, 3600)));

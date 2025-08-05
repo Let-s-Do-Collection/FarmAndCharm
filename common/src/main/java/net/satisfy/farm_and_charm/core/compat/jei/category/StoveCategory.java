@@ -17,13 +17,14 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.satisfy.farm_and_charm.FarmAndCharm;
-import net.satisfy.farm_and_charm.core.block.entity.StoveBlockEntity;
 import net.satisfy.farm_and_charm.client.gui.StoveGui;
+import net.satisfy.farm_and_charm.core.block.entity.StoveBlockEntity;
 import net.satisfy.farm_and_charm.core.compat.jei.FarmAndCharmJEIPlugin;
 import net.satisfy.farm_and_charm.core.recipe.StoveRecipe;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("removal")
 public class StoveCategory implements IRecipeCategory<StoveRecipe> {
     public static final RecipeType<StoveRecipe> STOVE = RecipeType.create(FarmAndCharm.MOD_ID, "stove", StoveRecipe.class);
     public static final int WIDTH = 124;

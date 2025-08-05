@@ -13,6 +13,7 @@ import net.satisfy.farm_and_charm.client.gui.RoasterGui;
 import net.satisfy.farm_and_charm.client.gui.StoveGui;
 import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
 
+@SuppressWarnings("removal")
 @EventBusSubscriber(modid = FarmAndCharm.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public class FarmAndCharmClientForge {
 

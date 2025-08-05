@@ -15,5 +15,6 @@
     "id": "farm_and_charm:pasta_with_onion_sauce",
     "count": 4
   },
-  "experience": 0.4
+  "experience": 0.4,
+  "requiresLearning": false
 }

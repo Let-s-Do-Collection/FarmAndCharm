@@ -27,5 +27,6 @@
   "result": {
     "id": "farm_and_charm:oat_pancake",
     "count": 3
-  }
+  },
+  "requiresLearning": false
 }

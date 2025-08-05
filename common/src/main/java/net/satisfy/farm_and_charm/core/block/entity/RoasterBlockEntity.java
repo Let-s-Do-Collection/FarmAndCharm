@@ -1,8 +1,10 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
 import net.minecraft.core.*;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -23,6 +25,7 @@ import net.satisfy.farm_and_charm.core.block.RoasterBlock;
 import net.satisfy.farm_and_charm.client.gui.handler.RoasterGuiHandler;
 import net.satisfy.farm_and_charm.core.item.food.EffectFood;
 import net.satisfy.farm_and_charm.core.item.food.EffectFoodHelper;
+import net.satisfy.farm_and_charm.core.recipe.RecipeUnlockManager;
 import net.satisfy.farm_and_charm.core.recipe.RoasterRecipe;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
@@ -34,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 
 public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker<RoasterBlockEntity>, ImplementedInventory, MenuProvider {
@@ -43,6 +47,7 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(MAX_CAPACITY, ItemStack.EMPTY);
     private int roastingTime;
     private boolean isBeingBurned;
+    private UUID ownerUuid;
     private final ContainerData delegate = new ContainerData() {
         public int get(int index) {
             return switch (index) {
@@ -164,12 +169,26 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
             return;
         }
 
+
         if (level == null) throw new IllegalStateException("Null world not allowed");
 
         RecipeManager recipeManager = level.getRecipeManager();
         List<RecipeHolder<RoasterRecipe>> recipes = recipeManager.getAllRecipesFor(RecipeTypeRegistry.ROASTER_RECIPE_TYPE.get());
         Optional<RoasterRecipe> recipe = Optional.ofNullable(getRecipe(recipes, inventory));
         RegistryAccess access = level.registryAccess();
+
+        if (recipe.get() instanceof RoasterRecipe roastingRecipe) {
+            if (roastingRecipe.requiresLearning()) {
+                ServerPlayer owner = Objects.requireNonNull(world.getServer()).getPlayerList().getPlayer(ownerUuid);
+                if (owner == null || !RecipeUnlockManager.isRecipeUnlocked(owner, BuiltInRegistries.RECIPE_TYPE.getKey(recipe.get().getType()))) {
+                    roastingTime = 0;
+                    if (state.getValue(RoasterBlock.ROASTING)) {
+                        world.setBlock(pos, state.setValue(RoasterBlock.ROASTING, false), Block.UPDATE_ALL);
+                    }
+                    return;
+                }
+            }
+        }
 
         if (recipe.isPresent() && canCraft(recipe.get(), access)) {
             if (++roastingTime >= MAX_ROASTING_TIME) {

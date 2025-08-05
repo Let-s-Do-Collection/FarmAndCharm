@@ -15,5 +15,6 @@
     "id": "farm_and_charm:stuffed_chicken",
     "count": 1
   },
-  "experience": 0.6
+  "experience": 0.6,
+  "requiresLearning": false
 }

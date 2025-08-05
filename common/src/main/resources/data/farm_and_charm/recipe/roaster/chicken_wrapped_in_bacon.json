@@ -21,5 +21,6 @@
   "result": {
     "id": "farm_and_charm:chicken_wrapped_in_bacon",
     "count": 1
-  }
+  },
+  "requiresLearning": false
 }

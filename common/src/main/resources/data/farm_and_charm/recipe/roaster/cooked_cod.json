@@ -21,5 +21,6 @@
   "result": {
     "id": "farm_and_charm:cooked_cod",
     "count": 1
-  }
+  },
+  "requiresLearning": false
 }

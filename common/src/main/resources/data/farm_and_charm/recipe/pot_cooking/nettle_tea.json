@@ -19,5 +19,6 @@
   "result": {
     "id": "farm_and_charm:nettle_tea",
     "count": 1
-  }
+  },
+  "requiresLearning": false
 }

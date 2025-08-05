@@ -25,5 +25,6 @@
   "result": {
     "id": "farm_and_charm:goulash",
     "count": 1
-  }
+  },
+  "requiresLearning": false
 }

@@ -15,5 +15,6 @@
     "id": "farm_and_charm:potato_with_roast_meat",
     "count": 2
   },
-  "experience": 0.5
+  "experience": 0.5,
+  "requiresLearning": false
 }

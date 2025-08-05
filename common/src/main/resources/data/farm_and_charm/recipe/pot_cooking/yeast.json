@@ -19,5 +19,6 @@
   "result": {
     "id": "farm_and_charm:yeast",
     "count": 12
-  }
+  },
+  "requiresLearning": false
 }

@@ -15,5 +15,6 @@
     "id": "farm_and_charm:grandmothers_strawberry_cake",
     "count": 2
   },
-  "experience": 0.35
+  "experience": 0.35,
+  "requiresLearning": false
 }

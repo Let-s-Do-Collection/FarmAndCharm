@@ -12,5 +12,6 @@
     "id": "farm_and_charm:baked_lamb_ham",
     "count": 1
   },
-  "experience": 0.5
+  "experience": 0.5,
+  "requiresLearning": false
 }

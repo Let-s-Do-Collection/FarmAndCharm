@@ -2,12 +2,14 @@ package net.satisfy.farm_and_charm.core.block.entity;
 
 import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -34,6 +36,7 @@ import net.satisfy.farm_and_charm.core.item.food.EffectBlockItem;
 import net.satisfy.farm_and_charm.core.item.food.EffectFood;
 import net.satisfy.farm_and_charm.core.item.food.EffectFoodBlockItem;
 import net.satisfy.farm_and_charm.core.item.food.EffectFoodHelper;
+import net.satisfy.farm_and_charm.core.recipe.RecipeUnlockManager;
 import net.satisfy.farm_and_charm.core.recipe.StoveRecipe;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
@@ -52,6 +55,7 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
     protected int burnTimeTotal;
     protected int cookTime;
     protected int cookTimeTotal;
+    private UUID ownerUuid;
     private final ContainerData propertyDelegate = new ContainerData() {
         @Override
         public int get(int index) {
@@ -155,6 +159,16 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         Optional<StoveRecipe> recipe = Optional.ofNullable(getRecipe(recipes, inventory));
 
         RegistryAccess access = level.registryAccess();
+        if (recipe.get() != null && recipe.get().requiresLearning()) {
+            ServerPlayer owner = Objects.requireNonNull(world.getServer()).getPlayerList().getPlayer(ownerUuid);
+            if (owner == null || !RecipeUnlockManager.isRecipeUnlocked(owner, BuiltInRegistries.RECIPE_TYPE.getKey(recipe.get().getType()))) {
+                this.cookTime = 0;
+                if (state.getValue(StoveBlock.LIT)) {
+                    world.setBlock(pos, state.setValue(StoveBlock.LIT, false), Block.UPDATE_ALL);
+                }
+                return;
+            }
+        }
         if (!initialBurningState && recipe.isPresent() && canCraft(recipe.get(), access)) {
             this.burnTime = this.burnTimeTotal = this.getTotalBurnTime(this.getItem(4));
             if (burnTime > 0) {

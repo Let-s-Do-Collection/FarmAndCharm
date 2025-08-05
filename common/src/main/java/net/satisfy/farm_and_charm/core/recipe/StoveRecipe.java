@@ -7,7 +7,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -15,7 +14,6 @@ import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
 import net.satisfy.farm_and_charm.core.util.GeneralUtil;
-import net.satisfy.farm_and_charm.core.util.StreamCodecUtil;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -23,11 +21,13 @@ public class StoveRecipe implements Recipe<RecipeInput> {
     protected final NonNullList<Ingredient> inputs;
     protected final ItemStack output;
     protected final float experience;
+    private final boolean requiresLearning;
 
-    public StoveRecipe(NonNullList<Ingredient> inputs, ItemStack output, float experience) {
+    public StoveRecipe(NonNullList<Ingredient> inputs, ItemStack output, float experience, boolean requiresLearning) {
         this.inputs = inputs;
         this.output = output;
         this.experience = experience;
+        this.requiresLearning = requiresLearning;
     }
 
     @Override
@@ -78,6 +78,10 @@ public class StoveRecipe implements Recipe<RecipeInput> {
         return true;
     }
 
+    public boolean requiresLearning() {
+        return requiresLearning;
+    }
+
     public static class Serializer implements RecipeSerializer<StoveRecipe> {
         public static final MapCodec<StoveRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Ingredient.CODEC_NONEMPTY.listOf().fieldOf("ingredients").flatXmap(list -> {
@@ -88,16 +92,35 @@ public class StoveRecipe implements Recipe<RecipeInput> {
                     return DataResult.success(NonNullList.of(Ingredient.EMPTY, ingredients));
                 }, DataResult::success).forGetter(StoveRecipe::getIngredients),
                 ItemStack.CODEC.fieldOf("result").forGetter(recipe -> recipe.output),
-                Codec.FLOAT.fieldOf("experience").forGetter(StoveRecipe::getExperience)
-            ).apply(instance, StoveRecipe::new)
+                Codec.FLOAT.fieldOf("experience").forGetter(StoveRecipe::getExperience),
+                Codec.BOOL.fieldOf("requiresLearning").forGetter(StoveRecipe::requiresLearning)
+                ).apply(instance, StoveRecipe::new)
         );
 
-        public static final StreamCodec<RegistryFriendlyByteBuf, StoveRecipe> STREAM_CODEC = StreamCodec.composite(
-                StreamCodecUtil.nonNullList(Ingredient.CONTENTS_STREAM_CODEC, Ingredient.EMPTY), StoveRecipe::getIngredients,
-                ItemStack.STREAM_CODEC, recipe -> recipe.output,
-                ByteBufCodecs.FLOAT, StoveRecipe::getExperience,
-                StoveRecipe::new
+        public static final StreamCodec<RegistryFriendlyByteBuf, StoveRecipe> STREAM_CODEC =
+                StreamCodec.of(Serializer::toNetwork, Serializer::fromNetwork);
         );
+
+        public static @NotNull StoveRecipe fromNetwork(RegistryFriendlyByteBuf registryFriendlyByteBuf) {
+            int i = registryFriendlyByteBuf.readVarInt();
+            NonNullList<Ingredient> nonNullList = NonNullList.withSize(i, Ingredient.EMPTY);
+            nonNullList.replaceAll((ingredient) -> Ingredient.CONTENTS_STREAM_CODEC.decode(registryFriendlyByteBuf));
+            ItemStack itemStack = ItemStack.STREAM_CODEC.decode(registryFriendlyByteBuf);
+            float experience = registryFriendlyByteBuf.readFloat();
+            boolean requiresLearning = registryFriendlyByteBuf.readBoolean();
+            return new StoveRecipe(nonNullList, itemStack, experience, requiresLearning);
+        }
+
+        public static void toNetwork(RegistryFriendlyByteBuf registryFriendlyByteBuf, StoveRecipe recipe) {
+            registryFriendlyByteBuf.writeVarInt(recipe.getIngredients().size());
+
+            for (Ingredient ingredient : recipe.getIngredients()) {
+                Ingredient.CONTENTS_STREAM_CODEC.encode(registryFriendlyByteBuf, ingredient);
+            }
+            registryFriendlyByteBuf.writeFloat(recipe.experience);
+            ItemStack.STREAM_CODEC.encode(registryFriendlyByteBuf, recipe.output);
+            registryFriendlyByteBuf.writeBoolean(recipe.requiresLearning);
+        }
 
         @Override
         public @NotNull MapCodec<StoveRecipe> codec() {

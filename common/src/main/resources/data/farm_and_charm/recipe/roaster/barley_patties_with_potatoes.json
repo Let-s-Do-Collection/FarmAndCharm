@@ -27,5 +27,6 @@
   "result": {
     "id": "farm_and_charm:barley_patties_with_potatoes",
     "count": 2
-  }
+  },
+  "requiresLearning": false
 }

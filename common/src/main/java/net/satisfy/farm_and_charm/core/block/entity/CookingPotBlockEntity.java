@@ -1,8 +1,10 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
 import net.minecraft.core.*;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
@@ -25,6 +27,7 @@ import net.satisfy.farm_and_charm.client.gui.handler.CookingPotGuiHandler;
 import net.satisfy.farm_and_charm.core.item.food.EffectFood;
 import net.satisfy.farm_and_charm.core.item.food.EffectFoodHelper;
 import net.satisfy.farm_and_charm.core.recipe.CookingPotRecipe;
+import net.satisfy.farm_and_charm.core.recipe.RecipeUnlockManager;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.TagRegistry;
@@ -35,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTicker<CookingPotBlockEntity>, ImplementedInventory, MenuProvider, Container {
     private static final int MAX_CAPACITY = 8, CONTAINER_SLOT = 6, OUTPUT_SLOT = 7, INGREDIENTS_AREA = 2 * 3;
@@ -43,6 +47,7 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(MAX_CAPACITY, ItemStack.EMPTY);
     private int cookingTime;
     private boolean isBeingBurned;
+    private UUID ownerUuid;
     private final ContainerData delegate = new ContainerData() {
         public int get(int index) {
             return switch (index) {
@@ -85,6 +90,9 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
         super.loadAdditional(compoundTag, provider);
         ContainerHelper.loadAllItems(compoundTag, inventory, provider);
         cookingTime = compoundTag.getInt("CookingTime");
+        if (compoundTag.hasUUID("OwnerUUID")) {
+            ownerUuid = compoundTag.getUUID("OwnerUUID");
+        }
     }
 
     @Override
@@ -92,6 +100,9 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
         super.saveAdditional(compoundTag, provider);
         ContainerHelper.saveAllItems(compoundTag, inventory, provider);
         compoundTag.putInt("CookingTime", cookingTime);
+        if (ownerUuid != null) {
+            compoundTag.putUUID("OwnerUUID", ownerUuid);
+        }
     }
 
     public boolean isBeingBurned() {
@@ -126,9 +137,7 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
             for (int slot = 0; slot < INGREDIENTS_AREA; slot++) {
                 ItemStack stack = getItem(slot);
                 if (ingredient.test(stack)) {
-                    ItemStack remainderStack = stack.getItem().hasCraftingRemainingItem()
-                            ? new ItemStack(Objects.requireNonNull(stack.getItem().getCraftingRemainingItem()))
-                            : ItemStack.EMPTY;
+                    ItemStack remainderStack = stack.getItem().hasCraftingRemainingItem() ? new ItemStack(Objects.requireNonNull(stack.getItem().getCraftingRemainingItem())) : ItemStack.EMPTY;
                     stack.shrink(1);
                     if (!remainderStack.isEmpty()) setItem(slot, remainderStack);
                     break;
@@ -171,11 +180,22 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
         if (!isBeingBurned) {
             return;
         }
-
         RecipeManager recipeManager = world.getRecipeManager();
         List<RecipeHolder<CookingPotRecipe>> recipes = recipeManager.getAllRecipesFor(RecipeTypeRegistry.COOKING_POT_RECIPE_TYPE.get());
         Optional<CookingPotRecipe> recipe = Optional.ofNullable(getRecipe(recipes, inventory));
 
+        if (recipe.get() instanceof CookingPotRecipe cookingRecipe) {
+            if (cookingRecipe.requiresLearning()) {
+                ServerPlayer owner = Objects.requireNonNull(world.getServer()).getPlayerList().getPlayer(ownerUuid);
+                if (owner == null || !RecipeUnlockManager.isRecipeUnlocked(owner, BuiltInRegistries.RECIPE_TYPE.getKey(recipe.get().getType()))) {
+                    cookingTime = 0;
+                    if (state.getValue(CookingPotBlock.COOKING)) {
+                        world.setBlock(pos, state.setValue(CookingPotBlock.COOKING, false), Block.UPDATE_ALL);
+                    }
+                    return;
+                }
+            }
+        }
         if (level == null) throw new IllegalStateException("Null world not allowed");
         RegistryAccess access = level.registryAccess();
 
@@ -233,6 +253,7 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
 
     @Nullable
     public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
+        ownerUuid = player.getUUID();
         return new CookingPotGuiHandler(syncId, inv, this, delegate);
     }
 }

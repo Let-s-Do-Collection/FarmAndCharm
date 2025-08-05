@@ -15,7 +15,6 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.satisfy.farm_and_charm.client.gui.handler.RoasterGuiHandler;
 import net.satisfy.farm_and_charm.client.gui.handler.StoveGuiHandler;
-import net.satisfy.farm_and_charm.compat.jei.category.*;
 import net.satisfy.farm_and_charm.core.compat.jei.category.CookingPotCategory;
 import net.satisfy.farm_and_charm.core.compat.jei.category.CraftingBowlCategory;
 import net.satisfy.farm_and_charm.core.compat.jei.category.MincerCategory;

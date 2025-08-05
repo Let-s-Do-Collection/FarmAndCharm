@@ -19,5 +19,6 @@
   "result": {
     "id": "farm_and_charm:onion_soup",
     "count": 1
-  }
+  },
+  "requiresLearning": true
 }

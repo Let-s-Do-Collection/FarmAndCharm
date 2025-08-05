@@ -22,12 +22,14 @@ public class CookingPotRecipe implements Recipe<RecipeInput> {
     private final boolean containerRequired;
     private final ItemStack containerItem;
     private final ItemStack output;
+    private final boolean requiresLearning;
 
-    public CookingPotRecipe(NonNullList<Ingredient> inputs, boolean containerRequired, ItemStack containerItem, ItemStack output) {
+    public CookingPotRecipe(NonNullList<Ingredient> inputs, boolean containerRequired, ItemStack containerItem, ItemStack output, boolean requiresLearning) {
         this.inputs = inputs;
         this.containerRequired = containerRequired;
         this.containerItem = containerItem;
         this.output = output;
+        this.requiresLearning = requiresLearning;
     }
 
     @Override
@@ -81,6 +83,10 @@ public class CookingPotRecipe implements Recipe<RecipeInput> {
         return RecipeTypeRegistry.COOKING_POT_RECIPE_TYPE.getId();
     }
 
+    public boolean requiresLearning() {
+        return requiresLearning;
+    }
+
     @Override
     public boolean isSpecial() {
         return true;
@@ -97,7 +103,8 @@ public class CookingPotRecipe implements Recipe<RecipeInput> {
                         }, DataResult::success).forGetter(CookingPotRecipe::getIngredients),
                         Codec.BOOL.fieldOf("requireContainer").forGetter(CookingPotRecipe::isContainerRequired),
                         ItemStack.CODEC.fieldOf("container").forGetter(CookingPotRecipe::getContainerItem),
-                        ItemStack.CODEC.fieldOf("result").forGetter(recipe -> recipe.output)
+                        ItemStack.CODEC.fieldOf("result").forGetter(recipe -> recipe.output),
+                        Codec.BOOL.fieldOf("requiresLearning").forGetter(CookingPotRecipe::requiresLearning)
                 ).apply(instance, CookingPotRecipe::new)
         );
         public static final StreamCodec<RegistryFriendlyByteBuf, CookingPotRecipe> STREAM_CODEC =
@@ -110,7 +117,8 @@ public class CookingPotRecipe implements Recipe<RecipeInput> {
             boolean containerRequired = registryFriendlyByteBuf.readBoolean();
             ItemStack containerItem = ItemStack.STREAM_CODEC.decode(registryFriendlyByteBuf);
             ItemStack itemStack = ItemStack.STREAM_CODEC.decode(registryFriendlyByteBuf);
-            return new CookingPotRecipe(nonNullList, containerRequired, containerItem, itemStack);
+            boolean requiresLearning = registryFriendlyByteBuf.readBoolean();
+            return new CookingPotRecipe(nonNullList, containerRequired, containerItem, itemStack, requiresLearning);
         }
 
         public static void toNetwork(RegistryFriendlyByteBuf registryFriendlyByteBuf, CookingPotRecipe recipe) {
@@ -122,6 +130,7 @@ public class CookingPotRecipe implements Recipe<RecipeInput> {
             registryFriendlyByteBuf.writeBoolean(recipe.containerRequired);
             ItemStack.STREAM_CODEC.encode(registryFriendlyByteBuf, recipe.containerItem);
             ItemStack.STREAM_CODEC.encode(registryFriendlyByteBuf, recipe.output);
+            registryFriendlyByteBuf.writeBoolean(recipe.requiresLearning);
         }
 
         @Override

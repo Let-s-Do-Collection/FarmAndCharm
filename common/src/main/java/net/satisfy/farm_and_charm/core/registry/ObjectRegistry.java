@@ -14,6 +14,7 @@ import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -52,6 +53,7 @@ import net.satisfy.farm_and_charm.core.item.ChickenFeedItem;
 import net.satisfy.farm_and_charm.core.item.DogFoodItem;
 import net.satisfy.farm_and_charm.core.item.FertilizerItem;
 import net.satisfy.farm_and_charm.core.item.HorseFodderItem;
+import net.satisfy.farm_and_charm.core.item.RecipeUnlockerItem;
 import net.satisfy.farm_and_charm.core.item.RottenTomatoItem;
 import net.satisfy.farm_and_charm.core.item.TeaJugItem;
 import net.satisfy.farm_and_charm.core.item.food.EffectBlockItem;
@@ -178,7 +180,6 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> GOULASH = registerItem("goulash", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("goulash"), PlatformHelper.getSaturationMod("goulash"), MobEffectRegistry.SATIATION, 6000), 6000, true));
     public static final RegistrySupplier<Item> SIMPLE_TOMATO_SOUP = registerItem("simple_tomato_soup", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("simple_tomato_soup"), PlatformHelper.getSaturationMod("simple_tomato_soup"), MobEffectRegistry.RESTED, 1800), 1800, true));
     public static final RegistrySupplier<Item> BARLEY_SOUP = registerItem("barley_soup", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("barley_soup"), PlatformHelper.getSaturationMod("barley_soup"), MobEffectRegistry.RESTED, 3000), 3000, true));
-    public static final RegistrySupplier<Item> ONION_SOUP = registerItem("onion_soup", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("onion_soup"), PlatformHelper.getSaturationMod("onion_soup"), MobEffectRegistry.RESTED, 2400), 2400, true));
     public static final RegistrySupplier<Item> POTATO_SOUP = registerItem("potato_soup", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("potato_soup"), PlatformHelper.getSaturationMod("potato_soup"), MobEffectRegistry.RESTED, 2400), 2400, true));
     public static final RegistrySupplier<Item> PASTA_WITH_ONION_SAUCE = registerItem("pasta_with_onion_sauce", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("pasta_with_onion_sauce"), PlatformHelper.getSaturationMod("pasta_with_onion_sauce"), MobEffectRegistry.SATIATION, 3600), 3600, false));
     public static final RegistrySupplier<Item> CORN_GRITS = registerItem("corn_grits", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("corn_grits"), PlatformHelper.getSaturationMod("corn_grits"), MobEffectRegistry.SATIATION, 2400), 2400, true));
@@ -192,6 +193,9 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> COOKED_SALMON = registerItem("cooked_salmon", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("cooked_salmon"), PlatformHelper.getSaturationMod("cooked_salmon"), MobEffectRegistry.SATIATION, 4800), 4800, true));
     public static final RegistrySupplier<Item> COOKED_COD = registerItem("cooked_cod", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("cooked_cod"), PlatformHelper.getSaturationMod("cooked_cod"), MobEffectRegistry.SUSTENANCE, 4800), 4800, true));
     public static final RegistrySupplier<Item> ROASTED_CHICKEN = registerItem("roasted_chicken", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("roasted_chicken"), PlatformHelper.getSaturationMod("roasted_chicken"), MobEffectRegistry.SATIATION, 4800), 4800, false));
+    public static final RegistrySupplier<Item> ONION_SOUP = registerItem("onion_soup", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("onion_soup"), PlatformHelper.getSaturationMod("onion_soup"), MobEffectRegistry.RESTED, 2400), 2400, true));
+    public static final RegistrySupplier<RecipeUnlockerItem> RECIPE_UNLOCKER = registerItem("recipe_unlocker", () -> new RecipeUnlockerItem(new Item.Properties()));
+    public static final ItemStack ONION_SOUP_RECIPE_UNLOCKER_STACK = RecipeUnlockerItem.createUnlockerForRecipes(RECIPE_UNLOCKER.get(), "farm_and_charm:pot_cooking/onion_soup");
 
     public static void init() {
         ITEMS.register();

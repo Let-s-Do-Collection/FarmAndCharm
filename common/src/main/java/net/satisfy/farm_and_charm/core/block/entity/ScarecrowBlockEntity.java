@@ -2,6 +2,7 @@ package net.satisfy.farm_and_charm.core.block.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -16,27 +17,24 @@ public class ScarecrowBlockEntity extends BlockEntity {
         super(EntityTypeRegistry.SCARECROW_BLOCK_ENTITY.get(), pos, state);
     }
 
-    public void tick() {
-        if (this.level instanceof ServerLevel serverLevel && !this.level.isClientSide) {
-            long currentTime = serverLevel.getGameTime();
-            long bonemealInterval = 20 * 25;
-            if (currentTime - lastTickTime > bonemealInterval) {
-                lastTickTime = currentTime;
-                applyBonemealEffect(serverLevel);
+    public static <T extends BlockEntity> void tick(Level level, T be) {
+        if (!(be instanceof ScarecrowBlockEntity self)) return;
+        if (level instanceof ServerLevel serverLevel) {
+            long current = serverLevel.getGameTime();
+            long interval = 20 * 25;
+            if (current - self.lastTickTime > interval) {
+                self.lastTickTime = current;
+                BlockPos.betweenClosedStream(
+                        self.worldPosition.offset(-8, -1, -8),
+                        self.worldPosition.offset(8, 1, 8)
+                ).forEach(p -> {
+                    var bs = serverLevel.getBlockState(p);
+                    if (bs.getBlock() instanceof CropBlock crop && !crop.isMaxAge(bs)) {
+                        crop.randomTick(bs, serverLevel, p, serverLevel.random);
+                        serverLevel.gameEvent(GameEvent.BLOCK_CHANGE, p, GameEvent.Context.of(bs));
+                    }
+                });
             }
         }
-    }
-
-    private void applyBonemealEffect(ServerLevel serverLevel) {
-        BlockPos.betweenClosedStream(this.getBlockPos().offset(-8, -1, -8), this.getBlockPos().offset(8, 1, 8))
-                .forEach(pos -> {
-                            BlockState blockState = serverLevel.getBlockState(pos);
-                            CropBlock cropBlock = (CropBlock) blockState.getBlock();
-                            if (!cropBlock.isMaxAge(blockState)) {
-                                cropBlock.randomTick(blockState, serverLevel, pos, serverLevel.random);
-                                serverLevel.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(blockState));
-                            }
-                        }
-                );
     }
 }

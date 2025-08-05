@@ -10,17 +10,18 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.satisfy.farm_and_charm.FarmAndCharm;
+import net.satisfy.farm_and_charm.client.model.ScarecrowModel;
 import net.satisfy.farm_and_charm.core.block.ScarecrowBlock;
 import net.satisfy.farm_and_charm.core.block.entity.ScarecrowBlockEntity;
-import net.satisfy.farm_and_charm.client.model.ScarecrowModel;
+import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 import org.joml.Quaternionf;
 
 import java.util.Objects;
 
 public class ScarecrowRenderer implements BlockEntityRenderer<ScarecrowBlockEntity> {
 
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "textures/entity/scarecrow.png");
+    private static final ResourceLocation TEX_WITH = FarmAndCharmIdentifier.of("textures/entity/scarecrow.png");
+    private static final ResourceLocation TEX_NO  = FarmAndCharmIdentifier.of("textures/entity/scarecrow_no_dungarees.png");
     private final ModelPart scarecrow;
     private final ModelPart post;
 
@@ -31,24 +32,25 @@ public class ScarecrowRenderer implements BlockEntityRenderer<ScarecrowBlockEnti
     }
 
     @Override
-    public void render(ScarecrowBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay) {
-        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
-        Direction direction = blockEntity.getBlockState().getValue(ScarecrowBlock.FACING);
-        float rotationDegrees = -direction.toYRot() + 180;
+    public void render(ScarecrowBlockEntity be, float pt, PoseStack ms, MultiBufferSource buf, int light, int overlay) {
+        Direction dir = be.getBlockState().getValue(ScarecrowBlock.FACING);
+        boolean has = be.getBlockState().getValue(ScarecrowBlock.HAS_DUNGAREES);
+        ResourceLocation tex = has ? TEX_WITH : TEX_NO;
+        VertexConsumer vc = buf.getBuffer(RenderType.entityCutoutNoCull(tex));
 
-        long time = Objects.requireNonNull(blockEntity.getLevel()).getGameTime();
-        float angle = (float) Math.sin(time * 0.05) * 1.5f;
+        float rotY = -dir.toYRot() + 180;
+        long t = Objects.requireNonNull(be.getLevel()).getGameTime();
+        float angle = (float) Math.sin(t * 0.05) * 1.5f;
 
-        poseStack.pushPose();
-        poseStack.translate(0.5, 0, 0.5);
-        poseStack.mulPose(new Quaternionf().rotateY((float) Math.toRadians(rotationDegrees)));
-        poseStack.mulPose(new Quaternionf().rotateX((float) Math.toRadians(angle)));
-        poseStack.translate(-0.5, 0, -0.5);
+        ms.pushPose();
+        ms.translate(0.5, 0, 0.5);
+        ms.mulPose(new Quaternionf().rotateY((float) Math.toRadians(rotY)));
+        ms.mulPose(new Quaternionf().rotateX((float) Math.toRadians(angle)));
+        ms.translate(-0.5, 0, -0.5);
 
-        scarecrow.render(poseStack, vertexConsumer, combinedLight, OverlayTexture.NO_OVERLAY);
-        post.render(poseStack, vertexConsumer, combinedLight, OverlayTexture.NO_OVERLAY);
-
-        poseStack.popPose();
+        scarecrow.render(ms, vc, light, OverlayTexture.NO_OVERLAY);
+        post.render(ms, vc, light, OverlayTexture.NO_OVERLAY);
+        ms.popPose();
     }
 
 }

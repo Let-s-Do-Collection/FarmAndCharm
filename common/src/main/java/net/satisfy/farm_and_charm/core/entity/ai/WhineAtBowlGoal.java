@@ -131,7 +131,7 @@ public class WhineAtBowlGoal extends Goal {
         }
 
         if (whineTicks % WHINE_INTERVAL == 0) {
-            wolf.playSound(SoundEvents.WOLF_WHINE, 1.0f, 1.0f);
+            wolf.playSound(SoundEvents.WOLF_WHINE, 0.4f, 0.4f);
         }
 
         if (whineTicks % ANGRY_PARTICLE_INTERVAL == 0) {
@@ -141,7 +141,7 @@ public class WhineAtBowlGoal extends Goal {
         }
 
         if (++whineTicks >= MAX_WHINE_TICKS) {
-            wolf.playSound(SoundEvents.WOLF_GROWL, 1.0f, 1.0f);
+            wolf.playSound(SoundEvents.WOLF_WHINE, 0.4f, 0.4f);
             Vec3 pos = wolf.position().add(0, 0.5, 0);
             server.sendParticles(ParticleTypes.ANGRY_VILLAGER, pos.x, pos.y, pos.z,
                     15, 0.3, 0.3, 0.3, 0.01);

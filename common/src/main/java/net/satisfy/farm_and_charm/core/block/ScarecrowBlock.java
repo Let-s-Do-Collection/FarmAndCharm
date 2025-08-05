@@ -13,21 +13,26 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.farm_and_charm.core.block.entity.ScarecrowBlockEntity;
+import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,22 +48,41 @@ public class ScarecrowBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     private static final Supplier<VoxelShape> voxelShapeSupplier = () -> {
         VoxelShape shape = Shapes.empty();
-        shape = Shapes.joinUnoptimized(shape, Shapes.box(0.4375, 0, 0.4375, 0.5625, 0.75, 0.5625), BooleanOp.OR);
-        shape = Shapes.joinUnoptimized(shape, Shapes.box(0.25, 0.625, 0.375, 0.75, 1.4375, 0.6875), BooleanOp.OR);
-        shape = Shapes.joinUnoptimized(shape, Shapes.box(0.25, 1.4375, 0.3125, 0.75, 1.9375, 0.8125), BooleanOp.OR);
-        shape = Shapes.joinUnoptimized(shape, Shapes.box(0.6875, 1.125, 0.375, 1, 1.5, 0.6875), BooleanOp.OR);
-        shape = Shapes.joinUnoptimized(shape, Shapes.box(0, 1.125, 0.375, 0.3125, 1.5, 0.6875), BooleanOp.OR);
+        shape = Shapes.joinUnoptimized(shape,
+                Shapes.box(0.4375, 0,    0.4375, 0.5625, 0.75,   0.5625),
+                BooleanOp.OR
+        );
+        shape = Shapes.joinUnoptimized(shape,
+                Shapes.box(0.25,   0.625, 0.375,  0.75,   1.4375, 0.6875),
+                BooleanOp.OR
+        );
+        shape = Shapes.joinUnoptimized(shape,
+                Shapes.box(0.25,   1.4375,0.3125,  0.75,   1.9375, 0.8125),
+                BooleanOp.OR
+        );
+        shape = Shapes.joinUnoptimized(shape,
+                Shapes.box(0.6875, 1.125, 0.375,  1.0,    1.5,    0.6875),
+                BooleanOp.OR
+        );
+        shape = Shapes.joinUnoptimized(shape,
+                Shapes.box(0.0,    1.125, 0.375,  0.3125, 1.5,    0.6875),
+                BooleanOp.OR
+        );
         return shape;
     };
-    public static final Map<Direction, VoxelShape> SHAPE = Util.make(new HashMap<>(), map -> {
-        for (Direction direction : Direction.Plane.HORIZONTAL) {
-            map.put(direction, GeneralUtil.rotateShape(Direction.NORTH, direction, voxelShapeSupplier.get()));
+    public static final Map<Direction, VoxelShape> SHAPE = Util.make(new HashMap<>(), m -> {
+        for (Direction d : Direction.Plane.HORIZONTAL) {
+            m.put(d, GeneralUtil.rotateShape(Direction.NORTH, d, voxelShapeSupplier.get()));
         }
     });
+    public static final BooleanProperty HAS_DUNGAREES = BooleanProperty.create("has_dungarees");
 
-    public ScarecrowBlock(Properties properties) {
-        super(properties);
-        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
+    public ScarecrowBlock(Properties props) {
+        super(props);
+        this.registerDefaultState(this.defaultBlockState()
+                .setValue(FACING, Direction.NORTH)
+                .setValue(HAS_DUNGAREES, true)
+        );
     }
 
     @Override
@@ -68,12 +92,14 @@ public class ScarecrowBlock extends BaseEntityBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection());
+        return this.defaultBlockState()
+                .setValue(FACING, ctx.getHorizontalDirection())
+                .setValue(HAS_DUNGAREES, true);
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(FACING, HAS_DUNGAREES);
     }
 
     @Override
@@ -84,9 +110,8 @@ public class ScarecrowBlock extends BaseEntityBlock {
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
-        VoxelShape shape = world.getBlockState(pos.below()).getShape(world, pos.below());
-        Direction direction = Direction.UP;
-        return Block.isFaceFull(shape, direction);
+        var below = world.getBlockState(pos.below()).getShape(world, pos.below());
+        return Block.isFaceFull(below, Direction.UP);
     }
 
     @Override
@@ -104,10 +129,18 @@ public class ScarecrowBlock extends BaseEntityBlock {
         return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
     }
 
+
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new ScarecrowBlockEntity(pos, state);
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState st) {
+        return new ScarecrowBlockEntity(pos, st);
+    }
+
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level lvl, BlockState st, BlockEntityType<T> type) {
+        return type == EntityTypeRegistry.SCARECROW_BLOCK_ENTITY.get()
+                ? (level, pos, state, be) -> ScarecrowBlockEntity.tick(level, be)
+                : null;
     }
 
     @Override

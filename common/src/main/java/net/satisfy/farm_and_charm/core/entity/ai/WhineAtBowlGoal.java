@@ -5,7 +5,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.animal.Cat;
+import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
@@ -14,23 +14,23 @@ import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 
 import java.util.EnumSet;
 
-public class MeowAtBowlGoal extends Goal {
-    private final Cat cat;
+public class WhineAtBowlGoal extends Goal {
+    private final Wolf wolf;
     private BlockPos bowlPos;
-    private int meowTicks;
+    private int whineTicks;
     private long lastCheckTime;
     private int cooldownTicks;
     private boolean active;
 
     private static final int CHECK_INTERVAL_TICKS = 20;
-    private static final int MAX_MEOW_TICKS = 300;
-    private static final int MEOW_INTERVAL = 60;
+    private static final int MAX_WHINE_TICKS = 300;
+    private static final int WHINE_INTERVAL = 60;
     private static final int ANGRY_PARTICLE_INTERVAL = 100;
 
-    public MeowAtBowlGoal(Cat cat) {
-        this.cat = cat;
+    public WhineAtBowlGoal(Wolf wolf) {
+        this.wolf = wolf;
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
-        this.meowTicks = 0;
+        this.whineTicks = 0;
         this.lastCheckTime = -1;
         this.cooldownTicks = 0;
         this.active = false;
@@ -42,8 +42,8 @@ public class MeowAtBowlGoal extends Goal {
             cooldownTicks--;
             return false;
         }
-        if (!cat.isTame() || cat.isOrderedToSit()) return false;
-        Level level = cat.level();
+        if (!wolf.isTame() || wolf.isOrderedToSit()) return false;
+        Level level = wolf.level();
         if (!(level instanceof ServerLevel server)) return false;
 
         long gameTime = server.getGameTime();
@@ -55,11 +55,11 @@ public class MeowAtBowlGoal extends Goal {
         boolean hourBeforeSleep = timeOfDay >= 11500 && timeOfDay <= 12500;
         if (!(at11000 || aroundMidday || hourBeforeSleep)) return false;
 
-        BlockPos catPos = cat.blockPosition();
-        for (BlockPos pos : BlockPos.betweenClosed(catPos.offset(-32, -4, -32), catPos.offset(32, 4, 32))) {
+        BlockPos wolfPos = wolf.blockPosition();
+        for (BlockPos pos : BlockPos.betweenClosed(wolfPos.offset(-32, -4, -32), wolfPos.offset(32, 4, 32))) {
             if (level.getBlockState(pos).is(ObjectRegistry.PET_BOWL.get())) {
                 BlockEntity be = level.getBlockEntity(pos);
-                if (be instanceof PetBowlBlockEntity bowl && bowl.isEmpty() && bowl.canBeUsedBy(cat)) {
+                if (be instanceof PetBowlBlockEntity bowl && bowl.isEmpty() && bowl.canBeUsedBy(wolf)) {
                     bowlPos = pos.immutable();
                     lastCheckTime = gameTime;
                     return true;
@@ -71,8 +71,8 @@ public class MeowAtBowlGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        if (!active || meowTicks >= MAX_MEOW_TICKS) return false;
-        Level level = cat.level();
+        if (!active || whineTicks >= MAX_WHINE_TICKS) return false;
+        Level level = wolf.level();
         if (level instanceof ServerLevel server && bowlPos != null) {
             BlockEntity be = server.getBlockEntity(bowlPos);
             return be instanceof PetBowlBlockEntity bowl && bowl.isEmpty();
@@ -88,15 +88,15 @@ public class MeowAtBowlGoal extends Goal {
     @Override
     public void start() {
         if (bowlPos != null) {
-            if (!cat.blockPosition().closerThan(bowlPos, 1.1)) {
-                cat.getNavigation().moveTo(
+            if (!wolf.blockPosition().closerThan(bowlPos, 1.1)) {
+                wolf.getNavigation().moveTo(
                         bowlPos.getX() + 0.5,
                         bowlPos.getY(),
                         bowlPos.getZ() + 0.5,
                         1.0
                 );
             }
-            meowTicks = 0;
+            whineTicks = 0;
             active = true;
         }
     }
@@ -104,7 +104,7 @@ public class MeowAtBowlGoal extends Goal {
     @Override
     public void tick() {
         if (bowlPos == null) return;
-        Level level = cat.level();
+        Level level = wolf.level();
         if (!(level instanceof ServerLevel server)) return;
 
         BlockEntity be = server.getBlockEntity(bowlPos);
@@ -113,15 +113,15 @@ public class MeowAtBowlGoal extends Goal {
             return;
         }
 
-        if (cat.blockPosition().closerThan(bowlPos, 1.1)) {
-            if (cat.getNavigation().isDone()) {
-                if (!cat.isOrderedToSit()) {
-                    cat.setOrderedToSit(true);
+        if (wolf.blockPosition().closerThan(bowlPos, 1.1)) {
+            if (wolf.getNavigation().isDone()) {
+                if (!wolf.isOrderedToSit()) {
+                    wolf.setOrderedToSit(true);
                 }
             }
         } else {
-            if (!cat.getNavigation().isInProgress()) {
-                cat.getNavigation().moveTo(
+            if (!wolf.getNavigation().isInProgress()) {
+                wolf.getNavigation().moveTo(
                         bowlPos.getX() + 0.5,
                         bowlPos.getY(),
                         bowlPos.getZ() + 0.5,
@@ -130,19 +130,19 @@ public class MeowAtBowlGoal extends Goal {
             }
         }
 
-        if (meowTicks % MEOW_INTERVAL == 0) {
-            cat.playSound(SoundEvents.CAT_BEG_FOR_FOOD, 1.0f, 1.0f);
+        if (whineTicks % WHINE_INTERVAL == 0) {
+            wolf.playSound(SoundEvents.WOLF_WHINE, 1.0f, 1.0f);
         }
 
-        if (meowTicks % ANGRY_PARTICLE_INTERVAL == 0) {
-            Vec3 pos = cat.position().add(0, 0.5, 0);
+        if (whineTicks % ANGRY_PARTICLE_INTERVAL == 0) {
+            Vec3 pos = wolf.position().add(0, 0.5, 0);
             server.sendParticles(ParticleTypes.ANGRY_VILLAGER, pos.x, pos.y, pos.z,
                     6, 0.3, 0.3, 0.3, 0.01);
         }
 
-        if (++meowTicks >= MAX_MEOW_TICKS) {
-            cat.playSound(SoundEvents.CAT_HISS, 1.0f, 1.0f);
-            Vec3 pos = cat.position().add(0, 0.5, 0);
+        if (++whineTicks >= MAX_WHINE_TICKS) {
+            wolf.playSound(SoundEvents.WOLF_GROWL, 1.0f, 1.0f);
+            Vec3 pos = wolf.position().add(0, 0.5, 0);
             server.sendParticles(ParticleTypes.ANGRY_VILLAGER, pos.x, pos.y, pos.z,
                     15, 0.3, 0.3, 0.3, 0.01);
             stop();
@@ -151,12 +151,30 @@ public class MeowAtBowlGoal extends Goal {
 
     @Override
     public void stop() {
+        boolean bowlStillEmpty = true;
+        if (bowlPos != null) {
+            BlockEntity be = wolf.level().getBlockEntity(bowlPos);
+            if (be instanceof PetBowlBlockEntity bowl && !bowl.isEmpty()) {
+                bowlStillEmpty = false;
+            }
+        }
+
         bowlPos = null;
-        meowTicks = 0;
-        cooldownTicks = CHECK_INTERVAL_TICKS;
+        whineTicks = 0;
         active = false;
-        if (cat.isOrderedToSit()) {
-            cat.setOrderedToSit(false);
+        cooldownTicks = bowlStillEmpty ? 400 : CHECK_INTERVAL_TICKS;
+
+        if (wolf.isOrderedToSit()) {
+            wolf.setOrderedToSit(false);
+        }
+
+        if (!bowlStillEmpty) {
+            wolf.playSound(SoundEvents.WOLF_PANT, 1.0f, 1.0f);
+            if (wolf.level() instanceof ServerLevel server) {
+                Vec3 pos = wolf.position().add(0, 0.5, 0);
+                server.sendParticles(ParticleTypes.HEART, pos.x, pos.y, pos.z,
+                        5, 0.3, 0.3, 0.3, 0.0);
+            }
         }
     }
 }

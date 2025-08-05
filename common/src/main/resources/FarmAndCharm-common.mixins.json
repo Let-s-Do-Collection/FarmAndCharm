@@ -22,6 +22,7 @@
     "PigMixin",
     "RabbitMixin",
     "TemptGoalAccessor",
+    "WolfMixin",
     "ZombieMixin"
   ],
   "injectors": {

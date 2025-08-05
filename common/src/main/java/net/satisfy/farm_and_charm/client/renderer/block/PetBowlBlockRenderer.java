@@ -16,7 +16,7 @@ public class PetBowlBlockRenderer implements BlockEntityRenderer<PetBowlBlockEnt
     @Override
     public void render(PetBowlBlockEntity entity, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int light, int overlay) {
         poseStack.pushPose();
-        poseStack.translate(0.5, 0.4, 0.5);
+        poseStack.translate(0.5, 0.165, 0.2475);
         Direction facing = entity.getBlockState().getValue(PetBowlBlock.FACING);
         float rotation = switch (facing) {
             case NORTH -> 180f;
@@ -30,9 +30,9 @@ public class PetBowlBlockRenderer implements BlockEntityRenderer<PetBowlBlockEnt
         Font font = Minecraft.getInstance().font;
         Component text = entity.getText();
         String str = text.getString();
-        if (str.length() > 16) str = str.substring(0, 16);
+        if (str.length() > 6) str = str.substring(0, 6);
         if (!str.isEmpty()) {
-            font.drawInBatch(Component.literal(str).getVisualOrderText(), -font.width(str) / 2f, 0, 0xFFFFFF, false, poseStack.last().pose(), buffer, Font.DisplayMode.NORMAL, 0, light);
+            font.drawInBatch(Component.literal(str).getVisualOrderText(), -font.width(str) / 2f, 0, 0xD8C4A0, false, poseStack.last().pose(), buffer, Font.DisplayMode.NORMAL, 0, light);
         }
 
         poseStack.popPose();

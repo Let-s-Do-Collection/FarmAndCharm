@@ -6,8 +6,12 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -17,6 +21,7 @@ import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PetBowlBlockEntity extends BlockEntity implements WorldlyContainer, TextEditableBlockEntity {
     private final NonNullList<ItemStack> items = NonNullList.withSize(1, ItemStack.EMPTY);
@@ -176,10 +181,6 @@ public class PetBowlBlockEntity extends BlockEntity implements WorldlyContainer,
         }
     }
 
-    public boolean wasDogFed() {
-        return fedDog;
-    }
-
     public boolean wasCatFed() {
         return fedCat;
     }
@@ -208,5 +209,22 @@ public class PetBowlBlockEntity extends BlockEntity implements WorldlyContainer,
     @Override
     public int getTextLineCount() {
         return 1;
+    }
+
+    @Override
+    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+        CompoundTag tag =  super.getUpdateTag(provider);
+        saveAdditional(tag, provider);
+        return tag;
+    }
+
+    public boolean canBeUsedBy(Animal animal) {
+        if (text.getString().isBlank()) return true;
+        return animal.hasCustomName() && animal.getName().getString().equals(text.getString());
     }
 }

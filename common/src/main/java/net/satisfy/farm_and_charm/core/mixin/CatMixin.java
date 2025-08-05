@@ -3,10 +3,10 @@ package net.satisfy.farm_and_charm.core.mixin;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Cat;
 import net.minecraft.world.item.ItemStack;
-import net.satisfy.farm_and_charm.core.entity.ai.EatFromBowlGoal;
+import net.satisfy.farm_and_charm.core.entity.BowlAccessor;
+import net.satisfy.farm_and_charm.core.entity.ai.CatEatFromBowlGoal;
 import net.satisfy.farm_and_charm.core.entity.ai.MeowAtBowlGoal;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
-import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Cat.class)
-public class CatMixin implements GeneralUtil.FedTracker {
+public class CatMixin implements BowlAccessor.FedTracker {
     @Unique
     private boolean farmAndCharm$fedFromBowl = false;
 
@@ -26,7 +26,7 @@ public class CatMixin implements GeneralUtil.FedTracker {
     @Inject(method = "registerGoals", at = @At("TAIL"))
     private void farmAndCharm$addFeedingGoal(CallbackInfo ci) {
         Mob self = (Mob)(Object)this;
-        ((MobAccessor)self).farmAndCharm$getGoalSelector().addGoal(13, new EatFromBowlGoal((Cat)(Object)this));
+        ((MobAccessor)self).farmAndCharm$getGoalSelector().addGoal(13, new CatEatFromBowlGoal((Cat)(Object)this));
         ((MobAccessor)self).farmAndCharm$getGoalSelector().addGoal(14, new MeowAtBowlGoal((Cat)(Object)this));
     }
 
@@ -47,6 +47,11 @@ public class CatMixin implements GeneralUtil.FedTracker {
         }
     }
 
+    @Override
+    public void farmAndCharm$$resetFed() {
+        farmAndCharm$fedFromBowl = false;
+        farmAndCharm$fedTimer = 0;
+    }
 
     @Override
     public void farmAndCharm$$markAsFed() {

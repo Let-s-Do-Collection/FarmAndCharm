@@ -15,6 +15,7 @@ import net.satisfy.farm_and_charm.client.gui.PetBowlEditGui;
 import net.satisfy.farm_and_charm.client.gui.RoasterGui;
 import net.satisfy.farm_and_charm.client.gui.StoveGui;
 import net.satisfy.farm_and_charm.client.model.CraftingBowlModel;
+import net.satisfy.farm_and_charm.client.model.DungareesLeggingsModel;
 import net.satisfy.farm_and_charm.client.model.MincerModel;
 import net.satisfy.farm_and_charm.client.model.PlowCartModel;
 import net.satisfy.farm_and_charm.client.model.ScarecrowModel;
@@ -118,6 +119,7 @@ public class FarmAndCharmClient {
         EntityModelLayerRegistry.register(ModelRegistry.SUPPLY_CART, SupplyCartModel::createBodyLayer);
         EntityModelLayerRegistry.register(ModelRegistry.PLOW, PlowCartModel::createBodyLayer);
         EntityRendererRegistry.register(EntityTypeRegistry.CHAIR, ChairRenderer::new);
+        EntityModelLayerRegistry.register(DungareesLeggingsModel.LAYER_LOCATION, DungareesLeggingsModel::createBodyLayer);
     }
 
     public static void registerStorageTypeRenderers() {

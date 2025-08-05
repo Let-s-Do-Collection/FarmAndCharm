@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "net.satisfy.farm_and_charm.neoforge.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "client": [
+  ],
+  "mixins": [
+    "LeggingsItemMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

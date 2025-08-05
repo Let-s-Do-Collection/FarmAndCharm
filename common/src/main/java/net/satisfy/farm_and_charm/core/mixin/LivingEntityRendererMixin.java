@@ -28,16 +28,14 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity> {
 
         if (!(animal instanceof SaturationTracker.SaturatedAnimal saturated)) return;
 
-        var mc = Minecraft.getInstance();
-        var player = mc.player;
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.crosshairPickEntity != animal || mc.player == null) return;
 
-        if (mc.crosshairPickEntity == animal && player != null) {
-            for (ItemStack stack : player.getArmorSlots()) {
-                if (stack.getItem() == ObjectRegistry.DUNGAREES.get()) {
-                    SaturationTracker tracker = saturated.farm_and_charm$getSaturationTracker();
-                    SaturationOverlayRenderer.render(poseStack, buffer, animal, tracker.level(), tracker.foodCounter());
-                    break;
-                }
+        for (ItemStack stack : mc.player.getArmorSlots()) {
+            if (stack.getItem() == ObjectRegistry.DUNGAREES.get()) {
+                SaturationTracker tracker = saturated.farm_and_charm$getSaturationTracker();
+                SaturationOverlayRenderer.render(poseStack, buffer, animal, tracker.level(), tracker.foodCounter());
+                break;
             }
         }
     }

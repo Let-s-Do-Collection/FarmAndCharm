@@ -12,6 +12,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.satisfy.farm_and_charm.core.entity.ai.ApproachFeedingTroughGoal;
+import net.satisfy.farm_and_charm.core.network.PacketHandler;
+import net.satisfy.farm_and_charm.core.network.packets.SyncSaturationPacket;
 import net.satisfy.farm_and_charm.core.util.SaturationTracker;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -59,9 +61,16 @@ public abstract class AnimalEntityMixin extends Mob implements SaturationTracker
 
     @Inject(method = "aiStep", at = @At("HEAD"))
     private void farm_and_charm$tickSaturation(CallbackInfo ci) {
-        EntityType<?> type = this.getType();
-        if (!(type == EntityType.COW || type == EntityType.PIG || type == EntityType.SHEEP || type == EntityType.CHICKEN)) return;
-        farm_and_charm$getSaturationTracker().tick((Animal)(Object)this);
+        if (!this.level().isClientSide) {
+            EntityType<?> type = this.getType();
+            if (!(type == EntityType.COW || type == EntityType.PIG || type == EntityType.SHEEP || type == EntityType.CHICKEN)) return;
+
+            SaturationTracker tracker = farm_and_charm$getSaturationTracker();
+            tracker.tick((Animal)(Object)this);
+
+            SyncSaturationPacket packet = new SyncSaturationPacket(this.getId(), tracker.level(), tracker.foodCounter());
+            PacketHandler.sendSaturationSync(packet, this);
+        }
     }
 
     @Inject(method = "mobInteract", at = @At("HEAD"), cancellable = true)
@@ -74,9 +83,12 @@ public abstract class AnimalEntityMixin extends Mob implements SaturationTracker
 
         if (!animal.isFood(stack) || animal.isBaby()) return;
 
-        farm_and_charm$getSaturationTracker().tryFeed(animal, player, hand);
+        SaturationTracker tracker = farm_and_charm$getSaturationTracker();
+        tracker.tryFeed(animal, player, hand);
 
         if (!animal.level().isClientSide) {
+            SyncSaturationPacket packet = new SyncSaturationPacket(this.getId(), tracker.level(), tracker.foodCounter());
+            PacketHandler.sendSaturationSync(packet, this);
             ((ServerLevel)animal.level()).sendParticles(ParticleTypes.HAPPY_VILLAGER, animal.getX(), animal.getY() + 1.0, animal.getZ(), 5, 0.2, 0.2, 0.2, 0.05);
         }
 

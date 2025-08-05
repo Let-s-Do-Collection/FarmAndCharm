@@ -7,6 +7,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -14,6 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.farm_and_charm.core.block.FeedingTroughBlock;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.TagRegistry;
+import net.satisfy.farm_and_charm.core.util.SaturationTracker;
 import org.jetbrains.annotations.NotNull;
 
 public class FeedingTroughBlockEntity extends BlockEntity implements WorldlyContainer {
@@ -136,5 +138,10 @@ public class FeedingTroughBlockEntity extends BlockEntity implements WorldlyCont
                 }
             }
         }
+    }
+
+    public void onAnimalFed(Animal animal) {
+        if (!(animal instanceof SaturationTracker.SaturatedAnimal saturated)) return;
+        saturated.farm_and_charm$getSaturationTracker().feedDirectly(animal, animal.tickCount, 5);
     }
 }

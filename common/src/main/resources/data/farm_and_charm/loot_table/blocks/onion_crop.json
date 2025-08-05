@@ -1,68 +1,116 @@
 {
   "type": "minecraft:block",
-  "functions": [
-    {
-      "function": "minecraft:explosion_decay"
-    }
-  ],
   "pools": [
     {
-      "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:alternatives",
-          "children": [
-            {
-              "type": "minecraft:item",
-              "conditions": [
-                {
-                  "block": "farm_and_charm:onion_crop",
-                  "condition": "minecraft:block_state_property",
-                  "properties": {
-                    "age": "4"
-                  }
-                }
-              ],
-              "name": "farm_and_charm:onion"
-            },
-            {
-              "type": "minecraft:item",
-              "name": "farm_and_charm:onion"
-            }
-          ]
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "block": "farm_and_charm:onion_crop",
-          "condition": "minecraft:block_state_property",
-          "properties": {
-            "age": "4"
-          }
-        }
-      ],
+      "rolls": 1,
       "entries": [
         {
           "type": "minecraft:item",
+          "name": "farm_and_charm:onion",
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "farm_and_charm:onion_crop",
+              "properties": {
+                "age": "4",
+                "giant": "true"
+              }
+            }
+          ],
           "functions": [
             {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 4.0,
+                "max": 8.0
+              }
+            },
+            {
+              "function": "minecraft:apply_bonus",
               "enchantment": "minecraft:fortune",
               "formula": "minecraft:binomial_with_bonus_count",
-              "function": "minecraft:apply_bonus",
               "parameters": {
                 "extra": 3,
                 "probability": 0.5715286
               }
             }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "farm_and_charm:onion",
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "farm_and_charm:onion_crop",
+              "properties": {
+                "age": "4",
+                "big": "true",
+                "giant": "false"
+              }
+            }
           ],
-          "name": "farm_and_charm:onion"
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 2.0,
+                "max": 6.0
+              }
+            },
+            {
+              "function": "minecraft:apply_bonus",
+              "enchantment": "minecraft:fortune",
+              "formula": "minecraft:binomial_with_bonus_count",
+              "parameters": {
+                "extra": 3,
+                "probability": 0.5715286
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "farm_and_charm:onion",
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "farm_and_charm:onion_crop",
+              "properties": {
+                "age": "4",
+                "big": "false",
+                "giant": "false"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1.0,
+                "max": 2.0
+              }
+            },
+            {
+              "function": "minecraft:apply_bonus",
+              "enchantment": "minecraft:fortune",
+              "formula": "minecraft:binomial_with_bonus_count",
+              "parameters": {
+                "extra": 3,
+                "probability": 0.5715286
+              }
+            }
+          ]
         }
-      ],
-      "rolls": 1.0
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "function": "minecraft:explosion_decay"
     }
   ]
 }

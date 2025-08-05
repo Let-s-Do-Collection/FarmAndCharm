@@ -25,9 +25,11 @@ public abstract class CropBlockMixin {
     @Shadow
     public abstract int getAge(BlockState state);
 
+    @Shadow public abstract boolean isMaxAge(BlockState arg);
+
     @Inject(at = @At("HEAD"), method = "randomTick")
     public void boostGrowthInRain(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
-        if (PlatformHelper.isRainGrowthEffectEnabled() && level.isRainingAt(pos.above()) && this.getAge(state) < 7) {
+        if (PlatformHelper.isRainGrowthEffectEnabled() && level.isRainingAt(pos.above()) && !this.isMaxAge(state)) {
             float growthChance = level.isThundering() ? 0.7f : 0.5f;
             growthChance *= PlatformHelper.getRainGrowthMultiplier();
             if (random.nextFloat() < growthChance) {

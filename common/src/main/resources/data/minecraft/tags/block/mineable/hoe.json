@@ -11,6 +11,9 @@
     "farm_and_charm:onion_bag",
     "farm_and_charm:flour_bag",
     "farm_and_charm:oat_ball",
-    "farm_and_charm:barley_ball"
+    "farm_and_charm:barley_ball",
+    "farm_and_charm:dog_food_bag",
+    "farm_and_charm:cat_food_bag"
+
   ]
 }

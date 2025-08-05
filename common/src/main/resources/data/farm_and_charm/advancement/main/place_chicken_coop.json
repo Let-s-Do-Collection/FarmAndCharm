@@ -1,0 +1,37 @@
+{
+  "parent": "farm_and_charm:main/place_chicken_nest",
+  "criteria": {
+    "chicken_coop": {
+      "conditions": {
+        "location": [
+          {
+            "block": "farm_and_charm:chicken_coop",
+            "condition": "minecraft:block_state_property"
+          }
+        ]
+      },
+      "trigger": "minecraft:placed_block"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.farm_and_charm.place_chicken_coop.desc"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "id": "farm_and_charm:chicken_coop"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.farm_and_charm.place_chicken_coop"
+    }
+  },
+  "requirements": [
+    [
+      "chicken_coop"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

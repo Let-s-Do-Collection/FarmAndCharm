@@ -14,6 +14,7 @@ import net.satisfy.farm_and_charm.core.block.entity.CraftingBowlBlockEntity;
 import net.satisfy.farm_and_charm.core.block.entity.EffectFoodBlockEntity;
 import net.satisfy.farm_and_charm.core.block.entity.FeedingTroughBlockEntity;
 import net.satisfy.farm_and_charm.core.block.entity.MincerBlockEntity;
+import net.satisfy.farm_and_charm.core.block.entity.PetBowlBlockEntity;
 import net.satisfy.farm_and_charm.core.block.entity.RoasterBlockEntity;
 import net.satisfy.farm_and_charm.core.block.entity.ScarecrowBlockEntity;
 import net.satisfy.farm_and_charm.core.block.entity.SiloBlockEntity;
@@ -44,6 +45,7 @@ public class EntityTypeRegistry {
     public static final RegistrySupplier<BlockEntityType<ScarecrowBlockEntity>> SCARECROW_BLOCK_ENTITY = registerBlockEntity("scarecrow", () -> BlockEntityType.Builder.of(ScarecrowBlockEntity::new, ObjectRegistry.SCARECROW.get()).build(null));
     public static final RegistrySupplier<BlockEntityType<MincerBlockEntity>> MINCER_BLOCK_ENTITY = registerBlockEntity("mincer", () -> BlockEntityType.Builder.of(MincerBlockEntity::new, ObjectRegistry.MINCER.get()).build(null));
     public static final RegistrySupplier<BlockEntityType<EffectFoodBlockEntity>> EFFECT_FOOD_BLOCK_ENTITY = registerBlockEntity("effect_food_block", () -> BlockEntityType.Builder.of(EffectFoodBlockEntity::new).build(null));
+    public static final RegistrySupplier<BlockEntityType<PetBowlBlockEntity>> PET_BOWL_BLOCK_ENTITY = registerBlockEntity("pet_bowl", () -> BlockEntityType.Builder.of(PetBowlBlockEntity::new, ObjectRegistry.PET_BOWL.get()).build(null));
 
     public static final RegistrySupplier<EntityType<RottenTomatoEntity>> ROTTEN_TOMATO = registerEntityType("rotten_tomato", () -> EntityType.Builder.<RottenTomatoEntity>of(RottenTomatoEntity::new, MobCategory.MISC).sized(0.25f, 0.25f).build(FarmAndCharmIdentifier.of("rotten_tomato").toString()));
     public static final RegistrySupplier<EntityType<SupplyCartEntity>> SUPPLY_CART =

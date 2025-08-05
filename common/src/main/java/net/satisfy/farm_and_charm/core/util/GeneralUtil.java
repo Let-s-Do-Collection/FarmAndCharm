@@ -504,4 +504,31 @@ public class GeneralUtil {
             return this.name;
         }
     }
+
+    public interface FedTracker {
+        void farmAndCharm$$markAsFed();
+        boolean farmAndCharm$$isFed();
+    }
+
+    public enum FoodType implements StringRepresentable {
+        NONE("none"),
+        CAT("cat"),
+        DOG("dog");
+
+        private final String name;
+
+        FoodType(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public @NotNull String getSerializedName() {
+            return name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
 }

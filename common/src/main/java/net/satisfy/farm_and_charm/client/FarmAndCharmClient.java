@@ -7,14 +7,22 @@ import dev.architectury.registry.client.rendering.RenderTypeRegistry;
 import dev.architectury.registry.menu.MenuRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.satisfy.farm_and_charm.client.gui.CookingPotGui;
+import net.satisfy.farm_and_charm.client.gui.PetBowlEditGui;
 import net.satisfy.farm_and_charm.client.gui.RoasterGui;
 import net.satisfy.farm_and_charm.client.gui.StoveGui;
-import net.satisfy.farm_and_charm.client.model.*;
+import net.satisfy.farm_and_charm.client.model.CraftingBowlModel;
+import net.satisfy.farm_and_charm.client.model.MincerModel;
+import net.satisfy.farm_and_charm.client.model.PlowCartModel;
+import net.satisfy.farm_and_charm.client.model.ScarecrowModel;
+import net.satisfy.farm_and_charm.client.model.SupplyCartModel;
+import net.satisfy.farm_and_charm.client.model.WaterSprinklerModel;
 import net.satisfy.farm_and_charm.client.renderer.block.CraftingBowlRenderer;
 import net.satisfy.farm_and_charm.client.renderer.block.MincerRenderer;
+import net.satisfy.farm_and_charm.client.renderer.block.PetBowlBlockRenderer;
 import net.satisfy.farm_and_charm.client.renderer.block.PlowCartRenderer;
 import net.satisfy.farm_and_charm.client.renderer.block.ScarecrowRenderer;
 import net.satisfy.farm_and_charm.client.renderer.block.StorageBlockEntityRenderer;
@@ -24,12 +32,48 @@ import net.satisfy.farm_and_charm.client.renderer.block.ToolRackRenderer;
 import net.satisfy.farm_and_charm.client.renderer.block.WaterSprinklerRenderer;
 import net.satisfy.farm_and_charm.client.renderer.block.WindowSillRenderer;
 import net.satisfy.farm_and_charm.client.renderer.entity.ChairRenderer;
+import net.satisfy.farm_and_charm.core.block.entity.PetBowlBlockEntity;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.ModelRegistry;
 import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.StorageTypeRegistry;
 
-import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.*;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.BARLEY_CROP;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.COOKING_POT;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.CORN_CROP;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.CRAFTING_BOWL;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.FARMERS_BREAKFAST;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.LETTUCE_CROP;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.MINCER;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.NETTLE_TEA;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.OAT_CROP;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.OAT_PANCAKE_BLOCK;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.ONION_CROP;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.RIBWORT_TEA;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.ROASTED_CORN_BLOCK;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.ROASTER;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.SCARECROW;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.STOVE;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.STRAWBERRY_CROP;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.STRAWBERRY_TEA;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.STUFFED_CHICKEN;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.STUFFED_RABBIT;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.TOMATO_CROP;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.TOMATO_CROP_BODY;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.WATER_SPRINKLER;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.WILD_BARLEY;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.WILD_BEETROOTS;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.WILD_CARROTS;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.WILD_CORN;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.WILD_EMMER;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.WILD_LETTUCE;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.WILD_NETTLE;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.WILD_OAT;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.WILD_ONIONS;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.WILD_POTATOES;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.WILD_RIBWORT;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.WILD_STRAWBERRIES;
+import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.WILD_TOMATOES;
 
 @Environment(EnvType.CLIENT)
 public class FarmAndCharmClient {
@@ -86,6 +130,12 @@ public class FarmAndCharmClient {
         BlockEntityRendererRegistry.register(EntityTypeRegistry.MINCER_BLOCK_ENTITY.get(), MincerRenderer::new);
         BlockEntityRendererRegistry.register(EntityTypeRegistry.CRAFTING_BOWL_BLOCK_ENTITY.get(), CraftingBowlRenderer::new);
         BlockEntityRendererRegistry.register(EntityTypeRegistry.SPRINKLER_BLOCK_ENTITY.get(), WaterSprinklerRenderer::new);
+        BlockEntityRendererRegistry.register(EntityTypeRegistry.PET_BOWL_BLOCK_ENTITY.get(), context -> new PetBowlBlockRenderer());
         BlockEntityRendererRegistry.register(EntityTypeRegistry.STORAGE_ENTITY.get(), context -> new StorageBlockEntityRenderer());
     }
+
+    public static void openPetBowlScreen(PetBowlBlockEntity entity) {
+        Minecraft.getInstance().setScreen(new PetBowlEditGui(entity));
+    }
+
 }

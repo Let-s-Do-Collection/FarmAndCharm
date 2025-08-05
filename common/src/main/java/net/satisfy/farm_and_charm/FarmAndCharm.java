@@ -9,8 +9,7 @@ import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.SoundEventRegistry;
 import net.satisfy.farm_and_charm.core.registry.TabRegistry;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.satisfy.farm_and_charm.core.registry.VillagerTradeRegistryHandler;
 
 import java.util.function.Supplier;
 
@@ -27,5 +26,6 @@ public class FarmAndCharm {
         ScreenhandlerTypeRegistry.init();
         SoundEventRegistry.init();
         RecipeTypeRegistry.init();
+        VillagerTradeRegistryHandler.init();
     }
 }

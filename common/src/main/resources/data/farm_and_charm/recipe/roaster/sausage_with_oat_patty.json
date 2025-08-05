@@ -2,7 +2,7 @@
   "type": "farm_and_charm:pot_cooking",
   "ingredients": [
     {
-      "item": "farm_and_charm:oat"
+      "tag": "farm_and_charm:oat"
     },
     {
       "tag": "farm_and_charm:butter"

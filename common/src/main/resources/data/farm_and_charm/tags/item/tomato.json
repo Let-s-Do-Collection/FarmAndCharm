@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#c:tomato",
-    "#neoforge:tomato"
+    "#c:crops/tomato",
+    "#neoforge:crops/tomato"
   ]
 }

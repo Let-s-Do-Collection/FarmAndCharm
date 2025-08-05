@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#c:onion",
-    "#neoforge:onion"
+    "#c:crops/onion",
+    "#neoforge:crops/onion"
   ]
 }

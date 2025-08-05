@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#c:cabbage",
-    "#neoforge:cabbage"
+    "#c:crops/cabbage",
+    "#neoforge:crops/cabbage"
   ]
 }

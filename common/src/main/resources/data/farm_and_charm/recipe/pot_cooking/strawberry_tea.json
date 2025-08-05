@@ -5,10 +5,10 @@
       "tag": "farm_and_charm:water_bottles"
     },
     {
-      "item": "farm_and_charm:strawberry"
+      "tag": "farm_and_charm:strawberry"
     },
     {
-      "item": "farm_and_charm:strawberry"
+      "tag": "farm_and_charm:strawberry"
     }
   ],
   "requireContainer": true,

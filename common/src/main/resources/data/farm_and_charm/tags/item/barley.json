@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#c:barley",
-    "#neoforge:barley"
+    "#c:grains/barleys",
+    "#neoforge:grains/barleys"
   ]
 }

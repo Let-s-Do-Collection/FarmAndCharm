@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#c:wheat",
-    "#neoforge:wheat"
+    "#c:grains/wheats",
+    "#neoforge:grains/wheats"
   ]
 }

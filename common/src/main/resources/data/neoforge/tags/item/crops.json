@@ -1,8 +1,9 @@
 {
   "replace": false,
   "values": [
-    "farm_and_charm:lettuce",
-    "farm_and_charm:onion",
-    "farm_and_charm:tomato"
-  ]
+    "#neoforge:crops/cabbage",
+    "#neoforge:crops/corn",
+    "#neoforge:crops/onion",
+    "#neoforge:crops/tomato"
+    ]
 }

@@ -15,4 +15,6 @@ public class TagRegistry {
     public static final TagKey<Block> WILD_CROPS = TagKey.create(Registries.BLOCK, FarmAndCharmIdentifier.of("wild_crops"));
     public static final TagKey<Item> HANGABLE = TagKey.create(Registries.ITEM, FarmAndCharmIdentifier.of("hangable"));
     public static final TagKey<Item> CONTAINER = TagKey.create(Registries.ITEM, FarmAndCharmIdentifier.of("container"));
+    public static final TagKey<Item> FEEDING_TROUGH_FODDER = TagKey.create(Registries.ITEM, FarmAndCharmIdentifier.of("feeding_trough_fodder"));
+
 }

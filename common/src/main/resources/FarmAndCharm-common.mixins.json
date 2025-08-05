@@ -13,7 +13,7 @@
     "CatTemptGoalMixin",
     "CropBlockMixin",
     "FarmlandBlockMixin",
-    "HorseMixin",
+    "PigMixin",
     "TemptGoalAccessor"
   ],
   "injectors": {

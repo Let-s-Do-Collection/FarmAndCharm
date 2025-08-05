@@ -2,7 +2,6 @@ package net.satisfy.farm_and_charm.core.util;
 
 import com.mojang.datafixers.util.Pair;
 import dev.architectury.platform.Platform;
-import dev.architectury.registry.client.rendering.ColorHandlerRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.Registrar;
 import dev.architectury.registry.registries.RegistrySupplier;
@@ -11,7 +10,6 @@ import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
@@ -39,10 +37,12 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeInput;
-import net.minecraft.world.level.*;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RotatedPillarBlock;
@@ -60,7 +60,17 @@ import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class GeneralUtil {
@@ -101,38 +111,29 @@ public class GeneralUtil {
     }
 
     public static boolean matchesRecipe(RecipeInput inventory, NonNullList<Ingredient> recipe, int startIndex, int endIndex) {
-        List<ItemStack> validStacks = new ArrayList();
-
-        for(int i = startIndex; i <= endIndex; ++i) {
-            ItemStack stackInSlot = inventory.getItem(i);
-            if (!stackInSlot.isEmpty()) {
-                validStacks.add(stackInSlot);
-            }
+        List<ItemStack> inputStacks = new ArrayList<>();
+        for (int i = startIndex; i <= endIndex; i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (!stack.isEmpty()) inputStacks.add(stack.copy());
         }
 
-        Iterator var10 = recipe.iterator();
+        if (inputStacks.size() != recipe.size()) return false;
 
-        boolean matches;
-        do {
-            if (!var10.hasNext()) {
-                return true;
-            }
-
-            Ingredient entry = (Ingredient)var10.next();
-            matches = false;
-            Iterator var8 = validStacks.iterator();
-
-            while(var8.hasNext()) {
-                ItemStack item = (ItemStack)var8.next();
-                if (entry.test(item)) {
-                    matches = true;
-                    validStacks.remove(item);
+        List<Ingredient> unmatched = new ArrayList<>(recipe);
+        for (ItemStack input : inputStacks) {
+            boolean matched = false;
+            Iterator<Ingredient> iter = unmatched.iterator();
+            while (iter.hasNext()) {
+                if (iter.next().test(input)) {
+                    iter.remove();
+                    matched = true;
                     break;
                 }
             }
-        } while(matches);
+            if (!matched) return false;
+        }
 
-        return false;
+        return unmatched.isEmpty();
     }
 
     public static VoxelShape rotateShape(Direction from, Direction to, VoxelShape shape) {

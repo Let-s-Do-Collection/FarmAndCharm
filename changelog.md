@@ -1,4 +1,11 @@
-[1.0.11] – 2025.08.04
+[1.0.12]
+
+**Fixed**
+* Farm Animals not being breedable anymore
+
+***
+
+[1.0.11]
 
 **Fixed**
 * Fixed a critical issue where the game would crash on servers due to client-only code being called from the `AnimalEntityMixin`. Everything worked fine in singleplayer, but not on dedicated servers.  

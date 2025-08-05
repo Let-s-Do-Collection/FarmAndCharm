@@ -77,6 +77,8 @@ public abstract class AnimalEntityMixin extends Mob implements SaturationTracker
 
         if (!animal.isFood(stack) || animal.isBaby()) return;
 
+        if (animal.canFallInLove()) return;
+
         SaturationTracker tracker = farm_and_charm$getSaturationTracker();
         tracker.tryFeed(animal, player, hand);
 

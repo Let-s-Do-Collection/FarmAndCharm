@@ -20,6 +20,7 @@ import net.satisfy.farm_and_charm.client.model.PlowCartModel;
 import net.satisfy.farm_and_charm.client.model.ScarecrowModel;
 import net.satisfy.farm_and_charm.client.model.SupplyCartModel;
 import net.satisfy.farm_and_charm.client.model.WaterSprinklerModel;
+import net.satisfy.farm_and_charm.client.renderer.block.ChickenNestRenderer;
 import net.satisfy.farm_and_charm.client.renderer.block.CraftingBowlRenderer;
 import net.satisfy.farm_and_charm.client.renderer.block.MincerRenderer;
 import net.satisfy.farm_and_charm.client.renderer.block.PetBowlBlockRenderer;
@@ -122,6 +123,7 @@ public class FarmAndCharmClient {
     public static void registerStorageTypeRenderers() {
         StorageBlockEntityRenderer.registerStorageType(StorageTypeRegistry.TOOL_RACK, new ToolRackRenderer());
         StorageBlockEntityRenderer.registerStorageType(StorageTypeRegistry.WINDOW_SILL, new WindowSillRenderer());
+        StorageBlockEntityRenderer.registerStorageType(StorageTypeRegistry.CHICKEN_NEST, new ChickenNestRenderer());
     }
 
     public static void registerBlockEntityRenderer() {

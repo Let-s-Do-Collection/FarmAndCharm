@@ -8,7 +8,7 @@
       "tag": "farm_and_charm:water_bottles"
     },
     {
-      "tag": "farm_and_charm:wheat"
+      "item": "minecraft:wheat"
     }
   ],
   "requireContainer": true,

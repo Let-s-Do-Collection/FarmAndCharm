@@ -18,6 +18,7 @@
     "CropBlockMixin",
     "FarmlandBlockMixin",
     "FoxMixin",
+    "ItemStackMixin",
     "LivingEntityMixin",
     "MobAccessor",
     "ParrotMixin",

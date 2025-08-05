@@ -1,5 +1,5 @@
 {
-  "type": "farm_and_charm:pot_cooking",
+  "type": "farm_and_charm:roaster",
   "ingredients": [
     {
       "tag": "farm_and_charm:oat"

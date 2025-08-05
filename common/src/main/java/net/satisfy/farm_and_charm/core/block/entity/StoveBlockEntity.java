@@ -1,6 +1,10 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
-import net.minecraft.core.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -17,21 +21,20 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.satisfy.farm_and_charm.core.block.StoveBlock;
 import net.satisfy.farm_and_charm.client.gui.handler.StoveGuiHandler;
+import net.satisfy.farm_and_charm.core.block.StoveBlock;
 import net.satisfy.farm_and_charm.core.item.food.EffectBlockItem;
 import net.satisfy.farm_and_charm.core.item.food.EffectFood;
 import net.satisfy.farm_and_charm.core.item.food.EffectFoodBlockItem;
@@ -44,7 +47,10 @@ import net.satisfy.farm_and_charm.core.world.ImplementedInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 
 public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<StoveBlockEntity>, ImplementedInventory, MenuProvider {
@@ -193,11 +199,9 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         } else if (recipe.isPresent() && !canCraft(recipe.get(), access)) {
             this.cookTime = 0;
         }
-        if (initialBurningState != isBurning()) {
-            if (state.getValue(StoveBlock.LIT) != (burnTime > 0)) {
-                world.setBlock(pos, state.setValue(StoveBlock.LIT, burnTime > 0), Block.UPDATE_ALL);
-                dirty = true;
-            }
+        if (initialBurningState != isBurning() || state.getValue(StoveBlock.LIT) != (burnTime > 0 || (burnTime == 0 && burnTimeTotal > 0))) {
+            world.setBlock(pos, state.setValue(StoveBlock.LIT, burnTime > 0 || (burnTime == 0 && burnTimeTotal > 0)), Block.UPDATE_ALL);
+            dirty = true;
         }
         if (dirty) {
             setChanged();
@@ -294,17 +298,8 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
     }
 
     protected int getTotalBurnTime(ItemStack fuel) {
-        if (fuel.isEmpty()) {
-            return 0;
-        } else {
-            Item item = fuel.getItem();
-            Map<Item, Integer> fuelBurnTimes = new HashMap<>();
-            fuelBurnTimes.put(Items.COAL, 1600);
-            fuelBurnTimes.put(Items.CHARCOAL, 1600);
-            fuelBurnTimes.put(Items.LAVA_BUCKET, 20000);
-            fuelBurnTimes.put(Items.BLAZE_ROD, 2400);
-            return fuelBurnTimes.getOrDefault(item, 0);
-        }
+        if (fuel.isEmpty()) return 0;
+        return AbstractFurnaceBlockEntity.getFuel().getOrDefault(fuel.getItem(), 0);
     }
 
     private ItemStack getRemainderItem(ItemStack stack) {

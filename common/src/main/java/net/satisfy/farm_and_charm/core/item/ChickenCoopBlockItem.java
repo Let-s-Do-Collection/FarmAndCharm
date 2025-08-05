@@ -7,17 +7,16 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.block.Block;
-import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
-import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 
 import java.util.List;
 
 public class ChickenCoopBlockItem extends BlockItem {
 
     public ChickenCoopBlockItem(Block block, Properties properties) {
-        super(block, properties.rarity(GeneralUtil.getRarity(ObjectRegistry.CHICKEN_COOP_ITEM.get().getDefaultInstance())));
+        super(block, properties.rarity(Rarity.COMMON));
     }
 
     @Override

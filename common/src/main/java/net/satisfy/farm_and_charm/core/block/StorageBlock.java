@@ -1,6 +1,5 @@
 package net.satisfy.farm_and_charm.core.block;
 
-import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -11,7 +10,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -23,86 +22,82 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.satisfy.farm_and_charm.core.block.entity.StorageBlockEntity;
-import net.satisfy.farm_and_charm.core.util.Util;
+import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
+@SuppressWarnings("deprecation")
 public abstract class StorageBlock extends FacingBlock implements EntityBlock {
-    public static final SoundEvent event;
 
     public StorageBlock(BlockBehaviour.Properties settings) {
         super(settings);
     }
 
-    public @NotNull InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity instanceof StorageBlockEntity shelfBlockEntity) {
-            Optional<Tuple<Float, Float>> optional = Util.getRelativeHitCoordinatesForBlockFace(hit, state.getValue(FACING), this.unAllowedDirections());
-            if (optional.isEmpty()) {
-                return InteractionResult.PASS;
-            } else {
-                Tuple<Float, Float> ff = optional.get();
-                int i = this.getSection(ff.getA(), ff.getB());
-                if (i == Integer.MIN_VALUE) {
-                    return InteractionResult.PASS;
-                } else if (!shelfBlockEntity.getInventory().get(i).isEmpty()) {
-                    this.remove(world, pos, player, shelfBlockEntity, i);
-                    return InteractionResult.sidedSuccess(world.isClientSide);
-                } else {
-                    ItemStack stack = player.getItemInHand(hand);
-                    if (!stack.isEmpty() && this.canInsertStack(stack)) {
-                        this.add(world, pos, player, shelfBlockEntity, stack, i);
-                        return InteractionResult.sidedSuccess(world.isClientSide);
-                    } else {
-                        return InteractionResult.CONSUME;
-                    }
-                }
+        if (blockEntity instanceof StorageBlockEntity storageEntity) {
+            Optional<Tuple<Float, Float>> hitCoordinates = GeneralUtil.getRelativeHitCoordinatesForBlockFace(hit, state.getValue(FACING), this.unAllowedDirections());
+            if (hitCoordinates.isEmpty()) {
+                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
             }
-        } else {
-            return InteractionResult.PASS;
+
+            Tuple<Float, Float> coordinates = hitCoordinates.get();
+            int section = this.getSection(coordinates.getA(), coordinates.getB());
+            if (section == Integer.MIN_VALUE) {
+                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            }
+
+            if (!storageEntity.getInventory().get(section).isEmpty()) {
+                this.remove(world, pos, player, storageEntity, section);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            }
+
+            if (!stack.isEmpty() && this.canInsertStack(stack)) {
+                this.add(world, pos, player, storageEntity, stack, section);
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            }
+
+            return ItemInteractionResult.CONSUME;
         }
+
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
-    public void add(Level level, BlockPos blockPos, Player player, StorageBlockEntity shelfBlockEntity, ItemStack itemStack, int i) {
+    public void add(Level level, BlockPos pos, Player player, StorageBlockEntity storageEntity, ItemStack itemStack, int index) {
         if (!level.isClientSide) {
-            SoundEvent soundEvent = this.getAddSound(level, blockPos, player, i);
-            shelfBlockEntity.setStack(i, itemStack.split(1));
-            level.playSound(null, blockPos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
+            SoundEvent sound = SoundEvents.WOOD_PLACE;
+            storageEntity.setStack(index, itemStack.split(1));
+            level.playSound(null, pos, sound, SoundSource.BLOCKS, 1.0F, 1.0F);
             if (player.isCreative()) {
                 itemStack.grow(1);
             }
 
-            level.gameEvent(player, GameEvent.BLOCK_CHANGE, blockPos);
+            level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
         }
     }
 
-    public void remove(Level level, BlockPos blockPos, Player player, StorageBlockEntity shelfBlockEntity, int i) {
+    public void remove(Level level, BlockPos pos, Player player, StorageBlockEntity storageEntity, int index) {
         if (!level.isClientSide) {
-            ItemStack itemStack = shelfBlockEntity.removeStack(i);
-            SoundEvent soundEvent = this.getRemoveSound(level, blockPos, player, i);
-            level.playSound(null, blockPos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
-            if (!player.getInventory().add(itemStack)) {
-                player.drop(itemStack, false);
+            ItemStack removedStack = storageEntity.removeStack(index);
+            SoundEvent sound = SoundEvents.WOOD_BREAK;
+            level.playSound(null, pos, sound, SoundSource.BLOCKS, 1.0F, 1.0F);
+            if (!player.getInventory().add(removedStack)) {
+                player.drop(removedStack, false);
             }
 
-            level.gameEvent(player, GameEvent.BLOCK_CHANGE, blockPos);
+            level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
         }
-    }
-
-    public SoundEvent getRemoveSound(Level level, BlockPos blockPos, Player player, int i) {
-        return event;
-    }
-
-    public SoundEvent getAddSound(Level level, BlockPos blockPos, Player player, int i) {
-        return event;
     }
 
     public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
         if (!state.is(newState.getBlock())) {
             BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof StorageBlockEntity shelf) {
+            if (blockEntity instanceof StorageBlockEntity storageEntity) {
                 if (world instanceof ServerLevel serverLevel) {
-                    Containers.dropContents(serverLevel, pos, shelf.getInventory());
+                    Containers.dropContents(serverLevel, pos, storageEntity.getInventory());
                 }
 
                 world.updateNeighbourForOutputSignal(pos, this);
@@ -122,15 +117,11 @@ public abstract class StorageBlock extends FacingBlock implements EntityBlock {
 
     public abstract Direction[] unAllowedDirections();
 
-    public abstract boolean canInsertStack(ItemStack var1);
+    public abstract boolean canInsertStack(ItemStack stack);
 
     public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new StorageBlockEntity(pos, state, this.size());
     }
 
-    public abstract int getSection(Float var1, Float var2);
-
-    static {
-        event = SoundEvents.WOOD_PLACE;
-    }
+    public abstract int getSection(Float x, Float y);
 }

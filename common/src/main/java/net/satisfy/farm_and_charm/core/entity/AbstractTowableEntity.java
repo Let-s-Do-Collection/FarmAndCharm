@@ -245,7 +245,7 @@ public abstract class AbstractTowableEntity extends Entity {
         double distanceTravelled = Math.sqrt(dx * dx + dz * dz);
 
         if (distanceTravelled > 0.2 && soundCooldownTicks <= 0 && !this.level().isClientSide()) {
-            this.level().playSound(null, this.blockPosition(), SoundEventRegistry.CART_MOVING.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
+            this.level().playSound(null, this.blockPosition(), SoundEventRegistry.CART_MOVING.get(), SoundSource.BLOCKS, 0.7F, 1.0F);
             soundCooldownTicks = 45;
         }
 

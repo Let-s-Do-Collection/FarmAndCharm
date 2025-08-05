@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
-import net.satisfy.farm_and_charm.core.util.Util;
+import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 
 public class StorageBlockEntity extends BlockEntity {
     private int size;
@@ -48,7 +48,7 @@ public class StorageBlockEntity extends BlockEntity {
         if (var2 instanceof ServerLevel serverLevel) {
             if (!this.level.isClientSide()) {
                 Packet<ClientGamePacketListener> updatePacket = this.getUpdatePacket();
-                Iterator var3 = Util.tracking(serverLevel, this.getBlockPos()).iterator();
+                Iterator var3 = GeneralUtil.tracking(serverLevel, this.getBlockPos()).iterator();
 
                 while(var3.hasNext()) {
                     ServerPlayer player = (ServerPlayer)var3.next();

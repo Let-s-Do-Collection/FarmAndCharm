@@ -27,6 +27,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3d;
 
 @SuppressWarnings("all")
 public class StackableEatableBlock extends Block {
@@ -72,35 +73,33 @@ public class StackableEatableBlock extends Block {
                 }
                 player.getFoodData().eat(3, 0.6f);
                 world.playSound(null, pos, SoundEvents.GENERIC_EAT, SoundSource.PLAYERS, 1.0F, 1.0F);
-
-                for (int i = 0; i < 10; i++) {
-                    double dx = (world.random.nextDouble() - 0.5) * 0.1;
-                    double dy = world.random.nextDouble() * 0.1;
-                    double dz = (world.random.nextDouble() - 0.5) * 0.1;
-                    world.addParticle(new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(this.asItem())),
-                            pos.getX() + 0.5, pos.getY() + 0.7, pos.getZ() + 0.5, dx, dy, dz);
-                }
-
-                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             }
+            if (world.isClientSide) {
+                for (int i = 0; i < 10; i++) {
+                    double rx = world.random.nextDouble() - 0.5;
+                    double ry = world.random.nextDouble();
+                    double rz = world.random.nextDouble() - 0.5;
+                    Vector3d velocity = new Vector3d(rx, ry, rz).mul(0.1);
+                    world.addParticle(new ItemParticleOption(ParticleTypes.ITEM, new ItemStack(this.asItem())),
+                            pos.getX() + 0.5, pos.getY() + 0.7, pos.getZ() + 0.5, velocity.x, velocity.y, velocity.z);
+                }
+            }
+            return ItemInteractionResult.sidedSuccess(world.isClientSide);
         } else if (stack.getItem() == this.asItem()) {
             if (state.getValue(STACK_PROPERTY) < this.maxStack) {
                 world.setBlock(pos, state.setValue(STACK_PROPERTY, state.getValue(STACK_PROPERTY) + 1), Block.UPDATE_ALL);
                 if (!player.isCreative()) {
                     stack.shrink(1);
                 }
-
                 for (int i = 0; i < 8; i++) {
                     double angle = world.random.nextDouble() * Math.PI * 2;
                     double speed = 0.1 + world.random.nextDouble() * 0.1;
                     double dx = Math.cos(angle) * speed;
                     double dy = 0.05;
                     double dz = Math.sin(angle) * speed;
-
                     world.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, state),
                             pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, dx, dy, dz);
                 }
-
                 return ItemInteractionResult.SUCCESS;
             }
         } else if (stack.isEmpty()) {

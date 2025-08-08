@@ -5,12 +5,7 @@
   },
   "recipe_type": "METAL",
   "result": {
-<<<<<<<< HEAD:common/src/main/resources/data/farm_and_charm/recipe/mincer/iron_nugget_from_iron_ore.json
-    "id": "minecraft:iron_nugget",
-    "count": 5
-========
-    "item": "minecraft:raw_iron",
+    "id": "minecraft:raw_iron",
     "count": 3
->>>>>>>> 1.21:common/src/main/resources/data/farm_and_charm/recipe/mincer/raw_iron_from_deepslate_iron_ore.json
   }
 }

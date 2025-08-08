@@ -42,15 +42,12 @@ public class PacketHandler {
     public static void sendSaturationSync(SyncSaturationPacket packet, Entity entity) {
         if (entity.level() instanceof ServerLevel serverLevel) {
             for (ServerPlayer player : serverLevel.players()) {
-                RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(io.netty.buffer.Unpooled.buffer(), entity.registryAccess());
-                SyncSaturationPacket.toNetwork(buf, packet);
-                // TODO fixme
-                //NetworkManager.sendToPlayer(player, new SyncSaturationPacket(packet.entityId(), packet.level(), packet.foodCounter()));
+                NetworkManager.sendToPlayer(player, packet);
             }
         }
     }
 
     public static void sendToClient(ServerPlayer player, SyncSaturationPacket packet) {
-        NetworkManager.sendToPlayer(player, new SyncSaturationPacket(packet.entityId(), packet.level(), packet.foodCounter()));
+        NetworkManager.sendToPlayer(player, packet);
     }
 }

@@ -21,7 +21,7 @@ public abstract class ItemStackMixin {
     private void farm_and_charm$modifyRarity(CallbackInfoReturnable<Rarity> cir) {
         var farm_and_charm$stack = this.getItem().getDefaultInstance();
         if (farm_and_charm$stack.is(ObjectRegistry.CHICKEN_COOP_ITEM.get())) {
-            CustomData data = farm_and_charm$stack.get(DataComponents.BLOCK_ENTITY_DATA);
+            CustomData data = farm_and_charm$stack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY);
             if (data.copyTag() != null && data.contains("BlockEntityTag")) {
                 cir.setReturnValue(Rarity.COMMON);
             }

@@ -2,7 +2,6 @@ package net.satisfy.farm_and_charm.core.item;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
@@ -30,11 +29,11 @@ public class ChickenCoopBlockItem extends BlockItem {
         tooltip.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
         tooltip.add(Component.empty());
 
-        CompoundTag tag = itemStack.get(DataComponents.BLOCK_ENTITY_DATA).copyTag();
-        if (tag == null) return;
+        CustomData data = itemStack.get(DataComponents.BLOCK_ENTITY_DATA);
+        if (data == null) return;
 
-        int eggCount = tag.getInt("EggCount");
-        ListTag chickens = tag.getList("Chickens", 10);
+        int eggCount = data.copyTag().getInt("EggCount");
+        ListTag chickens = data.copyTag().getList("Chickens", 10);
 
         if (!chickens.isEmpty()) {
             tooltip.add(Component.translatable("tooltip.farm_and_charm.chickencoop_chickens", chickens.size(), 3).withStyle(ChatFormatting.GRAY));

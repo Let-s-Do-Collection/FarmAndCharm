@@ -2,6 +2,7 @@ package net.satisfy.farm_and_charm;
 
 import com.google.common.base.Suppliers;
 import dev.architectury.registry.registries.RegistrarManager;
+import net.satisfy.farm_and_charm.core.network.PacketHandler;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.MobEffectRegistry;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
@@ -27,5 +28,6 @@ public class FarmAndCharm {
         SoundEventRegistry.init();
         RecipeTypeRegistry.init();
         VillagerTradeRegistryHandler.init();
+        PacketHandler.init();
     }
 }

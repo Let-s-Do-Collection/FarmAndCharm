@@ -11,9 +11,9 @@ public class SyncSaturationPacketClientHandler {
         Level level = Minecraft.getInstance().level;
         if (level == null) return;
 
-        Entity entity = level.getEntity(packet.getEntityId());
+        Entity entity = level.getEntity(packet.entityId());
         if (entity instanceof SaturationTracker.SaturatedAnimal saturated) {
-            saturated.farm_and_charm$getSaturationTracker().clientSync(packet.getLevel(), packet.getFoodCounter());
+            saturated.farm_and_charm$getSaturationTracker().clientSync(packet.level(), packet.foodCounter());
         }
     }
 }

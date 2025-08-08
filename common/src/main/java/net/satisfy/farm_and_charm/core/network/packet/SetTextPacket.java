@@ -3,15 +3,17 @@ package net.satisfy.farm_and_charm.core.network.packet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.satisfy.farm_and_charm.core.block.entity.TextEditableBlockEntity;
+import net.satisfy.farm_and_charm.core.network.PacketHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SetTextPacket {
+public class SetTextPacket implements CustomPacketPayload {
     private final BlockPos pos;
     private final List<String> texts;
 
@@ -49,5 +51,10 @@ public class SetTextPacket {
                 }
             }
         }
+    }
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return new Type<>(PacketHandler.SET_SIGN_TEXT);
     }
 }

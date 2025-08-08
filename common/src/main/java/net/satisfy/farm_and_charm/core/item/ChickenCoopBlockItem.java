@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.Block;
 
 import java.util.List;
@@ -20,8 +21,8 @@ public class ChickenCoopBlockItem extends BlockItem {
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        CompoundTag tag = stack.get(DataComponents.BLOCK_ENTITY_DATA).copyTag();
-        return tag != null && tag.contains("BlockEntityTag");
+        CustomData data = stack.get(DataComponents.BLOCK_ENTITY_DATA);
+        return data != null && data.contains("BlockEntityTag");
     }
 
     @Override

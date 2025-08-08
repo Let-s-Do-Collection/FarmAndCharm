@@ -3,7 +3,6 @@ package net.satisfy.farm_and_charm.core.network;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.platform.Platform;
 import dev.architectury.utils.Env;
-import io.netty.buffer.Unpooled;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -26,10 +25,11 @@ public class PacketHandler {
         });
 
         if (Platform.getEnvironment() == Env.CLIENT) {
-            NetworkManager.registerReceiver(NetworkManager.s2c(), SYNC_SATURATION, (buf, context) -> {
-                SyncSaturationPacket packet = SyncSaturationPacket.decode(buf);
-                context.queue(() -> SyncSaturationPacketClientHandler.handle(packet));
-            });
+            NetworkManager.registerReceiver(NetworkManager.s2c(),
+                    SyncSaturationPacket.TYPE,
+                    SyncSaturationPacket.STREAM_CODEC,
+                    (packet, packetContext) ->
+                            packetContext.queue(() -> SyncSaturationPacketClientHandler.handle(packet)));
         }
     }
 
@@ -43,15 +43,14 @@ public class PacketHandler {
         if (entity.level() instanceof ServerLevel serverLevel) {
             for (ServerPlayer player : serverLevel.players()) {
                 RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(io.netty.buffer.Unpooled.buffer(), entity.registryAccess());
-                SyncSaturationPacket.encode(packet, buf);
-                NetworkManager.sendToPlayer(player, SYNC_SATURATION, buf);
+                SyncSaturationPacket.toNetwork(buf, packet);
+                // TODO fixme
+                //NetworkManager.sendToPlayer(player, new SyncSaturationPacket(packet.entityId(), packet.level(), packet.foodCounter()));
             }
         }
     }
 
     public static void sendToClient(ServerPlayer player, SyncSaturationPacket packet) {
-        RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), null);
-        SyncSaturationPacket.encode(packet, buf);
-        NetworkManager.sendToPlayer(player, SYNC_SATURATION, buf);
+        NetworkManager.sendToPlayer(player, new SyncSaturationPacket(packet.entityId(), packet.level(), packet.foodCounter()));
     }
 }

@@ -1,6 +1,10 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
-import net.minecraft.core.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.Position;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -64,18 +68,18 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
     }
 
     @Override
-    protected void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        super.loadAdditional(compoundTag, provider);
-        if (!this.tryLoadLootTable(compoundTag))
+    public void loadAdditional(CompoundTag compound, HolderLookup.Provider provider) {
+        super.loadAdditional(compound, provider);
+        if (!this.tryLoadLootTable(compound))
             this.stacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(compoundTag, this.stacks, provider);
+        ContainerHelper.loadAllItems(compound, this.stacks, provider);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        super.saveAdditional(compoundTag, provider);
-        if (!this.trySaveLootTable(compoundTag))
-            ContainerHelper.saveAllItems(compoundTag, this.stacks, provider);
+    public void saveAdditional(CompoundTag compound, HolderLookup.Provider provider) {
+        super.saveAdditional(compound, provider);
+        if (!this.trySaveLootTable(compound))
+            ContainerHelper.saveAllItems(compound, this.stacks, provider);
     }
 
     @Override
@@ -84,7 +88,7 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
     }
 
     @Override
-    public @NotNull CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
         return this.saveWithoutMetadata(provider);
     }
 
@@ -110,10 +114,10 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
 
         Direction direction = state.getValue(MincerBlock.FACING).getClockWise();
 
-        if (!level.isClientSide() && !this.stacks.get(0).isEmpty()) {
-            ItemStack droppedStack = new ItemStack(mincer.stacks.get(0).getItem());
-            droppedStack.setCount(mincer.stacks.get(0).getCount());
-            this.stacks.set(0, ItemStack.EMPTY);
+        if (!level.isClientSide() && !this.stacks.get(OUTPUT_SLOT).isEmpty()) {
+            ItemStack droppedStack = new ItemStack(mincer.stacks.get(OUTPUT_SLOT).getItem());
+            droppedStack.setCount(mincer.stacks.get(OUTPUT_SLOT).getCount());
+            this.stacks.set(OUTPUT_SLOT, ItemStack.EMPTY);
 
             Vec3 vec3d = Vec3.atCenterOf(pos);
             Vec3 vec3d2 = vec3d.relative(direction, 0.7);
@@ -190,7 +194,6 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
                     List<RecipeHolder<MincerRecipe>> recipes = recipeManager.getAllRecipesFor(RecipeTypeRegistry.MINCER_RECIPE_TYPE.get());
                     Optional<MincerRecipe> recipe = Optional.ofNullable(getRecipe(recipes, stacks));
 
-
                     if (recipe.isPresent()) {
 
                         ItemStack inputStack = this.stacks.get(INPUT_SLOT);
@@ -221,7 +224,7 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
                             inputStack.shrink(1);
                             inputStack = inputStack.isEmpty() ? ItemStack.EMPTY : inputStack;
                             mincer.setItem(INPUT_SLOT, inputStack);
-                            mincer.setItem(0, recipe.get().getResultItem(level.registryAccess()));
+                            mincer.setItem(OUTPUT_SLOT, recipe.get().getResultItem(level.registryAccess()));
 
                             level.setBlock(pos, state.setValue(MincerBlock.CRANK, crank).setValue(MincerBlock.CRANKED, cranked), Block.UPDATE_ALL);
                             return;

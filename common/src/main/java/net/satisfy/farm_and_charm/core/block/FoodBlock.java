@@ -3,6 +3,8 @@ package net.satisfy.farm_and_charm.core.block;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -30,8 +32,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.core.particles.BlockParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,14 +64,12 @@ public class FoodBlock extends FacingBlock {
 
     @Override
     public @NotNull InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
-        InteractionHand hand = player.getUsedItemHand();
-        ItemStack itemStack = player.getItemInHand(hand);
         if (world.isClientSide) {
             if (tryEat(world, pos, state, player).consumesAction()) {
                 return InteractionResult.SUCCESS;
             }
 
-            if (itemStack.isEmpty()) {
+            if (player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty()) {
                 return InteractionResult.CONSUME;
             }
         }
@@ -88,7 +86,7 @@ public class FoodBlock extends FacingBlock {
             }
         }
 
-        if (!player.canEat(false)) {
+        if (!player.canEat(false) || !player.getFoodData().needsFood()) {
             return InteractionResult.PASS;
         } else {
             player.getFoodData().eat(foodComponent.nutrition(), foodComponent.saturation());

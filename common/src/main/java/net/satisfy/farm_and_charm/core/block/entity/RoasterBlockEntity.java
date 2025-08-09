@@ -1,6 +1,10 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
-import net.minecraft.core.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -21,8 +25,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
-import net.satisfy.farm_and_charm.core.block.RoasterBlock;
 import net.satisfy.farm_and_charm.client.gui.handler.RoasterGuiHandler;
+import net.satisfy.farm_and_charm.core.block.RoasterBlock;
 import net.satisfy.farm_and_charm.core.item.food.EffectFood;
 import net.satisfy.farm_and_charm.core.item.food.EffectFoodHelper;
 import net.satisfy.farm_and_charm.core.recipe.RecipeUnlockManager;
@@ -177,7 +181,7 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
         Optional<RoasterRecipe> recipe = Optional.ofNullable(getRecipe(recipes, inventory));
         RegistryAccess access = level.registryAccess();
 
-        if (recipe.get() instanceof RoasterRecipe roastingRecipe) {
+        if (recipe.isPresent() && recipe.get() instanceof RoasterRecipe roastingRecipe) {
             if (roastingRecipe.requiresLearning()) {
                 ServerPlayer owner = Objects.requireNonNull(world.getServer()).getPlayerList().getPlayer(ownerUuid);
                 if (owner == null || RecipeUnlockManager.isRecipeLocked(owner, BuiltInRegistries.RECIPE_TYPE.getKey(recipe.get().getType()))) {

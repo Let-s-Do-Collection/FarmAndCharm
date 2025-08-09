@@ -10,7 +10,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.context.UseOnContext;
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class FertilizerItem extends Item {
+public class FertilizerItem extends BoneMealItem {
     public FertilizerItem(Properties properties) {
         super(properties.stacksTo(64).durability(10));
     }
@@ -63,6 +63,7 @@ public class FertilizerItem extends Item {
             for (int i = 0; i < targets && !potentialPositions.isEmpty(); i++) {
                 BlockPos targetPos = potentialPositions.remove(random.nextInt(potentialPositions.size()));
                 BlockState blockState = world.getBlockState(targetPos);
+
                 if (blockState.getBlock() instanceof BonemealableBlock bonemealableBlock) {
                     if (blockState.getBlock() instanceof BigCropCapable bigCrop) {
                         if (bonemealableBlock.isValidBonemealTarget(world, targetPos, blockState)) {
@@ -70,6 +71,7 @@ public class FertilizerItem extends Item {
                                 bonemealableBlock.performBonemeal(serverWorld, world.random, targetPos, blockState);
                             }
                         }
+
                         BlockState newState = world.getBlockState(targetPos);
                         bigCrop.tryTransformToBigCrop(world, targetPos, newState, true);
                         applied = true;
@@ -106,7 +108,7 @@ public class FertilizerItem extends Item {
             }
         }
 
-        return InteractionResult.PASS;
+        return super.useOn(context);
     }
 
     @Override

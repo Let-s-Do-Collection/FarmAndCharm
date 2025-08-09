@@ -9,7 +9,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.BoneMealItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.context.UseOnContext;
@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class FertilizerItem extends Item {
+public class FertilizerItem extends BoneMealItem {
     public FertilizerItem(Properties properties) {
         super(properties.stacksTo(64).durability(10));
     }
@@ -107,7 +107,7 @@ public class FertilizerItem extends Item {
             }
         }
 
-        return InteractionResult.PASS;
+         return super.useOn(context);
     }
 
     @Override

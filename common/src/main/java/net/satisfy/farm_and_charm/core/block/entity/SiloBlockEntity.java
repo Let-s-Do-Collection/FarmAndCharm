@@ -222,11 +222,11 @@ public class SiloBlockEntity extends BlockEntity implements IMultiBlockEntityCon
                             this.setItem(finish, SiloBlock.isDryItem(level, finishStack) ? outputStack : finishStack);
                             dryTime = 0;
 
-
                             if (level != null && !level.isClientSide) {
                                 level.playSound(null, worldPosition, SoundEvents.COMPOSTER_FILL_SUCCESS,
                                         net.minecraft.sounds.SoundSource.BLOCKS, 0.7f, 1.0f);
                             }
+
                             break;
                         }
                     }
@@ -235,6 +235,7 @@ public class SiloBlockEntity extends BlockEntity implements IMultiBlockEntityCon
             }
         }
     }
+
 
     private void tryDropFinish(BlockState blockState) {
         if (this.level == null || !blockState.getValue(SiloBlock.OPEN))

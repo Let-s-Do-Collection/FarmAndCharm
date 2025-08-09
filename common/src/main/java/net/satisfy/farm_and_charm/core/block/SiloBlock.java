@@ -6,7 +6,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.BlockItem;
@@ -86,16 +86,16 @@ public class SiloBlock extends FacingBlock implements EntityBlock {
     }
 
     @Override
-    public @NotNull InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player, BlockHitResult blockHitResult) {
-        InteractionHand interactionHand = blockHitResult.getDirection() == Direction.UP ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
-        ItemStack itemStack = player.getItemInHand(interactionHand);
+    protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
         if (level.isClientSide)
-            return itemStack.isEmpty() || isDryItem(level, itemStack) ? InteractionResult.SUCCESS : isSilo(itemStack) || player.isDiscrete() ? InteractionResult.PASS : InteractionResult.CONSUME;
+            return itemStack.isEmpty() || isDryItem(level, itemStack) ? ItemInteractionResult.SUCCESS : isSilo(itemStack) || player.isDiscrete() ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION : ItemInteractionResult.CONSUME;
+
         BlockEntity be = level.getBlockEntity(blockPos);
         if (be instanceof SiloBlockEntity siloBE) {
             SiloBlockEntity siloController = siloBE.getControllerBE();
             if (siloController == null)
-                return InteractionResult.PASS;
+                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+
             if (itemStack.isEmpty()) {
                 if (player.isDiscrete()) {
                     ItemStack returnStack = siloBE.tryRemoveItem();
@@ -110,15 +110,16 @@ public class SiloBlock extends FacingBlock implements EntityBlock {
                     level.playSound(null, blockPos, isOpen ? SoundEvents.IRON_TRAPDOOR_CLOSE : SoundEvents.IRON_TRAPDOOR_OPEN,
                             net.minecraft.sounds.SoundSource.BLOCKS, 1.0f, 1.0f);
                 }
-                return InteractionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             } else if (isDryItem(level, itemStack) && siloController.tryAddItem(itemStack)) {
                 level.playSound(null, blockPos, SoundEvents.COMPOSTER_FILL_SUCCESS,
                         net.minecraft.sounds.SoundSource.BLOCKS, 1.0f, 1.0f);
-                return InteractionResult.SUCCESS;
+                return ItemInteractionResult.SUCCESS;
             }
         }
-        return isSilo(itemStack) || player.isDiscrete() ? InteractionResult.PASS : InteractionResult.CONSUME;
+        return isSilo(itemStack) || player.isDiscrete() ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION : ItemInteractionResult.CONSUME;
     }
+
 
     @Override
     public void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean notify) {

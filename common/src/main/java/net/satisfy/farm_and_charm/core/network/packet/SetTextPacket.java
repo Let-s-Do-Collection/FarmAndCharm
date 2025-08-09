@@ -3,6 +3,7 @@ package net.satisfy.farm_and_charm.core.network.packet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
@@ -13,16 +14,15 @@ import net.satisfy.farm_and_charm.core.network.PacketHandler;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SetTextPacket implements CustomPacketPayload {
-    private final BlockPos pos;
-    private final List<String> texts;
+public record SetTextPacket(BlockPos pos, List<String> texts) implements CustomPacketPayload {
 
-    public SetTextPacket(BlockPos pos, List<String> texts) {
-        this.pos = pos;
-        this.texts = texts;
-    }
+    public static final CustomPacketPayload.Type<SetTextPacket> TYPE =
+            new Type<>(PacketHandler.SET_SIGN_TEXT);
 
-    public static void encode(SetTextPacket msg, RegistryFriendlyByteBuf buf) {
+    public static final StreamCodec<RegistryFriendlyByteBuf, SetTextPacket> STREAM_CODEC =
+            StreamCodec.of(SetTextPacket::toNetwork, SetTextPacket::fromNetwork);
+
+    public static void toNetwork(RegistryFriendlyByteBuf buf, SetTextPacket msg) {
         buf.writeBlockPos(msg.pos);
         buf.writeInt(msg.texts.size());
         for (String text : msg.texts) {
@@ -30,7 +30,7 @@ public class SetTextPacket implements CustomPacketPayload {
         }
     }
 
-    public static SetTextPacket decode(RegistryFriendlyByteBuf buf) {
+    public static SetTextPacket fromNetwork(RegistryFriendlyByteBuf buf) {
         BlockPos pos = buf.readBlockPos();
         int size = buf.readInt();
         List<String> texts = new ArrayList<>();

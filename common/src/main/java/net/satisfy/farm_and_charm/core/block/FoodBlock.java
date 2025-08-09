@@ -86,7 +86,10 @@ public class FoodBlock extends FacingBlock {
             }
         }
 
-        if (!player.canEat(false) || !player.getFoodData().needsFood()) {
+        if (!player.canEat(false)) {
+            if (!player.getFoodData().needsFood() && !player.getAbilities().instabuild) {
+                return InteractionResult.PASS;
+            }
             return InteractionResult.PASS;
         } else {
             player.getFoodData().eat(foodComponent.nutrition(), foodComponent.saturation());

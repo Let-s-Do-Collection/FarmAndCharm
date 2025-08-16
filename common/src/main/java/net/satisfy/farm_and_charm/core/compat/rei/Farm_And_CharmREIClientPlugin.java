@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.compat.rei;
 
+import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.common.util.EntryStacks;
@@ -26,12 +27,13 @@ import net.satisfy.farm_and_charm.core.recipe.RoasterRecipe;
 import net.satisfy.farm_and_charm.core.recipe.SiloRecipe;
 import net.satisfy.farm_and_charm.core.recipe.StoveRecipe;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
+import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Farm_And_CharmREIClientPlugin {
-    public static void registerCategories(CategoryRegistry registry) {
+public class Farm_And_CharmREIClientPlugin implements REIClientPlugin {
+    public void registerCategories(CategoryRegistry registry) {
         registry.add(new CookingPotCategory());
         registry.add(new StoveCategory());
         registry.add(new CraftingBowlCategory());
@@ -46,15 +48,39 @@ public class Farm_And_CharmREIClientPlugin {
         registry.addWorkstations(SiloCategory.SILO_DISPLAY, EntryStacks.of(ObjectRegistry.SILO_WOOD.get()), EntryStacks.of(ObjectRegistry.SILO_COPPER.get()));
     }
 
-    public static void registerDisplays(DisplayRegistry registry) {
-        registry.registerFiller(CookingPotRecipe.class, CookingPotDisplay::new);
-        registry.registerFiller(MincerRecipe.class, MincingDisplay::new);
-        registry.registerFiller(StoveRecipe.class, StoveDisplay::new);
-        registry.registerFiller(CraftingBowlRecipe.class, CraftingBowlDisplay::new);
-        registry.registerFiller(RoasterRecipe.class, RoasterDisplay::new);
-        registry.registerFiller(SiloRecipe.class, SiloDisplay::new);
-
+    @Override
+    public void registerDisplays(DisplayRegistry registry) {
+        registry.registerRecipeFiller(
+                CookingPotRecipe.class,
+                RecipeTypeRegistry.COOKING_POT_RECIPE_TYPE.get(),
+                holder -> new CookingPotDisplay(holder.value())
+        );
+        registry.registerFiller(
+                MincerRecipe.class,
+                MincingDisplay::new
+        );
+        registry.registerRecipeFiller(
+                StoveRecipe.class,
+                RecipeTypeRegistry.STOVE_RECIPE_TYPE.get(),
+                holder -> new StoveDisplay(holder.value())
+        );
+        registry.registerRecipeFiller(
+                CraftingBowlRecipe.class,
+                RecipeTypeRegistry.CRAFTING_BOWL_RECIPE_TYPE.get(),
+                holder -> new CraftingBowlDisplay(holder.value())
+        );
+        registry.registerRecipeFiller(
+                RoasterRecipe.class,
+                RecipeTypeRegistry.ROASTER_RECIPE_TYPE.get(),
+                holder -> new RoasterDisplay(holder.value())
+        );
+        registry.registerRecipeFiller(
+                SiloRecipe.class,
+                RecipeTypeRegistry.SILO_RECIPE_TYPE.get(),
+                holder -> new SiloDisplay(holder.value())
+        );
     }
+
 
     public static List<Ingredient> ingredients(Recipe<RecipeInput> recipe, ItemStack stack) {
         List<Ingredient> l = new ArrayList<>(recipe.getIngredients());

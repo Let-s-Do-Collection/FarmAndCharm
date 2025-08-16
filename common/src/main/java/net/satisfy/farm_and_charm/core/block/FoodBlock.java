@@ -77,6 +77,17 @@ public class FoodBlock extends FacingBlock {
     }
 
     private InteractionResult tryEat(LevelAccessor world, BlockPos pos, BlockState state, Player player) {
+        if (!player.canEat(false)) {
+            if (!player.getFoodData().needsFood() && !player.getAbilities().instabuild) {
+                return InteractionResult.PASS;
+            }
+            return InteractionResult.PASS;
+        }
+
+        player.getFoodData().eat(foodComponent.nutrition(), foodComponent.saturation());
+        world.playSound(null, pos, SoundEvents.GENERIC_EAT, SoundSource.PLAYERS, 0.5f, world.getRandom().nextFloat() * 0.1f + 0.9f);
+        world.gameEvent(player, GameEvent.EAT, pos);
+
         if (world instanceof Level level) {
             for (int count = 0; count < 10; ++count) {
                 double d0 = level.random.nextGaussian() * 0.02D;
@@ -86,26 +97,15 @@ public class FoodBlock extends FacingBlock {
             }
         }
 
-        if (!player.canEat(false)) {
-            if (!player.getFoodData().needsFood() && !player.getAbilities().instabuild) {
-                return InteractionResult.PASS;
-            }
-            return InteractionResult.PASS;
+        int bites = state.getValue(BITES);
+        if (bites < maxBites - 1) {
+            world.setBlock(pos, state.setValue(BITES, bites + 1), 3);
         } else {
-            player.getFoodData().eat(foodComponent.nutrition(), foodComponent.saturation());
-            world.playSound(null, pos, SoundEvents.GENERIC_EAT, SoundSource.PLAYERS, 0.5f, world.getRandom().nextFloat() * 0.1f + 0.9f);
-            world.gameEvent(player, GameEvent.EAT, pos);
-
-            int bites = state.getValue(BITES);
-
-            if (bites < maxBites - 1) {
-                world.setBlock(pos, state.setValue(BITES, bites + 1), 3);
-            } else {
-                world.destroyBlock(pos, false);
-                world.gameEvent(player, GameEvent.BLOCK_DESTROY, pos);
-            }
-            return InteractionResult.SUCCESS;
+            world.destroyBlock(pos, false);
+            world.gameEvent(player, GameEvent.BLOCK_DESTROY, pos);
         }
+
+        return InteractionResult.SUCCESS;
     }
 
     public @NotNull BlockState rotate(BlockState state, Rotation rotation) {

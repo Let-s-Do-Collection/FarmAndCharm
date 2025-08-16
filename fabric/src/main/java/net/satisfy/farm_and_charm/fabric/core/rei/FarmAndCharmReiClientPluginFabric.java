@@ -5,15 +5,17 @@ import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import net.satisfy.farm_and_charm.core.compat.rei.Farm_And_CharmREIClientPlugin;
 
-
 public class FarmAndCharmReiClientPluginFabric implements REIClientPlugin {
+
+    private final Farm_And_CharmREIClientPlugin delegate = new Farm_And_CharmREIClientPlugin();
+
     @Override
     public void registerCategories(CategoryRegistry registry) {
-        Farm_And_CharmREIClientPlugin.registerCategories(registry);
+        delegate.registerCategories(registry);
     }
 
     @Override
     public void registerDisplays(DisplayRegistry registry) {
-        Farm_And_CharmREIClientPlugin.registerDisplays(registry);
+        delegate.registerDisplays(registry);
     }
 }

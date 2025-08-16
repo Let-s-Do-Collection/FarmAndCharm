@@ -166,16 +166,23 @@ public class SiloBlockEntity extends BlockEntity implements IMultiBlockEntityCon
 
     @Override
     public void notifyMultiUpdated() {
+        if (level == null) return;
         BlockState state = this.getBlockState();
-        if (SiloBlock.isSilo(state) && level != null) {
+        if (SiloBlock.isSilo(state)) {
             state = state.setValue(SiloBlock.BOTTOM, getController().getY() == getBlockPos().getY());
             state = state.setValue(SiloBlock.TOP, getController().getY() + height - 1 == getBlockPos().getY());
-            state = state.setValue(SiloBlock.OPEN, level.getBlockState(getController()).getValue(BlockStateProperties.OPEN));
-            state = state.setValue(BlockStateProperties.HORIZONTAL_FACING, level.getBlockState(getController()).getValue(BlockStateProperties.HORIZONTAL_FACING));
+            BlockState controllerState = level.getBlockState(getController());
+            if (controllerState.hasProperty(BlockStateProperties.OPEN)) {
+                state = state.setValue(SiloBlock.OPEN, controllerState.getValue(BlockStateProperties.OPEN));
+            }
+            if (controllerState.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
+                state = state.setValue(BlockStateProperties.HORIZONTAL_FACING, controllerState.getValue(BlockStateProperties.HORIZONTAL_FACING));
+            }
             level.setBlock(worldPosition, state, 6);
         }
-        if (isController())
+        if (isController()) {
             updateShape();
+        }
     }
 
     public void updateShape() {

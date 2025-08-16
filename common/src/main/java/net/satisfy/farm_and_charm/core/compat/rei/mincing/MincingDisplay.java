@@ -6,20 +6,23 @@ import me.shedaniel.rei.api.common.util.EntryIngredients;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.core.recipe.MincerRecipe;
 
-import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 public class MincingDisplay extends BasicDisplay {
-    public static final CategoryIdentifier<MincingDisplay> MINCING_DISPLAY = CategoryIdentifier.of(FarmAndCharm.MOD_ID, "mincing_display");
+    public static final CategoryIdentifier<MincingDisplay> MINCING_DISPLAY =
+            CategoryIdentifier.of(FarmAndCharm.MOD_ID, "mincing_display");
 
     public MincingDisplay(MincerRecipe recipe) {
         super(
-                Collections.singletonList(EntryIngredients.ofIngredient(recipe.getInput())),
-                Collections.singletonList(EntryIngredients.of(recipe.getOutput()))
+                List.of(EntryIngredients.ofIngredient(recipe.getInput())),
+                List.of(EntryIngredients.of(recipe.getOutput())),
+                Optional.empty()
         );
     }
 
     @Override
     public CategoryIdentifier<?> getCategoryIdentifier() {
-        return MincingCategory.MINCING_DISPLAY;
+        return MINCING_DISPLAY;
     }
 }

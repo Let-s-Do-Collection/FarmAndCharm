@@ -1,6 +1,5 @@
 package net.satisfy.farm_and_charm.core.compat.rei.cooking;
 
-import com.google.common.collect.Lists;
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.Renderer;
@@ -10,6 +9,8 @@ import me.shedaniel.rei.api.client.registry.display.DisplayCategory;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.satisfy.farm_and_charm.core.block.entity.CookingPotBlockEntity;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 
@@ -46,20 +47,21 @@ public class CookingPotCategory implements DisplayCategory<CookingPotDisplay> {
                 .markOutput());
 
         var containerEntry = display.getInputEntries().get(6);
-        var containerStack = containerEntry.isEmpty() ? net.minecraft.world.item.ItemStack.EMPTY : (net.minecraft.world.item.ItemStack)containerEntry.get(0).getValue();
-        if (!containerStack.isEmpty() && containerStack.getItem() != net.minecraft.world.item.Items.AIR) {
+        var containerStack = containerEntry.isEmpty() ? ItemStack.EMPTY : (ItemStack) containerEntry.get(0).getValue();
+        if (!containerStack.isEmpty() && containerStack.getItem() != Items.AIR) {
             widgets.add(Widgets.createSlot(new Point(startPoint.x + 56, startPoint.y + 23))
                     .entries(containerEntry)
                     .markInput());
         }
+
         for (int i = 0; i < 6; i++) {
             int x = (i % 3) * 18 - 8;
             int y = (i / 3) * 18 - 4;
             widgets.add(Widgets.createSlot(new Point(startPoint.x + x, startPoint.y + y))
                     .entries(display.getInputEntries().get(i))
                     .markInput());
-                widgets.add(Widgets.createSlot(new Point(startPoint.x + x, startPoint.y + y)).entries(display.getInputEntries().get(i + 1)).markInput());
         }
+
         return widgets;
     }
 }

@@ -44,7 +44,7 @@ public class SaturationOverlayRenderer {
 
         for (int i = 0; i < 3; i++) {
             poseStack.pushPose();
-            poseStack.translate((1 - i) * 1.1, 0.0, 0.0);
+            poseStack.translate((i - 1) * 1.1, 0.0, 0.0);
 
             float alpha;
 

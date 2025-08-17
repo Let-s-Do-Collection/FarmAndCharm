@@ -7,6 +7,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
@@ -20,7 +21,7 @@ public class OnionCropBlock extends CropBlock implements BigCropCapable {
     public static final BooleanProperty GIANT = BooleanProperty.create("giant");
 
     public OnionCropBlock(Properties properties) {
-        super(properties.randomTicks());
+        super(properties.noCollission().instabreak().sound(SoundType.CROP).randomTicks());
         registerDefaultState(getStateDefinition().any().setValue(AGE, 0).setValue(BIG, false).setValue(GIANT, false));
     }
 

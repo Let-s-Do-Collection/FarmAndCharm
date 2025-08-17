@@ -116,7 +116,7 @@
   "effect.farm_and_charm.dog_food.description": "Increases the attack damage, attack speed, and knockback resistance of Wolves.",
   "effect.farm_and_charm.sustenance.description": "Increases your Hunger by 1 every 6 seconds. If your Hunger Bar is full it will instead regenerate your Health by 1 every 6 seconds.",
   "effect.farm_and_charm.sweets.description": "Boosts your attributes, such as movement speed, attack speed, and attack damage, making you more effective in navigating and fighting. Stackable up to 10 times.",
-  "entity.farm_and_charm.chest_cart": "Chest Cart",
+  "entity.farm_and_charm.cart": "Supply Cart",
   "entity.farm_and_charm.plow": "Plow",
   "item.farm_and_charm.bacon": "Bacon",
   "item.farm_and_charm.bacon_with_eggs": "Bacon with Eggs",

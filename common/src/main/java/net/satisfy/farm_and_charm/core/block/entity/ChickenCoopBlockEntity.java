@@ -88,7 +88,9 @@ public class ChickenCoopBlockEntity extends BlockEntity {
         tag.putInt("CoopTime", 200 + chicken.getRandom().nextInt(200));
         storedChickens.add(tag);
 
-        if (chicken.getLeashHolder() != null) {
+        boolean hadLeash = chicken.getLeashHolder() != null;
+
+        if (hadLeash) {
             chicken.dropLeash(true, false);
             chicken.spawnAtLocation(Items.LEAD);
         }
@@ -100,7 +102,10 @@ public class ChickenCoopBlockEntity extends BlockEntity {
         chicken.setInvisible(true);
         chicken.discard();
 
-        addEgg();
+        if (!hadLeash) {
+            addEgg();
+        }
+
         this.setChanged();
         this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
     }

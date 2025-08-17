@@ -7,7 +7,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.farm_and_charm.core.entity.AbstractTowableEntity;
-import net.satisfy.farm_and_charm.core.registry.SoundEventRegistry;
 
 public final class CartWheel {
     private float rotation;
@@ -38,42 +37,47 @@ public final class CartWheel {
         this.rotation += this.rotationIncrement;
         this.prevPosX = this.posX;
         this.prevPosZ = this.posZ;
+
         final float yaw = (float) Math.toRadians(this.cart.getYRot());
         final float nx = -Mth.sin(yaw);
         final float nz = Mth.cos(yaw);
+
         this.posX = this.cart.getX() + nx * this.offsetZ - nz * this.offsetX;
         this.posZ = this.cart.getZ() + nz * this.offsetZ + nx * this.offsetX;
+
         final double dx = this.posX - this.prevPosX;
         final double dz = this.posZ - this.prevPosZ;
         final float distanceTravelled = (float) Math.sqrt(dx * dx + dz * dz);
-        final double dxNormalized = dx / distanceTravelled;
-        final double dzNormalized = dz / distanceTravelled;
+
+        final double dxNormalized = distanceTravelled > 0 ? dx / distanceTravelled : 0;
+        final double dzNormalized = distanceTravelled > 0 ? dz / distanceTravelled : 0;
         final float travelledForward = Mth.sign(dxNormalized * nx + dzNormalized * nz);
 
-        if (distanceTravelled > 0.2) {
+        if (distanceTravelled > 0.05) {
             final BlockPos blockpos = new BlockPos(Mth.floor(this.posX), Mth.floor(this.cart.getY() - 0.2F), Mth.floor(this.posZ));
             final BlockState blockstate = this.cart.level().getBlockState(blockpos);
+
             if (blockstate.getRenderShape() != RenderShape.INVISIBLE) {
-                int particleCount = 15;
-                float zFactor = 0.5F;
+                int particleCount = 8;
+                final float sideYaw = (float) Math.toRadians(this.cart.getYRot());
+                final double sideX = -Mth.cos(sideYaw);
+                final double sideZ = -Mth.sin(sideYaw);
+
+                double upwardVelocity = Math.min(distanceTravelled * 0.1, 0.15);
+
                 for (int i = 0; i < particleCount; i++) {
-                    double adjustedPosZ = Mth.lerp(zFactor, this.cart.getZ(), this.posZ) + (Math.random() - 0.5) * 0.1;
-                    double offsetX = this.posX + (Math.random() - 0.5) * 0.1;
-                    this.cart.level().addParticle(
-                            new BlockParticleOption(ParticleTypes.BLOCK, blockstate),
-                            offsetX,
-                            this.cart.getY() + (Math.random() - 0.5) * 0.1,
-                            adjustedPosZ,
-                            dx,
-                            distanceTravelled,
-                            dz
-                    );
+                    double centerShiftFactor = 0.3;
+                    double px = this.posX - sideX * this.offsetX * centerShiftFactor + (this.cart.getRandom().nextDouble() - 0.5) * 0.02;
+                    double py = blockpos.getY() + 1;
+                    double pz = this.posZ - sideZ * this.offsetX * centerShiftFactor + (this.cart.getRandom().nextDouble() - 0.5) * 0.02;
+
+                    this.cart.level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, blockstate), px, py, pz, dx * 0.05, upwardVelocity, dz * 0.05);
                 }
             }
         }
+
         this.rotationIncrement = travelledForward * distanceTravelled * this.circumference * 0.2F;
     }
-
 
     public float getRotation() {
         return this.rotation;

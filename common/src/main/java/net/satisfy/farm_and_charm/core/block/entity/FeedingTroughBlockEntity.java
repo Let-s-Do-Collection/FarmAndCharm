@@ -5,6 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.animal.Animal;
@@ -16,7 +17,6 @@ import net.satisfy.farm_and_charm.core.block.FeedingTroughBlock;
 import net.satisfy.farm_and_charm.core.network.PacketHandler;
 import net.satisfy.farm_and_charm.core.network.packet.SyncSaturationPacket;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
-import net.satisfy.farm_and_charm.core.registry.TagRegistry;
 import net.satisfy.farm_and_charm.core.util.SaturationTracker;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +36,7 @@ public class FeedingTroughBlockEntity extends BlockEntity implements WorldlyCont
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
-        return stack.is(TagRegistry.FEEDING_TROUGH_FODDER) && getItem(slot).getCount() < 4;
+        return stack.is(ItemTags.VILLAGER_PLANTABLE_SEEDS) && getItem(slot).getCount() < 4;
     }
 
     @Override
@@ -83,16 +83,17 @@ public class FeedingTroughBlockEntity extends BlockEntity implements WorldlyCont
         if (stack.isEmpty()) {
             items.set(slot, ItemStack.EMPTY);
         } else {
-            ItemStack current = items.get(slot);
-            if (current.isEmpty()) {
-                items.set(slot, stack.copy());
-            } else if (ItemStack.isSameItemSameComponents(current, stack)) {
-                int newCount = Math.min(4, current.getCount() + stack.getCount());
-                current.setCount(newCount);
-                items.set(slot, current);
-            }
+            int capped = Math.min(4, stack.getCount());
+            ItemStack copy = stack.copy();
+            copy.setCount(capped);
+            items.set(slot, copy);
         }
         setChanged();
+    }
+
+    @Override
+    public int getMaxStackSize() {
+        return 4;
     }
 
     @Override
@@ -102,7 +103,7 @@ public class FeedingTroughBlockEntity extends BlockEntity implements WorldlyCont
 
     @Override
     public void clearContent() {
-        items.clear();
+        items.set(0, ItemStack.EMPTY);
         setChanged();
     }
 
@@ -146,7 +147,6 @@ public class FeedingTroughBlockEntity extends BlockEntity implements WorldlyCont
         if (!(animal instanceof SaturationTracker.SaturatedAnimal saturated)) return;
         SaturationTracker tracker = saturated.farm_and_charm$getSaturationTracker();
         tracker.feedDirectly(animal, animal.tickCount, 5);
-
         if (!animal.level().isClientSide) {
             PacketHandler.sendSaturationSync(
                     new SyncSaturationPacket(animal.getId(), tracker.level(), tracker.foodCounter()),

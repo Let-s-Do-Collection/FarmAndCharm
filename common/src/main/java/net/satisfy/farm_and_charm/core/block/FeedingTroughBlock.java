@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -31,7 +30,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-@SuppressWarnings("deprecation")
 public class FeedingTroughBlock extends LineConnectingBlock implements EntityBlock {
     public static final IntegerProperty SIZE = IntegerProperty.create("size", 0, 4);
     private static final Supplier<VoxelShape> voxelShapeSupplier = () -> {
@@ -56,15 +54,21 @@ public class FeedingTroughBlock extends LineConnectingBlock implements EntityBlo
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected @NotNull ItemInteractionResult useItemOn(ItemStack itemStack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!world.isClientSide && hand == InteractionHand.MAIN_HAND && itemStack.is(ItemTags.VILLAGER_PLANTABLE_SEEDS)) {
-            int size = state.getValue(SIZE);
-            if (size < 4) {
-                world.setBlock(pos, state.setValue(SIZE, size + 1), 3);
-                if (!player.getAbilities().instabuild) {
-                    itemStack.shrink(1);
+            BlockEntity be = world.getBlockEntity(pos);
+            if (be instanceof FeedingTroughBlockEntity trough) {
+                ItemStack current = trough.getItem(0);
+                if (current.isEmpty()) {
+                    trough.setItem(0, new ItemStack(itemStack.getItem(), 1));
+                    if (!player.getAbilities().instabuild) itemStack.shrink(1);
+                    return ItemInteractionResult.SUCCESS;
+                } else if (ItemStack.isSameItemSameComponents(current, itemStack) && current.getCount() < 4) {
+                    current.grow(1);
+                    trough.setItem(0, current);
+                    if (!player.getAbilities().instabuild) itemStack.shrink(1);
+                    return ItemInteractionResult.SUCCESS;
                 }
-                return ItemInteractionResult.SUCCESS;
             }
         }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;

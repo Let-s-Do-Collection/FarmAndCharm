@@ -78,7 +78,6 @@ public class RoasterCategory implements IRecipeCategory<RoasterRecipe> {
     }
 
     @Override
-    @SuppressWarnings("all")
     public @NotNull IDrawable getBackground() {
         return this.background;
     }

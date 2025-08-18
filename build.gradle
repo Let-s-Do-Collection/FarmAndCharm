@@ -43,6 +43,16 @@ allprojects {
         }
     }
 
+    publishing {
+        repositories {
+            maven {
+                name = "tsuyumaven"
+                url = "https://maven.tsuyumori.dev/snapshots"
+                credentials(PasswordCredentials)
+            }
+        }
+    }
+
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
         options.release = 21

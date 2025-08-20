@@ -44,6 +44,11 @@ public abstract class AbstractTowableEntity extends Entity {
         this.rightWheel = new CartWheel(this, 1.5F);
     }
 
+    @Override
+    public float maxUpStep() {
+        return 1.2f;
+    }
+
     public boolean hasDriver() {
         return this.driver != null;
     }

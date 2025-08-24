@@ -17,6 +17,7 @@ import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import java.util.List;
 
 public class CookingPotCategory implements DisplayCategory<CookingPotDisplay> {
+    
 
     @Override
     public CategoryIdentifier<CookingPotDisplay> getCategoryIdentifier() {

@@ -4,13 +4,13 @@
       "model": "farm_and_charm:block/tomato_top_stage0"
     },
     "age=0,supported=true": {
-      "model": "farm_and_charm:block/tomato_top_stage0"
+      "model": "farm_and_charm:block/tomato_top_stage0_supported"
     },
     "age=1,supported=false": {
       "model": "farm_and_charm:block/tomato_top_stage1"
     },
     "age=1,supported=true": {
-      "model": "farm_and_charm:block/tomato_top_stage1"
+      "model": "farm_and_charm:block/tomato_top_stage1_supported"
     },
     "age=2,supported=false": [
       {
@@ -28,15 +28,15 @@
     ],
     "age=2,supported=true": [
       {
-        "model": "farm_and_charm:block/tomato_top_stage2-1",
+        "model": "farm_and_charm:block/tomato_top_stage2-1_supported",
         "weight": 1
       },
       {
-        "model": "farm_and_charm:block/tomato_top_stage2-2",
+        "model": "farm_and_charm:block/tomato_top_stage2-2_supported",
         "weight": 1
       },
       {
-        "model": "farm_and_charm:block/tomato_top_stage2-3",
+        "model": "farm_and_charm:block/tomato_top_stage2-3_supported",
         "weight": 1
       }
     ],
@@ -56,15 +56,15 @@
     ],
     "age=3,supported=true": [
       {
-        "model": "farm_and_charm:block/tomato_top_stage3-1",
+        "model": "farm_and_charm:block/tomato_top_stage3-1_supported",
         "weight": 1
       },
       {
-        "model": "farm_and_charm:block/tomato_top_stage3-2",
+        "model": "farm_and_charm:block/tomato_top_stage3-2_supported",
         "weight": 1
       },
       {
-        "model": "farm_and_charm:block/tomato_top_stage3-3",
+        "model": "farm_and_charm:block/tomato_top_stage3-3_supported",
         "weight": 1
       }
     ],
@@ -84,15 +84,15 @@
     ],
     "age=4,supported=true": [
       {
-        "model": "farm_and_charm:block/tomato_top_stage4-1",
+        "model": "farm_and_charm:block/tomato_top_stage4-1_supported",
         "weight": 1
       },
       {
-        "model": "farm_and_charm:block/tomato_top_stage4-2",
+        "model": "farm_and_charm:block/tomato_top_stage4-2_supported",
         "weight": 1
       },
       {
-        "model": "farm_and_charm:block/tomato_top_stage4-3",
+        "model": "farm_and_charm:block/tomato_top_stage4-3_supported",
         "weight": 1
       }
     ]

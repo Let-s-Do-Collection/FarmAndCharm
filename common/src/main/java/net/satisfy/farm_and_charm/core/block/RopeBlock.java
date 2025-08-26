@@ -25,6 +25,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.satisfy.farm_and_charm.core.block.crops.ClimbingCropBlock;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
@@ -96,6 +97,12 @@ public class RopeBlock extends Block {
         boolean up = canConnectTo(level, pos.above(), Direction.DOWN);
         boolean down = canConnectTo(level, pos.below(), Direction.UP);
 
+        boolean belowClimbingCrop = level.getBlockState(pos.below()).getBlock() instanceof ClimbingCropBlock;
+        if (belowClimbingCrop) {
+            down = true;
+            up = true;
+        }
+
         boolean hasHorizontal = north || south || east || west;
         boolean isCorner = (north || south) && (east || west);
         boolean hasVertical = up || down;
@@ -126,6 +133,9 @@ public class RopeBlock extends Block {
             if (direction == Direction.UP) {
                 boolean topSupport = neighbor.isFaceSturdy(level, neighborPos, Direction.DOWN);
                 state = state.setValue(SUPPORTING_ROPE_KNOT, topSupport);
+            }
+            if (direction == Direction.DOWN && neighbor.getBlock() instanceof ClimbingCropBlock) {
+                state = state.setValue(DOWN, true).setValue(UP, true);
             }
 
             boolean north = state.getValue(NORTH);
@@ -208,6 +218,9 @@ public class RopeBlock extends Block {
         BlockState blockState = level.getBlockState(neighborPos);
         if (blockState.getBlock() instanceof RopeBlock) return true;
         if (blockState.getBlock() instanceof RopeKnotBlock) return true;
+        if (blockState.getBlock() instanceof ClimbingCropBlock) {
+            return dirTowardNeighbor == Direction.DOWN || dirTowardNeighbor == Direction.UP;
+        }
         if (dirTowardNeighbor == Direction.UP) {
             if (blockState.getBlock() instanceof LanternBlock) return true;
             if (blockState.getBlock() instanceof BellBlock) return true;
@@ -215,6 +228,7 @@ public class RopeBlock extends Block {
         }
         return blockState.isFaceSturdy(level, neighborPos, dirTowardNeighbor);
     }
+
 
     @Override
     public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {

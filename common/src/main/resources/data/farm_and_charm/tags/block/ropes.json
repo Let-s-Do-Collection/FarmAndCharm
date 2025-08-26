@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#c:ropes",
+      "required": false
+    },
+    {
+      "id": "brewery:rope",
+      "required": false
+    },
+    {
+      "id": "brewery:rope_knot",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:rope",
+      "required": false
+    }
+  ]
+}

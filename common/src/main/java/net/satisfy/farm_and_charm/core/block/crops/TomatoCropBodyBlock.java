@@ -21,69 +21,57 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-@SuppressWarnings("deprecation")
 public class TomatoCropBodyBlock extends TomatoCropBlock implements BonemealableBlock {
     public static final VoxelShape SHAPE = Block.box(1.0, 0.0, 1.0, 15.0, 16.0, 15.0);
 
-    public TomatoCropBodyBlock(BlockBehaviour.Properties arg) {
-        super(arg, SHAPE);
+    public TomatoCropBodyBlock(BlockBehaviour.Properties properties) {
+        super(properties, SHAPE);
     }
 
-    private Optional<BlockPos> getHeadPos(BlockGetter blockGetter, BlockPos blockPos, Block block) {
-        return BlockUtil.getTopConnectedBlock(blockGetter, blockPos, block, Direction.UP, ObjectRegistry.TOMATO_CROP.get());
+    private Optional<BlockPos> getHeadPos(BlockGetter level, BlockPos pos, Block block) {
+        return BlockUtil.getTopConnectedBlock(level, pos, block, Direction.UP, ObjectRegistry.TOMATO_CROP.get());
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
+    public @NotNull ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
         return new ItemStack(getHeadBlock());
     }
 
     @Override
-    public boolean canBeReplaced(BlockState blockState, BlockPlaceContext blockPlaceContext) {
-        boolean bl = super.canBeReplaced(blockState, blockPlaceContext);
-        return (!bl || !blockPlaceContext.getItemInHand().is(getHeadBlock().asItem())) && bl;
-    }
-
-    public @NotNull BlockState updateShape(BlockState blockState, Direction direction, BlockState blockState2, LevelAccessor levelAccessor, BlockPos blockPos, BlockPos blockPos2) {
-        if (direction == Direction.DOWN && !blockState.canSurvive(levelAccessor, blockPos)) {
-            levelAccessor.scheduleTick(blockPos, this, 1);
-        }
-        TomatoCropHeadBlock hopsCropHeadBlock = getHeadBlock();
-        if (direction == Direction.UP && !blockState2.is(this) && !blockState2.is(hopsCropHeadBlock)) {
-            if (getHeight(blockPos, levelAccessor) > TomatoCropHeadBlock.getMaxHeight(levelAccessor, blockPos) - 1 && !isRopeAbove(levelAccessor, blockPos)) {
-                levelAccessor.scheduleTick(blockPos, hopsCropHeadBlock, 1);
-            }
-            return hopsCropHeadBlock.getStateForAge(blockState.getValue(AGE));
-        } else {
-            return blockState;
-        }
+    public boolean canBeReplaced(BlockState state, BlockPlaceContext ctx) {
+        boolean base = super.canBeReplaced(state, ctx);
+        return (!base || !ctx.getItemInHand().is(getHeadBlock().asItem())) && base;
     }
 
     @Override
-    public boolean isValidBonemealTarget(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
+    public @NotNull BlockState updateShape(BlockState state, Direction dir, BlockState neighbor, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        if (dir == Direction.UP) {
+            state = state.setValue(SUPPORTED, isRopeAbove(level, pos));
+        }
+        return super.updateShape(state, dir, neighbor, level, pos, neighborPos);
+    }
+
+    @Override
+    public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) {
         return true;
     }
 
     @Override
-    public boolean isBonemealSuccess(Level level, RandomSource randomSource, BlockPos blockPos, BlockState blockState) {
+    public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state) {
         return true;
     }
 
-
     @Override
-    public void performBonemeal(ServerLevel serverLevel, RandomSource randomSource, BlockPos blockPos, BlockState blockState) {
-        Optional<BlockPos> optional = this.getHeadPos(serverLevel, blockPos, blockState.getBlock());
-        if (optional.isPresent()) {
-            BlockPos pos = optional.get();
-            if (TomatoCropHeadBlock.canGrowInto(serverLevel, pos.above())) {
-                serverLevel.setBlockAndUpdate(pos.above(), ObjectRegistry.TOMATO_CROP.get().defaultBlockState());
-                return;
-            }
+    public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
+        Optional<BlockPos> head = getHeadPos(level, pos, state.getBlock());
+        if (head.isPresent() && TomatoCropHeadBlock.canGrowInto(level, head.get().above())) {
+            level.setBlockAndUpdate(head.get().above(), ObjectRegistry.TOMATO_CROP.get().defaultBlockState());
+            return;
         }
-        if (this.canGrow(blockState)) {
-            serverLevel.setBlockAndUpdate(blockPos, getStateForAge(blockState.getValue(AGE) + 1));
+        if (canGrow(state)) {
+            level.setBlockAndUpdate(pos, getStateForAge(state.getValue(AGE) + 1));
         } else {
-            dropTomatoes(serverLevel, blockPos, blockState);
+            dropTomatoes(level, pos, state);
         }
     }
 }

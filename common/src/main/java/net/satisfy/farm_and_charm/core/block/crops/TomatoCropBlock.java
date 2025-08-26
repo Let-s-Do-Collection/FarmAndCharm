@@ -1,7 +1,6 @@
 package net.satisfy.farm_and_charm.core.block.crops;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -18,31 +17,27 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.satisfy.farm_and_charm.core.block.RopeBlock;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.NotNull;
 
-import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.FERTILIZED_FARM_BLOCK;
-
-@SuppressWarnings("deprecation")
 public abstract class TomatoCropBlock extends Block {
-    public static final IntegerProperty AGE;
+    public static final IntegerProperty AGE = BlockStateProperties.AGE_4;
+    public static final BooleanProperty SUPPORTED = BooleanProperty.create("supported");
     private static final int MAX_AGE = 4;
-
-    static {
-        AGE = BlockStateProperties.AGE_4;
-    }
-
     protected final VoxelShape shape;
 
-    protected TomatoCropBlock(Properties arg, VoxelShape shape) {
-        super(arg);
+    protected TomatoCropBlock(BlockBehaviour.Properties properties, VoxelShape shape) {
+        super(properties);
         this.shape = shape;
     }
 
@@ -54,106 +49,113 @@ public abstract class TomatoCropBlock extends Block {
         return (TomatoCropBodyBlock) ObjectRegistry.TOMATO_CROP_BODY.get();
     }
 
-    @SuppressWarnings("unused")
-    protected static boolean isRopeAbove(LevelAccessor levelAccessor, BlockPos blockPos) {
-        return false;
+    protected static boolean isRopeAbove(LevelAccessor level, BlockPos pos) {
+        return level.getBlockState(pos.above()).getBlock() instanceof RopeBlock;
     }
 
-    protected static int getHeight(BlockPos blockPos, LevelAccessor levelAccessor) {
+    protected static int getHeight(BlockPos pos, LevelAccessor level) {
         int height = 0;
-        while (levelAccessor.getBlockState(blockPos.below(height)).getBlock() instanceof TomatoCropBlock) {
+        while (level.getBlockState(pos.below(height)).getBlock() instanceof TomatoCropBlock) {
             height++;
         }
         return height;
     }
 
     @Override
-    public @NotNull VoxelShape getShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext collisionContext) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return this.shape;
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
-        BlockState blockState = context.getLevel().getBlockState(context.getClickedPos().above());
-        return !blockState.is(getHeadBlock()) && !blockState.is(getBodyBlock()) ? this.defaultBlockState() : getBodyBlock().defaultBlockState();
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        Level level = ctx.getLevel();
+        BlockPos pos = ctx.getClickedPos();
+        BlockState above = level.getBlockState(pos.above());
+
+        boolean supported = isRopeAbove(level, pos);
+        BlockState base = !above.is(getHeadBlock()) && !above.is(getBodyBlock())
+                ? this.defaultBlockState()
+                : getBodyBlock().defaultBlockState();
+
+        return base.setValue(AGE, 0).setValue(SUPPORTED, supported);
     }
 
     public @NotNull BlockState getStateForAge(int age) {
-        return this.defaultBlockState().setValue(AGE, Math.min(age, MAX_AGE));
+        return this.defaultBlockState().setValue(AGE, Math.min(age, MAX_AGE)).setValue(SUPPORTED, false);
     }
 
     @Override
-    public boolean canSurvive(BlockState blockState, LevelReader levelReader, BlockPos blockPos) {
-        BlockPos belowPos = blockPos.relative(Direction.DOWN);
-        BlockState belowState = levelReader.getBlockState(belowPos);
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        BlockPos below = pos.below();
+        BlockState belowState = level.getBlockState(below);
         return mayPlaceOn(belowState) || belowState.is(getHeadBlock()) || belowState.is(getBodyBlock());
     }
 
-    protected boolean mayPlaceOn(BlockState blockState) {
-        return blockState.is(Blocks.FARMLAND) || blockState.is(ObjectRegistry.FERTILIZED_FARM_BLOCK.get());
+    protected boolean mayPlaceOn(BlockState state) {
+        return state.is(Blocks.FARMLAND) || state.is(ObjectRegistry.FERTILIZED_FARM_BLOCK.get());
     }
 
-    protected boolean canGrow(BlockState blockState) {
-        return blockState.getValue(AGE) < MAX_AGE;
+    protected boolean canGrow(BlockState state) {
+        return state.getValue(AGE) < MAX_AGE;
     }
 
     @Override
-    protected @NotNull InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player, BlockHitResult blockHitResult) {
-        InteractionHand interactionHand = player.getUsedItemHand();
-        if (player.getItemInHand(interactionHand).is(Items.BONE_MEAL)) {
-            return InteractionResult.PASS;
-        }
-        int age = blockState.getValue(AGE);
+    protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        InteractionHand hand = player.getUsedItemHand();
+        if (player.getItemInHand(hand).is(Items.BONE_MEAL)) return InteractionResult.PASS;
+        int age = state.getValue(AGE);
         if (age == MAX_AGE) {
-            dropTomatoes(level, blockPos, blockState);
+            dropTomatoes(level, pos, state);
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
-        return super.useWithoutItem(blockState, level, blockPos, player, blockHitResult);
+        return super.useWithoutItem(state, level, pos, player, hit);
     }
 
     protected void dropTomatoes(Level level, BlockPos blockPos, BlockState blockState) {
         int age = blockState.getValue(AGE);
         int amount = level.getRandom().nextInt(2) + (age >= MAX_AGE ? 1 : 0);
         ItemStack drop = new ItemStack(ObjectRegistry.TOMATO.get(), amount);
-        if (level.getRandom().nextFloat() < 0.05) {
+        if (level.getRandom().nextFloat() < 0.05f) {
             drop = new ItemStack(ObjectRegistry.ROTTEN_TOMATO.get(), 1);
         }
         popResource(level, blockPos, drop);
         level.playSound(null, blockPos, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.8F + level.random.nextFloat() * 0.4F);
-        level.setBlock(blockPos, blockState.setValue(AGE, 1), 2);
-    }
 
-    @Override
-    public void tick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource) {
-        if (!blockState.canSurvive(serverLevel, blockPos)) {
-            serverLevel.destroyBlock(blockPos, true);
+        int resetAge = 1;
+        if (this instanceof TomatoCropBodyBlock && level.getBlockState(blockPos.above()).is(getHeadBlock())) {
+            resetAge = 2;
         }
+        level.setBlock(blockPos, blockState.setValue(AGE, resetAge), 2);
+    }
+    
+    @Override
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (!state.canSurvive(level, pos)) level.destroyBlock(pos, true);
     }
 
     @Override
-    public boolean isRandomlyTicking(BlockState blockState) {
-        return canGrow(blockState);
+    public boolean isRandomlyTicking(BlockState state) {
+        return canGrow(state);
     }
 
     @Override
-    public void randomTick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource) {
-        if (serverLevel.getRawBrightness(blockPos, 0) >= 9) {
-            int age = blockState.getValue(AGE);
-            if (age < MAX_AGE) {
-                if (randomSource.nextFloat() < 0.2) {
-                    serverLevel.setBlock(blockPos, this.getStateForAge(age + 1), 2);
-                }
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (level.getRawBrightness(pos, 0) >= 9) {
+            int age = state.getValue(AGE);
+            if (age < MAX_AGE && random.nextFloat() < 0.2f) {
+                boolean supported = isRopeAbove(level, pos);
+                level.setBlock(pos, getStateForAge(age + 1).setValue(SUPPORTED, supported), 2);
             }
         }
     }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
-        return blockState.getFluidState().isEmpty();
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+        return state.getFluidState().isEmpty();
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(AGE);
+        builder.add(AGE, SUPPORTED);
     }
 }

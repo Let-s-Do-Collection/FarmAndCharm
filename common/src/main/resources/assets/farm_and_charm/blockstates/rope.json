@@ -1,0 +1,73 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "farm_and_charm:block/rope_connection_center"
+      }
+    },
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "farm_and_charm:block/rope_connection_north"
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "farm_and_charm:block/rope_connection_south"
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "farm_and_charm:block/rope_connection_west"
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "farm_and_charm:block/rope_connection_east"
+      }
+    },
+    {
+      "when": {
+        "up": "true"
+      },
+      "apply": {
+        "model": "farm_and_charm:block/rope_connection_up"
+      }
+    },
+    {
+      "when": {
+        "down": "true"
+      },
+      "apply": {
+        "model": "farm_and_charm:block/rope_connection_down"
+      }
+    },
+    {
+      "when": {
+        "supporting_rope_knot": "true"
+      },
+      "apply": {
+        "model": "farm_and_charm:block/rope_connection_supporting_knot"
+      }
+    },
+    {
+      "when": {
+        "rope_knot": "true"
+      },
+      "apply": {
+        "model": "farm_and_charm:block/rope_connection_knot"
+      }
+    }
+  ]
+}

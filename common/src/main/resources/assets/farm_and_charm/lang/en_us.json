@@ -310,5 +310,7 @@
   "advancement.farm_and_charm.place_chicken_coop.desc": "Place a Chicken Coop",
   "advancement.farm_and_charm.place_chicken_coop": "Cluckingham Palace",
   "advancement.farm_and_charm.place_chicken_nest.desc": "Place a Chicken Nest",
-  "advancement.farm_and_charm.place_chicken_nest": "What Came First...?"
+  "advancement.farm_and_charm.place_chicken_nest": "What Came First...?",
+  "block.farm_and_charm.rope_knot": "Rope Knot",
+  "block.farm_and_charm.rope": "Rope"
 }

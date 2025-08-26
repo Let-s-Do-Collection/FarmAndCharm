@@ -1,0 +1,41 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "farm_and_charm:block/rope_knot"
+      }
+    },
+    {
+      "when": {
+        "north": true
+      },
+      "apply": {
+        "model": "farm_and_charm:block/rope_knot_connection_north"
+      }
+    },
+    {
+      "when": {
+        "south": true
+      },
+      "apply": {
+        "model": "farm_and_charm:block/rope_knot_connection_south"
+      }
+    },
+    {
+      "when": {
+        "east": true
+      },
+      "apply": {
+        "model": "farm_and_charm:block/rope_knot_connection_east"
+      }
+    },
+    {
+      "when": {
+        "west": true
+      },
+      "apply": {
+        "model": "farm_and_charm:block/rope_knot_connection_west"
+      }
+    }
+  ]
+}

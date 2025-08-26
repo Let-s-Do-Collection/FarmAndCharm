@@ -1,0 +1,23 @@
+{
+	"format_version": "1.21.6",
+	"credit": "Made by Satisfy",
+	"textures": {
+		"0": "farm_and_charm:block/rope",
+		"particle": "farm_and_charm:block/rope"
+	},
+	"elements": [
+		{
+			"from": [7, 13, 7],
+			"to": [9, 16, 9],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7, 13, 7]},
+			"faces": {
+				"north": {"uv": [4, 12, 6, 15], "texture": "#0"},
+				"east": {"uv": [8, 12, 10, 15], "texture": "#0"},
+				"south": {"uv": [4, 12, 6, 15], "texture": "#0"},
+				"west": {"uv": [8, 12, 10, 15], "texture": "#0"},
+				"up": {"uv": [7, 14, 9, 16], "texture": "#0"},
+				"down": {"uv": [7, 14, 9, 16], "texture": "#0"}
+			}
+		}
+	]
+}

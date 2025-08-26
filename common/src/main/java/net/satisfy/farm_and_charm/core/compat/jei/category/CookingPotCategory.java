@@ -82,6 +82,7 @@ public class CookingPotCategory implements IRecipeCategory<CookingPotRecipe> {
     }
 
     @Override
+    @SuppressWarnings("removal")
     public @NotNull IDrawable getBackground() {
         return this.background;
     }

@@ -1,0 +1,7 @@
+{
+  "parent": "farm_and_charm:block/template_cross_crop_supported",
+  "textures": {
+    "4": "farm_and_charm:block/tomato_top_stage3_2",
+    "particle": "farm_and_charm:block/tomato_top_stage3_2"
+  }
+}

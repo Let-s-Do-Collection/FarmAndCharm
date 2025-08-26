@@ -18,73 +18,85 @@ public class TomatoCropHeadBlock extends TomatoCropBlock implements Bonemealable
 
     public TomatoCropHeadBlock(Properties properties) {
         super(properties, SHAPE);
-        this.registerDefaultState(defaultBlockState().setValue(AGE, 0));
+        this.registerDefaultState(this.defaultBlockState()
+                .setValue(AGE, 0)
+                .setValue(SUPPORTED, false));
     }
 
-    public static boolean canGrowInto(ServerLevel serverLevel, BlockPos blockPos) {
-        return serverLevel.getBlockState(blockPos).isAir() && (isRopeAbove(serverLevel, blockPos) || getHeight(blockPos.below(), serverLevel) < getMaxHeight(serverLevel, blockPos));
+    public static int getMaxHeight(LevelAccessor level, BlockPos pos) {
+        return isRopeAbove(level, pos) ? 4 : 2;
+    }
+
+    public static boolean canGrowInto(ServerLevel level, BlockPos pos) {
+        return level.getBlockState(pos).isAir()
+                && (isRopeAbove(level, pos) || getHeight(pos.below(), level) < getMaxHeight(level, pos));
     }
 
     @Override
-    public void tick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource) {
-        super.tick(blockState, serverLevel, blockPos, randomSource);
-        if (getHeight(blockPos, serverLevel) > getMaxHeight(serverLevel, blockPos) && !isRopeAbove(serverLevel, blockPos)) {
-            serverLevel.destroyBlock(blockPos, true);
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        super.tick(state, level, pos, random);
+        if (getHeight(pos, level) > getMaxHeight(level, pos) && !isRopeAbove(level, pos)) {
+            level.destroyBlock(pos, true);
         }
     }
 
     @Override
-    public boolean isRandomlyTicking(BlockState blockState) {
+    public boolean isRandomlyTicking(BlockState state) {
         return true;
     }
 
     @Override
-    public void randomTick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource) {
-        super.randomTick(blockState, serverLevel, blockPos, randomSource);
-        if (serverLevel.getRawBrightness(blockPos, 0) >= 9) {
-            if (randomSource.nextFloat() < 0.2F && canGrowInto(serverLevel, blockPos.above())) {
-                serverLevel.setBlockAndUpdate(blockPos.above(), this.defaultBlockState());
-            }
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        super.randomTick(state, level, pos, random);
+        if (level.getRawBrightness(pos, 0) >= 9
+                && random.nextFloat() < 0.2F
+                && canGrowInto(level, pos.above())) {
+            boolean supported = isRopeAbove(level, pos.above());
+            level.setBlockAndUpdate(pos.above(),
+                    this.defaultBlockState().setValue(SUPPORTED, supported));
         }
     }
 
     @Override
-    public boolean isValidBonemealTarget(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
+    public @NotNull BlockState updateShape(BlockState state, Direction dir, BlockState neighbor,
+                                           LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        if (dir == Direction.UP) {
+            state = state.setValue(SUPPORTED, isRopeAbove(level, pos));
+        }
+        if ((dir == Direction.DOWN && !state.canSurvive(level, pos))
+                || (getHeight(pos, level) > 2 && !isRopeAbove(level, pos))) {
+            level.scheduleTick(pos, this, 1);
+        }
+        if (dir == Direction.UP && (neighbor.is(this) || neighbor.is(getBodyBlock()))) {
+            return getBodyBlock().getStateForAge(state.getValue(AGE))
+                    .setValue(SUPPORTED, isRopeAbove(level, pos));
+        }
+        return state;
+    }
+
+    @Override
+    public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) {
         return true;
     }
 
     @Override
-    public boolean isBonemealSuccess(Level level, RandomSource randomSource, BlockPos blockPos, BlockState blockState) {
+    public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state) {
         return true;
     }
 
     @Override
-    @SuppressWarnings("deprecation")
-    public @NotNull BlockState updateShape(BlockState blockState, Direction direction, BlockState blockState2, LevelAccessor levelAccessor, BlockPos blockPos, BlockPos blockPos2) {
-        if ((direction == Direction.DOWN && !blockState.canSurvive(levelAccessor, blockPos)) || (getHeight(blockPos, levelAccessor) > 2 && !isRopeAbove(levelAccessor, blockPos))) {
-            levelAccessor.scheduleTick(blockPos, this, 1);
-        }
-        if (direction != Direction.UP || !blockState2.is(this) && !blockState2.is(getBodyBlock())) {
-            return blockState;
-        } else {
-            return getBodyBlock().getStateForAge(blockState.getValue(AGE));
-        }
-    }
-
-    @Override
-    public void performBonemeal(ServerLevel serverLevel, RandomSource randomSource, BlockPos blockPos, BlockState blockState) {
-        if (randomSource.nextBoolean() && canGrowInto(serverLevel, blockPos.above())) {
-            serverLevel.setBlockAndUpdate(blockPos.above(), this.defaultBlockState());
+    public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
+        if (random.nextBoolean() && canGrowInto(level, pos.above())) {
+            boolean supported = isRopeAbove(level, pos.above());
+            level.setBlockAndUpdate(pos.above(),
+                    this.defaultBlockState().setValue(SUPPORTED, supported));
             return;
         }
-        if (this.canGrow(blockState)) {
-            serverLevel.setBlockAndUpdate(blockPos, getStateForAge(blockState.getValue(AGE) + 1));
+        if (canGrow(state)) {
+            level.setBlockAndUpdate(pos,
+                    getStateForAge(state.getValue(AGE) + 1).setValue(SUPPORTED, isRopeAbove(level, pos)));
         } else {
-            dropTomatoes(serverLevel, blockPos, blockState);
+            dropTomatoes(level, pos, state);
         }
-    }
-
-    public static int getMaxHeight(LevelAccessor levelAccessor, BlockPos blockPos) {
-        return isRopeAbove(levelAccessor, blockPos) ? 4 : 2;
     }
 }

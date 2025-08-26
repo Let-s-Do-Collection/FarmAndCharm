@@ -146,7 +146,7 @@ public class FeedingTroughBlockEntity extends BlockEntity implements WorldlyCont
     public void onAnimalFed(Animal animal) {
         if (!(animal instanceof SaturationTracker.SaturatedAnimal saturated)) return;
         SaturationTracker tracker = saturated.farm_and_charm$getSaturationTracker();
-        tracker.feedDirectly(animal, animal.tickCount, 5);
+        tracker.feedDirectly(animal, 5);
         if (!animal.level().isClientSide) {
             PacketHandler.sendSaturationSync(
                     new SyncSaturationPacket(animal.getId(), tracker.level(), tracker.foodCounter()),

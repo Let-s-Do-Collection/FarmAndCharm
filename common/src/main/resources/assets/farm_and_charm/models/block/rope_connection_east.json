@@ -1,0 +1,37 @@
+{
+	"format_version": "1.21.6",
+	"credit": "Made by Satisfy",
+	"textures": {
+		"0": "farm_and_charm:block/rope",
+		"particle": "farm_and_charm:block/rope"
+	},
+	"elements": [
+		{
+			"name": "rope",
+			"from": [7, 11, 7],
+			"to": [9, 13, 9],
+			"rotation": {"angle": 0, "axis": "y", "origin": [7, 11, 7]},
+			"faces": {
+				"north": {"uv": [7, 8, 9, 10], "texture": "#0"},
+				"east": {"uv": [7, 10, 9, 12], "texture": "#0"},
+				"south": {"uv": [9, 8, 11, 10], "texture": "#0"},
+				"west": {"uv": [7, 12, 9, 14], "texture": "#0"},
+				"up": {"uv": [7, 14, 9, 16], "rotation": 90, "texture": "#0"},
+				"down": {"uv": [6, 4, 8, 2], "rotation": 90, "texture": "#0"}
+			}
+		},
+		{
+			"from": [9, 11, 7],
+			"to": [16, 13, 9],
+			"rotation": {"angle": 0, "axis": "y", "origin": [9, 11, 7]},
+			"faces": {
+				"north": {"uv": [9, 6, 16, 8], "texture": "#0"},
+				"east": {"uv": [10, 10, 12, 12], "texture": "#0"},
+				"south": {"uv": [9, 6, 16, 8], "texture": "#0"},
+				"west": {"uv": [10, 10, 12, 12], "texture": "#0"},
+				"up": {"uv": [9, 14, 16, 16], "texture": "#0"},
+				"down": {"uv": [2, 10, 9, 12], "texture": "#0"}
+			}
+		}
+	]
+}

@@ -32,9 +32,6 @@ public class TabRegistry {
                 output.accept(ObjectRegistry.STRAWBERRY.get());
                 output.accept(ObjectRegistry.WILD_NETTLE.get());
                 output.accept(ObjectRegistry.WILD_RIBWORT.get());
-                output.accept(ObjectRegistry.STRAWBERRY_TEA_CUP.get());
-                output.accept(ObjectRegistry.NETTLE_TEA_CUP.get());
-                output.accept(ObjectRegistry.RIBWORT_TEA_CUP.get());
                 output.accept(ObjectRegistry.WILD_EMMER.get());
                 output.accept(ObjectRegistry.WILD_BEETROOTS.get());
                 output.accept(ObjectRegistry.WILD_POTATOES.get());
@@ -112,12 +109,16 @@ public class TabRegistry {
                 output.accept(ObjectRegistry.STRAWBERRY_TEA.get());
                 output.accept(ObjectRegistry.NETTLE_TEA.get());
                 output.accept(ObjectRegistry.RIBWORT_TEA.get());
+                output.accept(ObjectRegistry.STRAWBERRY_TEA_CUP.get());
+                output.accept(ObjectRegistry.NETTLE_TEA_CUP.get());
+                output.accept(ObjectRegistry.RIBWORT_TEA_CUP.get());
                 output.accept(ObjectRegistry.CAT_FOOD.get());
                 output.accept(ObjectRegistry.DOG_FOOD.get());
                 output.accept(ObjectRegistry.CHICKEN_FEED.get());
                 output.accept(ObjectRegistry.HORSE_FODDER.get());
                 output.accept(ObjectRegistry.FERTILIZER.get());
                 output.accept(ObjectRegistry.COMPOST.get());
+                output.accept(ObjectRegistry.ROPE.get());
                 output.accept(ObjectRegistry.PET_BOWL.get());
                 output.accept(ObjectRegistry.DOG_FOOD_BAG.get());
                 output.accept(ObjectRegistry.CAT_FOOD_BAG.get());

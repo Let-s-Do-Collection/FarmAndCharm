@@ -310,7 +310,8 @@
   "advancement.farm_and_charm.place_chicken_coop": "Gackingham Palace",
   "advancement.farm_and_charm.place_chicken_coop.desc": "Platziere einen Hühnerstall",
   "advancement.farm_and_charm.place_chicken_nest": "Was war zuerst da...?",
-  "advancement.farm_and_charm.place_chicken_nest.desc": "Platziere ein Hühnernest"
-
+  "advancement.farm_and_charm.place_chicken_nest.desc": "Platziere ein Hühnernest",
+  "block.farm_and_charm.rope_knot": "Strickknoten",
+  "block.farm_and_charm.rope": "Strick"
 }
 

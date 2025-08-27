@@ -43,10 +43,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-
 public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker<RoasterBlockEntity>, ImplementedInventory, MenuProvider {
-    private static final int MAX_CAPACITY = 8, CONTAINER_SLOT = 6, OUTPUT_SLOT = 7, INGREDIENTS_AREA = 2 * 3;
-    private static final int[] SLOTS_FOR_UP = new int[]{0, 1, 2, 3, 4, 5, 6};
+    private static final int FIRST_INGREDIENT_SLOT = 0;
+    private static final int LAST_INGREDIENT_SLOT = 5;
+    private static final int CONTAINER_SLOT = 6;
+    private static final int OUTPUT_SLOT = 7;
+    private static final int MAX_CAPACITY = 8;
     private static final int MAX_ROASTING_TIME = 900;
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(MAX_CAPACITY, ItemStack.EMPTY);
     private int roastingTime;
@@ -60,14 +62,12 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
                 default -> 0;
             };
         }
-
         public void set(int index, int value) {
             switch (index) {
                 case 0 -> roastingTime = value;
                 case 1 -> isBeingBurned = value != 0;
             }
         }
-
         public int getCount() {
             return 2;
         }
@@ -83,24 +83,34 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
 
     public int @NotNull [] getSlotsForFace(Direction side) {
         return switch (side) {
-            case UP -> SLOTS_FOR_UP;
-            case DOWN -> new int[]{0};
+            case UP -> new int[]{0, 1, 2, 3, 4, 5};
+            case DOWN -> new int[]{OUTPUT_SLOT};
             default -> new int[]{CONTAINER_SLOT};
         };
     }
 
     @Override
-    protected void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        super.loadAdditional(compoundTag, provider);
-        ContainerHelper.loadAllItems(compoundTag, inventory, provider);
-        roastingTime = compoundTag.getInt("RoastingTime");
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.loadAdditional(tag, provider);
+        NonNullList<ItemStack> loaded = NonNullList.withSize(MAX_CAPACITY, ItemStack.EMPTY);
+        ContainerHelper.loadAllItems(tag, loaded, provider);
+        for (int i = 0; i < MAX_CAPACITY; i++) {
+            this.inventory.set(i, loaded.get(i));
+        }
+        roastingTime = tag.getInt("RoastingTime");
+        if (tag.hasUUID("OwnerUUID")) {
+            ownerUuid = tag.getUUID("OwnerUUID");
+        }
     }
 
     @Override
-    protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        super.saveAdditional(compoundTag, provider);
-        ContainerHelper.saveAllItems(compoundTag, inventory, provider);
-        compoundTag.putInt("RoastingTime", roastingTime);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.saveAdditional(tag, provider);
+        ContainerHelper.saveAllItems(tag, inventory, provider);
+        tag.putInt("RoastingTime", roastingTime);
+        if (ownerUuid != null) {
+            tag.putUUID("OwnerUUID", ownerUuid);
+        }
     }
 
     public boolean isBeingBurned() {
@@ -112,23 +122,26 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
     private boolean canCraft(Recipe<?> recipe, RegistryAccess access) {
         if (recipe == null || recipe.getResultItem(access).isEmpty()) return false;
         if (recipe instanceof RoasterRecipe roastingRecipe) {
-            ItemStack outputSlotStack = getItem(0), containerSlotStack = getItem(CONTAINER_SLOT);
-            boolean isContainerCorrect = containerSlotStack.is(roastingRecipe.getContainer().getItem()), isOutputSlotCompatible = outputSlotStack.isEmpty() || ItemStack.isSameItemSameComponents(outputSlotStack, generateOutputItem(recipe, access)) && outputSlotStack.getCount() < outputSlotStack.getMaxStackSize();
-            return isContainerCorrect && isOutputSlotCompatible;
+            ItemStack containerSlotStack = getItem(CONTAINER_SLOT);
+            if (!containerSlotStack.is(roastingRecipe.getContainer().getItem())) return false;
+            ItemStack outputSlotStack = getItem(OUTPUT_SLOT);
+            ItemStack expected = generateOutputItem(recipe, access);
+            return outputSlotStack.isEmpty() || ItemStack.isSameItemSameComponents(outputSlotStack, expected) && outputSlotStack.getCount() < outputSlotStack.getMaxStackSize();
         }
         return false;
     }
 
     private void craft(Recipe<?> recipe, RegistryAccess access) {
         if (!canCraft(recipe, access)) return;
-        ItemStack recipeOutput = generateOutputItem(recipe, access), outputSlotStack = getItem(0);
+        ItemStack recipeOutput = generateOutputItem(recipe, access);
+        ItemStack outputSlotStack = getItem(OUTPUT_SLOT);
         if (outputSlotStack.isEmpty()) {
-            setItem(0, recipeOutput);
+            setItem(OUTPUT_SLOT, recipeOutput);
         } else {
             outputSlotStack.grow(recipeOutput.getCount());
         }
         recipe.getIngredients().forEach(ingredient -> {
-            for (int slot = 0; slot < INGREDIENTS_AREA; slot++) {
+            for (int slot = FIRST_INGREDIENT_SLOT; slot <= LAST_INGREDIENT_SLOT; slot++) {
                 ItemStack stack = getItem(slot);
                 if (ingredient.test(stack)) {
                     ItemStack remainderStack = stack.getItem().hasCraftingRemainingItem() ? new ItemStack(Objects.requireNonNull(stack.getItem().getCraftingRemainingItem())) : ItemStack.EMPTY;
@@ -143,13 +156,14 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
             containerSlotStack.shrink(1);
             if (containerSlotStack.isEmpty()) setItem(CONTAINER_SLOT, ItemStack.EMPTY);
         }
+        setChanged();
     }
 
     private ItemStack generateOutputItem(Recipe<?> recipe, RegistryAccess access) {
         ItemStack outputStack = recipe.getResultItem(access).copy();
         if (outputStack.getItem() instanceof EffectFood) {
             recipe.getIngredients().forEach(ingredient -> {
-                for (int slot = 0; slot < INGREDIENTS_AREA; slot++) {
+                for (int slot = FIRST_INGREDIENT_SLOT; slot <= LAST_INGREDIENT_SLOT; slot++) {
                     ItemStack stack = getItem(slot);
                     if (ingredient.test(stack)) {
                         EffectFoodHelper.getEffects(stack).forEach(effect -> EffectFoodHelper.addEffect(outputStack, effect));
@@ -168,19 +182,14 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
         if (wasBeingBurned != isBeingBurned || state.getValue(RoasterBlock.LIT) != isBeingBurned) {
             world.setBlock(pos, state.setValue(RoasterBlock.LIT, isBeingBurned), Block.UPDATE_ALL);
         }
-
         if (!isBeingBurned) {
             return;
         }
-
-
         if (level == null) throw new IllegalStateException("Null world not allowed");
-
         RecipeManager recipeManager = level.getRecipeManager();
         List<RecipeHolder<RoasterRecipe>> recipes = recipeManager.getAllRecipesFor(RecipeTypeRegistry.ROASTER_RECIPE_TYPE.get());
         Optional<RoasterRecipe> recipe = Optional.ofNullable(getRecipe(recipes, inventory));
         RegistryAccess access = level.registryAccess();
-
         if (recipe.isPresent() && recipe.get() instanceof RoasterRecipe roastingRecipe) {
             if (roastingRecipe.requiresLearning()) {
                 ServerPlayer owner = Objects.requireNonNull(world.getServer()).getPlayerList().getPlayer(ownerUuid);
@@ -193,7 +202,6 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
                 }
             }
         }
-
         if (recipe.isPresent() && canCraft(recipe.get(), access)) {
             if (++roastingTime >= MAX_ROASTING_TIME) {
                 roastingTime = 0;
@@ -210,9 +218,15 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
         }
     }
 
-
+    @Override
     public NonNullList<ItemStack> getItems() {
         return inventory;
+    }
+
+    @Override
+    public void setItem(int slot, ItemStack stack) {
+        inventory.set(slot, stack);
+        setChanged();
     }
 
     public boolean stillValid(Player player) {
@@ -230,24 +244,47 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
     }
 
     private RoasterRecipe getRecipe(List<RecipeHolder<RoasterRecipe>> recipes, NonNullList<ItemStack> inventory) {
-        recipeLoop:
         for (RecipeHolder<RoasterRecipe> recipeHolder : recipes) {
             RoasterRecipe recipe = recipeHolder.value();
-            for (Ingredient ingredient : recipe.getIngredients()) {
-                boolean ingredientFound = false;
-                for (int slotIndex = 1; slotIndex < inventory.size(); slotIndex++) {
-                    ItemStack slotItem = inventory.get(slotIndex);
-                    if (ingredient.test(slotItem)) {
-                        ingredientFound = true;
-                        break;
-                    }
-                }
-                if (!ingredientFound) {
-                    continue recipeLoop;
-                }
+            if (matchesInventory(recipe, inventory)) {
+                return recipe;
             }
-            return recipe;
         }
         return null;
+    }
+
+    private boolean matchesInventory(RoasterRecipe recipe, NonNullList<ItemStack> inventory) {
+        List<Ingredient> ingredients = recipe.getIngredients();
+        NonNullList<ItemStack> invCopy = NonNullList.withSize(inventory.size(), ItemStack.EMPTY);
+        for (int i = FIRST_INGREDIENT_SLOT; i <= LAST_INGREDIENT_SLOT; i++) {
+            invCopy.set(i, inventory.get(i).copy());
+        }
+        for (Ingredient ingredient : ingredients) {
+            boolean matched = false;
+            for (int i = FIRST_INGREDIENT_SLOT; i <= LAST_INGREDIENT_SLOT; i++) {
+                ItemStack stack = invCopy.get(i);
+                if (!stack.isEmpty() && ingredient.test(stack)) {
+                    stack.shrink(1);
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) {
+                return false;
+            }
+        }
+        outer:
+        for (int i = FIRST_INGREDIENT_SLOT; i <= LAST_INGREDIENT_SLOT; i++) {
+            ItemStack remaining = invCopy.get(i);
+            if (!remaining.isEmpty()) {
+                for (Ingredient ingredient : ingredients) {
+                    if (ingredient.test(remaining)) {
+                        continue outer;
+                    }
+                }
+                return false;
+            }
+        }
+        return true;
     }
 }

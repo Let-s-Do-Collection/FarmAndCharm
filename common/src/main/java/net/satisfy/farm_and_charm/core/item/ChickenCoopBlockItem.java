@@ -27,7 +27,6 @@ public class ChickenCoopBlockItem extends BlockItem {
     @Override
     public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
         tooltip.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
-        tooltip.add(Component.empty());
 
         CustomData data = itemStack.get(DataComponents.BLOCK_ENTITY_DATA);
         if (data == null) return;
@@ -35,11 +34,18 @@ public class ChickenCoopBlockItem extends BlockItem {
         int eggCount = data.copyTag().getInt("EggCount");
         ListTag chickens = data.copyTag().getList("Chickens", 10);
 
+        boolean added = false;
+
         if (!chickens.isEmpty()) {
+            tooltip.add(Component.empty());
+            added = true;
             tooltip.add(Component.translatable("tooltip.farm_and_charm.chickencoop_chickens", chickens.size(), 3).withStyle(ChatFormatting.GRAY));
         }
 
         if (eggCount > 0) {
+            if (!added) {
+                tooltip.add(Component.empty());
+            }
             tooltip.add(Component.translatable("tooltip.farm_and_charm.chickencoop_eggs", eggCount, 9).withStyle(ChatFormatting.GRAY));
         }
     }

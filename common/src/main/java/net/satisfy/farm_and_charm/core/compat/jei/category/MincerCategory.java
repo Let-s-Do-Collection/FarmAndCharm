@@ -9,7 +9,6 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.satisfy.farm_and_charm.FarmAndCharm;
@@ -21,19 +20,20 @@ import java.util.List;
 
 public class MincerCategory implements IRecipeCategory<MincerRecipe> {
     public static final RecipeType<MincerRecipe> MINCING_TYPE = RecipeType.create(FarmAndCharm.MOD_ID, "mincer", MincerRecipe.class);
-    public final static ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "textures/gui/mincer.png");
+    private static final int WIDTH = 150;
+    private static final int HEIGHT = 50;
 
-    private final IDrawable background;
     private final IDrawable icon;
+    private final IDrawable slot;
 
     public MincerCategory(IGuiHelper helper) {
-        this.background = helper.createDrawable(TEXTURE, 0, 0, 176, 85);
         this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ObjectRegistry.MINCER.get()));
+        this.slot = helper.getSlotDrawable();
     }
 
     @Override
     public @NotNull RecipeType<MincerRecipe> getRecipeType() {
-        return MincerCategory.MINCING_TYPE;
+        return MINCING_TYPE;
     }
 
     @Override
@@ -42,8 +42,13 @@ public class MincerCategory implements IRecipeCategory<MincerRecipe> {
     }
 
     @Override
-    public @NotNull IDrawable getBackground() {
-        return this.background;
+    public int getWidth() {
+        return WIDTH;
+    }
+
+    @Override
+    public int getHeight() {
+        return HEIGHT;
     }
 
     @Override
@@ -55,9 +60,12 @@ public class MincerCategory implements IRecipeCategory<MincerRecipe> {
     public void setRecipe(IRecipeLayoutBuilder builder, MincerRecipe recipe, IFocusGroup focuses) {
         List<Ingredient> ingredients = recipe.getIngredients();
         if (!ingredients.isEmpty()) {
-            builder.addSlot(RecipeIngredientRole.INPUT, 50, 35).addIngredients(ingredients.get(0));
+            builder.addSlot(RecipeIngredientRole.INPUT, 30, 15)
+                    .setBackground(this.slot, -1, -1)
+                    .addIngredients(ingredients.get(0));
         }
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 110, 35).addItemStack(recipe.getOutput());
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 100, 15)
+                .setBackground(this.slot, -1, -1)
+                .addItemStack(recipe.getOutput());
     }
-
 }

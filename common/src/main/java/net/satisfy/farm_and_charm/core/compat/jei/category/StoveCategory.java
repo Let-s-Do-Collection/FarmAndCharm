@@ -24,16 +24,15 @@ import net.satisfy.farm_and_charm.core.recipe.StoveRecipe;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("removal")
 public class StoveCategory implements IRecipeCategory<StoveRecipe> {
     public static final RecipeType<StoveRecipe> STOVE = RecipeType.create(FarmAndCharm.MOD_ID, "stove", StoveRecipe.class);
     public static final int WIDTH = 124;
     public static final int HEIGHT = 60;
     public static final int WIDTH_OF = 26;
     public static final int HEIGHT_OF = 13;
+
     private final IDrawable background;
     private final IDrawable icon;
-
     private final IDrawable burnIcon;
     private final IDrawableAnimated arrow;
     private final Component localizedName;
@@ -47,32 +46,26 @@ public class StoveCategory implements IRecipeCategory<StoveRecipe> {
         this.localizedName = Component.translatable("rei.farm_and_charm.stove_category");
     }
 
-
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, StoveRecipe recipe, IFocusGroup focuses) {
         NonNullList<Ingredient> ingredients = recipe.getIngredients();
-
         FarmAndCharmJEIPlugin.addSlot(builder, 29 - WIDTH_OF, 18 - HEIGHT_OF, ingredients.get(0));
-
         if (ingredients.size() > 1) {
             FarmAndCharmJEIPlugin.addSlot(builder, 47 - WIDTH_OF, 18 - HEIGHT_OF, ingredients.get(1));
         }
-
         if (ingredients.size() > 2) {
             FarmAndCharmJEIPlugin.addSlot(builder, 65 - WIDTH_OF, 18 - HEIGHT_OF, ingredients.get(2));
         }
-
         assert Minecraft.getInstance().level != null;
         builder.addSlot(RecipeIngredientRole.OUTPUT, 126 - WIDTH_OF, 42 - HEIGHT_OF)
                 .addItemStack(recipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
     }
 
-
     @Override
     public void draw(StoveRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
+        this.background.draw(guiGraphics);
         arrow.draw(guiGraphics, StoveGui.ARROW_X - WIDTH_OF, StoveGui.ARROW_Y - HEIGHT_OF);
         burnIcon.draw(guiGraphics, 62 - WIDTH_OF, 49 - HEIGHT_OF);
-
         drawExperience(recipe, guiGraphics);
     }
 
@@ -88,6 +81,16 @@ public class StoveCategory implements IRecipeCategory<StoveRecipe> {
     }
 
     @Override
+    public int getWidth() {
+        return WIDTH;
+    }
+
+    @Override
+    public int getHeight() {
+        return HEIGHT;
+    }
+
+    @Override
     public @NotNull RecipeType<StoveRecipe> getRecipeType() {
         return STOVE;
     }
@@ -95,11 +98,6 @@ public class StoveCategory implements IRecipeCategory<StoveRecipe> {
     @Override
     public @NotNull Component getTitle() {
         return this.localizedName;
-    }
-
-    @Override
-    public @NotNull IDrawable getBackground() {
-        return this.background;
     }
 
     @Override

@@ -1,7 +1,6 @@
 {
   "replace": false,
   "values": [
-    "#c:raw_beef",
-    "#neoforge:raw_beef"
+    "#c:raw_beef"
   ]
 }

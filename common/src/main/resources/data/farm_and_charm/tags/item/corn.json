@@ -1,7 +1,6 @@
 {
   "replace": false,
   "values": [
-    "#c:crops/corn",
-    "#neoforge:crops/corn"
+    "#c:crops/corn"
   ]
 }

@@ -1,9 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "minecraft:cooked_beef",
-    "farm_and_charm:beef_patty_with_vegetables",
-    "farm_and_charm:potato_with_roast_meat",
-    "farm_and_charm:sausage_with_oat_patty"
-  ]
-}

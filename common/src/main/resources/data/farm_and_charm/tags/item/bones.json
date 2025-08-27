@@ -2,7 +2,6 @@
     "replace": false,
     "values": [
         "minecraft:bone",
-        "#c:bones",
-        "#neoforge:bones"
+        "#c:bones"
     ]
 }

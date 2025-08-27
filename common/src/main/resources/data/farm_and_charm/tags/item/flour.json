@@ -1,7 +1,6 @@
 {
   "replace": false,
   "values": [
-    "#c:flour",
-    "#neoforge:flour"
+    "#c:flour"
   ]
 }

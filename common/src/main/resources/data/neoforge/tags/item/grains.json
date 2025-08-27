@@ -1,9 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "#neoforge:grains/barleys",
-    "#neoforge:grains/corn",
-    "#neoforge:grains/oats",
-    "#neoforge:grains/wheats"
-  ]
-}

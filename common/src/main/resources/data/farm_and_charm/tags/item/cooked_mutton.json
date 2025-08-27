@@ -1,7 +1,6 @@
 {
   "replace": false,
   "values": [
-    "#c:cooked_mutton",
-    "#neoforge:cooked_mutton"
+    "#c:cooked_mutton"
   ]
 }

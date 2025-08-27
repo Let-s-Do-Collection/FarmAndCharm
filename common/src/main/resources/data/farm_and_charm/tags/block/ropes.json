@@ -6,11 +6,11 @@
       "required": false
     },
     {
-      "id": "brewery:rope",
+      "id": "farm_and_charm:rope",
       "required": false
     },
     {
-      "id": "brewery:rope_knot",
+      "id": "farm_and_charm:rope_knot",
       "required": false
     },
     {

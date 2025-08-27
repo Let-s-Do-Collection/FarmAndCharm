@@ -2,7 +2,6 @@
   "replace": false,
   "values": [
     "#c:bread",
-    "#neoforge:bread",
     "minecraft:bread"
   ]
 }

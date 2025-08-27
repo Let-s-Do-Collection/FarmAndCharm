@@ -1,7 +1,6 @@
 {
   "replace": false,
   "values": [
-    "#c:raw_chicken",
-    "#neoforge:raw_chicken"
+    "#c:raw_chicken"
   ]
 }

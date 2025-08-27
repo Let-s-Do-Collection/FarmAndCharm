@@ -1,9 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "minecraft:cooked_chicken",
-    "farm_and_charm:stuffed_chicken",
-    "farm_and_charm:roasted_chicken",
-    "farm_and_charm:chicken_wrapped_in_bacon"
-  ]
-}

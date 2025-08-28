@@ -2,11 +2,11 @@ package net.satisfy.farm_and_charm.core.mixin;
 
 import net.minecraft.world.entity.animal.Rabbit;
 import net.minecraft.world.item.ItemStack;
+import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 
 @Mixin(Rabbit.class)
 public class RabbitMixin {

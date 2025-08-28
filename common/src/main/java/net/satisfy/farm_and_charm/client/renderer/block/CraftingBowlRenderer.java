@@ -18,9 +18,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.farm_and_charm.FarmAndCharm;
+import net.satisfy.farm_and_charm.client.model.CraftingBowlModel;
 import net.satisfy.farm_and_charm.core.block.CraftingBowlBlock;
 import net.satisfy.farm_and_charm.core.block.entity.CraftingBowlBlockEntity;
-import net.satisfy.farm_and_charm.client.model.CraftingBowlModel;
 
 public class CraftingBowlRenderer implements BlockEntityRenderer<CraftingBowlBlockEntity> {
     private final ModelPart bowl;

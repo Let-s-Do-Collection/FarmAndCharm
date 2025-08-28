@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-@SuppressWarnings("deprecation, unused")
+@SuppressWarnings("unused")
 public class BenchBlock extends LineConnectingBlock {
     public BenchBlock(Properties settings) {
         super(settings);
@@ -47,8 +47,9 @@ public class BenchBlock extends LineConnectingBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
-        return GeneralUtil.onUse(level, player, interactionHand, blockHitResult, 0);
+    //TODO Check
+    protected @NotNull ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+        return GeneralUtil.onUse(level, player, interactionHand, blockHitResult, 0.1);
     }
 
     @Override

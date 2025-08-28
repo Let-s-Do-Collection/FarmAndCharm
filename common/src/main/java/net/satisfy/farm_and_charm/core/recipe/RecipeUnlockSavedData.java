@@ -1,7 +1,5 @@
 package net.satisfy.farm_and_charm.core.recipe;
 
-import com.mojang.datafixers.DSL;
-import com.mojang.datafixers.DataFix;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -10,11 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.saveddata.SavedData;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class RecipeUnlockSavedData extends SavedData {
     private final Map<UUID, Set<ResourceLocation>> playerRecipes = new HashMap<>();

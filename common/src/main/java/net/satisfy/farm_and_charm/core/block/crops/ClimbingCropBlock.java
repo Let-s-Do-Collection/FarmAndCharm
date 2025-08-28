@@ -13,17 +13,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
@@ -33,16 +28,23 @@ import net.satisfy.farm_and_charm.core.block.RopeBlock;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public abstract class ClimbingCropBlock extends Block {
-    public static final IntegerProperty AGE = BlockStateProperties.AGE_4;
     public static final BooleanProperty SUPPORTED = BooleanProperty.create("supported");
-    private static final int MAX_AGE = 4;
     protected final VoxelShape shape;
 
     protected ClimbingCropBlock(BlockBehaviour.Properties properties, VoxelShape shape) {
         super(properties);
         this.shape = shape;
     }
+
+    protected abstract IntegerProperty getAgeProperty();
+    protected abstract int getMaxAge();
+    protected abstract ItemLike getRipeItem();
+    protected abstract ItemLike getRottenItem();
+
+    protected float getRottenChance() { return 0.05F; }
+    protected int getHarvestResetAge(Level level, BlockPos pos, BlockState state) { return 1; }
 
     protected static boolean isRopeAbove(LevelAccessor level, BlockPos pos) {
         BlockPos up = pos.above();
@@ -59,11 +61,6 @@ public abstract class ClimbingCropBlock extends Block {
         return h;
     }
 
-    protected abstract ItemLike getRipeItem();
-    protected abstract ItemLike getRottenItem();
-    protected float getRottenChance() { return 0.05F; }
-    protected int getHarvestResetAge(Level level, BlockPos pos, BlockState state) { return 1; }
-
     @Override
     public @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return this.shape;
@@ -71,11 +68,11 @@ public abstract class ClimbingCropBlock extends Block {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        return this.defaultBlockState().setValue(AGE, 0).setValue(SUPPORTED, false);
+        return this.defaultBlockState().setValue(getAgeProperty(), 0).setValue(SUPPORTED, false);
     }
 
     public @NotNull BlockState getStateForAge(int age) {
-        return this.defaultBlockState().setValue(AGE, Math.min(age, MAX_AGE)).setValue(SUPPORTED, false);
+        return this.defaultBlockState().setValue(getAgeProperty(), Math.min(age, getMaxAge())).setValue(SUPPORTED, false);
     }
 
     @Override
@@ -90,15 +87,15 @@ public abstract class ClimbingCropBlock extends Block {
     }
 
     protected boolean canGrow(BlockState state) {
-        return state.getValue(AGE) < MAX_AGE;
+        return state.getValue(getAgeProperty()) < getMaxAge();
     }
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         InteractionHand hand = player.getUsedItemHand();
         if (player.getItemInHand(hand).is(Items.BONE_MEAL)) return InteractionResult.PASS;
-        int age = state.getValue(AGE);
-        if (age == MAX_AGE) {
+        int age = state.getValue(getAgeProperty());
+        if (age == getMaxAge()) {
             dropFruits(level, pos, state);
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
@@ -135,15 +132,15 @@ public abstract class ClimbingCropBlock extends Block {
     }
 
     protected void dropFruits(Level level, BlockPos blockPos, BlockState blockState) {
-        int age = blockState.getValue(AGE);
-        int amount = level.getRandom().nextInt(2) + (age >= MAX_AGE ? 1 : 0);
+        int age = blockState.getValue(getAgeProperty());
+        int amount = level.getRandom().nextInt(2) + (age >= getMaxAge() ? 1 : 0);
         ItemStack drop = level.getRandom().nextFloat() < getRottenChance()
                 ? new ItemStack(getRottenItem(), 1)
                 : new ItemStack(getRipeItem(), amount);
         popResource(level, blockPos, drop);
         level.playSound(null, blockPos, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS, 1.0F, 0.8F + level.random.nextFloat() * 0.4F);
         int resetAge = getHarvestResetAge(level, blockPos, blockState);
-        level.setBlock(blockPos, blockState.setValue(AGE, resetAge), 2);
+        level.setBlock(blockPos, blockState.setValue(getAgeProperty(), resetAge), 2);
     }
 
     @Override
@@ -159,10 +156,10 @@ public abstract class ClimbingCropBlock extends Block {
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         if (level.getRawBrightness(pos, 0) >= 9) {
-            int age = state.getValue(AGE);
-            if (age < MAX_AGE && random.nextFloat() < 0.2f) {
-                boolean supported = isRopeAbove(level, pos);
-                level.setBlock(pos, state.setValue(AGE, age + 1).setValue(SUPPORTED, supported), 2);
+            int age = state.getValue(getAgeProperty());
+            if (age < getMaxAge() && random.nextFloat() < 0.2f) {
+                boolean supported = state.getValue(SUPPORTED);
+                level.setBlock(pos, state.setValue(getAgeProperty(), age + 1).setValue(SUPPORTED, supported), 2);
             }
         }
     }
@@ -174,6 +171,6 @@ public abstract class ClimbingCropBlock extends Block {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(AGE, SUPPORTED);
+        builder.add(getAgeProperty(), SUPPORTED);
     }
 }

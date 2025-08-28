@@ -3,11 +3,9 @@ package net.satisfy.farm_and_charm.core.block.crops;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -19,7 +17,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("deprecation")
 public class StrawberryCropBlock extends CropBlock {
     public static final IntegerProperty AGE = IntegerProperty.create("age", 0, 5);
 
@@ -48,8 +45,7 @@ public class StrawberryCropBlock extends CropBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult blockHitResult) {
-        InteractionHand hand = player.getUsedItemHand();
+    protected @NotNull InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult blockHitResult) {
         int i = state.getValue(AGE);
         if (i == getMaxAge()) {
             int strawberryCount = world.random.nextInt(2) + 1;

@@ -7,16 +7,7 @@ import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffect;
 import net.satisfy.farm_and_charm.FarmAndCharm;
-import net.satisfy.farm_and_charm.core.effect.ChickenEffect;
-import net.satisfy.farm_and_charm.core.effect.DogFoodEffect;
-import net.satisfy.farm_and_charm.core.effect.FarmersBlessingEffect;
-import net.satisfy.farm_and_charm.core.effect.FeastEffect;
-import net.satisfy.farm_and_charm.core.effect.GrandmasBlessingEffect;
-import net.satisfy.farm_and_charm.core.effect.HorseFodderEffect;
-import net.satisfy.farm_and_charm.core.effect.RestedEffect;
-import net.satisfy.farm_and_charm.core.effect.SatiationEffect;
-import net.satisfy.farm_and_charm.core.effect.SustenanceEffect;
-import net.satisfy.farm_and_charm.core.effect.SweetsEffect;
+import net.satisfy.farm_and_charm.core.effect.*;
 import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 
 import java.util.function.Supplier;

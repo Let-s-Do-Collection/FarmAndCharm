@@ -3,14 +3,7 @@ package net.satisfy.farm_and_charm;
 import com.google.common.base.Suppliers;
 import dev.architectury.registry.registries.RegistrarManager;
 import net.satisfy.farm_and_charm.core.network.PacketHandler;
-import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
-import net.satisfy.farm_and_charm.core.registry.MobEffectRegistry;
-import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
-import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
-import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
-import net.satisfy.farm_and_charm.core.registry.SoundEventRegistry;
-import net.satisfy.farm_and_charm.core.registry.TabRegistry;
-import net.satisfy.farm_and_charm.core.registry.VillagerTradeRegistryHandler;
+import net.satisfy.farm_and_charm.core.registry.*;
 
 import java.util.function.Supplier;
 

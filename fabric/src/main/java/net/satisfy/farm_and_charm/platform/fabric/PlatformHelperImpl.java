@@ -1,8 +1,8 @@
 package net.satisfy.farm_and_charm.platform.fabric;
 
-import net.satisfy.farm_and_charm.platform.PlatformHelper;
-import net.satisfy.farm_and_charm.fabric.core.config.FarmAndCharmFabricConfig;
 import me.shedaniel.autoconfig.AutoConfig;
+import net.satisfy.farm_and_charm.fabric.core.config.FarmAndCharmFabricConfig;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 
 public class PlatformHelperImpl extends PlatformHelper {
     public static boolean isBonemealEffectEnabled() {

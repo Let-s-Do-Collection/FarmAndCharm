@@ -11,8 +11,8 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.satisfy.farm_and_charm.FarmAndCharm;
-import net.satisfy.farm_and_charm.core.block.entity.WaterSprinklerBlockEntity;
 import net.satisfy.farm_and_charm.client.model.WaterSprinklerModel;
+import net.satisfy.farm_and_charm.core.block.entity.WaterSprinklerBlockEntity;
 import org.joml.Quaternionf;
 
 public class WaterSprinklerRenderer implements BlockEntityRenderer<WaterSprinklerBlockEntity> {

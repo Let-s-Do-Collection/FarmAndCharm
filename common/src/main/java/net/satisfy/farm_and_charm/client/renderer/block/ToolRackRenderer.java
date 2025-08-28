@@ -8,9 +8,9 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.satisfy.farm_and_charm.client.util.ClientUtil;
 import net.satisfy.farm_and_charm.core.block.entity.StorageBlockEntity;
 import net.satisfy.farm_and_charm.core.registry.TagRegistry;
-import net.satisfy.farm_and_charm.client.util.ClientUtil;
 
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)

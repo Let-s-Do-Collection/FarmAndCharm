@@ -8,12 +8,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.satisfy.farm_and_charm.FarmAndCharm;
-import net.satisfy.farm_and_charm.core.recipe.CookingPotRecipe;
-import net.satisfy.farm_and_charm.core.recipe.CraftingBowlRecipe;
-import net.satisfy.farm_and_charm.core.recipe.MincerRecipe;
-import net.satisfy.farm_and_charm.core.recipe.RoasterRecipe;
-import net.satisfy.farm_and_charm.core.recipe.SiloRecipe;
-import net.satisfy.farm_and_charm.core.recipe.StoveRecipe;
+import net.satisfy.farm_and_charm.core.recipe.*;
 import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 
 import java.util.function.Supplier;

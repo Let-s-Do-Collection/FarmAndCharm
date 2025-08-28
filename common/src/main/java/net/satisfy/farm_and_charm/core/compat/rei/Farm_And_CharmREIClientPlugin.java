@@ -20,12 +20,7 @@ import net.satisfy.farm_and_charm.core.compat.rei.silo.SiloCategory;
 import net.satisfy.farm_and_charm.core.compat.rei.silo.SiloDisplay;
 import net.satisfy.farm_and_charm.core.compat.rei.stove.StoveCategory;
 import net.satisfy.farm_and_charm.core.compat.rei.stove.StoveDisplay;
-import net.satisfy.farm_and_charm.core.recipe.CookingPotRecipe;
-import net.satisfy.farm_and_charm.core.recipe.CraftingBowlRecipe;
-import net.satisfy.farm_and_charm.core.recipe.MincerRecipe;
-import net.satisfy.farm_and_charm.core.recipe.RoasterRecipe;
-import net.satisfy.farm_and_charm.core.recipe.SiloRecipe;
-import net.satisfy.farm_and_charm.core.recipe.StoveRecipe;
+import net.satisfy.farm_and_charm.core.recipe.*;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
 

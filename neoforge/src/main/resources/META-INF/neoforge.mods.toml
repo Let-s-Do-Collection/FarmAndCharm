@@ -4,16 +4,17 @@ license = "Custom"
 issueTrackerURL = "https://github.com/satisfyu/Let-s-Do-Hub"
 
 [[mixins]]
-config = [
-    "FarmAndCharm-common.mixins.json",
-    "FarmAndCharm.mixins.json"
-]
+config = "FarmAndCharm-common.mixins.json"
+
+[[mixins]]
+config = "FarmAndCharm.mixins.json"
+
 
 [[mods]]
 modId = "farm_and_charm"
-version = "1.2.0"
+version = "1.1.0"
 displayName = "[Let's Do] Farm & Charm"
-authors = "satisfy, binaris, jason13"
+authors = "satisfy"
 description = '''
 The farm calls: Experience the art of advanced agriculture and farmhouse cuisine! Use mincers, cooking pots, as well as new grains and fruit varieties to enhance your culinary and agricultural skills.
 '''

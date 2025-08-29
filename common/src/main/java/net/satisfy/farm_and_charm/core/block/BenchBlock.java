@@ -47,7 +47,6 @@ public class BenchBlock extends LineConnectingBlock {
     }
 
     @Override
-    //TODO Check
     protected @NotNull ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
         return GeneralUtil.onUse(level, player, interactionHand, blockHitResult, 0.1);
     }

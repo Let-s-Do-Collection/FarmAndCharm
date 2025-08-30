@@ -12,7 +12,7 @@ config = "FarmAndCharm.mixins.json"
 
 [[mods]]
 modId = "farm_and_charm"
-version = "${mod_version}"
+version = "${version}"
 displayName = "[Let's Do] Farm & Charm"
 authors = "satisfy"
 description = '''

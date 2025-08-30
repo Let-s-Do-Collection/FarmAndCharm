@@ -16,8 +16,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.util.GeneralUtil;
-
-import java.util.Iterator;
+import org.jetbrains.annotations.NotNull;
 
 public class StorageBlockEntity extends BlockEntity {
     private int size;
@@ -49,10 +48,8 @@ public class StorageBlockEntity extends BlockEntity {
         if (var2 instanceof ServerLevel serverLevel) {
             if (!this.level.isClientSide()) {
                 Packet<ClientGamePacketListener> updatePacket = this.getUpdatePacket();
-                Iterator var3 = GeneralUtil.tracking(serverLevel, this.getBlockPos()).iterator();
 
-                while(var3.hasNext()) {
-                    ServerPlayer player = (ServerPlayer)var3.next();
+                for (ServerPlayer player : GeneralUtil.tracking(serverLevel, this.getBlockPos())) {
                     player.connection.send(updatePacket);
                 }
             }
@@ -81,13 +78,13 @@ public class StorageBlockEntity extends BlockEntity {
     }
 
     @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.Provider provider) {
         return this.saveWithoutMetadata(provider);
     }
 
     public void setInventory(NonNullList<ItemStack> inventory) {
         for(int i = 0; i < inventory.size(); ++i) {
-            this.inventory.set(i, (ItemStack)inventory.get(i));
+            this.inventory.set(i, inventory.get(i));
         }
 
     }

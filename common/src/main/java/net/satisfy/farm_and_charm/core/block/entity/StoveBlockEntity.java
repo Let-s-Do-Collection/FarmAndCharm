@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
+import dev.architectury.registry.fuel.FuelRegistry;
 import net.minecraft.core.*;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -24,7 +25,6 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
@@ -126,7 +126,9 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         this.cookTimeTotal = compoundTag.getShort("CookTimeTotal");
         this.burnTimeTotal = this.getTotalBurnTime(this.getItem(4));
         this.experience = compoundTag.getFloat("Experience");
-
+        if (compoundTag.hasUUID("Owner")) {
+            this.ownerUuid = compoundTag.getUUID("Owner");
+        }
     }
 
     @Override
@@ -136,6 +138,9 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         compoundTag.putShort("CookTime", (short) this.cookTime);
         compoundTag.putShort("CookTimeTotal", (short) this.cookTimeTotal);
         compoundTag.putFloat("Experience", this.experience);
+        if (this.ownerUuid != null) {
+            compoundTag.putUUID("Owner", this.ownerUuid);
+        }
         ContainerHelper.saveAllItems(compoundTag, this.inventory, provider);
     }
 
@@ -234,7 +239,8 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
             }
         }
 
-        if (recipeOutput.getItem() instanceof EffectFood || recipeOutput.getItem() instanceof EffectFoodBlockItem || recipeOutput.getItem() instanceof EffectFoodBlockItem) {
+        if (recipeOutput.getItem() instanceof EffectFood
+                || recipeOutput.getItem() instanceof EffectFoodBlockItem) {
             EffectFoodHelper.applyEffects(recipeOutput);
         }
         if (outputSlotStack.isEmpty()) {
@@ -295,7 +301,7 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
 
     protected int getTotalBurnTime(ItemStack fuel) {
         if (fuel.isEmpty()) return 0;
-        return AbstractFurnaceBlockEntity.getFuel().getOrDefault(fuel.getItem(), 0);
+        return FuelRegistry.get(fuel);
     }
 
     private ItemStack getRemainderItem(ItemStack stack) {
@@ -361,6 +367,10 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         super.setChanged();
         if (this.level != null)
             level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), Block.UPDATE_CLIENTS);
+    }
+
+    public void setOwner(UUID uuid) {
+        this.ownerUuid = uuid;
     }
 
     @Nullable

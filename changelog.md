@@ -1,3 +1,10 @@
+[1.1.2]
+
+**Fixed**
+* Crash caused by unregistered custom MobEffects (e.g. `sustenance`) not being saved correctly
+* Stove didn’t accept modded fuels
+* Crash when saving StoveBlockEntity if ownerUuid was null
+
 [1.1.1]
 
 **Fixed**

@@ -1,3 +1,9 @@
+[1.1.1]
+
+**Fixed**
+* Fixed a crash when sending `SyncSaturationPacket` by sending payloads directly.
+
+***
 [1.1.0]
 
 **Welcome to 1.21.1**

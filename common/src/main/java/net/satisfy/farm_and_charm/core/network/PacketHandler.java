@@ -17,18 +17,14 @@ public class PacketHandler {
     public static final ResourceLocation SYNC_SATURATION = FarmAndCharmIdentifier.of("sync_saturation");
 
     public static void init() {
-        NetworkManager.registerReceiver(NetworkManager.c2s(),
-                SetTextPacket.TYPE,
-                SetTextPacket.STREAM_CODEC, (setTextPacket, packetContext) -> {
-            packetContext.queue(() ->
-                    SetTextPacket.handle(setTextPacket, (ServerPlayer) packetContext.getPlayer()));
-        });
         if (Platform.getEnvironment() == Env.CLIENT) {
-            NetworkManager.registerReceiver(NetworkManager.s2c(),
-                    SyncSaturationPacket.TYPE,
-                    SyncSaturationPacket.STREAM_CODEC,
-                    (packet, packetContext) ->
-                            packetContext.queue(() -> SyncSaturationPacketClientHandler.handle(packet)));
+            NetworkManager.registerReceiver(NetworkManager.c2s(), SetTextPacket.TYPE, SetTextPacket.STREAM_CODEC, (pkt, ctx) -> {});
+            NetworkManager.registerReceiver(NetworkManager.s2c(), SyncSaturationPacket.TYPE, SyncSaturationPacket.STREAM_CODEC, (pkt, ctx) ->
+                    ctx.queue(() -> SyncSaturationPacketClientHandler.handle(pkt)));
+        } else {
+            NetworkManager.registerReceiver(NetworkManager.c2s(), SetTextPacket.TYPE, SetTextPacket.STREAM_CODEC, (pkt, ctx) ->
+                    ctx.queue(() -> SetTextPacket.handle(pkt, (ServerPlayer) ctx.getPlayer())));
+            NetworkManager.registerReceiver(NetworkManager.s2c(), SyncSaturationPacket.TYPE, SyncSaturationPacket.STREAM_CODEC, (pkt, ctx) -> {});
         }
     }
 

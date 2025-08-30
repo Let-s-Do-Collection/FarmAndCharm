@@ -4,6 +4,21 @@
 * Crash caused by unregistered custom MobEffects (e.g. `sustenance`) not being saved correctly
 * Stove didn’t accept modded fuels
 * Crash when saving StoveBlockEntity if ownerUuid was null
+* Crafting Bowl never produced output items after stirring was completed
+* Server crash when ticking crops (`NoSuchMethodError: getGrowthSpeed`), fixed by explicitly calling `CropBlock.getGrowthSpeed(...)` in crop blocks
+
+**Changed**
+* Tomato crops can no longer be planted on top of other tomato blocks
+* Chicken AI goals for locating and entering coops were optimized:
+  * Reduced frequency of pathfinding checks with internal cooldown
+  * Improved caching of valid coop positions
+  * Prevented redundant navigation calls for smoother movement
+
+A big thank you to everyone who has been actively reporting bugs and sharing feedback ❤️
+
+Some issues can easily slip through during development, and your reports help me catch them faster. Your support makes the mod better with every update. I really appreciate it!
+
+***
 
 [1.1.1]
 
@@ -11,6 +26,7 @@
 * Fixed a crash when sending `SyncSaturationPacket` by sending payloads directly.
 
 ***
+
 [1.1.0]
 
 **Welcome to 1.21.1**

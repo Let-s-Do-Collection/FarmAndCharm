@@ -38,6 +38,15 @@ public class TomatoCropHeadBlock extends ClimbingCropBlock implements Bonemealab
     }
 
     @Override
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        BlockState below = level.getBlockState(pos.below());
+        if (below.getBlock() instanceof TomatoCropHeadBlock || below.getBlock() instanceof TomatoCropBodyBlock) {
+            return false;
+        }
+        return super.canSurvive(state, level, pos);
+    }
+
+    @Override
     protected ItemLike getRipeItem() {
         return ObjectRegistry.TOMATO.get();
     }

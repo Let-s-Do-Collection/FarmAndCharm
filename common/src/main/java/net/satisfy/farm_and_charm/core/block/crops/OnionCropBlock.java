@@ -70,7 +70,7 @@ public class OnionCropBlock extends CropBlock implements BigCropCapable {
         if (level.getRawBrightness(pos, 0) >= 9) {
             int age = getAge(state);
             if (age < getMaxAge()) {
-                float growth = getGrowthSpeed(this, level, pos);
+                float growth = CropBlock.getGrowthSpeed(this, level, pos);
                 if (random.nextInt((int)(25.0F / growth) + 1) == 0) {
                     level.setBlock(pos, getStateForAge(age + 1), 2);
                 }

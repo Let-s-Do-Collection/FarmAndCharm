@@ -34,7 +34,6 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity implements WorldlyContainer, BlockEntityTicker<CraftingBowlBlockEntity> {
-
     private NonNullList<ItemStack> stacks = NonNullList.withSize(5, ItemStack.EMPTY);
 
     public CraftingBowlBlockEntity(BlockPos position, BlockState state) {
@@ -42,18 +41,16 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
     }
 
     @Override
-    protected void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        super.loadAdditional(compoundTag, provider);
-        if (!this.tryLoadLootTable(compoundTag))
-            this.stacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-        ContainerHelper.loadAllItems(compoundTag, this.stacks, provider);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.loadAdditional(tag, provider);
+        if (!this.tryLoadLootTable(tag)) this.stacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+        ContainerHelper.loadAllItems(tag, this.stacks, provider);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        super.saveAdditional(compoundTag, provider);
-        if(!this.trySaveLootTable(compoundTag))
-            ContainerHelper.saveAllItems(compoundTag, this.stacks, provider);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+        super.saveAdditional(tag, provider);
+        if (!this.trySaveLootTable(tag)) ContainerHelper.saveAllItems(tag, this.stacks, provider);
     }
 
     @Override
@@ -73,9 +70,7 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
 
     @Override
     public boolean isEmpty() {
-        for (ItemStack itemstack : this.stacks)
-            if (!itemstack.isEmpty())
-                return false;
+        for (ItemStack itemstack : this.stacks) if (!itemstack.isEmpty()) return false;
         return true;
     }
 
@@ -111,11 +106,7 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
 
     public int filledSlots() {
         int count = 0;
-        for (ItemStack stack : this.stacks) {
-            if (!stack.isEmpty()) {
-                count++;
-            }
-        }
+        for (ItemStack stack : this.stacks) if (!stack.isEmpty()) count++;
         return count;
     }
 
@@ -125,7 +116,7 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
 
     public void addItemStack(ItemStack stack) {
         for (int j = 0; j < this.getContainerSize(); ++j) {
-            if (this.getItem(j) == ItemStack.EMPTY) {
+            if (this.getItem(j).isEmpty()) {
                 this.setItem(j, stack);
                 setChanged();
                 return;
@@ -160,33 +151,30 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
     }
 
     @Override
-    public void tick(Level level, BlockPos blockPos, BlockState blockState, CraftingBowlBlockEntity blockEntity) {
-        if (!level.isClientSide && level.getBlockState(blockPos).getBlock() instanceof CraftingBowlBlock) {
-            int stirring = blockState.getValue(CraftingBowlBlock.STIRRING);
-            int stirred = blockState.getValue(CraftingBowlBlock.STIRRED);
-
+    public void tick(Level level, BlockPos pos, BlockState state, CraftingBowlBlockEntity be) {
+        if (!level.isClientSide && state.getBlock() instanceof CraftingBowlBlock) {
+            int stirring = state.getValue(CraftingBowlBlock.STIRRING);
+            int stirred = state.getValue(CraftingBowlBlock.STIRRED);
             if (stirring > 0) {
                 RecipeManager recipeManager = level.getRecipeManager();
                 List<RecipeHolder<CraftingBowlRecipe>> recipes = recipeManager.getAllRecipesFor(RecipeTypeRegistry.CRAFTING_BOWL_RECIPE_TYPE.get());
-                Optional<CraftingBowlRecipe> recipe = Optional.ofNullable(getRecipe(recipes, stacks));                if (recipe != null && stirred < CraftingBowlBlock.STIRS_NEEDED) {
+                Optional<CraftingBowlRecipe> recipe = Optional.ofNullable(getRecipe(recipes, stacks));
+                if (recipe.isPresent() && stirred < CraftingBowlBlock.STIRS_NEEDED) {
                     stirred++;
-
-                    if (stirred == CraftingBowlBlock.STIRS_NEEDED && recipe.isPresent()) {
+                    if (stirred == CraftingBowlBlock.STIRS_NEEDED) {
                         recipe.get().getIngredients().forEach(ingredient -> {
-                            int size = blockEntity.getItems().size();
-                            for (int slot = 0; slot < size; slot++) {
-                                ItemStack stack = blockEntity.getItem(slot);
+                            for (int slot = 0; slot < be.getContainerSize(); slot++) {
+                                ItemStack stack = be.getItem(slot);
                                 if (ingredient.test(stack)) {
                                     ItemStack remainder = getRemainderItem(stack);
                                     stack.shrink(1);
                                     if (stack.isEmpty()) {
-                                        blockEntity.setItem(slot, ItemStack.EMPTY);
+                                        be.setItem(slot, ItemStack.EMPTY);
                                         if (!remainder.isEmpty()) {
-                                            double offsetX = level.random.nextDouble() * 0.7D + 0.15D;
-                                            double offsetY = level.random.nextDouble() * 0.7D + 0.15D;
-                                            double offsetZ = level.random.nextDouble() * 0.7D + 0.15D;
-                                            ItemEntity itemEntity = new ItemEntity(level, blockPos.getX() + offsetX, blockPos.getY() + offsetY, blockPos.getZ() + offsetZ, remainder);
-                                            level.addFreshEntity(itemEntity);
+                                            double ox = level.random.nextDouble() * 0.7D + 0.15D;
+                                            double oy = level.random.nextDouble() * 0.7D + 0.15D;
+                                            double oz = level.random.nextDouble() * 0.7D + 0.15D;
+                                            level.addFreshEntity(new ItemEntity(level, pos.getX() + ox, pos.getY() + oy, pos.getZ() + oz, remainder));
                                         }
                                     }
                                     break;
@@ -195,33 +183,30 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
                         });
                         ItemStack resultItem = recipe.get().getResultItem(level.registryAccess()).copy();
                         resultItem.setCount(recipe.get().getOutputCount());
-                        blockEntity.setItem(4, resultItem);
+                        be.setItem(4, resultItem);
                     }
                 }
                 stirring -= 1;
-                level.setBlock(blockPos, blockState.setValue(CraftingBowlBlock.STIRRING, stirring).setValue(CraftingBowlBlock.STIRRED, stirred), 3);
+                level.setBlock(pos, state.setValue(CraftingBowlBlock.STIRRING, stirring).setValue(CraftingBowlBlock.STIRRED, stirred), 3);
             } else if (stirred > 0 && stirred < CraftingBowlBlock.STIRS_NEEDED) {
-                level.setBlock(blockPos, blockState.setValue(CraftingBowlBlock.STIRRED, 0), 3);
+                level.setBlock(pos, state.setValue(CraftingBowlBlock.STIRRED, 0), 3);
             }
         }
     }
 
-    private CraftingBowlRecipe getRecipe(List<RecipeHolder<CraftingBowlRecipe>> recipes, NonNullList<ItemStack> inventory) {
+    private CraftingBowlRecipe getRecipe(List<RecipeHolder<CraftingBowlRecipe>> recipes, NonNullList<ItemStack> inv) {
         recipeLoop:
-        for (RecipeHolder<CraftingBowlRecipe> recipeHolder : recipes) {
-            CraftingBowlRecipe recipe = recipeHolder.value();
-            for (Ingredient ingredient : recipe.getIngredients()) {
-                boolean ingredientFound = false;
-                for (int slotIndex = 1; slotIndex < inventory.size(); slotIndex++) {
-                    ItemStack slotItem = inventory.get(slotIndex);
-                    if (ingredient.test(slotItem)) {
-                        ingredientFound = true;
+        for (RecipeHolder<CraftingBowlRecipe> holder : recipes) {
+            CraftingBowlRecipe recipe = holder.value();
+            for (Ingredient ing : recipe.getIngredients()) {
+                boolean found = false;
+                for (ItemStack slotItem : inv) {
+                    if (ing.test(slotItem)) {
+                        found = true;
                         break;
                     }
                 }
-                if (!ingredientFound) {
-                    continue recipeLoop;
-                }
+                if (!found) continue recipeLoop;
             }
             return recipe;
         }

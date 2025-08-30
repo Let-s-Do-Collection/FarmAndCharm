@@ -22,7 +22,10 @@ public class LettuceCropBlock extends CropBlock implements BigCropCapable {
 
     public LettuceCropBlock(Properties settings) {
         super(settings.randomTicks());
-        registerDefaultState(getStateDefinition().any().setValue(AGE, 0).setValue(BIG, false).setValue(GIANT, false));
+        registerDefaultState(getStateDefinition().any()
+                .setValue(AGE, 0)
+                .setValue(BIG, false)
+                .setValue(GIANT, false));
     }
 
     @Override
@@ -55,7 +58,6 @@ public class LettuceCropBlock extends CropBlock implements BigCropCapable {
         builder.add(AGE, BIG, GIANT);
     }
 
-
     @Override
     public boolean propagatesSkylightDown(BlockState state, BlockGetter world, BlockPos pos) {
         return true;
@@ -71,7 +73,7 @@ public class LettuceCropBlock extends CropBlock implements BigCropCapable {
         if (level.getRawBrightness(pos, 0) >= 9) {
             int age = getAge(state);
             if (age < getMaxAge()) {
-                float growth = getGrowthSpeed(this, level, pos);
+                float growth = CropBlock.getGrowthSpeed(this, level, pos);
                 if (random.nextInt((int)(25.0F / growth) + 1) == 0) {
                     level.setBlock(pos, getStateForAge(age + 1), 2);
                 }

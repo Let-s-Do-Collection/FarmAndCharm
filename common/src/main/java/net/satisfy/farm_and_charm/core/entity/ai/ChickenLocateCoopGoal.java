@@ -18,6 +18,7 @@ public class ChickenLocateCoopGoal extends Goal {
     private final Chicken chicken;
     private BlockPos foundCoop;
     private final List<BlockPos> cachedCoops = new ArrayList<>();
+    private int searchCooldown = 0;
 
     public ChickenLocateCoopGoal(Chicken chicken) {
         this.chicken = chicken;
@@ -27,15 +28,16 @@ public class ChickenLocateCoopGoal extends Goal {
     @Override
     public boolean canUse() {
         if (chicken.isBaby()) return false;
-
         ChickenCoopAccess access = (ChickenCoopAccess) chicken;
-
         if (access.farmAndCharm$hasCoopTarget()) return false;
         if (access.farmAndCharm$searchedForCoop()) return false;
         if (access.farmAndCharm$getCoopCooldown() > 0) return false;
-
+        if (searchCooldown > 0) {
+            searchCooldown--;
+            return false;
+        }
+        searchCooldown = 20 + chicken.getRandom().nextInt(20);
         ServerLevel level = (ServerLevel) chicken.level();
-
         Iterator<BlockPos> it = cachedCoops.iterator();
         while (it.hasNext()) {
             BlockPos cached = it.next();
@@ -53,7 +55,6 @@ public class ChickenLocateCoopGoal extends Goal {
                 return true;
             }
         }
-
         BlockPos pos = chicken.blockPosition();
         foundCoop = BlockPos.findClosestMatch(pos, 16, 4, check -> {
             if (!level.getBlockState(check).is(ObjectRegistry.CHICKEN_COOP.get())) return false;
@@ -63,7 +64,6 @@ public class ChickenLocateCoopGoal extends Goal {
             if (!cachedCoops.contains(check)) cachedCoops.add(check);
             return true;
         }).orElse(null);
-
         return foundCoop != null;
     }
 
@@ -71,6 +71,8 @@ public class ChickenLocateCoopGoal extends Goal {
     public void start() {
         ((ChickenCoopAccess) chicken).farmAndCharm$setCoopTarget(foundCoop);
         ((ChickenCoopAccess) chicken).farmAndCharm$setSearchedForCoop(true);
-        chicken.getNavigation().moveTo(foundCoop.getX() + 0.5, foundCoop.getY() + 0.5, foundCoop.getZ() + 0.5, 1.0);
+        if (!chicken.getNavigation().isInProgress()) {
+            chicken.getNavigation().moveTo(foundCoop.getX() + 0.5, foundCoop.getY() + 0.5, foundCoop.getZ() + 0.5, 1.0);
+        }
     }
 }

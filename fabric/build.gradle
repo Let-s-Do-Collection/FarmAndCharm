@@ -1,5 +1,7 @@
 plugins {
     id "com.github.johnrengelman.shadow" version "8.0.0"
+    id "com.modrinth.minotaur" version "2.+"
+    id "com.matthewprenger.cursegradle" version "1.4.0"
 }
 
 architectury {
@@ -8,9 +10,8 @@ architectury {
 }
 
 def jarFileName = 'letsdo-farm_and_charm-fabric'
-
+def changelogText = rootProject.file("CHANGELOG.md").text
 archivesBaseName = jarFileName
-
 
 loom {
     accessWidenerPath = project(":common").loom.accessWidenerPath
@@ -25,19 +26,13 @@ configurations {
 }
 
 repositories {
-    maven {
-        name "TerraformersMC"
-        url "https://maven.terraformersmc.com"
-    }
+    maven { name "TerraformersMC"; url "https://maven.terraformersmc.com" }
     maven {
         name = "Modrinth"
         url = "https://api.modrinth.com/maven"
-        content {
-            includeGroup "maven.modrinth"
-        }
+        content { includeGroup "maven.modrinth" }
     }
 }
-
 
 dependencies {
     modImplementation "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
@@ -55,18 +50,13 @@ dependencies {
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 }
 
-
 processResources {
     inputs.property "version", project.version
-
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
-    }
+    filesMatching("fabric.mod.json") { expand "version": project.version }
 }
 
 shadowJar {
     exclude "architectury.common.json"
-
     configurations = [project.configurations.shadowCommon]
     archiveClassifier.set("dev-shadow")
 }
@@ -78,9 +68,7 @@ remapJar {
     archiveClassifier.set(null)
 }
 
-jar {
-    archiveClassifier.set("dev")
-}
+jar { archiveClassifier.set("dev") }
 
 sourcesJar {
     def commonSources = project(":common").sourcesJar
@@ -89,9 +77,7 @@ sourcesJar {
 }
 
 components.java {
-    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
-        skip()
-    }
+    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) { skip() }
 }
 
 publishing {
@@ -101,7 +87,34 @@ publishing {
             from components.java
         }
     }
+}
 
-    repositories {
+modrinth {
+    token = System.getenv("MODRINTH_TOKEN")
+    projectId = "lets-do-farm-charm"
+    versionNumber = rootProject.mod_version
+    versionName = "${rootProject.archives_base_name}-${rootProject.mod_version} [${rootProject.minecraft_version}-fabric]"
+    versionType = "release"
+    changelog = rootProject.file("CHANGELOG.md").exists() ? rootProject.file("CHANGELOG.md").text : " "
+    gameVersions = [rootProject.minecraft_version]
+    loaders = ["fabric"]
+    uploadFile = remapJar
+    additionalFiles = [tasks.sourcesJar.archiveFile]
+}
+
+curseforge {
+    apiKey = System.getenv("CURSEFORGE_API_KEY")
+    project {
+        id = "1038103"
+        releaseType = "release"
+        addGameVersion rootProject.minecraft_version
+        addGameVersion "Fabric"
+        mainArtifact(remapJar) {
+            displayName = "${rootProject.archives_base_name}-${rootProject.mod_version} [${rootProject.minecraft_version}-fabric]"
+            changelog = changelogText
+            changelogType = "markdown"
+        }
+        addArtifact(sourcesJar)
     }
 }
+

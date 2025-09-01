@@ -58,6 +58,10 @@ allprojects {
         options.release = 21
     }
 
+    tasks.register("publishModrinthAll") {
+        dependsOn(":fabric:modrinth", ":neoforge:modrinth")
+    }
+
     java {
         withSourcesJar()
     }

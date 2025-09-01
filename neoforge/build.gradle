@@ -1,6 +1,9 @@
 plugins {
     id "com.github.johnrengelman.shadow" version "8.0.0"
+    id "com.modrinth.minotaur" version "2.+"
+    id "com.matthewprenger.cursegradle" version "1.4.0"
 }
+
 architectury {
     platformSetupLoomIde()
     neoForge()
@@ -8,18 +11,14 @@ architectury {
 
 loom {
     accessWidenerPath = project(":common").loom.accessWidenerPath
-
-    neoForge {
-    }
+    neoForge { }
 }
 
 def jarFileName = 'letsdo-farm_and_charm-neoforge'
-
+def changelogText = rootProject.file("CHANGELOG.md").text
 archivesBaseName = jarFileName
 
-repositories {
-    maven { url 'https://jitpack.io' }
-}
+repositories { maven { url 'https://jitpack.io' } }
 
 configurations {
     common
@@ -30,11 +29,7 @@ configurations {
 }
 
 repositories {
-    maven {
-        name = 'NeoForged'
-        url = 'https://maven.neoforged.net/releases'
-    }
-
+    maven { name = 'NeoForged'; url = 'https://maven.neoforged.net/releases' }
     maven { url "https://maven.shedaniel.me" }
 }
 
@@ -46,22 +41,19 @@ dependencies {
     modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
     modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
     modRuntimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
+
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive false }
 }
 
 processResources {
     inputs.property 'version', project.version
-
-    filesMatching('META-INF/neoforge.mods.toml') {
-        expand version: project.version
-    }
+    filesMatching('META-INF/neoforge.mods.toml') { expand version: project.version }
 }
 
 shadowJar {
     exclude "fabric.mod.json"
     exclude "architectury.common.json"
-
     configurations = [project.configurations.shadowCommon]
     archiveClassifier.set("dev-shadow")
 }
@@ -73,9 +65,7 @@ remapJar {
     atAccessWideners.add(loom.accessWidenerPath.get().asFile.getName())
 }
 
-jar {
-    archiveClassifier.set("dev")
-}
+jar { archiveClassifier.set("dev") }
 
 sourcesJar {
     def commonSources = project(":common").sourcesJar
@@ -84,9 +74,7 @@ sourcesJar {
 }
 
 components.java {
-    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
-        skip()
-    }
+    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) { skip() }
 }
 
 publishing {
@@ -95,5 +83,34 @@ publishing {
             artifactId = rootProject.archives_base_name + "-" + project.name
             from components.java
         }
+    }
+}
+
+modrinth {
+    token = System.getenv("MODRINTH_TOKEN")
+    projectId = "lets-do-farm-charm"
+    versionNumber = rootProject.mod_version
+    versionName = "${rootProject.archives_base_name}-${rootProject.mod_version} [${rootProject.minecraft_version}-neoforge]"
+    versionType = "release"
+    changelog = rootProject.file("CHANGELOG.md").exists() ? rootProject.file("CHANGELOG.md").text : " "
+    gameVersions = [rootProject.minecraft_version]
+    loaders = ["neoforge"]
+    uploadFile = remapJar
+    additionalFiles = [tasks.sourcesJar.archiveFile]
+}
+
+curseforge {
+    apiKey = System.getenv("CURSEFORGE_API_KEY")
+    project {
+        id = "1038103"
+        releaseType = "release"
+        addGameVersion rootProject.minecraft_version
+        addGameVersion "Fabric"
+        mainArtifact(remapJar) {
+            displayName = "${rootProject.archives_base_name}-${rootProject.mod_version} [${rootProject.minecraft_version}-fabric]"
+            changelog = changelogText
+            changelogType = "markdown"
+        }
+        addArtifact(sourcesJar)
     }
 }

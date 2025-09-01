@@ -4,11 +4,10 @@ import dev.architectury.platform.Platform;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.Registrar;
 import dev.architectury.registry.registries.RegistrySupplier;
+import java.util.function.Supplier;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.satisfy.farm_and_charm.FarmAndCharm;
@@ -24,10 +23,9 @@ import net.satisfy.farm_and_charm.core.effect.SustenanceEffect;
 import net.satisfy.farm_and_charm.core.effect.SweetsEffect;
 import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 
-import java.util.function.Supplier;
-
 public class MobEffectRegistry {
-    private static final DeferredRegister<MobEffect> MOB_EFFECTS = DeferredRegister.create(FarmAndCharm.MOD_ID, Registries.MOB_EFFECT);
+    private static final DeferredRegister<MobEffect> MOB_EFFECTS =
+            DeferredRegister.create(FarmAndCharm.MOD_ID, Registries.MOB_EFFECT);
     private static final Registrar<MobEffect> MOB_EFFECTS_REGISTRAR = MOB_EFFECTS.getRegistrar();
 
     public static final RegistrySupplier<MobEffect> SWEETS;
@@ -53,9 +51,9 @@ public class MobEffectRegistry {
     }
 
     public static Holder<MobEffect> holder(RegistrySupplier<MobEffect> supplier) {
-        ResourceLocation id = supplier.getId();
-        ResourceKey<MobEffect> key = ResourceKey.create(Registries.MOB_EFFECT, id);
-        return BuiltInRegistries.MOB_EFFECT.getHolder(key).orElseThrow();
+        return BuiltInRegistries.MOB_EFFECT.getResourceKey(supplier.get())
+                .flatMap(BuiltInRegistries.MOB_EFFECT::getHolder)
+                .orElseThrow();
     }
 
     public static MobEffectInstance inst(RegistrySupplier<MobEffect> supplier, int duration) {

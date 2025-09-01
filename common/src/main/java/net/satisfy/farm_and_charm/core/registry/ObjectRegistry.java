@@ -5,14 +5,23 @@ import dev.architectury.registry.registries.Registrar;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.*;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.food.Foods;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.BoneMealItem;
+import net.minecraft.world.item.HoeItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemNameBlockItem;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.*;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.core.block.*;
 import net.satisfy.farm_and_charm.core.block.crops.*;
@@ -32,6 +41,7 @@ public class ObjectRegistry {
     public static final Registrar<Item> ITEM_REGISTRAR = ITEMS.getRegistrar();
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(FarmAndCharm.MOD_ID, Registries.BLOCK);
     public static final Registrar<Block> BLOCK_REGISTRAR = BLOCKS.getRegistrar();
+
     public static final RegistrySupplier<Item> FERTILIZER = registerItem("fertilizer", () -> new BoneMealItem(getSettings()));
     public static final RegistrySupplier<Item> PITCHFORK = registerItem("pitchfork", () -> new HoeItem(Tiers.IRON, new Item.Properties()));
     public static final RegistrySupplier<Item> SUPPLY_CART = registerItem("supply_cart", () -> new CartItem(getSettings()));
@@ -128,7 +138,7 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Block> DOG_FOOD_BAG = registerWithItem("dog_food_bag", () -> new StackableBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CYAN_CARPET), 3));
     public static final RegistrySupplier<Block> CAT_FOOD_BAG = registerWithItem("cat_food_bag", () -> new StackableBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.PINK_CARPET), 3));
     public static final RegistrySupplier<Block> CHICKEN_NEST = registerWithItem("chicken_nest", () -> new ChickenNestBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK).noCollission().instabreak()));
-    public static final RegistrySupplier<Item> DUNGAREES = registerItem("dungarees", () -> new DungareesItem(ArmorMaterials.LEATHER, ArmorItem.Type.LEGGINGS, getSettings().rarity(Rarity.RARE), FarmAndCharmIdentifier.of("textures/models/armor/dungarees.png")));
+    public static final RegistrySupplier<Item> DUNGAREES = registerItem("dungarees", () -> new DungareesItem(ArmorMaterials.LEATHER, ArmorItem.Type.LEGGINGS, getSettings().rarity(Rarity.RARE), FarmAndCharmIdentifier.of("models/armor/dungarees.png")));
     public static final RegistrySupplier<Block> CHICKEN_COOP = registerWithoutItem("chicken_coop", () -> new ChickenCoopBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS).strength(1.0F).sound(SoundType.WOOD)));
     public static final RegistrySupplier<Item> CHICKEN_COOP_ITEM = registerItem("chicken_coop", () -> new ChickenCoopBlockItem(ObjectRegistry.CHICKEN_COOP.get(), getSettings()));
     public static final RegistrySupplier<Item> OAT_PANCAKE = registerItem("oat_pancake", () -> new EffectBlockItem(OAT_PANCAKE_BLOCK.get(), getFoodItemSettings(PlatformHelper.getNutrition("oat_pancake"), PlatformHelper.getSaturationMod("oat_pancake"), MobEffectRegistry.SATIATION, 2400)));
@@ -138,7 +148,7 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> FARMERS_BREAKFAST_ITEM = registerItem("farmers_breakfast", () -> new EffectBlockItem(FARMERS_BREAKFAST.get(), getFoodItemSettings(PlatformHelper.getNutrition("farmers_breakfast"), PlatformHelper.getSaturationMod("farmers_breakfast"), MobEffectRegistry.FARMERS_BLESSING, 9600)));
     public static final RegistrySupplier<Item> STUFFED_CHICKEN_ITEM = registerItem("stuffed_chicken", () -> new EffectBlockItem(STUFFED_CHICKEN.get(), getFoodItemSettings(PlatformHelper.getNutrition("stuffed_chicken"), PlatformHelper.getSaturationMod("stuffed_chicken"), MobEffectRegistry.FEAST, 9600)));
     public static final RegistrySupplier<Item> STUFFED_RABBIT_ITEM = registerItem("stuffed_rabbit", () -> new EffectBlockItem(STUFFED_RABBIT.get(), getFoodItemSettings(PlatformHelper.getNutrition("stuffed_rabbit"), PlatformHelper.getSaturationMod("stuffed_rabbit"), MobEffectRegistry.FEAST, 9600)));
-    public static final RegistrySupplier<Block> GRANDMOTHERS_STRAWBERRY_CAKE = registerWithoutItem("grandmothers_strawberry_cake_block", () -> new FoodBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 4, new FoodProperties.Builder().nutrition(7).saturationModifier(0.6F).effect(new MobEffectInstance(MobEffectRegistry.GRANDMAS_BLESSING, 2400), 1.0F).build()));
+    public static final RegistrySupplier<Block> GRANDMOTHERS_STRAWBERRY_CAKE = registerWithoutItem("grandmothers_strawberry_cake_block", () -> new FoodBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 4, new FoodProperties.Builder().nutrition(7).saturationModifier(0.6F).effect(MobEffectRegistry.inst(MobEffectRegistry.GRANDMAS_BLESSING, 2400), 1.0F).build()));
     public static final RegistrySupplier<Item> GRANDMOTHERS_STRAWBERRY_CAKE_ITEM = registerItem("grandmothers_strawberry_cake", () -> new EffectBlockItem(GRANDMOTHERS_STRAWBERRY_CAKE.get(), getFoodItemSettings(PlatformHelper.getNutrition("grandmothers_strawberry_cake"), PlatformHelper.getSaturationMod("grandmothers_strawberry_cake"), MobEffectRegistry.GRANDMAS_BLESSING, 2400)));
     public static final RegistrySupplier<Item> FARMERS_BREAD_ITEM = registerItem("farmers_bread", () -> new EffectBlockItem(FARMERS_BREAD.get(), getFoodItemSettings(PlatformHelper.getNutrition("farmers_bread"), PlatformHelper.getSaturationMod("farmers_bread"), MobEffectRegistry.FARMERS_BLESSING, 3600)));
     public static final RegistrySupplier<Item> FARMER_SALAD = registerItem("farmer_salad", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("farmer_salad"), PlatformHelper.getSaturationMod("farmer_salad"), MobEffectRegistry.SATIATION, 4800, false, false), 4800, false));
@@ -183,8 +193,7 @@ public class ObjectRegistry {
     }
 
     static Item.Properties getSettings() {
-        return getSettings(settings -> {
-        });
+        return getSettings(s -> {});
     }
 
     private static Item.Properties getFoodItemSettings(int nutrition, float saturationMod, Holder<MobEffect> effect, int duration) {

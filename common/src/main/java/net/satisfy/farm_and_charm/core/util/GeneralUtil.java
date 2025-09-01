@@ -62,13 +62,14 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Supplier;
 
+@SuppressWarnings("all")
 public class GeneralUtil {
     private static final String BLOCK_POS_KEY = "block_pos";
     private static final String BLOCK_POSES_KEY = "block_poses";
     public static final EnumProperty<GeneralUtil.LineConnectingType> LINE_CONNECTING_TYPE = EnumProperty.create("type", GeneralUtil.LineConnectingType.class);
     private static final Map<ResourceLocation, Map<BlockPos, Pair<ChairEntity, BlockPos>>> CHAIRS = new HashMap<>();
     private static Method blockStateMethod;
-    private static boolean checked = false;
+    private static final boolean checked = false;
 
     public GeneralUtil() {
     }

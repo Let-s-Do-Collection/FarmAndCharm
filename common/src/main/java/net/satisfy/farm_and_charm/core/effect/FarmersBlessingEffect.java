@@ -6,7 +6,7 @@ import net.minecraft.world.entity.LivingEntity;
 
 public class FarmersBlessingEffect extends MobEffect {
     public FarmersBlessingEffect() {
-        super(MobEffectCategory.BENEFICIAL, 0);
+        super(MobEffectCategory.BENEFICIAL, 0xFF228B22);
     }
 
     @Override

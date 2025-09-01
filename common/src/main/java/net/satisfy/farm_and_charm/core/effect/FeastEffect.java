@@ -14,7 +14,7 @@ import java.util.Objects;
 public class FeastEffect extends MobEffect {
 
     public FeastEffect() {
-        super(MobEffectCategory.BENEFICIAL, 0);
+        super(MobEffectCategory.BENEFICIAL, 0xFF8B0000);
     }
 
     @Override

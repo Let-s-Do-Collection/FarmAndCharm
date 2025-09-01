@@ -3,12 +3,10 @@ loaderVersion = "[4,)"
 license = "Custom"
 issueTrackerURL = "https://github.com/satisfyu/Let-s-Do-Hub"
 
-[[mixins]]
-config = "FarmAndCharm-common.mixins.json"
-
-[[mixins]]
-config = "FarmAndCharm.mixins.json"
-
+mixins = [
+    "FarmAndCharm-common.mixins.json",
+    "FarmAndCharm.mixins.json"
+]
 
 [[mods]]
 modId = "farm_and_charm"

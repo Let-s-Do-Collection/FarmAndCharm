@@ -13,6 +13,7 @@ public class SustenanceEffect extends MobEffect {
         super(MobEffectCategory.BENEFICIAL, 0);
     }
 
+
     @Override
     public boolean applyEffectTick(LivingEntity entity, int amplifier) {
         if (!entity.level().isClientSide() && entity instanceof Player player) {

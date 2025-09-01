@@ -8,8 +8,8 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
@@ -58,33 +58,28 @@ public class FoodBlock extends FacingBlock {
         if (!Objects.requireNonNull(ctx.getPlayer()).isShiftKeyDown()) {
             return null;
         }
-
         return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
     }
 
     @Override
     public @NotNull InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
         if (world.isClientSide) {
-            if (tryEat(world, pos, state, player).consumesAction()) {
-                return InteractionResult.SUCCESS;
-            }
-
-            if (player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty()) {
-                return InteractionResult.CONSUME;
-            }
+            return InteractionResult.CONSUME;
         }
         return tryEat(world, pos, state, player);
     }
 
     private InteractionResult tryEat(LevelAccessor world, BlockPos pos, BlockState state, Player player) {
-        if (!player.canEat(false)) {
-            if (!player.getFoodData().needsFood() && !player.getAbilities().instabuild) {
-                return InteractionResult.PASS;
+        player.getFoodData().eat(foodComponent.nutrition(), foodComponent.saturation());
+
+        if (world instanceof Level level) {
+            for (FoodProperties.PossibleEffect effect : foodComponent.effects()) {
+                if (effect.probability() >= 1.0F || level.random.nextFloat() < effect.probability()) {
+                    player.addEffect(new MobEffectInstance(effect.effect()));
+                }
             }
-            return InteractionResult.PASS;
         }
 
-        player.getFoodData().eat(foodComponent.nutrition(), foodComponent.saturation());
         world.playSound(null, pos, SoundEvents.GENERIC_EAT, SoundSource.PLAYERS, 0.5f, world.getRandom().nextFloat() * 0.1f + 0.9f);
         world.gameEvent(player, GameEvent.EAT, pos);
 

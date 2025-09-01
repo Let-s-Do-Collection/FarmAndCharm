@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
+import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class OnionCropBlock extends CropBlock implements BigCropCapable {
@@ -70,7 +71,7 @@ public class OnionCropBlock extends CropBlock implements BigCropCapable {
         if (level.getRawBrightness(pos, 0) >= 9) {
             int age = getAge(state);
             if (age < getMaxAge()) {
-                float growth = CropBlock.getGrowthSpeed(this, level, pos);
+                float growth = GeneralUtil.GrowthSpeedUtil.getGrowthSpeed(state, level, pos);
                 if (random.nextInt((int)(25.0F / growth) + 1) == 0) {
                     level.setBlock(pos, getStateForAge(age + 1), 2);
                 }

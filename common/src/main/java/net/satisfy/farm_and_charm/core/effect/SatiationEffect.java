@@ -9,7 +9,7 @@ import net.satisfy.farm_and_charm.platform.PlatformHelper;
 
 public class SatiationEffect extends MobEffect {
     public SatiationEffect() {
-        super(MobEffectCategory.BENEFICIAL, 0);
+        super(MobEffectCategory.BENEFICIAL, 0xFFFFD700);
     }
 
     @Override

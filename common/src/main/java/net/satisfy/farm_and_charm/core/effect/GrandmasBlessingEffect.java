@@ -15,7 +15,7 @@ public class GrandmasBlessingEffect extends MobEffect {
     private static final AttributeModifier LUCK_MODIFIER = new AttributeModifier(LUCK_MODIFIER_ID, 2, AttributeModifier.Operation.ADD_VALUE);
 
     public GrandmasBlessingEffect() {
-        super(MobEffectCategory.BENEFICIAL, 0);
+        super(MobEffectCategory.BENEFICIAL, 0xFFDA70D6);
     }
 
     @Override

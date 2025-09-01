@@ -47,7 +47,6 @@ public class EntityTypeRegistry {
         return BLOCK_ENTITY_TYPES.register(FarmAndCharmIdentifier.of(path), type);
     }
 
-
     private static <T extends EntityType<?>> RegistrySupplier<T> registerEntityType(final String path, final Supplier<T> type) {
         return ENTITY_TYPES.register(FarmAndCharmIdentifier.of(path), type);
     }

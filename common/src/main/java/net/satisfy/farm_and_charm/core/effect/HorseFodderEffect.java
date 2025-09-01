@@ -13,7 +13,7 @@ public class HorseFodderEffect extends MobEffect {
 
 
     public HorseFodderEffect() {
-        super(MobEffectCategory.BENEFICIAL, 0x8B4513);
+        super(MobEffectCategory.BENEFICIAL, 0xFF8B4513);
         this.addAttributeModifier(Attributes.JUMP_STRENGTH, JUMP_STRENGTH_MODIFIER_ID, 0.1F, AttributeModifier.Operation.ADD_VALUE);
         this.addAttributeModifier(Attributes.MOVEMENT_SPEED, MOVEMENT_SPEED_MODIFIER_ID, 0.1F, AttributeModifier.Operation.ADD_VALUE);
     }

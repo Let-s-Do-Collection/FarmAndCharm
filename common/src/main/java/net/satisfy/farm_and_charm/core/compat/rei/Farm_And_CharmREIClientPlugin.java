@@ -50,9 +50,10 @@ public class Farm_And_CharmREIClientPlugin implements REIClientPlugin {
                 RecipeTypeRegistry.COOKING_POT_RECIPE_TYPE.get(),
                 holder -> new CookingPotDisplay(holder.value())
         );
-        registry.registerFiller(
+        registry.registerRecipeFiller(
                 MincerRecipe.class,
-                MincingDisplay::new
+                RecipeTypeRegistry.MINCER_RECIPE_TYPE.get(),
+                holder -> new MincingDisplay(holder.value())
         );
         registry.registerRecipeFiller(
                 StoveRecipe.class,

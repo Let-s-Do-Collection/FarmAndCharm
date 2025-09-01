@@ -39,12 +39,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeInput;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -60,15 +58,17 @@ import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Supplier;
 
 public class GeneralUtil {
-
     private static final String BLOCK_POS_KEY = "block_pos";
     private static final String BLOCK_POSES_KEY = "block_poses";
     public static final EnumProperty<GeneralUtil.LineConnectingType> LINE_CONNECTING_TYPE = EnumProperty.create("type", GeneralUtil.LineConnectingType.class);
     private static final Map<ResourceLocation, Map<BlockPos, Pair<ChairEntity, BlockPos>>> CHAIRS = new HashMap<>();
+    private static Method blockStateMethod;
+    private static boolean checked = false;
 
     public GeneralUtil() {
     }
@@ -514,6 +514,47 @@ public class GeneralUtil {
         @Override
         public String toString() {
             return name;
+        }
+    }
+
+     public static class GrowthSpeedUtil {
+        private static Method blockStateMethod;
+        private static Method blockMethod;
+        private static boolean initialized = false;
+
+        private static void init() {
+            if (initialized) return;
+
+            try {
+                blockStateMethod = CropBlock.class.getDeclaredMethod("getGrowthSpeed",
+                        BlockState.class, LevelReader.class, BlockPos.class);
+                blockStateMethod.setAccessible(true);
+            } catch (NoSuchMethodException ignored) {
+            }
+
+            try {
+                blockMethod = CropBlock.class.getDeclaredMethod("getGrowthSpeed",
+                        Block.class, BlockGetter.class, BlockPos.class);
+                blockMethod.setAccessible(true);
+            } catch (NoSuchMethodException ignored) {
+            }
+
+            initialized = true;
+        }
+
+        public static float getGrowthSpeed(BlockState state, ServerLevel level, BlockPos pos) {
+            init();
+            try {
+                if (blockStateMethod != null) {
+                    return (float) blockStateMethod.invoke(null, state, level, pos);
+                }
+                if (blockMethod != null) {
+                    return (float) blockMethod.invoke(null, state.getBlock(), level, pos);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Unable to invoke CropBlock.getGrowthSpeed", e);
+            }
+            return 1.0F;
         }
     }
 }

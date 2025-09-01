@@ -1,3 +1,15 @@
+[1.1.3]
+
+**Fixed**
+* Another Try for: Crash caused by unregistered custom MobEffects (e.g. `sustenance`) not being saved correctly
+* Grandma's Strawberry Pie can now be eaten safely. Enjoy!
+
+**Changed**
+* Most cooking tools can now be broken instantly and dont require a tool anymore
+* All Effects have now unique Particle Effect Colors 
+
+*** 
+
 [1.1.2]
 
 **Fixed**

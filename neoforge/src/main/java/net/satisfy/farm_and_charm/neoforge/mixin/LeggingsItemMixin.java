@@ -21,7 +21,6 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.function.Consumer;
 
-@SuppressWarnings("removal")
 @Mixin(DungareesItem.class)
 public abstract class LeggingsItemMixin extends ArmorItem {
     @Shadow

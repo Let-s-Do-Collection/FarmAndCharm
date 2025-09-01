@@ -17,7 +17,7 @@ public class SweetsEffect extends MobEffect {
     public static final ResourceLocation ATTACK_SPEED_MODIFIER_ID = FarmAndCharmIdentifier.of("sweets_attack_speed_modifier");
 
     public SweetsEffect() {
-        super(MobEffectCategory.BENEFICIAL, 0);
+        super(MobEffectCategory.BENEFICIAL, 0xFFFFC0CB);
     }
 
     @Override

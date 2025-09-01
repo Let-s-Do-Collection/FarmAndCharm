@@ -7,7 +7,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.satisfy.farm_and_charm.FarmAndCharm;
-import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 
 public class SoundEventRegistry {
 
@@ -24,7 +23,7 @@ public class SoundEventRegistry {
     public static void init() {}
 
     private static RegistrySupplier<SoundEvent> create(String name) {
-        ResourceLocation id = FarmAndCharmIdentifier.of(name);
+        ResourceLocation id = FarmAndCharm.identifier(name);
         return SOUND_EVENTS.register(id, () -> SoundEvent.createVariableRangeEvent(id));
     }
 }

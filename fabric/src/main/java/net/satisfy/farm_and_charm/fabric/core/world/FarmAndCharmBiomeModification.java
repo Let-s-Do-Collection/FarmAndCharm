@@ -4,14 +4,14 @@ import net.fabricmc.fabric.api.biome.v1.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.levelgen.GenerationStep;
-import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
+import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.core.world.feature.FarmAndCharmPlacedFeature;
 
 import java.util.function.Predicate;
 
 public class FarmAndCharmBiomeModification {
     public static void init() {
-        BiomeModification world = BiomeModifications.create(FarmAndCharmIdentifier.of("world_features"));
+        BiomeModification world = BiomeModifications.create(FarmAndCharm.identifier("world_features"));
         Predicate<BiomeSelectionContext> spawnsWildFlowersBiomes = getFarm_And_CharmSelector("spawns_wild_flowers");
         Predicate<BiomeSelectionContext> spawnsWildEmmerBiomes = getFarm_And_CharmSelector("spawns_wild_emmer");
         Predicate<BiomeSelectionContext> spawnsWildOatBiomes = getFarm_And_CharmSelector("spawns_wild_oat");
@@ -50,6 +50,6 @@ public class FarmAndCharmBiomeModification {
     }
 
     private static Predicate<BiomeSelectionContext> getFarm_And_CharmSelector(String path) {
-        return BiomeSelectors.tag(TagKey.create(Registries.BIOME, FarmAndCharmIdentifier.of(path)));
+        return BiomeSelectors.tag(TagKey.create(Registries.BIOME, FarmAndCharm.identifier(path)));
     }
 }

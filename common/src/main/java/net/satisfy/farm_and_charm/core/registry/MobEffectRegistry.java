@@ -21,7 +21,6 @@ import net.satisfy.farm_and_charm.core.effect.RestedEffect;
 import net.satisfy.farm_and_charm.core.effect.SatiationEffect;
 import net.satisfy.farm_and_charm.core.effect.SustenanceEffect;
 import net.satisfy.farm_and_charm.core.effect.SweetsEffect;
-import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 
 public class MobEffectRegistry {
     private static final DeferredRegister<MobEffect> MOB_EFFECTS =
@@ -43,7 +42,7 @@ public class MobEffectRegistry {
         if (Platform.isNeoForge()) {
             return MOB_EFFECTS.register(name, effect);
         }
-        return MOB_EFFECTS_REGISTRAR.register(FarmAndCharmIdentifier.of(name), effect);
+        return MOB_EFFECTS_REGISTRAR.register(FarmAndCharm.identifier(name), effect);
     }
 
     public static void init() {

@@ -14,7 +14,6 @@ import net.satisfy.farm_and_charm.core.entity.ChairEntity;
 import net.satisfy.farm_and_charm.core.entity.PlowCartEntity;
 import net.satisfy.farm_and_charm.core.entity.RottenTomatoEntity;
 import net.satisfy.farm_and_charm.core.entity.SupplyCartEntity;
-import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 
 import java.util.HashSet;
 import java.util.function.Supplier;
@@ -38,17 +37,17 @@ public class EntityTypeRegistry {
     public static final RegistrySupplier<BlockEntityType<ChickenCoopBlockEntity>> CHICKEN_COOP_BLOCK_ENTITY = registerBlockEntity("chicken_coop", () -> BlockEntityType.Builder.of(ChickenCoopBlockEntity::new, ObjectRegistry.CHICKEN_COOP.get()).build(null));
     public static final RegistrySupplier<BlockEntityType<RopeKnotBlockEntity>> ROPE_KNOT_BLOCK_ENTITY = registerBlockEntity("rope_knot", () -> BlockEntityType.Builder.of(RopeKnotBlockEntity::new, ObjectRegistry.ROPE_KNOT.get()).build(null));
 
-    public static final RegistrySupplier<EntityType<RottenTomatoEntity>> ROTTEN_TOMATO = registerEntityType("rotten_tomato", () -> EntityType.Builder.<RottenTomatoEntity>of(RottenTomatoEntity::new, MobCategory.MISC).sized(0.25f, 0.25f).build(FarmAndCharmIdentifier.of("rotten_tomato").toString()));
-    public static final RegistrySupplier<EntityType<SupplyCartEntity>> SUPPLY_CART = registerEntityType("cart", () -> EntityType.Builder.of(SupplyCartEntity::new, MobCategory.MISC).sized(1.875f, 0.875f).clientTrackingRange(10).build(FarmAndCharmIdentifier.of("supply_cart").toString()));
-    public static final RegistrySupplier<EntityType<PlowCartEntity>> PLOW = registerEntityType("plow", () -> EntityType.Builder.of(PlowCartEntity::new, MobCategory.MISC).sized(1.875f, 0.875f).clientTrackingRange(10).build(FarmAndCharmIdentifier.of("plow").toString()));
-    public static final RegistrySupplier<EntityType<ChairEntity>> CHAIR = registerEntityType("chair", () -> EntityType.Builder.of(ChairEntity::new, MobCategory.MISC).sized(0.001F, 0.001F).build((FarmAndCharmIdentifier.of("chair")).toString()));
+    public static final RegistrySupplier<EntityType<RottenTomatoEntity>> ROTTEN_TOMATO = registerEntityType("rotten_tomato", () -> EntityType.Builder.<RottenTomatoEntity>of(RottenTomatoEntity::new, MobCategory.MISC).sized(0.25f, 0.25f).build(FarmAndCharm.identifier("rotten_tomato").toString()));
+    public static final RegistrySupplier<EntityType<SupplyCartEntity>> SUPPLY_CART = registerEntityType("cart", () -> EntityType.Builder.of(SupplyCartEntity::new, MobCategory.MISC).sized(1.875f, 0.875f).clientTrackingRange(10).build(FarmAndCharm.identifier("supply_cart").toString()));
+    public static final RegistrySupplier<EntityType<PlowCartEntity>> PLOW = registerEntityType("plow", () -> EntityType.Builder.of(PlowCartEntity::new, MobCategory.MISC).sized(1.875f, 0.875f).clientTrackingRange(10).build(FarmAndCharm.identifier("plow").toString()));
+    public static final RegistrySupplier<EntityType<ChairEntity>> CHAIR = registerEntityType("chair", () -> EntityType.Builder.of(ChairEntity::new, MobCategory.MISC).sized(0.001F, 0.001F).build((FarmAndCharm.identifier("chair")).toString()));
 
     private static <T extends BlockEntityType<?>> RegistrySupplier<T> registerBlockEntity(final String path, final Supplier<T> type) {
-        return BLOCK_ENTITY_TYPES.register(FarmAndCharmIdentifier.of(path), type);
+        return BLOCK_ENTITY_TYPES.register(FarmAndCharm.identifier(path), type);
     }
 
     private static <T extends EntityType<?>> RegistrySupplier<T> registerEntityType(final String path, final Supplier<T> type) {
-        return ENTITY_TYPES.register(FarmAndCharmIdentifier.of(path), type);
+        return ENTITY_TYPES.register(FarmAndCharm.identifier(path), type);
     }
 
 

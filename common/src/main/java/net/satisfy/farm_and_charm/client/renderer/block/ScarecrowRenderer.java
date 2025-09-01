@@ -10,18 +10,18 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.client.model.ScarecrowModel;
 import net.satisfy.farm_and_charm.core.block.ScarecrowBlock;
 import net.satisfy.farm_and_charm.core.block.entity.ScarecrowBlockEntity;
-import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 import org.joml.Quaternionf;
 
 import java.util.Objects;
 
 public class ScarecrowRenderer implements BlockEntityRenderer<ScarecrowBlockEntity> {
 
-    private static final ResourceLocation TEX_WITH = FarmAndCharmIdentifier.of("textures/entity/scarecrow.png");
-    private static final ResourceLocation TEX_NO  = FarmAndCharmIdentifier.of("textures/entity/scarecrow_no_dungarees.png");
+    private static final ResourceLocation TEX_WITH = FarmAndCharm.identifier("textures/entity/scarecrow.png");
+    private static final ResourceLocation TEX_NO  = FarmAndCharm.identifier("textures/entity/scarecrow_no_dungarees.png");
     private final ModelPart scarecrow;
     private final ModelPart post;
 

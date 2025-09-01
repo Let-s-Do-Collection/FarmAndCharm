@@ -9,7 +9,6 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.core.recipe.*;
-import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 
 import java.util.function.Supplier;
 
@@ -31,7 +30,7 @@ public class RecipeTypeRegistry {
 
 
     private static <T extends Recipe<?>> RegistrySupplier<RecipeSerializer<T>> create(String name, Supplier<RecipeSerializer<T>> serializer) {
-        return RECIPE_SERIALIZERS.register(FarmAndCharmIdentifier.of(name), serializer);
+        return RECIPE_SERIALIZERS.register(FarmAndCharm.identifier(name), serializer);
     }
 
     private static <T extends Recipe<?>> RegistrySupplier<RecipeType<T>> create(String name) {
@@ -41,7 +40,7 @@ public class RecipeTypeRegistry {
                 return name;
             }
         };
-        return RECIPE_TYPES.register(FarmAndCharmIdentifier.of(name), type);
+        return RECIPE_TYPES.register(FarmAndCharm.identifier(name), type);
     }
 
     public static void init() {

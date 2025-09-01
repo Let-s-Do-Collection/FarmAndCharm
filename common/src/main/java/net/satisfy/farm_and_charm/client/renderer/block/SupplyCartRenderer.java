@@ -7,13 +7,13 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.client.model.SupplyCartModel;
 import net.satisfy.farm_and_charm.core.entity.SupplyCartEntity;
-import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 import org.jetbrains.annotations.NotNull;
 
 public class SupplyCartRenderer extends EntityRenderer<SupplyCartEntity> {
-    public static final ResourceLocation CART_TEXTURE = FarmAndCharmIdentifier.of("textures/entity/supply_cart.png");
+    public static final ResourceLocation CART_TEXTURE = FarmAndCharm.identifier("textures/entity/supply_cart.png");
     private final SupplyCartModel<SupplyCartEntity> model;
 
     public SupplyCartRenderer(EntityRendererProvider.Context context) {

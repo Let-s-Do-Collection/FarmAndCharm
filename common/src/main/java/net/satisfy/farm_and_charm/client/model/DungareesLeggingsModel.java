@@ -8,11 +8,11 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.world.entity.Entity;
-import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
+import net.satisfy.farm_and_charm.FarmAndCharm;
 import org.jetbrains.annotations.NotNull;
 
 public class DungareesLeggingsModel<T extends Entity> extends EntityModel<T> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(FarmAndCharmIdentifier.of("dungarees"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(FarmAndCharm.identifier("dungarees"), "main");
     private final ModelPart body;
     private final ModelPart right_leg;
     private final ModelPart left_leg;

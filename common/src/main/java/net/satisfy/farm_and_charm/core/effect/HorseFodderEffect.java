@@ -5,11 +5,11 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
+import net.satisfy.farm_and_charm.FarmAndCharm;
 
 public class HorseFodderEffect extends MobEffect {
-    private static final ResourceLocation JUMP_STRENGTH_MODIFIER_ID = FarmAndCharmIdentifier.of("horse_fodder_jump_strength_modifier");
-    private static final ResourceLocation MOVEMENT_SPEED_MODIFIER_ID = FarmAndCharmIdentifier.of("horse_fodder_movement_speed_modifier");
+    private static final ResourceLocation JUMP_STRENGTH_MODIFIER_ID = FarmAndCharm.identifier("horse_fodder_jump_strength_modifier");
+    private static final ResourceLocation MOVEMENT_SPEED_MODIFIER_ID = FarmAndCharm.identifier("horse_fodder_movement_speed_modifier");
 
 
     public HorseFodderEffect() {

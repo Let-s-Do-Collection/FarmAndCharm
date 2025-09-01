@@ -8,10 +8,10 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
+import net.satisfy.farm_and_charm.FarmAndCharm;
 
 public class GrandmasBlessingEffect extends MobEffect {
-    private static final ResourceLocation LUCK_MODIFIER_ID = FarmAndCharmIdentifier.of("grandmas_blessing_luck_modifier");
+    private static final ResourceLocation LUCK_MODIFIER_ID = FarmAndCharm.identifier("grandmas_blessing_luck_modifier");
     private static final AttributeModifier LUCK_MODIFIER = new AttributeModifier(LUCK_MODIFIER_ID, 2, AttributeModifier.Operation.ADD_VALUE);
 
     public GrandmasBlessingEffect() {

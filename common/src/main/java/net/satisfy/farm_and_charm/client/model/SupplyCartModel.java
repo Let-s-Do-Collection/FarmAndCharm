@@ -7,11 +7,11 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.core.entity.SupplyCartEntity;
-import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 
 public class SupplyCartModel<T extends SupplyCartEntity> extends EntityModel<T> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(FarmAndCharmIdentifier.of("supply_cart"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(FarmAndCharm.identifier("supply_cart"), "main");
     private final ModelPart cart;
     private final ModelPart right_wheel;
     private final ModelPart left_wheel;

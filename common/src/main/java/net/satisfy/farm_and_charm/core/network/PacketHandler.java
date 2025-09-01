@@ -7,14 +7,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.core.network.handler.SyncSaturationPacketClientHandler;
 import net.satisfy.farm_and_charm.core.network.packet.SetTextPacket;
 import net.satisfy.farm_and_charm.core.network.packet.SyncSaturationPacket;
-import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 
 public class PacketHandler {
-    public static final ResourceLocation SET_SIGN_TEXT = FarmAndCharmIdentifier.of("set_text");
-    public static final ResourceLocation SYNC_SATURATION = FarmAndCharmIdentifier.of("sync_saturation");
+    public static final ResourceLocation SET_SIGN_TEXT = FarmAndCharm.identifier("set_text");
+    public static final ResourceLocation SYNC_SATURATION = FarmAndCharm.identifier("sync_saturation");
 
     public static void init() {
         if (Platform.getEnvironment() == Env.CLIENT) {

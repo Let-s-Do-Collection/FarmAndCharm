@@ -9,12 +9,12 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.client.gui.handler.StoveGuiHandler;
-import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 
 @Environment(EnvType.CLIENT)
 public class StoveGui extends AbstractContainerScreen<StoveGuiHandler> {
-    public static final ResourceLocation BACKGROUND  = FarmAndCharmIdentifier.of("textures/gui/stove_gui.png");
+    public static final ResourceLocation BACKGROUND  = FarmAndCharm.identifier("textures/gui/stove_gui.png");
 
     public static final int ARROW_X = 93;
     public static final int ARROW_Y = 32;

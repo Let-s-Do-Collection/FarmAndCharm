@@ -3,7 +3,7 @@ package net.satisfy.farm_and_charm.core.world.feature;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
-import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
+import net.satisfy.farm_and_charm.FarmAndCharm;
 
 
 public class FarmAndCharmPlacedFeature {
@@ -23,7 +23,7 @@ public class FarmAndCharmPlacedFeature {
     public static final ResourceKey<PlacedFeature> WILD_CORN_PATCH_CHANCE_KEY = registerKey("wild_corn_chance");
 
     public static ResourceKey<PlacedFeature> registerKey(String name) {
-        return ResourceKey.create(Registries.PLACED_FEATURE, FarmAndCharmIdentifier.of(name));
+        return ResourceKey.create(Registries.PLACED_FEATURE, FarmAndCharm.identifier(name));
     }
 }
 

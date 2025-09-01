@@ -9,12 +9,12 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
+import net.satisfy.farm_and_charm.FarmAndCharm;
 
 public class SweetsEffect extends MobEffect {
-    public static final ResourceLocation SPEED_MODIFIER_ID = FarmAndCharmIdentifier.of("sweets_speed_modifier");
-    public static final ResourceLocation ATTACK_DAMAGE_MODIFIER_ID = FarmAndCharmIdentifier.of("sweets_attack_damage_modifier");
-    public static final ResourceLocation ATTACK_SPEED_MODIFIER_ID = FarmAndCharmIdentifier.of("sweets_attack_speed_modifier");
+    public static final ResourceLocation SPEED_MODIFIER_ID = FarmAndCharm.identifier("sweets_speed_modifier");
+    public static final ResourceLocation ATTACK_DAMAGE_MODIFIER_ID = FarmAndCharm.identifier("sweets_attack_damage_modifier");
+    public static final ResourceLocation ATTACK_SPEED_MODIFIER_ID = FarmAndCharm.identifier("sweets_attack_speed_modifier");
 
     public SweetsEffect() {
         super(MobEffectCategory.BENEFICIAL, 0xFFFFC0CB);

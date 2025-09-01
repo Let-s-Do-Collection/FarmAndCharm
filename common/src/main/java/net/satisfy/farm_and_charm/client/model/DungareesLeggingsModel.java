@@ -12,7 +12,6 @@ import net.satisfy.farm_and_charm.core.util.FarmAndCharmIdentifier;
 import org.jetbrains.annotations.NotNull;
 
 public class DungareesLeggingsModel<T extends Entity> extends EntityModel<T> {
-
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(FarmAndCharmIdentifier.of("dungarees"), "main");
     private final ModelPart body;
     private final ModelPart right_leg;

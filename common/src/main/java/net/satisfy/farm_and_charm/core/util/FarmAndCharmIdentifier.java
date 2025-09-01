@@ -3,6 +3,7 @@ package net.satisfy.farm_and_charm.core.util;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 
+@Deprecated
 public final class FarmAndCharmIdentifier {
 
     public static ResourceLocation of(String path) {

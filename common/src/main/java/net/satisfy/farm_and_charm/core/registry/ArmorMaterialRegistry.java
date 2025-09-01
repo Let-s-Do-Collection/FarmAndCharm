@@ -6,6 +6,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Items;
@@ -22,12 +23,22 @@ public final class ArmorMaterialRegistry {
     public static final Holder<ArmorMaterial> CLOTH = register(
             Util.make(new EnumMap<>(ArmorItem.Type.class), m -> {
                 m.put(ArmorItem.Type.BOOTS, 1);
-                m.put(ArmorItem.Type.LEGGINGS, 2);
-                m.put(ArmorItem.Type.CHESTPLATE, 3);
+                m.put(ArmorItem.Type.LEGGINGS, 1);
+                m.put(ArmorItem.Type.CHESTPLATE, 2);
                 m.put(ArmorItem.Type.HELMET, 1);
-                m.put(ArmorItem.Type.BODY, 3);
             }),
-            () -> Ingredient.of(Items.LEATHER),
+            () -> Ingredient.of(ItemTags.WOOL),
+            ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "armor/default")
+    );
+
+    public static final Holder<ArmorMaterial> JEWELRY = register(
+            Util.make(new EnumMap<>(ArmorItem.Type.class), m -> {
+                m.put(ArmorItem.Type.BOOTS, 1);
+                m.put(ArmorItem.Type.LEGGINGS, 1);
+                m.put(ArmorItem.Type.CHESTPLATE, 1);
+                m.put(ArmorItem.Type.HELMET, 1);
+            }),
+            () -> Ingredient.of(Items.GOLD_INGOT),
             ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "armor/default")
     );
 
@@ -48,9 +59,17 @@ public final class ArmorMaterialRegistry {
 
     private static Holder<ArmorMaterial> register(EnumMap<ArmorItem.Type, Integer> map, Supplier<Ingredient> repair, ResourceLocation layerPrefix) {
         EnumMap<ArmorItem.Type, Integer> copy = new EnumMap<>(ArmorItem.Type.class);
-        for (ArmorItem.Type t : ArmorItem.Type.values()) copy.put(t, map.get(t));
+        for (ArmorItem.Type t : ArmorItem.Type.values()) {
+            Integer v = map.get(t);
+            if (v == null) v = 0;
+            copy.put(t, v);
+        }
         List<ArmorMaterial.Layer> layers = List.of(new ArmorMaterial.Layer(layerPrefix, "", true));
-        return Registry.registerForHolder(BuiltInRegistries.ARMOR_MATERIAL, ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "basic"), new ArmorMaterial(copy, 15, SoundEvents.ARMOR_EQUIP_LEATHER, repair, layers, 0.0F, 0.0F));
+        return Registry.registerForHolder(
+                BuiltInRegistries.ARMOR_MATERIAL,
+                ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "basic"),
+                new ArmorMaterial(copy, 15, SoundEvents.ARMOR_EQUIP_LEATHER, repair, layers, 0.0F, 0.0F)
+        );
     }
 
     private static Holder<ArmorMaterial> withLayer(Holder<ArmorMaterial> base, ResourceLocation layerPrefix) {

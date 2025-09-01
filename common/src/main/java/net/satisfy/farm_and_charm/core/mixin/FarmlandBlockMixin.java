@@ -16,33 +16,25 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Iterator;
-
 @Mixin(FarmBlock.class)
 public class FarmlandBlockMixin {
     @Inject(method = "isNearWater", at = @At("HEAD"), cancellable = true)
     private static void injectWaterSprinklerCheck(LevelReader levelReader, BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
         int range = PlatformHelper.getWaterSprinklerRange();
-        Iterator<BlockPos> var2 = BlockPos.betweenClosed(blockPos.offset(-range, 1, -range), blockPos.offset(range, 1, range)).iterator();
-
-        BlockPos blockPos2;
-        do {
-            if (!var2.hasNext()) {
+        for (BlockPos p : BlockPos.betweenClosed(
+                blockPos.offset(-range, -1, -range),
+                blockPos.offset(range, 1, range))) {
+            if (levelReader.getBlockState(p).is(ObjectRegistry.WATER_SPRINKLER.get())) {
+                cir.setReturnValue(true);
                 return;
             }
-            blockPos2 = var2.next();
-        } while (!levelReader.getBlockState(blockPos2).is(ObjectRegistry.WATER_SPRINKLER.get()));
-        cir.setReturnValue(true);
+        }
     }
-
 
     @Inject(method = "fallOn", at = @At("HEAD"), cancellable = true)
     private void farm_and_charm$preventTrampleWithDungarees(Level level, BlockState blockState, BlockPos blockPos, Entity entity, float f, CallbackInfo ci) {
         if (!(entity instanceof Player player)) return;
-
         ItemStack legs = player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.LEGS);
-        if (legs.getItem() == ObjectRegistry.DUNGAREES.get()) {
-            ci.cancel();
-        }
+        if (legs.getItem() == ObjectRegistry.DUNGAREES.get()) ci.cancel();
     }
 }

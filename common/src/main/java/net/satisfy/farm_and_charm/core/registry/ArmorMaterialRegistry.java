@@ -21,6 +21,7 @@ import java.util.function.Supplier;
 
 public final class ArmorMaterialRegistry {
     public static final Holder<ArmorMaterial> CLOTH = register(
+            "cloth",
             Util.make(new EnumMap<>(ArmorItem.Type.class), m -> {
                 m.put(ArmorItem.Type.BOOTS, 1);
                 m.put(ArmorItem.Type.LEGGINGS, 1);
@@ -32,6 +33,7 @@ public final class ArmorMaterialRegistry {
     );
 
     public static final Holder<ArmorMaterial> JEWELRY = register(
+            "jewelry",
             Util.make(new EnumMap<>(ArmorItem.Type.class), m -> {
                 m.put(ArmorItem.Type.BOOTS, 1);
                 m.put(ArmorItem.Type.LEGGINGS, 1);
@@ -57,7 +59,7 @@ public final class ArmorMaterialRegistry {
         return ResourceLocation.fromNamespaceAndPath(png.getNamespace(), name);
     }
 
-    private static Holder<ArmorMaterial> register(EnumMap<ArmorItem.Type, Integer> map, Supplier<Ingredient> repair, ResourceLocation layerPrefix) {
+    private static Holder<ArmorMaterial> register(String id, EnumMap<ArmorItem.Type, Integer> map, Supplier<Ingredient> repair, ResourceLocation layerPrefix) {
         EnumMap<ArmorItem.Type, Integer> copy = new EnumMap<>(ArmorItem.Type.class);
         for (ArmorItem.Type t : ArmorItem.Type.values()) {
             Integer v = map.get(t);
@@ -67,7 +69,7 @@ public final class ArmorMaterialRegistry {
         List<ArmorMaterial.Layer> layers = List.of(new ArmorMaterial.Layer(layerPrefix, "", true));
         return Registry.registerForHolder(
                 BuiltInRegistries.ARMOR_MATERIAL,
-                ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "basic"),
+                ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, id),
                 new ArmorMaterial(copy, 15, SoundEvents.ARMOR_EQUIP_LEATHER, repair, layers, 0.0F, 0.0F)
         );
     }
@@ -79,7 +81,11 @@ public final class ArmorMaterialRegistry {
         EnumMap<ArmorItem.Type, Integer> def = new EnumMap<>(ArmorItem.Type.class);
         for (ArmorItem.Type t : ArmorItem.Type.values()) def.put(t, base.value().getDefense(t));
         List<ArmorMaterial.Layer> layers = List.of(new ArmorMaterial.Layer(layerPrefix, "", true));
-        Holder<ArmorMaterial> res = Registry.registerForHolder(BuiltInRegistries.ARMOR_MATERIAL, ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "mat_" + layerPrefix.getNamespace() + "_" + layerPrefix.getPath().replace('/', '_')), new ArmorMaterial(def, base.value().enchantmentValue(), base.value().equipSound(), base.value().repairIngredient(), layers, base.value().toughness(), base.value().knockbackResistance()));
+        Holder<ArmorMaterial> res = Registry.registerForHolder(
+                BuiltInRegistries.ARMOR_MATERIAL,
+                ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "mat_" + layerPrefix.getNamespace() + "_" + layerPrefix.getPath().replace('/', '_')),
+                new ArmorMaterial(def, base.value().enchantmentValue(), base.value().equipSound(), base.value().repairIngredient(), layers, base.value().toughness(), base.value().knockbackResistance())
+        );
         CACHE.put(key, res);
         return res;
     }

@@ -1,3 +1,16 @@
+[1.1.4]
+
+**Fixed**
+* MincerCategory for REI wasn't registered properly
+* ArmorType was being registered twice
+* Sprinkler now hydrates farmland and extinguishes nearby fire properly
+* Leggings renderer now works correctly on Fabric
+
+**Changed**
+* Migrated FarmAndCharmIdentifier to ResourceLocation.fromNamespaceAndPath
+
+***
+
 [1.1.3]
 
 **Fixed**

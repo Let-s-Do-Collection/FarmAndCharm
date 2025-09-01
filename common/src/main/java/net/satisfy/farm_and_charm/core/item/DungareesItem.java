@@ -31,7 +31,7 @@ public class DungareesItem extends ArmorItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
+    public void appendHoverText(@NotNull ItemStack itemStack, @NotNull TooltipContext tooltipContext, List<Component> tooltip, @NotNull TooltipFlag tooltipFlag) {
         tooltip.add(Component.empty());
         tooltip.add(Component.translatable("tooltip.farm_and_charm.dungarees_1").withStyle(ChatFormatting.DARK_PURPLE));
         tooltip.add(Component.translatable("tooltip.farm_and_charm.dungarees_2").withStyle(ChatFormatting.BLUE));

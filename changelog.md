@@ -3,6 +3,7 @@
 **Fixed**
 * Another Try for: Crash caused by unregistered custom MobEffects (e.g. `sustenance`) not being saved correctly
 * Grandma's Strawberry Pie can now be eaten safely. Enjoy!
+* Dungarees not being rendered properly on NeoForge
 
 **Changed**
 * Most cooking tools can now be broken instantly and dont require a tool anymore

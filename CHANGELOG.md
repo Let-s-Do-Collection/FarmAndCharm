@@ -5,10 +5,11 @@
 * ArmorType was being registered twice
 * Sprinkler now hydrates farmland and extinguishes nearby fire properly
 * Leggings renderer now works correctly on Fabric
+* Improved IngredientsCheck for CraftingBowl
 
 **Changed**
 * Migrated FarmAndCharmIdentifier to ResourceLocation.fromNamespaceAndPath
-
+* Added a "Can be Placed" tooltip for the PetBowl
 ***
 
 [1.1.3]

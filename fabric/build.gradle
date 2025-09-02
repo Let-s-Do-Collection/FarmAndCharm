@@ -100,6 +100,11 @@ modrinth {
     loaders = ["fabric"]
     uploadFile = remapJar
     additionalFiles = [tasks.sourcesJar.archiveFile]
+
+    dependencies {
+        required.project "architectury-api"
+        required.project "cloth-config"
+    }
 }
 
 curseforge {
@@ -114,5 +119,10 @@ curseforge {
             changelog = changelogText
             changelogType = "markdown"
         }
+
+        relations {
+            requiredDependency "architectury-api"
+        }
     }
 }
+

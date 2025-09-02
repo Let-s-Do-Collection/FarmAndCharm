@@ -97,6 +97,10 @@ modrinth {
     loaders = ["neoforge"]
     uploadFile = remapJar
     additionalFiles = [tasks.sourcesJar.archiveFile]
+
+    dependencies {
+        required.project "architectury-api"
+    }
 }
 
 curseforge {
@@ -111,5 +115,10 @@ curseforge {
             changelog = changelogText
             changelogType = "markdown"
         }
+
+        relations {
+            requiredDependency "architectury-api"
+        }
     }
 }
+

@@ -122,7 +122,7 @@ curseforge {
 
         relations {
             requiredDependency "architectury-api"
-            required.project "cloth-config"
+            requiredDependency "cloth-config"
         }
     }
 }

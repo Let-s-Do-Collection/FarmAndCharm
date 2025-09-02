@@ -40,7 +40,6 @@ public class GrandmasBlessingEffect extends MobEffect {
         if (luckAttribute != null && !luckAttribute.hasModifier(LUCK_MODIFIER_ID)) {
             luckAttribute.addPermanentModifier(LUCK_MODIFIER);
         }
-
     }
 
     @Override

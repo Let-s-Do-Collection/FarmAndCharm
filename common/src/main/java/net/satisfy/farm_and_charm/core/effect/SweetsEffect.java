@@ -21,33 +21,32 @@ public class SweetsEffect extends MobEffect {
     }
 
     @Override
-    public boolean applyEffectTick(LivingEntity livingEntity, int amplifier) {
-        if (!livingEntity.level().isClientSide) {
+    public boolean applyEffectTick(LivingEntity entity, int amplifier) {
+        if (!entity.level().isClientSide) {
             double percentIncrease = 0.02 * (amplifier + 1);
             percentIncrease = Math.min(percentIncrease, 0.3);
 
-            applyModifier(livingEntity, Attributes.MOVEMENT_SPEED, SPEED_MODIFIER_ID, percentIncrease, "Farm_And_Charm speed boost");
-            applyModifier(livingEntity, Attributes.ATTACK_SPEED, ATTACK_SPEED_MODIFIER_ID, percentIncrease, "Farm_And_Charm attack speed boost");
-            applyModifier(livingEntity, Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE_MODIFIER_ID, percentIncrease, "Farm_And_Charm attack damage boost");
+            applyModifier(entity, Attributes.MOVEMENT_SPEED, SPEED_MODIFIER_ID, percentIncrease);
+            applyModifier(entity, Attributes.ATTACK_SPEED, ATTACK_SPEED_MODIFIER_ID, percentIncrease);
+            applyModifier(entity, Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE_MODIFIER_ID, percentIncrease);
         }
         return true;
     }
 
-    private void applyModifier(LivingEntity entity, Holder<Attribute> attribute, ResourceLocation id, double percentIncrease, String name) {
-        AttributeInstance attributeInstance = entity.getAttribute(attribute);
-
-        if (attributeInstance != null) {
-            AttributeModifier modifier = attributeInstance.getModifier(id);
-            if (modifier != null) {
-                attributeInstance.removeModifier(modifier);
+    private void applyModifier(LivingEntity entity, Holder<Attribute> attribute, ResourceLocation id, double percentIncrease) {
+        AttributeInstance instance = entity.getAttribute(attribute);
+        if (instance != null) {
+            AttributeModifier old = instance.getModifier(id);
+            if (old != null) {
+                instance.removeModifier(old);
             }
             double increase = attribute.value().getDefaultValue() * percentIncrease;
-            attributeInstance.addTransientModifier(new AttributeModifier(id, increase, AttributeModifier.Operation.ADD_VALUE));
+            instance.addTransientModifier(new AttributeModifier(id, increase, AttributeModifier.Operation.ADD_VALUE));
         }
     }
 
     @Override
-    public boolean shouldApplyEffectTickThisTick(int i, int j) {
+    public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
         return true;
     }
 }

@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.effect;
 
+import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
@@ -11,14 +12,19 @@ public class FarmersBlessingEffect extends MobEffect {
 
     @Override
     public boolean applyEffectTick(LivingEntity entity, int amplifier) {
-        entity.getActiveEffectsMap().forEach((effect, instance) -> {
-            if (effect.value().getCategory() == MobEffectCategory.HARMFUL) {
+        if (!entity.level().isClientSide()) {
+            var toRemove = new java.util.ArrayList<Holder<MobEffect>>();
+            entity.getActiveEffectsMap().forEach((effect, instance) -> {
+                if (effect.value().getCategory() == MobEffectCategory.HARMFUL) {
+                    toRemove.add(effect);
+                }
+            });
+            for (var effect : toRemove) {
                 entity.removeEffect(effect);
             }
-        });
+        }
         return true;
     }
-
 
     @Override
     public boolean shouldApplyEffectTickThisTick(int i, int j) {

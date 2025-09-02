@@ -16,14 +16,15 @@ import net.minecraft.world.level.block.CandleBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.farm_and_charm.core.block.entity.WaterSprinklerBlockEntity;
+import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import net.satisfy.farm_and_charm.core.registry.SoundEventRegistry;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("notNull")
 public class WaterSprinklerBlock extends BaseEntityBlock {
     public static final MapCodec<WaterSprinklerBlock> CODEC = simpleCodec(WaterSprinklerBlock::new);
     private static final VoxelShape SHAPE = Shapes.or(
@@ -89,23 +90,22 @@ public class WaterSprinklerBlock extends BaseEntityBlock {
     public void tick(@NotNull BlockState state, ServerLevel world, BlockPos pos, @NotNull RandomSource random) {
         BlockPos.betweenClosed(pos.offset(-4, -1, -4), pos.offset(4, 1, 4)).forEach(p -> {
             BlockState bs = world.getBlockState(p);
-
+            if (bs.is(Blocks.FARMLAND) || bs.is(ObjectRegistry.FERTILIZED_FARM_BLOCK.get())) {
+                world.setBlock(p, bs.setValue(BlockStateProperties.MOISTURE, 7), 2);
+            }
             if (bs.is(Blocks.FIRE)) {
                 world.removeBlock(p, false);
                 world.playSound(null, p, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 2.6F + (random.nextFloat() - random.nextFloat()) * 0.8F);
             }
-
             if ((bs.is(Blocks.CAMPFIRE) || bs.is(Blocks.SOUL_CAMPFIRE)) && bs.getValue(CampfireBlock.LIT)) {
                 world.setBlock(p, bs.setValue(CampfireBlock.LIT, false), 3);
                 world.playSound(null, p, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 1.0F);
             }
-
             if (bs.getBlock() instanceof CandleBlock && bs.getValue(CandleBlock.LIT)) {
                 world.setBlock(p, bs.setValue(CandleBlock.LIT, false), 3);
                 world.playSound(null, p, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 1.0F);
             }
         });
-
         world.playSound(null, pos, SoundEventRegistry.WATER_SPRINKLER.get(), SoundSource.BLOCKS, 0.25F, 0.75F);
         world.scheduleTick(pos, this, 20);
     }

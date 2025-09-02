@@ -34,8 +34,8 @@ public class SustenanceEffect extends MobEffect {
     }
 
     @Override
-    public boolean shouldApplyEffectTickThisTick(int duration, int j) {
-        int interval = PlatformHelper.getSustenanceEffectInterval();
-        return interval > 0 && duration % interval == 0;
+    public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
+        int interval = Math.max(1, PlatformHelper.getSustenanceEffectInterval());
+        return duration % interval == 0;
     }
 }

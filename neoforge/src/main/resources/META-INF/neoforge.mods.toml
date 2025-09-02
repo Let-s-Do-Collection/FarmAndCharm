@@ -4,7 +4,7 @@ license = "Custom"
 issueTrackerURL = "https://github.com/satisfyu/Let-s-Do-Hub"
 
 [[mixins]]
-config = "FarmAndCharm-common.mixins.json"
+config = "FarmAndCharm-neoforge.mixins.json"
 
 [[mods]]
 modId = "farm_and_charm"

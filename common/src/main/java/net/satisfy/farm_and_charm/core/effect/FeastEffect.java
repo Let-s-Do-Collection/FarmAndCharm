@@ -19,24 +19,24 @@ public class FeastEffect extends MobEffect {
 
     @Override
     public boolean applyEffectTick(LivingEntity entity, int amplifier) {
-        int satiationInterval = PlatformHelper.getFeastEffectSatiationInterval();
-        int sustenanceInterval = PlatformHelper.getFeastEffectSustenanceInterval();
+        int satiationInterval = Math.max(1, PlatformHelper.getFeastEffectSatiationInterval());
+        int sustenanceInterval = Math.max(1, PlatformHelper.getFeastEffectSustenanceInterval());
         int healAmount = PlatformHelper.getFeastEffectHealAmount();
 
         if (!entity.level().isClientSide() && entity instanceof Player player) {
             int duration = this.getDuration(entity, this);
-            if (duration % satiationInterval  == 0) {
+            if (duration % satiationInterval == 0) {
                 if (!player.getFoodData().needsFood() &&
                         !player.hasEffect(MobEffects.REGENERATION) &&
                         player.getFoodData().getSaturationLevel() > 0f) {
-                    player.heal(healAmount  + amplifier);
+                    player.heal(healAmount + amplifier);
                 }
             }
 
             if (duration % sustenanceInterval == 0) {
                 FoodData foodData = player.getFoodData();
                 if (foodData.getFoodLevel() >= 20) {
-                    player.heal(healAmount );
+                    player.heal(healAmount);
                 } else {
                     foodData.setFoodLevel(Math.min(foodData.getFoodLevel() + 1, 20));
                 }
@@ -47,8 +47,8 @@ public class FeastEffect extends MobEffect {
 
     @Override
     public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
-        int satiationInterval = PlatformHelper.getFeastEffectSatiationInterval();
-        int sustenanceInterval = PlatformHelper.getFeastEffectSustenanceInterval();
+        int satiationInterval = Math.max(1, PlatformHelper.getFeastEffectSatiationInterval());
+        int sustenanceInterval = Math.max(1, PlatformHelper.getFeastEffectSustenanceInterval());
         return duration % satiationInterval == 0 || duration % sustenanceInterval == 0;
     }
 

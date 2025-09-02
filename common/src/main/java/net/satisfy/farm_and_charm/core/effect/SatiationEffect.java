@@ -27,7 +27,7 @@ public class SatiationEffect extends MobEffect {
 
     @Override
     public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
-        int interval = PlatformHelper.getSatiationEffectInterval();
+        int interval = Math.max(1, PlatformHelper.getSatiationEffectInterval());
         return duration % interval == 0;
     }
 }

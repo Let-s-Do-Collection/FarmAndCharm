@@ -102,7 +102,6 @@ public class CraftingBowlBlock extends BaseEntityBlock {
         if (blockEntity instanceof CraftingBowlBlockEntity bowlEntity) {
             int stirring = blockState.getValue(STIRRING);
             int stirred = blockState.getValue(STIRRED);
-
             if (player.isShiftKeyDown() && itemStack.isEmpty() && hand == InteractionHand.MAIN_HAND) {
                 for (int i = 0; i < bowlEntity.getContainerSize(); i++) {
                     ItemStack stack = bowlEntity.getItem(i);
@@ -114,31 +113,37 @@ public class CraftingBowlBlock extends BaseEntityBlock {
                 bowlEntity.setChanged();
                 return InteractionResult.sidedSuccess(world.isClientSide);
             }
-
             if (!itemStack.isEmpty() && stirring == 0) {
                 if (bowlEntity.canAddItem(itemStack)) {
-                    bowlEntity.addItemStack(itemStack.copy());
+                    ItemStack toInsert = itemStack.copy();
+                    toInsert.setCount(1);
+                    bowlEntity.addItemStack(toInsert);
                     if (!player.isCreative()) {
-                        itemStack.setCount(0);
+                        itemStack.shrink(1);
                     }
                     return InteractionResult.SUCCESS;
                 }
             } else if (itemStack.isEmpty()) {
                 if (stirred >= STIRS_NEEDED && stirring == 0) {
-                    player.getInventory().add(bowlEntity.getItem(4));
-                    bowlEntity.setItem(4, ItemStack.EMPTY);
-                    world.setBlock(pos, blockState.setValue(STIRRED, 0), 3);
-                    return InteractionResult.SUCCESS;
+                    ItemStack out = bowlEntity.getItem(4);
+                    if (!out.isEmpty()) {
+                        player.getInventory().add(out.copy());
+                        bowlEntity.setItem(4, ItemStack.EMPTY);
+                        world.setBlock(pos, blockState.setValue(STIRRED, 0), 3);
+                        return InteractionResult.SUCCESS;
+                    }
                 }
                 if (world instanceof ServerLevel serverWorld) {
                     RandomSource randomSource = serverWorld.random;
-                    for (ItemStack stack : bowlEntity.getItems()) {
-                        if (!stack.isEmpty() && bowlEntity.getItem(4) != stack) {
+                    for (int i = 0; i < 4; i++) {
+                        ItemStack stack = bowlEntity.getItem(i);
+                        if (!stack.isEmpty()) {
                             ItemParticleOption particleOption = new ItemParticleOption(ParticleTypes.ITEM, stack);
-                            serverWorld.sendParticles(particleOption, pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5, 1, randomSource.nextGaussian() * 0.15D, 0.05D, randomSource.nextGaussian() * 0.15D, 0.05D);                        }
+                            serverWorld.sendParticles(particleOption, pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5, 1, randomSource.nextGaussian() * 0.15D, 0.05D, randomSource.nextGaussian() * 0.15D, 0.05D);
+                        }
                     }
                 }
-                if (stirring <= 6) {
+                if (stirring <= 6 && bowlEntity.findRecipe(world).isPresent()) {
                     world.setBlock(pos, blockState.setValue(STIRRING, 10), 3);
                     world.playSound(null, pos, SoundEventRegistry.CRAFTING_BOWL_STIRRING.get(), SoundSource.BLOCKS, 0.05f, 1.0F);
                     return InteractionResult.SUCCESS;
@@ -147,7 +152,6 @@ public class CraftingBowlBlock extends BaseEntityBlock {
         }
         return InteractionResult.PASS;
     }
-
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
@@ -170,7 +174,6 @@ public class CraftingBowlBlock extends BaseEntityBlock {
         }
         return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
     }
-
 
     @Override
     public void onPlace(BlockState blockstate, Level world, BlockPos pos, BlockState oldState, boolean moving) {
@@ -210,7 +213,7 @@ public class CraftingBowlBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
-        return createTickerHelper(type, EntityTypeRegistry.CRAFTING_BOWL_BLOCK_ENTITY.get(), (world1, pos, state1, be) -> be.tick(world1, pos, state1, be));
+        return createTickerHelper(type, EntityTypeRegistry.CRAFTING_BOWL_BLOCK_ENTITY.get(), (w, p, s, be) -> be.tick(w, p, s, be));
     }
 
     @Override

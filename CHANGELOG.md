@@ -1,3 +1,10 @@
+[1.1.6]
+
+**Fixed**
+* Crash when sending `SyncSaturationPacket` due to missing STREAM_CODEC registration on server
+
+***
+
 [1.1.5]
 
 **Fixed**

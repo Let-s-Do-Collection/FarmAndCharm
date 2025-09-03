@@ -17,9 +17,11 @@ public class PacketHandler {
     public static final ResourceLocation SYNC_SATURATION = FarmAndCharm.identifier("sync_saturation");
 
     public static void init() {
-        NetworkManager.registerReceiver(NetworkManager.c2s(), SetTextPacket.TYPE, SetTextPacket.STREAM_CODEC, (pkt, ctx) -> ctx.queue(() -> SetTextPacket.handle(pkt, (ServerPlayer) ctx.getPlayer())));
-
-        if (Platform.getEnvironment() == Env.CLIENT) {
+        if (Platform.getEnvironment() == Env.SERVER) {
+            NetworkManager.registerReceiver(NetworkManager.c2s(), SetTextPacket.TYPE, SetTextPacket.STREAM_CODEC, (pkt, ctx) -> ctx.queue(() -> SetTextPacket.handle(pkt, (ServerPlayer) ctx.getPlayer())));
+            NetworkManager.registerReceiver(NetworkManager.s2c(), SyncSaturationPacket.TYPE, SyncSaturationPacket.STREAM_CODEC, (pkt, ctx) -> {});
+        } else {
+            NetworkManager.registerReceiver(NetworkManager.c2s(), SetTextPacket.TYPE, SetTextPacket.STREAM_CODEC, (pkt, ctx) -> {});
             NetworkManager.registerReceiver(NetworkManager.s2c(), SyncSaturationPacket.TYPE, SyncSaturationPacket.STREAM_CODEC, (pkt, ctx) -> ctx.queue(() -> SyncSaturationPacketClientHandler.handle(pkt)));
         }
     }

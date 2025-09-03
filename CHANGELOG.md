@@ -2,6 +2,8 @@
 
 **Fixed**
 * Crash when sending `SyncSaturationPacket` due to missing STREAM_CODEC registration on server
+* Fixed crash when saving Coop items by moving data to `BLOCK_ENTITY_DATA` and stripping UUIDs.
+* Fixed duplicate UUID warnings when releasing chickens.
 
 ***
 

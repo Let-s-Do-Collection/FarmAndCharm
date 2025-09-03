@@ -1,3 +1,10 @@
+[1.1.5]
+
+**Fixed**
+* Network crash on Fabric due to incorrect registration of S2C receivers in PacketHandler
+
+***
+
 [1.1.4]
 
 **Fixed**
@@ -10,6 +17,7 @@
 **Changed**
 * Migrated FarmAndCharmIdentifier to ResourceLocation.fromNamespaceAndPath
 * Added a "Can be Placed" tooltip for the PetBowl
+
 ***
 
 [1.1.3]

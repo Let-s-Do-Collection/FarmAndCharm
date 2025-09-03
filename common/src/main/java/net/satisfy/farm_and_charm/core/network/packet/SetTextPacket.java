@@ -10,6 +10,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.satisfy.farm_and_charm.core.block.entity.TextEditableBlockEntity;
 import net.satisfy.farm_and_charm.core.network.PacketHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +55,7 @@ public record SetTextPacket(BlockPos pos, List<String> texts) implements CustomP
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends CustomPacketPayload> type() {
         return new Type<>(PacketHandler.SET_SIGN_TEXT);
     }
 }

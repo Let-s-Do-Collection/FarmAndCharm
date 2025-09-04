@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class MincingDisplay extends BasicDisplay {
+
     public static final CategoryIdentifier<MincingDisplay> MINCING_DISPLAY =
             CategoryIdentifier.of(FarmAndCharm.MOD_ID, "mincing_display");
 

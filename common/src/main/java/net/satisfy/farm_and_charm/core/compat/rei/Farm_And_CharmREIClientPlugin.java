@@ -80,7 +80,7 @@ public class Farm_And_CharmREIClientPlugin implements REIClientPlugin {
 
     public static List<Ingredient> ingredients(Recipe<RecipeInput> recipe, ItemStack stack) {
         List<Ingredient> l = new ArrayList<>(recipe.getIngredients());
-        l.add(0, Ingredient.of(stack.getItem()));
+        if (!stack.isEmpty()) l.add(0, Ingredient.of(stack.getItem()));
         return l;
     }
 }

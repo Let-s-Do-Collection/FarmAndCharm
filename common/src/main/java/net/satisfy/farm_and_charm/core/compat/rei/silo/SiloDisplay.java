@@ -17,7 +17,7 @@ public class SiloDisplay extends BasicDisplay {
                 recipe.getIngredients().stream()
                         .map(EntryIngredients::ofIngredient)
                         .collect(Collectors.toList()),
-                Collections.singletonList(EntryIngredients.of(recipe.getResultItem(null)))
+                Collections.singletonList(EntryIngredients.of(recipe.getResultItem(BasicDisplay.registryAccess())))
         );
     }
 
@@ -26,5 +26,3 @@ public class SiloDisplay extends BasicDisplay {
         return SiloCategory.SILO_DISPLAY;
     }
 }
-
-

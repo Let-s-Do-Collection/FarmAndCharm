@@ -7,7 +7,6 @@ import me.shedaniel.rei.api.common.util.EntryIngredients;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.core.recipe.CookingPotRecipe;
@@ -27,27 +26,19 @@ public class CookingPotDisplay extends BasicDisplay {
 
     private static List<EntryIngredient> createInputs(CookingPotRecipe recipe) {
         List<EntryIngredient> inputs = new ArrayList<>();
-        int ingredientIndex = 0;
-
-        for (Ingredient ingredient : recipe.getIngredients()) {
-            for (ItemStack stack : ingredient.getItems()) {
-                if (ingredientIndex < 6) {
-                    inputs.add(EntryIngredients.of(stack));
-                    ingredientIndex++;
-                }
+        for (int i = 0; i < 6; i++) {
+            if (i < recipe.getIngredients().size()) {
+                Ingredient ingredient = recipe.getIngredients().get(i);
+                inputs.add(EntryIngredients.ofIngredient(ingredient));
+            } else {
+                inputs.add(EntryIngredients.of(ItemStack.EMPTY));
             }
         }
-
-        while (inputs.size() < 6) {
-            inputs.add(EntryIngredients.of(ItemStack.EMPTY));
-        }
-
         if (recipe.isContainerRequired() && !recipe.getContainerItem().isEmpty()) {
             inputs.add(EntryIngredients.of(recipe.getContainerItem()));
         } else {
-            inputs.add(EntryIngredients.of(new ItemStack(Items.AIR)));
+            inputs.add(EntryIngredients.of(ItemStack.EMPTY));
         }
-
         return inputs;
     }
 

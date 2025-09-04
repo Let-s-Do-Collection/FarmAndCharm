@@ -1,4 +1,4 @@
-package net.satisfy.farm_and_charm.neoforge.mixin;
+package net.satisfy.farm_and_charm.neoforge.core.mixin;
 
 import net.minecraft.world.entity.ai.goal.TemptGoal;
 import net.minecraft.world.entity.player.Player;

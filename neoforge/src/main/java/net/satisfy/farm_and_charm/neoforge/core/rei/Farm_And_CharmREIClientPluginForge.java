@@ -1,4 +1,4 @@
-package net.satisfy.farm_and_charm.neoforge.rei;
+package net.satisfy.farm_and_charm.neoforge.core.rei;
 
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;

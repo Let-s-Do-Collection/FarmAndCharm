@@ -1,9 +1,17 @@
+[1.1.8]
+
+**Fixed**
+* _Neoforge Only:_ Compostable items are now properly registered via NeoForge data maps instead of runtime code
+
+
+***
+
 [1.1.7]
 
 **Fixed**
-* Resolved server crash when syncing saturation (SyncSaturationPacket) by registering S2C payload type correctly and limiting receiver registration to the client environment.
-* REI integration now properly handles tag-based ingredients across all custom categories (Cooking Pot, Crafting Bowl, Mincing, Roaster, Stove, Silo).
-* REI Result items are now consistently resolved with registryAccess to avoid unstable/null context issues.
+* Resolved server crash when syncing saturation (`SyncSaturationPacket`) by registering S2C payload type correctly and limiting receiver registration to the client environment
+* REI integration now properly handles tag-based ingredients across all custom categories (Cooking Pot, Crafting Bowl, Mincing, Roaster, Stove, Silo)
+* REI Result items are now consistently resolved with registryAccess to avoid unstable/null context issues   
 
 ***
 

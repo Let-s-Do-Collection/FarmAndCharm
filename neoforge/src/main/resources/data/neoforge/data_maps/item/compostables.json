@@ -1,0 +1,199 @@
+{
+  "values": {
+    "farm_and_charm:kernels": {
+      "chance": 0.3
+    },
+    "farm_and_charm:corn": {
+      "chance": 0.3
+    },
+    "farm_and_charm:oat_seeds": {
+      "chance": 0.2
+    },
+    "farm_and_charm:oat": {
+      "chance": 0.3
+    },
+    "farm_and_charm:barley_seeds": {
+      "chance": 0.2
+    },
+    "farm_and_charm:barley": {
+      "chance": 0.3
+    },
+    "farm_and_charm:lettuce_seeds": {
+      "chance": 0.3
+    },
+    "farm_and_charm:lettuce_crop": {
+      "chance": 0.3
+    },
+    "farm_and_charm:lettuce": {
+      "chance": 0.3
+    },
+    "farm_and_charm:onion": {
+      "chance": 0.3
+    },
+    "farm_and_charm:tomato_seeds": {
+      "chance": 0.2
+    },
+    "farm_and_charm:tomato": {
+      "chance": 0.3
+    },
+    "farm_and_charm:rotten_tomato": {
+      "chance": 0.5
+    },
+    "farm_and_charm:strawberry_seeds": {
+      "chance": 0.2
+    },
+    "farm_and_charm:strawberry": {
+      "chance": 0.3
+    },
+    "farm_and_charm:wild_nettle": {
+      "chance": 0.3
+    },
+    "farm_and_charm:wild_ribwort": {
+      "chance": 0.3
+    },
+    "farm_and_charm:wild_emmer": {
+      "chance": 0.3
+    },
+    "farm_and_charm:wild_beetroots": {
+      "chance": 0.3
+    },
+    "farm_and_charm:wild_potatoes": {
+      "chance": 0.3
+    },
+    "farm_and_charm:wild_carrots": {
+      "chance": 0.3
+    },
+    "farm_and_charm:wild_barley": {
+      "chance": 0.3
+    },
+    "farm_and_charm:wild_corn": {
+      "chance": 0.3
+    },
+    "farm_and_charm:wild_oat": {
+      "chance": 0.3
+    },
+    "farm_and_charm:wild_lettuce": {
+      "chance": 0.3
+    },
+    "farm_and_charm:wild_onions": {
+      "chance": 0.3
+    },
+    "farm_and_charm:wild_tomatoes": {
+      "chance": 0.3
+    },
+    "farm_and_charm:wild_strawberries": {
+      "chance": 0.3
+    },
+    "farm_and_charm:fertilizer": {
+      "chance": 0.85
+    },
+    "farm_and_charm:butter": {
+      "chance": 0.3
+    },
+    "farm_and_charm:yeast": {
+      "chance": 0.2
+    },
+    "farm_and_charm:flour": {
+      "chance": 0.4
+    },
+    "farm_and_charm:dough": {
+      "chance": 0.4
+    },
+    "farm_and_charm:raw_pasta": {
+      "chance": 0.5
+    },
+    "farm_and_charm:minced_beef": {
+      "chance": 0.4
+    },
+    "farm_and_charm:lamb_ham": {
+      "chance": 0.4
+    },
+    "farm_and_charm:chicken_parts": {
+      "chance": 0.3
+    },
+    "farm_and_charm:bacon": {
+      "chance": 0.4
+    },
+    "farm_and_charm:farmer_salad": {
+      "chance": 0.5
+    },
+    "farm_and_charm:oatmeal_with_strawberries": {
+      "chance": 0.4
+    },
+    "farm_and_charm:simple_tomato_soup": {
+      "chance": 0.4
+    },
+    "farm_and_charm:barley_soup": {
+      "chance": 0.4
+    },
+    "farm_and_charm:onion_soup": {
+      "chance": 0.4
+    },
+    "farm_and_charm:potato_soup": {
+      "chance": 0.4
+    },
+    "farm_and_charm:goulash": {
+      "chance": 0.5
+    },
+    "farm_and_charm:pasta_with_onion_sauce": {
+      "chance": 0.5
+    },
+    "farm_and_charm:corn_grits": {
+      "chance": 0.4
+    },
+    "farm_and_charm:barley_patties_with_potatoes": {
+      "chance": 0.5
+    },
+    "farm_and_charm:beef_patty_with_vegetables": {
+      "chance": 0.5
+    },
+    "farm_and_charm:sausage_with_oat_patty": {
+      "chance": 0.4
+    },
+    "farm_and_charm:roasted_chicken": {
+      "chance": 0.6
+    },
+    "farm_and_charm:roasted_corn": {
+      "chance": 0.5
+    },
+    "farm_and_charm:cooked_salmon": {
+      "chance": 0.4
+    },
+    "farm_and_charm:cooked_cod": {
+      "chance": 0.4
+    },
+    "farm_and_charm:chicken_wrapped_in_bacon": {
+      "chance": 0.5
+    },
+    "farm_and_charm:lamb_with_corn": {
+      "chance": 0.5
+    },
+    "farm_and_charm:bacon_with_eggs": {
+      "chance": 0.5
+    },
+    "farm_and_charm:oat_pancake": {
+      "chance": 0.4
+    },
+    "farm_and_charm:farmers_breakfast": {
+      "chance": 0.6
+    },
+    "farm_and_charm:baked_lamb_ham": {
+      "chance": 0.5
+    },
+    "farm_and_charm:potato_with_roast_meat": {
+      "chance": 0.6
+    },
+    "farm_and_charm:stuffed_chicken": {
+      "chance": 0.6
+    },
+    "farm_and_charm:stuffed_rabbit": {
+      "chance": 0.6
+    },
+    "farm_and_charm:farmers_bread": {
+      "chance": 0.5
+    },
+    "farm_and_charm:grandmothers_strawberry_cake": {
+      "chance": 0.7
+    }
+  }
+}

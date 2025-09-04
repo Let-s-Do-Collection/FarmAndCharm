@@ -1,6 +1,6 @@
 package net.satisfy.farm_and_charm.platform.neoforge;
 
-import net.satisfy.farm_and_charm.neoforge.config.FarmAndCharmNeoForgeConfig;
+import net.satisfy.farm_and_charm.neoforge.core.config.FarmAndCharmNeoForgeConfig;
 
 public class PlatformHelperImpl {
 

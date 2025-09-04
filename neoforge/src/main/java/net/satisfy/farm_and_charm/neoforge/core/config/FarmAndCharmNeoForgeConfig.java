@@ -1,4 +1,4 @@
-package net.satisfy.farm_and_charm.neoforge.config;
+package net.satisfy.farm_and_charm.neoforge.core.config;
 
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.event.config.ModConfigEvent;

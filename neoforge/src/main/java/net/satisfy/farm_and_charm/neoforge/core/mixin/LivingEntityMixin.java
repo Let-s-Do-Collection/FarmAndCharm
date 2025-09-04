@@ -1,4 +1,4 @@
-package net.satisfy.farm_and_charm.neoforge.mixin;
+package net.satisfy.farm_and_charm.neoforge.core.mixin;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;

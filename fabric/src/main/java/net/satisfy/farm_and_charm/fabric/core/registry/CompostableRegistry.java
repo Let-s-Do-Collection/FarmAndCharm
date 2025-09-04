@@ -1,6 +1,7 @@
-package net.satisfy.farm_and_charm.core.registry;
+package net.satisfy.farm_and_charm.fabric.core.registry;
 
 import net.minecraft.world.level.block.ComposterBlock;
+import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 
 public class CompostableRegistry {
     public static void registerCompostable() {

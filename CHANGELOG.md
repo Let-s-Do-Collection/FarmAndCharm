@@ -1,7 +1,13 @@
 [1.1.8]
 
 **Fixed**
-* _Neoforge Only:_ Compostable items are now properly registered via NeoForge data maps instead of runtime code
+
+***
+
+[1.1.7.1]
+
+**Fixed**
+* _Neoforge Only:_ Compostable items are now properly registered through NeoForge data maps instead of runtime code
 
 
 ***

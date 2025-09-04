@@ -10,6 +10,7 @@ public class SyncSaturationPacketClientHandler {
     public static void handle(SyncSaturationPacket packet) {
         Level level = Minecraft.getInstance().level;
         if (level == null) return;
+        
 
         Entity entity = level.getEntity(packet.entityId());
         if (entity instanceof SaturationTracker.SaturatedAnimal saturated) {

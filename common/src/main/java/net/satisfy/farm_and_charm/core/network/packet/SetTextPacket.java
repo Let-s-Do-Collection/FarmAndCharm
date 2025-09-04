@@ -23,6 +23,7 @@ public record SetTextPacket(BlockPos pos, List<String> texts) implements CustomP
     public static final StreamCodec<RegistryFriendlyByteBuf, SetTextPacket> STREAM_CODEC =
             StreamCodec.of(SetTextPacket::toNetwork, SetTextPacket::fromNetwork);
 
+
     public static void toNetwork(RegistryFriendlyByteBuf buf, SetTextPacket msg) {
         buf.writeBlockPos(msg.pos);
         buf.writeInt(msg.texts.size());
@@ -56,6 +57,6 @@ public record SetTextPacket(BlockPos pos, List<String> texts) implements CustomP
 
     @Override
     public @NotNull Type<? extends CustomPacketPayload> type() {
-        return new Type<>(PacketHandler.SET_SIGN_TEXT);
+        return TYPE;
     }
 }

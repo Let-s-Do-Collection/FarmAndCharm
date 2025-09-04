@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public record SyncSaturationPacket(int entityId, int level, int foodCounter) implements CustomPacketPayload {
 
+
     public static final CustomPacketPayload.Type<SyncSaturationPacket> TYPE =
             new Type<>(PacketHandler.SYNC_SATURATION);
 

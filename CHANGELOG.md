@@ -1,3 +1,9 @@
+[1.1.7]
+
+* Resolved server crash when syncing saturation (SyncSaturationPacket) by registering S2C payload type correctly and limiting receiver registration to the client environment.
+
+***
+
 [1.1.6]
 
 **Fixed**

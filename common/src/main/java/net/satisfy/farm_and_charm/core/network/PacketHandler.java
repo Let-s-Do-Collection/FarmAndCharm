@@ -17,28 +17,33 @@ public class PacketHandler {
     public static final ResourceLocation SYNC_SATURATION = FarmAndCharm.identifier("sync_saturation");
 
     public static void init() {
-        if (Platform.getEnvironment() == Env.SERVER) {
-            NetworkManager.registerReceiver(NetworkManager.c2s(), SetTextPacket.TYPE, SetTextPacket.STREAM_CODEC, (pkt, ctx) -> ctx.queue(() -> SetTextPacket.handle(pkt, (ServerPlayer) ctx.getPlayer())));
-            NetworkManager.registerReceiver(NetworkManager.s2c(), SyncSaturationPacket.TYPE, SyncSaturationPacket.STREAM_CODEC, (pkt, ctx) -> {});
-        } else {
-            NetworkManager.registerReceiver(NetworkManager.c2s(), SetTextPacket.TYPE, SetTextPacket.STREAM_CODEC, (pkt, ctx) -> {});
-            NetworkManager.registerReceiver(NetworkManager.s2c(), SyncSaturationPacket.TYPE, SyncSaturationPacket.STREAM_CODEC, (pkt, ctx) -> ctx.queue(() -> SyncSaturationPacketClientHandler.handle(pkt)));
-        }
-    }
+        NetworkManager.registerReceiver(NetworkManager.c2s(), SetTextPacket.TYPE, SetTextPacket.STREAM_CODEC, (pkt, ctx) -> ctx.queue(() -> SetTextPacket.handle(pkt, (ServerPlayer) ctx.getPlayer())));
 
-    public static void sendToServer(SetTextPacket packet) {
-        NetworkManager.sendToServer(packet);
+        if (Platform.getEnvironment() == Env.CLIENT) {
+            NetworkManager.registerReceiver(NetworkManager.s2c(), SyncSaturationPacket.TYPE, SyncSaturationPacket.STREAM_CODEC, (pkt, ctx) -> ctx.queue(() -> SyncSaturationPacketClientHandler.handle(pkt)));
+        } else {
+            NetworkManager.registerS2CPayloadType(SyncSaturationPacket.TYPE, SyncSaturationPacket.STREAM_CODEC);
+        }
     }
 
     public static void sendSaturationSync(SyncSaturationPacket packet, Entity entity) {
         if (entity.level() instanceof ServerLevel serverLevel) {
             for (ServerPlayer player : serverLevel.players()) {
-                NetworkManager.sendToPlayer(player, packet);
+                if (NetworkManager.canPlayerReceive(player, SyncSaturationPacket.TYPE)) {
+                    NetworkManager.sendToPlayer(player, packet);
+                }
             }
         }
     }
 
     public static void sendToClient(ServerPlayer player, SyncSaturationPacket packet) {
-        NetworkManager.sendToPlayer(player, packet);
+        if (NetworkManager.canPlayerReceive(player, SyncSaturationPacket.TYPE)) {
+            NetworkManager.sendToPlayer(player, packet);
+        }
+    }
+
+
+    public static void sendToServer(SetTextPacket packet) {
+        NetworkManager.sendToServer(packet);
     }
 }

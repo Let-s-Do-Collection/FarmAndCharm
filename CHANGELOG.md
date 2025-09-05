@@ -2,6 +2,7 @@
 
 **Fixed**
 * Climbing crops (Tomatoes, Hops) placement now works on all blocks that extend `FarmBlock`
+* Removed invalid DataMap entry `farm_and_charm:lettuce_crop` that caused NeoForge startup crashes.
 
 ***
 

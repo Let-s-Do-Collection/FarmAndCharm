@@ -21,9 +21,6 @@
     "farm_and_charm:lettuce_seeds": {
       "chance": 0.3
     },
-    "farm_and_charm:lettuce_crop": {
-      "chance": 0.3
-    },
     "farm_and_charm:lettuce": {
       "chance": 0.3
     },

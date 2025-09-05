@@ -1,10 +1,11 @@
 [1.1.8]
 
 **Fixed**
+* Climbing crops (Tomatoes, Hops) placement now works on all blocks that extend `FarmBlock`
 
 ***
 
-[1.1.7.1]
+[1.1.7.1-Neoforge]
 
 **Fixed**
 * _Neoforge Only:_ Compostable items are now properly registered through NeoForge data maps instead of runtime code

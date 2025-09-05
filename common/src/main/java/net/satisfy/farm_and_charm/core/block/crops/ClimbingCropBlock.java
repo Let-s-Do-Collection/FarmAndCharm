@@ -15,7 +15,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FarmBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -83,7 +83,7 @@ public abstract class ClimbingCropBlock extends Block {
     }
 
     protected boolean mayPlaceOn(BlockState state) {
-        return state.is(Blocks.FARMLAND) || state.is(ObjectRegistry.FERTILIZED_FARM_BLOCK.get());
+        return state.getBlock() instanceof FarmBlock;
     }
 
     protected boolean canGrow(BlockState state) {

@@ -6,12 +6,14 @@ import net.neoforged.fml.config.ModConfig;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.neoforge.core.config.FarmAndCharmNeoForgeConfig;
 
+import java.util.Objects;
+
 @Mod(FarmAndCharm.MOD_ID)
 public class FarmAndCharmNeoForge {
-
     public FarmAndCharmNeoForge(ModContainer modContainer) {
-        FarmAndCharm.init();
         modContainer.registerConfig(ModConfig.Type.COMMON, FarmAndCharmNeoForgeConfig.COMMON_CONFIG);
+        Objects.requireNonNull(modContainer.getEventBus()).addListener(FarmAndCharmNeoForgeConfig::onLoad);
+        modContainer.getEventBus().addListener(FarmAndCharmNeoForgeConfig::onReload);
+        FarmAndCharm.init();
     }
-
 }

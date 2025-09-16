@@ -1,26 +1,22 @@
 package net.satisfy.farm_and_charm.neoforge.core.config;
 
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class FarmAndCharmNeoForgeConfig {
     public static final ModConfigSpec COMMON_CONFIG;
-
     public static final ModConfigSpec.BooleanValue ENABLE_BONEMEAL_EFFECT;
     public static final ModConfigSpec.IntValue FERTILIZED_SOIL_RANGE;
     public static final ModConfigSpec.IntValue WATER_SPRINKLER_RANGE;
     public static final ModConfigSpec.BooleanValue ENABLE_RAIN_GROWTH_EFFECT;
     public static final ModConfigSpec.DoubleValue RAIN_GROWTH_MULTIPLIER;
     public static final ModConfigSpec.IntValue FEEDING_TROUGH_RANGE;
-
     public static final ModConfigSpec.BooleanValue ENABLE_FERTILIZER;
     public static final ModConfigSpec.BooleanValue ENABLE_TAMING;
     public static final ModConfigSpec.BooleanValue ENABLE_HORSE_TAMING;
     public static final ModConfigSpec.BooleanValue ENABLE_HORSE_EFFECTS;
     public static final ModConfigSpec.BooleanValue ENABLE_CHICKEN_EFFECTS;
     public static final ModConfigSpec.BooleanValue ENABLE_CAT_TAMING_CHANCE;
-
     public static final ModConfigSpec.IntValue OAT_PANCAKE_NUTRITION;
     public static final ModConfigSpec.DoubleValue OAT_PANCAKE_SATURATION_MOD;
     public static final ModConfigSpec.IntValue ROASTED_CORN_NUTRITION;
@@ -75,7 +71,6 @@ public class FarmAndCharmNeoForgeConfig {
     public static final ModConfigSpec.DoubleValue COOKED_COD_SATURATION_MOD;
     public static final ModConfigSpec.IntValue ROASTED_CHICKEN_NUTRITION;
     public static final ModConfigSpec.DoubleValue ROASTED_CHICKEN_SATURATION_MOD;
-
     public static final ModConfigSpec.IntValue CHICKEN_EFFECT_TICK_INTERVAL;
     public static final ModConfigSpec.IntValue CHICKEN_EFFECT_EGG_CHANCE;
     public static final ModConfigSpec.IntValue CHICKEN_EFFECT_FEATHER_CHANCE;
@@ -88,90 +83,88 @@ public class FarmAndCharmNeoForgeConfig {
     public static final ModConfigSpec.IntValue SATIATION_EFFECT_INTERVAL;
     public static final ModConfigSpec.IntValue SATIATION_EFFECT_HEAL_AMOUNT;
 
-    public static boolean enableBonemealEffect;
-    public static int fertilizedSoilRange;
-    public static int waterSprinklerRange;
-    public static boolean enableRainGrowthEffect;
+    public static boolean enableBonemealEffect = true;
+    public static int fertilizedSoilRange = 5;
+    public static int waterSprinklerRange = 8;
+    public static boolean enableRainGrowthEffect = true;
     public static double rainGrowthMultiplier = 0.5;
-    public static int feedingTroughRange;
-    public static boolean enableFertilizer;
-    public static boolean enableTaming;
-    public static boolean enableHorseTaming;
-    public static boolean enableHorseEffects;
-    public static boolean enableChickenEffects;
-    public static boolean enableCatTamingChance;
+    public static int feedingTroughRange = 8;
+    public static boolean enableFertilizer = true;
+    public static boolean enableTaming = true;
+    public static boolean enableHorseTaming = true;
+    public static boolean enableHorseEffects = true;
+    public static boolean enableChickenEffects = true;
+    public static boolean enableCatTamingChance = true;
 
+    public static int oatPancakeNutrition = 5;
+    public static double oatPancakeSaturationMod = 0.6;
+    public static int roastedCornNutrition = 5;
+    public static double roastedCornSaturationMod = 0.5;
+    public static int potatoWithRoastMeatNutrition = 7;
+    public static double potatoWithRoastMeatSaturationMod = 0.7;
+    public static int bakedLambHamNutrition = 8;
+    public static double bakedLambHamSaturationMod = 0.9;
+    public static int farmersBreakfastNutrition = 12;
+    public static double farmersBreakfastSaturationMod = 1.2;
+    public static int stuffedChickenNutrition = 8;
+    public static double stuffedChickenSaturationMod = 0.8;
+    public static int stuffedRabbitNutrition = 9;
+    public static double stuffedRabbitSaturationMod = 0.9;
+    public static int grandmothersStrawberryCakeNutrition = 4;
+    public static double grandmothersStrawberryCakeSaturationMod = 0.7;
+    public static int farmersBreadNutrition = 6;
+    public static double farmersBreadSaturationMod = 0.8;
+    public static int farmerSaladNutrition = 7;
+    public static double farmerSaladSaturationMod = 0.6;
+    public static int goulashNutrition = 8;
+    public static double goulashSaturationMod = 0.9;
+    public static int simpleTomatoSoupNutrition = 6;
+    public static double simpleTomatoSoupSaturationMod = 0.6;
+    public static int barleySoupNutrition = 5;
+    public static double barleySoupSaturationMod = 0.8;
+    public static int onionSoupNutrition = 7;
+    public static double onionSoupSaturationMod = 0.6;
+    public static int potatoSoupNutrition = 5;
+    public static double potatoSoupSaturationMod = 0.6;
+    public static int pastaWithOnionSauceNutrition = 6;
+    public static double pastaWithOnionSauceSaturationMod = 0.7;
+    public static int cornGritsNutrition = 6;
+    public static double cornGritsSaturationMod = 0.5;
+    public static int oatmealWithStrawberriesNutrition = 4;
+    public static double oatmealWithStrawberriesSaturationMod = 0.8;
+    public static int sausageWithOatPattyNutrition = 8;
+    public static double sausageWithOatPattySaturationMod = 0.9;
+    public static int lambWithCornNutrition = 8;
+    public static double lambWithCornSaturationMod = 0.8;
+    public static int beefPattyWithVegetablesNutrition = 6;
+    public static double beefPattyWithVegetablesSaturationMod = 0.8;
+    public static int barleyPattiesWithPotatoesNutrition = 5;
+    public static double barleyPattiesWithPotatoesSaturationMod = 0.9;
+    public static int baconWithEggsNutrition = 6;
+    public static double baconWithEggsSaturationMod = 0.7;
+    public static int chickenWrappedInBaconNutrition = 9;
+    public static double chickenWrappedInBaconSaturationMod = 0.9;
+    public static int cookedSalmonNutrition = 7;
+    public static double cookedSalmonSaturationMod = 0.9;
+    public static int cookedCodNutrition = 7;
+    public static double cookedCodSaturationMod = 0.9;
+    public static int roastedChickenNutrition = 5;
+    public static double roastedChickenSaturationMod = 0.8;
 
-    public static int oatPancakeNutrition;
-    public static double oatPancakeSaturationMod;
-    public static int roastedCornNutrition;
-    public static double roastedCornSaturationMod;
-    public static int potatoWithRoastMeatNutrition;
-    public static double potatoWithRoastMeatSaturationMod;
-    public static int bakedLambHamNutrition;
-    public static double bakedLambHamSaturationMod;
-    public static int farmersBreakfastNutrition;
-    public static double farmersBreakfastSaturationMod;
-    public static int stuffedChickenNutrition;
-    public static double stuffedChickenSaturationMod;
-    public static int stuffedRabbitNutrition;
-    public static double stuffedRabbitSaturationMod;
-    public static int grandmothersStrawberryCakeNutrition;
-    public static double grandmothersStrawberryCakeSaturationMod;
-    public static int farmersBreadNutrition;
-    public static double farmersBreadSaturationMod;
-    public static int farmerSaladNutrition;
-    public static double farmerSaladSaturationMod;
-    public static int goulashNutrition;
-    public static double goulashSaturationMod;
-    public static int simpleTomatoSoupNutrition;
-    public static double simpleTomatoSoupSaturationMod;
-    public static int barleySoupNutrition;
-    public static double barleySoupSaturationMod;
-    public static int onionSoupNutrition;
-    public static double onionSoupSaturationMod;
-    public static int potatoSoupNutrition;
-    public static double potatoSoupSaturationMod;
-    public static int pastaWithOnionSauceNutrition;
-    public static double pastaWithOnionSauceSaturationMod;
-    public static int cornGritsNutrition;
-    public static double cornGritsSaturationMod;
-    public static int oatmealWithStrawberriesNutrition;
-    public static double oatmealWithStrawberriesSaturationMod;
-    public static int sausageWithOatPattyNutrition;
-    public static double sausageWithOatPattySaturationMod;
-    public static int lambWithCornNutrition;
-    public static double lambWithCornSaturationMod;
-    public static int beefPattyWithVegetablesNutrition;
-    public static double beefPattyWithVegetablesSaturationMod;
-    public static int barleyPattiesWithPotatoesNutrition;
-    public static double barleyPattiesWithPotatoesSaturationMod;
-    public static int baconWithEggsNutrition;
-    public static double baconWithEggsSaturationMod;
-    public static int chickenWrappedInBaconNutrition;
-    public static double chickenWrappedInBaconSaturationMod;
-    public static int cookedSalmonNutrition;
-    public static double cookedSalmonSaturationMod;
-    public static int cookedCodNutrition;
-    public static double cookedCodSaturationMod;
-    public static int roastedChickenNutrition;
-    public static double roastedChickenSaturationMod;
-
-    public static int chickenEffectTickInterval;
-    public static int chickenEffectEggChance;
-    public static int chickenEffectFeatherChance;
-    public static int feastEffectSatiationInterval;
-    public static int feastEffectSustenanceInterval;
-    public static int feastEffectHealAmount;
-    public static int sustenanceEffectInterval;
-    public static int sustenanceEffectHealAmount;
-    public static int sustenanceEffectFoodIncrement;
-    public static int satiationEffectInterval;
-    public static int satiationEffectHealAmount;
+    public static int chickenEffectTickInterval = 120;
+    public static int chickenEffectEggChance = 20;
+    public static int chickenEffectFeatherChance = 20;
+    public static int feastEffectSatiationInterval = 40;
+    public static int feastEffectSustenanceInterval = 200;
+    public static int feastEffectHealAmount = 1;
+    public static int sustenanceEffectInterval = 200;
+    public static int sustenanceEffectHealAmount = 1;
+    public static int sustenanceEffectFoodIncrement = 1;
+    public static int satiationEffectInterval = 40;
+    public static int satiationEffectHealAmount = 1;
 
     static {
         ModConfigSpec.Builder COMMON_BUILDER = new ModConfigSpec.Builder();
-
         COMMON_BUILDER.push("Blocks");
         ENABLE_BONEMEAL_EFFECT = COMMON_BUILDER.define("enableBonemealEffect", true);
         FERTILIZED_SOIL_RANGE = COMMON_BUILDER.defineInRange("fertilizedSoilRange", 5, 1, 16);
@@ -190,7 +183,6 @@ public class FarmAndCharmNeoForgeConfig {
         ENABLE_CAT_TAMING_CHANCE = COMMON_BUILDER.define("enableCatTamingChance", true);
 
         COMMON_BUILDER.push("Nutrition");
-
         OAT_PANCAKE_NUTRITION = COMMON_BUILDER.defineInRange("oatPancakeNutrition", 5, 0, Integer.MAX_VALUE);
         OAT_PANCAKE_SATURATION_MOD = COMMON_BUILDER.defineInRange("oatPancakeSaturationMod", 0.6, 0.0, Double.MAX_VALUE);
         ROASTED_CORN_NUTRITION = COMMON_BUILDER.defineInRange("roastedCornNutrition", 5, 0, Integer.MAX_VALUE);
@@ -245,7 +237,6 @@ public class FarmAndCharmNeoForgeConfig {
         COOKED_COD_SATURATION_MOD = COMMON_BUILDER.defineInRange("cookedCodSaturationMod", 0.9, 0.0, Double.MAX_VALUE);
         ROASTED_CHICKEN_NUTRITION = COMMON_BUILDER.defineInRange("roastedChickenNutrition", 5, 0, Integer.MAX_VALUE);
         ROASTED_CHICKEN_SATURATION_MOD = COMMON_BUILDER.defineInRange("roastedChickenSaturationMod", 0.8, 0.0, Double.MAX_VALUE);
-
         COMMON_BUILDER.pop();
         COMMON_BUILDER.pop();
 
@@ -266,17 +257,15 @@ public class FarmAndCharmNeoForgeConfig {
         COMMON_CONFIG = COMMON_BUILDER.build();
     }
 
-    @SubscribeEvent
-    public static void onLoad(final ModConfigEvent.Loading event) {
+    public static void onLoad(ModConfigEvent.Loading event) {
         sync();
     }
 
-    @SubscribeEvent
-    public static void onReload(final ModConfigEvent.Reloading event) {
+    public static void onReload(ModConfigEvent.Reloading event) {
         sync();
     }
 
-    private static void sync() {
+    public static void sync() {
         enableBonemealEffect = ENABLE_BONEMEAL_EFFECT.get();
         fertilizedSoilRange = FERTILIZED_SOIL_RANGE.get();
         waterSprinklerRange = WATER_SPRINKLER_RANGE.get();

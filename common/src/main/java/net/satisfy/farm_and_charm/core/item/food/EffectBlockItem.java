@@ -10,6 +10,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffectUtil;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
@@ -19,10 +20,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
 @SuppressWarnings("unused")
 public class EffectBlockItem extends BlockItem {
@@ -33,7 +36,7 @@ public class EffectBlockItem extends BlockItem {
     @Override
     public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
         List<FoodProperties.PossibleEffect> list2 = Lists.newArrayList();
-        if(itemStack.has(DataComponents.FOOD)) { list2 = itemStack.get(DataComponents.FOOD).effects(); }
+        if(itemStack.has(DataComponents.FOOD)) { list2 = Objects.requireNonNull(itemStack.get(DataComponents.FOOD)).effects(); }
 
         List<Pair<Holder<Attribute>, AttributeModifier>> list3 = Lists.newArrayList();
 
@@ -97,6 +100,11 @@ public class EffectBlockItem extends BlockItem {
 
         tooltip.add(Component.empty());
         tooltip.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+    }
+
+    @Override
+    public @NotNull ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity user) {
+        return user.eat(level, stack);
     }
 
     @Override

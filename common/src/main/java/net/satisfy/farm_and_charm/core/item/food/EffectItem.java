@@ -99,11 +99,10 @@ public class EffectItem extends Item {
 
     @Override
     public @NotNull ItemStack finishUsingItem(ItemStack itemStack, Level level, LivingEntity livingEntity) {
-        super.finishUsingItem(itemStack, level, livingEntity);
+        ItemStack eaten = livingEntity.eat(level, itemStack);
         if (this.returnBowl) {
-            return GeneralUtil.convertStackAfterFinishUsing(livingEntity, itemStack, Items.BOWL, this);
-        } else {
-            return itemStack.isEmpty() ? new ItemStack(Items.AIR) : itemStack;
+            return GeneralUtil.convertStackAfterFinishUsing(livingEntity, eaten, Items.BOWL, this);
         }
+        return eaten;
     }
 }

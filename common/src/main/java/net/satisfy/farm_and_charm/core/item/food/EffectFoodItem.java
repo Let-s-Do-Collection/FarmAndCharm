@@ -34,29 +34,28 @@ public class EffectFoodItem extends Item implements EffectFood {
                 }
             }
         }
-
-        int slot = -1;
-        Inventory playerInventory = null;
-        if (user instanceof Player player && !player.isCreative()) {
-            playerInventory = player.getInventory();
-            slot = playerInventory.findSlotMatchingUnusedItem(stack);
-        }
-        ItemStack returnStack = super.finishUsingItem(stack, world, user);
         int stage = EffectFoodHelper.getStage(stack);
-        if (playerInventory != null && stage < this.foodStages) {
-            ItemStack itemStack = EffectFoodHelper.setStage(new ItemStack(this), stage + 1);
-            if (slot >= 0 && slot < playerInventory.items.size()) {
-                if (playerInventory.getItem(slot).isEmpty()) {
-                    playerInventory.add(slot, itemStack);
-                    return returnStack;
+        int slot = -1;
+        Inventory inv = null;
+        if (user instanceof Player player && !player.isCreative()) {
+            inv = player.getInventory();
+            slot = inv.findSlotMatchingUnusedItem(stack);
+        }
+        ItemStack eaten = user.eat(world, stack);
+        if (inv != null && stage < this.foodStages) {
+            ItemStack next = EffectFoodHelper.setStage(new ItemStack(this), stage + 1);
+            if (slot >= 0 && slot < inv.items.size()) {
+                if (inv.getItem(slot).isEmpty()) {
+                    inv.add(slot, next);
+                    return eaten;
                 }
             }
-            slot = playerInventory.getSlotWithRemainingSpace(itemStack);
-            if (slot >= 0 && slot < playerInventory.items.size()) {
-                playerInventory.add(slot, itemStack);
+            int space = inv.getSlotWithRemainingSpace(next);
+            if (space >= 0 && space < inv.items.size()) {
+                inv.add(space, next);
             }
         }
-        return user.eat(world, returnStack);// Should Eat ItemStack because this is Food
+        return eaten;
     }
 
     @Override

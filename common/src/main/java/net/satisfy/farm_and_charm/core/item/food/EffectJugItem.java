@@ -25,11 +25,10 @@ public class EffectJugItem extends Item {
 
     @Override
     public @NotNull ItemStack finishUsingItem(ItemStack itemStack, Level level, LivingEntity livingEntity) {
-        super.finishUsingItem(itemStack, level, livingEntity);
+        ItemStack eaten = livingEntity.eat(level, itemStack);
         if (this.returnBottle) {
-            return GeneralUtil.convertStackAfterFinishUsing(livingEntity, itemStack, Items.GLASS_BOTTLE, this);
-        } else {
-            return itemStack.isEmpty() ? new ItemStack(Items.AIR) : itemStack;
+            return GeneralUtil.convertStackAfterFinishUsing(livingEntity, eaten, Items.GLASS_BOTTLE, this);
         }
+        return eaten;
     }
 }

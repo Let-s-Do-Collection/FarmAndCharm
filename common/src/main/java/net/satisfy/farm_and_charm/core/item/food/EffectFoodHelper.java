@@ -26,53 +26,71 @@ import java.util.Optional;
 
 public class EffectFoodHelper {
 
+    private static float saturationModifierOf(FoodProperties base) {
+        if (base.nutrition() <= 0) return 0.0f;
+        return base.saturation() / (base.nutrition() * 2.0f);
+    }
 
-    /**
-     * Adds an effect to the given item stack,
-     * removing any existing effects that have the same effect as the one being added and
-     * removing the hunger effect if it exists.
-     * **/
     public static void addEffect(ItemStack stack, Pair<MobEffectInstance, Float> effect) {
+        var base = stack.get(DataComponents.FOOD);
+        if (base == null) return;
+        var target = effect.getFirst().getEffect();
+        for (var e : base.effects()) {
+            if (e.effect().getEffect() == target) return;
+        }
+        var b = new FoodProperties.Builder().nutrition(base.nutrition()).saturationModifier(saturationModifierOf(base));
+        if (base.canAlwaysEat()) b.alwaysEdible();
+        if (base.eatSeconds() == 0.8f) b.fast();
+        for (var e : base.effects()) b.effect(e.effect(), e.probability());
+        b.effect(effect.getFirst(), effect.getSecond());
+        stack.set(DataComponents.FOOD, b.build());
+    }
+
+    private static void rebuildWithout(ItemStack stack) {
+        var base = stack.get(DataComponents.FOOD);
+        if (base == null) return;
+        var b = new FoodProperties.Builder().nutrition(base.nutrition()).saturationModifier(saturationModifierOf(base));
+        if (base.canAlwaysEat()) b.alwaysEdible();
+        if (base.eatSeconds() == 0.8f) b.fast();
+        for (var e : base.effects()) {
+            if (e.effect().getEffect() != MobEffects.HUNGER) b.effect(e.effect(), e.probability());
+        }
+        stack.set(DataComponents.FOOD, b.build());
+    }
+
+    private static void removeHungerEffect(ItemStack stack) {
+        rebuildWithout(stack);
+    }
+
+    private static void removeRawChickenEffects(ItemStack stack) {
+        if (stack.getItem() != Items.CHICKEN) return;
+        removeHungerEffect(stack);
+    }
+
+    public static List<Pair<MobEffectInstance, Float>> getEffects(ItemStack stack) {
         removeHungerEffect(stack);
         removeRawChickenEffects(stack);
-        List<FoodProperties.PossibleEffect> effectList = getPossibleEffects(stack);
-        boolean bl = true;
-        int id = BuiltInRegistries.MOB_EFFECT.asHolderIdMap().getId(effect.getFirst().getEffect()) + 1;
-
-        for (FoodProperties.PossibleEffect possibleEffect : effectList) {
-            int idTemp = BuiltInRegistries.MOB_EFFECT.asHolderIdMap().getId(possibleEffect.effect().getEffect()) + 1;
-            if (idTemp == id) {
-                bl = false;
-                break;
-            }
+        var out = Lists.<Pair<MobEffectInstance, Float>>newArrayList();
+        if (stack.getItem() instanceof PotionItem) {
+            var pc = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+            for (var e : pc.customEffects()) out.add(new Pair<>(e, 1.0f));
+            return out;
         }
-
-        if (bl) {
-            effectList.add(createPossibleEffect(effect));
-        }
-
-        FoodProperties.Builder builder = new FoodProperties.Builder();
-        for (FoodProperties.PossibleEffect possibleEffect : effectList) {
-            builder.effect(possibleEffect.effect(), possibleEffect.probability());
-        }
-
-        FoodProperties foodProperties = builder.build();
-        stack.set(DataComponents.FOOD, foodProperties);
+        var base = stack.get(DataComponents.FOOD);
+        if (base != null) for (var e : base.effects()) out.add(new Pair<>(e.effect(), e.probability()));
+        return out;
     }
 
-    /**
-     * get the list of possible effects from the given item stack
-     * if the item stack has no effects, an empty list is returned
-     * **/
-    private static List<FoodProperties.PossibleEffect> getPossibleEffects(ItemStack stack) {
-        return stack.has(DataComponents.FOOD) ? stack.get(DataComponents.FOOD).effects() : Lists.newArrayList();
-    }
-
-    /**
-     * create a PossibleEffect object from the given effect
-     * **/
-    public static FoodProperties.PossibleEffect createPossibleEffect(Pair<MobEffectInstance, Float> effect) {
-        return new FoodProperties.PossibleEffect(effect.getFirst(), effect.getSecond());
+    public static void applyEffects(ItemStack stack) {
+        var pc = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+        if (pc.hasEffects()) return;
+        var base = stack.get(DataComponents.FOOD);
+        if (base == null) return;
+        var b = new FoodProperties.Builder().nutrition(base.nutrition()).saturationModifier(saturationModifierOf(base));
+        if (base.canAlwaysEat()) b.alwaysEdible();
+        if (base.eatSeconds() == 0.8f) b.fast();
+        for (var e : base.effects()) b.effect(e.effect(), e.probability());
+        stack.set(DataComponents.FOOD, b.build());
     }
 
     public static CompoundTag createNbt(short id, Pair<MobEffectInstance, Float> effect) {
@@ -82,109 +100,6 @@ public class EffectFoodHelper {
         nbtCompound.putInt("amplifier", effect.getFirst().getAmplifier());
         nbtCompound.putFloat("chance", effect.getSecond());
         return nbtCompound;
-    }
-
-
-    /**
-     * Get the list of effects from the given item stack
-     * if the item stack has no effects, an empty list is returned
-     * if the item stack is a potion, the custom effects are returned
-     * if the item stack is a food item, the effects are returned
-     * **/
-    public static List<Pair<MobEffectInstance, Float>> getEffects(ItemStack stack) {
-        removeHungerEffect(stack);
-        removeRawChickenEffects(stack);
-        List<Pair<MobEffectInstance, Float>> effects = Lists.newArrayList();
-        if (stack.getItem() instanceof EffectFood) {
-            effects = fromPossibleEffect(getPossibleEffects(stack));
-        } else if (stack.getItem() instanceof PotionItem) {
-            PotionContents potionContents = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
-
-            for (MobEffectInstance effect : potionContents.customEffects()) {
-                effects.add(new Pair<>(effect, 1.0f));
-            }
-        } else {
-            FoodProperties foodComponent = stack.get(DataComponents.FOOD);
-            if (foodComponent != null) {
-                for(FoodProperties.PossibleEffect effect : foodComponent.effects()) {
-                    effects.add(new Pair<>(effect.effect(), effect.probability()));
-                }
-            }
-        }
-        return effects;
-    }
-
-    /**
-     * Removes the hunger effect from the given item stack
-     * **/
-    private static void removeHungerEffect(ItemStack stack) {
-        List<FoodProperties.PossibleEffect> effectList = getPossibleEffects(stack);
-        List<FoodProperties.PossibleEffect> updatedList = Lists.newArrayList();
-
-        for (FoodProperties.PossibleEffect effect : effectList) {
-            if (effect.effect().getEffect() != MobEffects.HUNGER) {
-                updatedList.add(effect);
-            }
-        }
-
-        FoodProperties.Builder builder = new FoodProperties.Builder();
-        for (FoodProperties.PossibleEffect possibleEffect : updatedList) {
-            builder.effect(possibleEffect.effect(), possibleEffect.probability());
-        }
-
-        FoodProperties properties = builder.build();
-        stack.set(DataComponents.FOOD, properties);
-    }
-
-    /**
-     * Removes the hunger effect from the given item stack if the item stack is a raw chicken
-     * and returns the list of effects that are not the hunger effect
-     * **/
-    private static void removeRawChickenEffects(ItemStack stack) {
-        if (stack.getItem() == Items.CHICKEN) {
-            List<FoodProperties.PossibleEffect> effectList = getPossibleEffects(stack);
-            List<FoodProperties.PossibleEffect> updatedList = Lists.newArrayList();
-
-            for (FoodProperties.PossibleEffect effect : effectList) {
-                if (effect.effect().getEffect() != MobEffects.HUNGER) {
-                    updatedList.add(effect);
-                }
-            }
-
-            FoodProperties.Builder builder = new FoodProperties.Builder();
-            for (FoodProperties.PossibleEffect possibleEffect : updatedList) {
-                builder.effect(possibleEffect.effect(), possibleEffect.probability());
-            }
-
-            FoodProperties foodProperties = builder.build();
-            stack.set(DataComponents.FOOD, foodProperties);
-        }
-    }
-
-    /**
-     * Converts a list of PossibleEffect objects to a list of Pair objects
-     * **/
-    public static List<Pair<MobEffectInstance, Float>> fromPossibleEffect(List<FoodProperties.PossibleEffect> list) {
-        List<Pair<MobEffectInstance, Float>> effects = Lists.newArrayList();
-        for(FoodProperties.PossibleEffect effect : list) {
-            effects.add(new Pair<>(effect.effect(), effect.probability()));
-        }
-        return effects;
-    }
-
-    public static void applyEffects(ItemStack stack) {
-        PotionContents potionContents = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
-        if (!potionContents.hasEffects()) {
-            FoodProperties foodProperties = stack.get(DataComponents.FOOD);
-            if (foodProperties != null) {
-                FoodProperties.Builder builder = new FoodProperties.Builder();
-                for (FoodProperties.PossibleEffect possibleEffect : getPossibleEffects(stack)) {
-                    builder.effect(possibleEffect.effect(), possibleEffect.probability());
-                }
-                FoodProperties foodData = builder.build();
-                stack.set(DataComponents.FOOD, foodData);
-            }
-        }
     }
 
     public static List<Pair<MobEffectInstance, Float>> fromNbt(ListTag list) {
@@ -197,24 +112,15 @@ public class EffectFoodHelper {
         return effects;
     }
 
-    /**
-     * Set the stage of the given item stack
-     * **/
     public static ItemStack setStage(ItemStack stack, int stage) {
         stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(stage));
         return stack;
     }
 
-    /**
-     * Get the stage of the given item stack
-     * **/
     public static int getStage(ItemStack stack) {
         return stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(0)).value();
     }
 
-    /**
-     * Get the tooltip for the given item stack
-     * **/
     public static void getTooltip(ItemStack stack, List<Component> tooltip) {
         List<Pair<MobEffectInstance, Float>> effects = getEffects(stack);
         if (effects.isEmpty()) {
@@ -223,14 +129,12 @@ public class EffectFoodHelper {
             for (Pair<MobEffectInstance, Float> effectPair : effects) {
                 MobEffectInstance statusEffect = effectPair.getFirst();
                 MutableComponent mutableText = Component.translatable(statusEffect.getDescriptionId());
-
                 if (statusEffect.getAmplifier() > 0) {
                     mutableText = Component.translatable("potion.withAmplifier", mutableText, Component.translatable("potion.potency." + statusEffect.getAmplifier()));
                 }
                 if (effectPair.getFirst().getDuration() > 20) {
                     mutableText = Component.translatable("potion.withDuration", mutableText, MobEffectUtil.formatDuration(statusEffect, 1.0f, 1));
                 }
-
                 tooltip.add(mutableText.withStyle(statusEffect.getEffect().value().getCategory().getTooltipFormatting()));
             }
         }

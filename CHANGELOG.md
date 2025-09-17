@@ -1,3 +1,13 @@
+[1.1.9]
+
+**Fixed**
+* Meals and effect foods now restore hunger and saturation correctly
+* Fixed crash on startup caused by config values being accessed before load
+* Fixed server crash in Roaster caused by illegal access to FoodProperties.PossibleEffect constructor
+* Updated EffectFoodHelper to use 1.21.1 FoodProperties.Builder API (nutrition, saturationModifier, alwaysEdible, fast, effect)
+
+***
+
 [1.1.8]
 
 **Fixed**

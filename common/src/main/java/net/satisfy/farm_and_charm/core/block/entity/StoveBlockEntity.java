@@ -214,21 +214,10 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         if (recipe == null || recipe.getResultItem(access).isEmpty()) {
             return false;
         }
-        for (Ingredient ingredient : recipe.getIngredients()) {
-            boolean found = false;
-            for (int slot : INGREDIENT_SLOTS) {
-                if (ingredient.test(this.getItem(slot))) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                return false;
-            }
+        if (!matchesInventory(recipe, this.inventory)) {
+            return false;
         }
-        final ItemStack recipeOutput = recipe.getResultItem(access);
-        final ItemStack outputSlotStack = this.getItem(0);
-
+        ItemStack recipeOutput = recipe.getResultItem(access).copy();
         for (int slot : INGREDIENT_SLOTS) {
             ItemStack ingredientStack = this.getItem(slot);
             if (!ingredientStack.isEmpty() && (ingredientStack.getItem() instanceof EffectFood || ingredientStack.getItem() instanceof EffectBlockItem)) {
@@ -238,18 +227,64 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
                 }
             }
         }
-
-        if (recipeOutput.getItem() instanceof EffectFood
-                || recipeOutput.getItem() instanceof EffectFoodBlockItem) {
+        if (recipeOutput.getItem() instanceof EffectFood || recipeOutput.getItem() instanceof EffectFoodBlockItem) {
             EffectFoodHelper.applyEffects(recipeOutput);
         }
-        if (outputSlotStack.isEmpty()) {
+        ItemStack output = this.getItem(0);
+        if (output.isEmpty()) {
             return true;
-        } else if (!ItemStack.isSameItemSameComponents(outputSlotStack, recipeOutput)) {
-            return false;
-        } else {
-            return outputSlotStack.getCount() + recipeOutput.getCount() <= outputSlotStack.getMaxStackSize();
         }
+        if (!ItemStack.isSameItemSameComponents(output, recipeOutput)) {
+            return false;
+        }
+        return output.getCount() + recipeOutput.getCount() <= output.getMaxStackSize();
+    }
+
+    private StoveRecipe getRecipe(List<RecipeHolder<StoveRecipe>> recipes, NonNullList<ItemStack> inventory) {
+        for (RecipeHolder<StoveRecipe> holder : recipes) {
+            StoveRecipe r = holder.value();
+            if (matchesInventory(r, inventory)) {
+                return r;
+            }
+        }
+        return null;
+    }
+
+    private boolean matchesInventory(StoveRecipe recipe, NonNullList<ItemStack> inventory) {
+        NonNullList<ItemStack> invCopy = NonNullList.withSize(inventory.size(), ItemStack.EMPTY);
+        for (int i : INGREDIENT_SLOTS) {
+            invCopy.set(i, inventory.get(i).copy());
+        }
+        for (Ingredient ingredient : recipe.getIngredients()) {
+            boolean matched = false;
+            for (int i : INGREDIENT_SLOTS) {
+                ItemStack stack = invCopy.get(i);
+                if (!stack.isEmpty() && ingredient.test(stack)) {
+                    stack.shrink(1);
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) {
+                return false;
+            }
+        }
+        for (int i : INGREDIENT_SLOTS) {
+            ItemStack remaining = invCopy.get(i);
+            if (!remaining.isEmpty()) {
+                boolean stillIngredient = false;
+                for (Ingredient ing : recipe.getIngredients()) {
+                    if (ing.test(remaining)) {
+                        stillIngredient = true;
+                        break;
+                    }
+                }
+                if (!stillIngredient) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     protected void craft(StoveRecipe recipe, RegistryAccess access) {
@@ -384,27 +419,5 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         CompoundTag compoundTag = new CompoundTag();
         this.saveAdditional(compoundTag, provider);
         return compoundTag;
-    }
-
-    private StoveRecipe getRecipe(List<RecipeHolder<StoveRecipe>> recipes, NonNullList<ItemStack> inventory) {
-        recipeLoop:
-        for (RecipeHolder<StoveRecipe> recipeHolder : recipes) {
-            StoveRecipe recipe = recipeHolder.value();
-            for (Ingredient ingredient : recipe.getIngredients()) {
-                boolean ingredientFound = false;
-                for (int slotIndex = 1; slotIndex < inventory.size(); slotIndex++) {
-                    ItemStack slotItem = inventory.get(slotIndex);
-                    if (ingredient.test(slotItem)) {
-                        ingredientFound = true;
-                        break;
-                    }
-                }
-                if (!ingredientFound) {
-                    continue recipeLoop;
-                }
-            }
-            return recipe;
-        }
-        return null;
     }
 }

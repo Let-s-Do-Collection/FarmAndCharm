@@ -42,7 +42,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-@SuppressWarnings("deprecation")
 public class EffectFoodBlock extends BaseEntityBlock {
     public static final MapCodec<EffectFoodBlock> CODEC = simpleCodec(EffectFoodBlock::new);
     public static final DirectionProperty FACING;

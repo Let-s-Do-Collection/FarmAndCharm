@@ -5,6 +5,8 @@
 * Fixed crash on startup caused by config values being accessed before load
 * Fixed server crash in Roaster caused by illegal access to FoodProperties.PossibleEffect constructor
 * Updated EffectFoodHelper to use 1.21.1 FoodProperties.Builder API (nutrition, saturationModifier, alwaysEdible, fast, effect)
+* Stove now properly matches only ingredient slots when checking recipes.
+* Ensures Candlelight effect-food blocks use the same BE logic as Farm & Charm.
 
 ***
 

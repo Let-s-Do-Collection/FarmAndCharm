@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-@SuppressWarnings("unused")
 public class EffectFoodItem extends Item implements EffectFood {
 
     private final int foodStages;

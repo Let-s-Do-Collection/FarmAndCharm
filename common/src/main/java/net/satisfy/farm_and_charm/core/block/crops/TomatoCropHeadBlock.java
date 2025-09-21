@@ -148,11 +148,11 @@ public class TomatoCropHeadBlock extends ClimbingCropBlock implements Bonemealab
 
     @Override
     public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) {
-        return true;
+        return state.getValue(AGE) < getMaxAge();
     }
 
     @Override
     public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state) {
-        return true;
+        return state.getValue(AGE) < getMaxAge();
     }
 }

@@ -4,9 +4,10 @@
 * Meals and effect foods now restore hunger and saturation correctly
 * Fixed crash on startup caused by config values being accessed before load
 * Fixed server crash in Roaster caused by illegal access to FoodProperties.PossibleEffect constructor
-* Updated EffectFoodHelper to use 1.21.1 FoodProperties.Builder API (nutrition, saturationModifier, alwaysEdible, fast, effect)
+* Updated EffectFoodHelper to use 1.21.1 FoodProperties.Builder API 
 * Stove now properly matches only ingredient slots when checking recipes.
 * Ensures Candlelight effect-food blocks use the same BE logic as Farm & Charm.
+* Bonemeal can no longer be applied to tomato crops once they have reached their maximum growth stage.
 
 ***
 

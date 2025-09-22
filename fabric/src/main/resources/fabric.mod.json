@@ -5,7 +5,7 @@
   "name": "[Let's Do] Farm & Charm",
   "description": "The farm calls: Experience the art of advanced agriculture and farmhouse cuisine! Use mincers, cooking pots, as well as new grains and fruit varieties to enhance your culinary and agricultural skills.",
   "authors": [
-    "satisfy, jason13, binaris"
+    "satisfy, jason13"
   ],
   "contact": {
     "issues": "https://github.com/satisfyu/Let-s-Do-Hub",
@@ -32,8 +32,7 @@
       ]
   },
   "mixins": [
-    "FarmAndCharm.mixins.json",
-    "FarmAndCharm-common.mixins.json"
+    "FarmAndCharm.mixins.json"
   ],
   "depends": {
     "fabric-api": "*",

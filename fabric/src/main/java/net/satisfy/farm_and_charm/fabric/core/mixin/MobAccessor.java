@@ -1,4 +1,4 @@
-package net.satisfy.farm_and_charm.core.mixin;
+package net.satisfy.farm_and_charm.fabric.core.mixin;
 
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.GoalSelector;

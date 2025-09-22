@@ -1,4 +1,4 @@
-package net.satisfy.farm_and_charm.core.mixin;
+package net.satisfy.farm_and_charm.fabric.core.mixin;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;

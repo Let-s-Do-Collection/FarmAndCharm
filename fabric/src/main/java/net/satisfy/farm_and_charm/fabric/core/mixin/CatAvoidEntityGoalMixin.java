@@ -1,4 +1,4 @@
-package net.satisfy.farm_and_charm.core.mixin;
+package net.satisfy.farm_and_charm.fabric.core.mixin;
 
 import net.minecraft.world.entity.animal.Cat;
 import net.minecraft.world.entity.player.Player;

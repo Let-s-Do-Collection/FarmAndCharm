@@ -1,4 +1,4 @@
-package net.satisfy.farm_and_charm.core.mixin;
+package net.satisfy.farm_and_charm.fabric.core.mixin;
 
 import net.minecraft.world.entity.animal.Fox;
 import net.minecraft.world.item.ItemStack;

@@ -6,6 +6,7 @@
 
 **Changed**
 * Removed unused ArmorMaterial layer handling
+* Mixin configs moved from common to loader-specific folders 
 
 ***
 

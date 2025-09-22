@@ -4,6 +4,9 @@
 * `FoodBlock` now properly applies hunger, saturation and effects from its registered item’s `FoodProperties` when eating bites
 * `CookingPot` now writes all ingredient effects onto output items (includes base potion effects and custom potion effects)
 
+**Changed**
+* Removed unused ArmorMaterial layer handling
+
 ***
 
 [1.1.9]

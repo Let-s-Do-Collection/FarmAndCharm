@@ -28,8 +28,7 @@ public final class ArmorMaterialRegistry {
                 m.put(ArmorItem.Type.CHESTPLATE, 2);
                 m.put(ArmorItem.Type.HELMET, 1);
             }),
-            () -> Ingredient.of(ItemTags.WOOL),
-            ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "armor/default")
+            () -> Ingredient.of(ItemTags.WOOL)
     );
 
     public static final Holder<ArmorMaterial> JEWELRY = register(
@@ -40,9 +39,9 @@ public final class ArmorMaterialRegistry {
                 m.put(ArmorItem.Type.CHESTPLATE, 1);
                 m.put(ArmorItem.Type.HELMET, 1);
             }),
-            () -> Ingredient.of(Items.GOLD_INGOT),
-            ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "armor/default")
+            () -> Ingredient.of(Items.GOLD_INGOT)
     );
+
 
     private static final Map<String, Holder<ArmorMaterial>> CACHE = new HashMap<>();
 
@@ -59,14 +58,14 @@ public final class ArmorMaterialRegistry {
         return ResourceLocation.fromNamespaceAndPath(png.getNamespace(), name);
     }
 
-    private static Holder<ArmorMaterial> register(String id, EnumMap<ArmorItem.Type, Integer> map, Supplier<Ingredient> repair, ResourceLocation layerPrefix) {
+    private static Holder<ArmorMaterial> register(String id, EnumMap<ArmorItem.Type, Integer> map, Supplier<Ingredient> repair) {
         EnumMap<ArmorItem.Type, Integer> copy = new EnumMap<>(ArmorItem.Type.class);
         for (ArmorItem.Type t : ArmorItem.Type.values()) {
             Integer v = map.get(t);
             if (v == null) v = 0;
             copy.put(t, v);
         }
-        List<ArmorMaterial.Layer> layers = List.of(new ArmorMaterial.Layer(layerPrefix, "", true));
+        List<ArmorMaterial.Layer> layers = List.of();
         return Registry.registerForHolder(
                 BuiltInRegistries.ARMOR_MATERIAL,
                 ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, id),

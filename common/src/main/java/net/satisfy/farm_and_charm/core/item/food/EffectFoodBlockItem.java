@@ -63,7 +63,7 @@ public class EffectFoodBlockItem extends BlockItem implements EffectFood {
 
     @Override
     public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
-        EffectFoodHelper.getTooltip(itemStack, tooltip);
+        EffectFoodHelper.getTooltip(itemStack, tooltipContext, tooltip);
         tooltip.add(Component.empty());
         tooltip.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
     }

@@ -3,6 +3,7 @@ package net.satisfy.farm_and_charm.core.block;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -70,10 +71,14 @@ public class FoodBlock extends FacingBlock {
     }
 
     private InteractionResult tryEat(LevelAccessor world, BlockPos pos, BlockState state, Player player) {
-        player.getFoodData().eat(foodComponent.nutrition(), foodComponent.saturation());
+        ItemStack stack = new ItemStack(asItem());
+        FoodProperties fp = stack.get(DataComponents.FOOD);
+        if (fp == null) fp = this.foodComponent;
+
+        player.getFoodData().eat(fp.nutrition(), fp.saturation());
 
         if (world instanceof Level level) {
-            for (FoodProperties.PossibleEffect effect : foodComponent.effects()) {
+            for (FoodProperties.PossibleEffect effect : fp.effects()) {
                 if (effect.probability() >= 1.0F || level.random.nextFloat() < effect.probability()) {
                     player.addEffect(new MobEffectInstance(effect.effect()));
                 }
@@ -84,11 +89,11 @@ public class FoodBlock extends FacingBlock {
         world.gameEvent(player, GameEvent.EAT, pos);
 
         if (world instanceof Level level) {
-            for (int count = 0; count < 10; ++count) {
-                double d0 = level.random.nextGaussian() * 0.02D;
-                double d1 = level.random.nextGaussian() * 0.02D;
-                double d2 = level.random.nextGaussian() * 0.02D;
-                level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, state), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, d0, d1, d2);
+            for (int i = 0; i < 10; ++i) {
+                double dx = level.random.nextGaussian() * 0.02D;
+                double dy = level.random.nextGaussian() * 0.02D;
+                double dz = level.random.nextGaussian() * 0.02D;
+                level.addParticle(new BlockParticleOption(ParticleTypes.BLOCK, state), pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, dx, dy, dz);
             }
         }
 

@@ -10,19 +10,23 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.Container;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.component.CustomModelData;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class EffectFoodHelper {
 
@@ -73,6 +77,9 @@ public class EffectFoodHelper {
         var out = Lists.<Pair<MobEffectInstance, Float>>newArrayList();
         if (stack.getItem() instanceof PotionItem) {
             var pc = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+            pc.potion().ifPresent(p -> {
+                for (var e : p.value().getEffects()) out.add(new Pair<>(e, 1.0f));
+            });
             for (var e : pc.customEffects()) out.add(new Pair<>(e, 1.0f));
             return out;
         }
@@ -121,22 +128,66 @@ public class EffectFoodHelper {
         return stack.getOrDefault(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(0)).value();
     }
 
-    public static void getTooltip(ItemStack stack, List<Component> tooltip) {
-        List<Pair<MobEffectInstance, Float>> effects = getEffects(stack);
+    public static void getTooltip(ItemStack stack, Item.TooltipContext tooltipContext, List<Component> tooltip) {
+        List<FoodProperties.PossibleEffect> effects = stack.has(DataComponents.FOOD) ? Objects.requireNonNull(stack.get(DataComponents.FOOD)).effects() : Lists.newArrayList();
+        List<Pair<Holder<Attribute>, AttributeModifier>> attrs = Lists.newArrayList();
         if (effects.isEmpty()) {
             tooltip.add(Component.translatable("effect.none").withStyle(ChatFormatting.GRAY));
-        } else {
-            for (Pair<MobEffectInstance, Float> effectPair : effects) {
-                MobEffectInstance statusEffect = effectPair.getFirst();
-                MutableComponent mutableText = Component.translatable(statusEffect.getDescriptionId());
-                if (statusEffect.getAmplifier() > 0) {
-                    mutableText = Component.translatable("potion.withAmplifier", mutableText, Component.translatable("potion.potency." + statusEffect.getAmplifier()));
+            return;
+        }
+        for (FoodProperties.PossibleEffect pe : effects) {
+            MutableComponent name = Component.translatable(pe.effect().getDescriptionId());
+            MobEffect eff = pe.effect().getEffect().value();
+            eff.createModifiers(pe.effect().getAmplifier(), (h, base) -> {
+                AttributeModifier m = new AttributeModifier(base.id(), base.amount() * (double)(pe.effect().getAmplifier() + 1), base.operation());
+                attrs.add(new Pair<>(h, m));
+            });
+            if (pe.effect().getDuration() > 20) {
+                name = Component.translatable("potion.withDuration", name, MobEffectUtil.formatDuration(pe.effect(), pe.probability(), tooltipContext.tickRate()));
+            }
+            tooltip.add(name.withStyle(eff.getCategory().getTooltipFormatting()));
+        }
+        if (!attrs.isEmpty()) {
+            tooltip.add(Component.empty());
+            tooltip.add(Component.translatable("potion.whenDrank").withStyle(ChatFormatting.DARK_PURPLE));
+            for (Pair<Holder<Attribute>, AttributeModifier> pair : attrs) {
+                AttributeModifier m = pair.getSecond();
+                double amt = m.amount();
+                double shown = (m.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_BASE || m.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) ? amt * 100.0 : amt;
+                if (amt > 0.0) {
+                    tooltip.add(Component.translatable("attribute.modifier.plus." + m.operation().id(), ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(shown), Component.translatable(pair.getFirst().value().getDescriptionId())).withStyle(ChatFormatting.BLUE));
+                } else if (amt < 0.0) {
+                    tooltip.add(Component.translatable("attribute.modifier.take." + m.operation().id(), ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(-shown), Component.translatable(pair.getFirst().value().getDescriptionId())).withStyle(ChatFormatting.RED));
                 }
-                if (effectPair.getFirst().getDuration() > 20) {
-                    mutableText = Component.translatable("potion.withDuration", mutableText, MobEffectUtil.formatDuration(statusEffect, 1.0f, 1));
-                }
-                tooltip.add(mutableText.withStyle(statusEffect.getEffect().value().getCategory().getTooltipFormatting()));
             }
         }
+    }
+
+    public static Map<Holder<MobEffect>, MobEffectInstance> bestEffects(Iterable<Pair<MobEffectInstance, Float>> effects) {
+        Map<Holder<MobEffect>, MobEffectInstance> best = new HashMap<>();
+        for (Pair<MobEffectInstance, Float> p : effects) {
+            MobEffectInstance cur = p.getFirst();
+            Holder<MobEffect> key = cur.getEffect();
+            MobEffectInstance prev = best.get(key);
+            if (prev == null || cur.getAmplifier() > prev.getAmplifier() || (cur.getAmplifier() == prev.getAmplifier() && cur.getDuration() > prev.getDuration())) {
+                best.put(key, cur);
+            }
+        }
+        return best;
+    }
+
+    public static List<MobEffectInstance> collectMergedSortedEffects(Iterable<ItemStack> stacks) {
+        List<Pair<MobEffectInstance, Float>> collected = new ArrayList<>();
+        for (ItemStack in : stacks) if (!in.isEmpty()) collected.addAll(getEffects(in));
+        Map<Holder<MobEffect>, MobEffectInstance> best = bestEffects(collected);
+        List<MobEffectInstance> sorted = new ArrayList<>(best.values());
+        sorted.sort(Comparator.comparingInt(a -> BuiltInRegistries.MOB_EFFECT.getId(a.getEffect().value())));
+        return sorted;
+    }
+
+    public static List<MobEffectInstance> collectMergedSortedEffects(Container container, int from, int to) {
+        List<ItemStack> stacks = new ArrayList<>();
+        for (int i = from; i <= to; i++) stacks.add(container.getItem(i));
+        return collectMergedSortedEffects(stacks);
     }
 }

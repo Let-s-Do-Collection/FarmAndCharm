@@ -59,6 +59,6 @@ public class EffectFoodItem extends Item implements EffectFood {
 
     @Override
     public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> list, TooltipFlag tooltipFlag) {
-        EffectFoodHelper.getTooltip(itemStack, list);
+        EffectFoodHelper.getTooltip(itemStack, tooltipContext, list);
     }
 }

@@ -1,5 +1,8 @@
 package net.satisfy.farm_and_charm.core.entity.ai;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -9,15 +12,13 @@ import net.satisfy.farm_and_charm.core.block.entity.ChickenCoopBlockEntity;
 import net.satisfy.farm_and_charm.core.entity.ChickenCoopAccess;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 
-import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.Iterator;
-import java.util.List;
 
 public class ChickenLocateCoopGoal extends Goal {
     private final Chicken chicken;
     private BlockPos foundCoop;
-    private final List<BlockPos> cachedCoops = new ArrayList<>();
+    private final Set<BlockPos> cachedCoops = new HashSet<>();
+    private int nextScanTick;
 
     public ChickenLocateCoopGoal(Chicken chicken) {
         this.chicken = chicken;
@@ -27,14 +28,23 @@ public class ChickenLocateCoopGoal extends Goal {
     @Override
     public boolean canUse() {
         if (chicken.isBaby()) return false;
-
         ChickenCoopAccess access = (ChickenCoopAccess) chicken;
-
         if (access.farmAndCharm$hasCoopTarget()) return false;
         if (access.farmAndCharm$searchedForCoop()) return false;
         if (access.farmAndCharm$getCoopCooldown() > 0) return false;
+        if (chicken.tickCount < nextScanTick) return false;
 
         ServerLevel level = (ServerLevel) chicken.level();
+
+        if (foundCoop != null) {
+            if (level.getBlockState(foundCoop).is(ObjectRegistry.CHICKEN_COOP.get())) {
+                BlockEntity be = level.getBlockEntity(foundCoop);
+                if (be instanceof ChickenCoopBlockEntity coop && coop.hasSpaceForChicken()) {
+                    if (chicken.getNavigation().createPath(foundCoop, 0) != null) return true;
+                }
+            }
+            foundCoop = null;
+        }
 
         Iterator<BlockPos> it = cachedCoops.iterator();
         while (it.hasNext()) {
@@ -50,6 +60,7 @@ public class ChickenLocateCoopGoal extends Goal {
             }
             if (chicken.getNavigation().createPath(cached, 0) != null) {
                 foundCoop = cached;
+                nextScanTick = chicken.tickCount + 40;
                 return true;
             }
         }
@@ -60,10 +71,23 @@ public class ChickenLocateCoopGoal extends Goal {
             BlockEntity be = level.getBlockEntity(check);
             if (!(be instanceof ChickenCoopBlockEntity coop) || !coop.hasSpaceForChicken()) return false;
             if (chicken.getNavigation().createPath(check, 0) == null) return false;
-            if (!cachedCoops.contains(check)) cachedCoops.add(check);
+            if (cachedCoops.size() >= 16) {
+                BlockPos far = null;
+                double max = -1.0;
+                for (BlockPos p : cachedCoops) {
+                    double d = p.distSqr(pos);
+                    if (d > max) {
+                        max = d;
+                        far = p;
+                    }
+                }
+                if (far != null) cachedCoops.remove(far);
+            }
+            cachedCoops.add(check);
             return true;
         }).orElse(null);
 
+        nextScanTick = chicken.tickCount + 40;
         return foundCoop != null;
     }
 

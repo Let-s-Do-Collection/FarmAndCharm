@@ -14,6 +14,7 @@ import java.util.EnumSet;
 
 public class ChickenGotoAndEnterCoopGoal extends Goal {
     private final Chicken chicken;
+    private int nextRepathTick;
 
     public ChickenGotoAndEnterCoopGoal(Chicken chicken) {
         this.chicken = chicken;
@@ -22,19 +23,25 @@ public class ChickenGotoAndEnterCoopGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        if (((ChickenCoopAccess) chicken).farmAndCharm$getCoopCooldown() > 0) return false;
-        if (!((ChickenCoopAccess) chicken).farmAndCharm$hasCoopTarget()) return false;
-        BlockPos target = ((ChickenCoopAccess) chicken).farmAndCharm$getCoopTarget();
+        ChickenCoopAccess acc = (ChickenCoopAccess) chicken;
+        if (acc.farmAndCharm$getCoopCooldown() > 0) return false;
+        if (!acc.farmAndCharm$hasCoopTarget()) return false;
+        BlockPos target = acc.farmAndCharm$getCoopTarget();
         BlockEntity be = chicken.level().getBlockEntity(target);
-        return be instanceof ChickenCoopBlockEntity coop && coop.hasSpaceForChicken() && !coop.containsChicken(chicken);
+        if (!(be instanceof ChickenCoopBlockEntity coop)) return false;
+        if (!coop.hasSpaceForChicken()) return false;
+        if (coop.containsChicken(chicken)) return false;
+        return chicken.getNavigation().createPath(target, 0) != null;
     }
 
     @Override
     public void start() {
         BlockPos coopPos = ((ChickenCoopAccess) chicken).farmAndCharm$getCoopTarget();
         if (coopPos == null) return;
-        double distance = chicken.position().distanceTo(Vec3.atCenterOf(coopPos));
-        if (distance <= 1.2) {
+        nextRepathTick = chicken.tickCount;
+        Vec3 center = Vec3.atCenterOf(coopPos);
+        double d2 = chicken.position().distanceToSqr(center);
+        if (d2 <= 1.44) {
             BlockEntity be = chicken.level().getBlockEntity(coopPos);
             if (be instanceof ChickenCoopBlockEntity coop && coop.hasSpaceForChicken()) {
                 chicken.level().playSound(null, chicken.blockPosition(), SoundEvents.BEEHIVE_ENTER, chicken.getSoundSource(), 1.0F, 1.0F);
@@ -45,7 +52,8 @@ public class ChickenGotoAndEnterCoopGoal extends Goal {
                 return;
             }
         }
-        chicken.getNavigation().moveTo(coopPos.getX() + 0.5, coopPos.getY() + 0.5, coopPos.getZ() + 0.5, 1.0);
+        chicken.getNavigation().moveTo(center.x, center.y, center.z, 1.0);
+        nextRepathTick = chicken.tickCount + 10;
     }
 
     @Override
@@ -57,8 +65,9 @@ public class ChickenGotoAndEnterCoopGoal extends Goal {
             chicken.getNavigation().stop();
             return;
         }
-        double distance = chicken.position().distanceTo(Vec3.atCenterOf(coopPos));
-        if (distance <= 1.2) {
+        Vec3 center = Vec3.atCenterOf(coopPos);
+        double d2 = chicken.position().distanceToSqr(center);
+        if (d2 <= 1.44) {
             BlockEntity be = chicken.level().getBlockEntity(coopPos);
             if (be instanceof ChickenCoopBlockEntity coop && coop.hasSpaceForChicken()) {
                 chicken.level().playSound(null, chicken.blockPosition(), SoundEvents.BEEHIVE_ENTER, chicken.getSoundSource(), 1.0F, 1.0F);
@@ -66,7 +75,12 @@ public class ChickenGotoAndEnterCoopGoal extends Goal {
                 ((ChickenCoopAccess) chicken).farmAndCharm$clearCoopTarget();
                 ((ChickenCoopAccess) chicken).farmAndCharm$setCoopCooldown(20 * 60 * (3 + chicken.getRandom().nextInt(10)));
                 chicken.getNavigation().stop();
+                return;
             }
+        }
+        if (chicken.tickCount >= nextRepathTick) {
+            chicken.getNavigation().moveTo(center.x, center.y, center.z, 1.0);
+            nextRepathTick = chicken.tickCount + 10;
         }
     }
 

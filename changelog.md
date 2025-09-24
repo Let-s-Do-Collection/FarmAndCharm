@@ -1,3 +1,12 @@
+[1.0.13]
+
+**Changed**
+* Optimized `SaturationTracker`: reduced per-tick checks, cached loot tables, and removed intermediate list allocations for loot drops
+* Optimized `ChickenLocateCoopGoal`: limited scan frequency, introduced coop cache with eviction, and reduced expensive pathfinding calls
+* Optimized `ChickenGotoAndEnterCoopGoal`: reduced path recalculations, replaced sqrt distance checks with squared distance, and minimized redundant world lookups
+
+***
+
 [1.0.12]
 
 **Fixed**

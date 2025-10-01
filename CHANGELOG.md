@@ -1,3 +1,11 @@
+[1.1.11]
+
+**Fixed**
+* Scarecrows now boost the growth of climbing crops in addition to regular farmland crops.
+* Feeding trough can now be refilled after animals eat from it.
+
+***
+
 [1.1.10]
 
 **Fixed**

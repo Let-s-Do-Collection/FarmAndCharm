@@ -24,6 +24,7 @@ public class PlatformHelperImpl {
         return FarmAndCharmNeoForgeConfig.feedingTroughRange;
     }
 
+
     public static int getFertilizedSoilRange() {
         return FarmAndCharmNeoForgeConfig.fertilizedSoilRange;
     }

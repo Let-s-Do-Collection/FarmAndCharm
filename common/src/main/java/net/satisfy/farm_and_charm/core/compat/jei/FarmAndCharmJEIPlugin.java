@@ -52,6 +52,7 @@ public class FarmAndCharmJEIPlugin implements IModPlugin {
         RecipeManager rm = Objects.requireNonNull(Minecraft.getInstance().level).getRecipeManager();
 
         List<RecipeHolder<CookingPotRecipe>> cookingHoldersRecipes = rm.getAllRecipesFor(RecipeTypeRegistry.COOKING_POT_RECIPE_TYPE.get());
+
         List<CookingPotRecipe> cookingPotRecipes = new ArrayList<>();
         cookingHoldersRecipes.iterator().forEachRemaining(recipeHolder -> {
             cookingPotRecipes.add(recipeHolder.value());

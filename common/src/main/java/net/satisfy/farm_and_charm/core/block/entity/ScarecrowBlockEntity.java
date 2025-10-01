@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.satisfy.farm_and_charm.core.block.crops.ClimbingCropBlock;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 
 public class ScarecrowBlockEntity extends BlockEntity {
@@ -31,6 +32,9 @@ public class ScarecrowBlockEntity extends BlockEntity {
                     var bs = serverLevel.getBlockState(p);
                     if (bs.getBlock() instanceof CropBlock crop && !crop.isMaxAge(bs)) {
                         crop.randomTick(bs, serverLevel, p, serverLevel.random);
+                        serverLevel.gameEvent(GameEvent.BLOCK_CHANGE, p, GameEvent.Context.of(bs));
+                    } else if (bs.getBlock() instanceof ClimbingCropBlock) {
+                        ((ClimbingCropBlock) bs.getBlock()).randomTick(bs, serverLevel, p, serverLevel.random);
                         serverLevel.gameEvent(GameEvent.BLOCK_CHANGE, p, GameEvent.Context.of(bs));
                     }
                 });

@@ -10,6 +10,7 @@ import java.util.Objects;
 
 @Mod(FarmAndCharm.MOD_ID)
 public class FarmAndCharmNeoForge {
+    
     public FarmAndCharmNeoForge(ModContainer modContainer) {
         modContainer.registerConfig(ModConfig.Type.COMMON, FarmAndCharmNeoForgeConfig.COMMON_CONFIG);
         Objects.requireNonNull(modContainer.getEventBus()).addListener(FarmAndCharmNeoForgeConfig::onLoad);

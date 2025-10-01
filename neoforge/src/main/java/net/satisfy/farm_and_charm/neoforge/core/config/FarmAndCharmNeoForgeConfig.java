@@ -258,6 +258,7 @@ public class FarmAndCharmNeoForgeConfig {
     }
 
     public static void onLoad(ModConfigEvent.Loading event) {
+
         sync();
     }
 

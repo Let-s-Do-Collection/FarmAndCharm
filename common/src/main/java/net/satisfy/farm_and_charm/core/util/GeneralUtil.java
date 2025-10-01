@@ -62,7 +62,6 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Supplier;
 
-@SuppressWarnings("all")
 public class GeneralUtil {
     private static final String BLOCK_POS_KEY = "block_pos";
     private static final String BLOCK_POSES_KEY = "block_poses";
@@ -465,7 +464,7 @@ public class GeneralUtil {
     }
 
     public static Set<BlockPos> readBlockPoses(CompoundTag compoundTag) {
-        Set<BlockPos> blockSet = new HashSet();
+        Set<BlockPos> blockSet = new HashSet<>();
         if (!compoundTag.contains("block_poses")) {
             return blockSet;
         } else {

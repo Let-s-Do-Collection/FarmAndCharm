@@ -45,6 +45,7 @@ public class FeedingTroughBlock extends LineConnectingBlock implements EntityBlo
 
     public FeedingTroughBlock(Properties settings) {
         super(settings);
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(SIZE, 0));
     }
 
     @Override
@@ -54,24 +55,14 @@ public class FeedingTroughBlock extends LineConnectingBlock implements EntityBlo
     }
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(ItemStack itemStack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!world.isClientSide && hand == InteractionHand.MAIN_HAND && itemStack.is(ItemTags.VILLAGER_PLANTABLE_SEEDS)) {
-            BlockEntity be = world.getBlockEntity(pos);
-            if (be instanceof FeedingTroughBlockEntity trough) {
-                ItemStack current = trough.getItem(0);
-                if (current.isEmpty()) {
-                    trough.setItem(0, new ItemStack(itemStack.getItem(), 1));
-                    if (!player.getAbilities().instabuild) itemStack.shrink(1);
-                    return ItemInteractionResult.SUCCESS;
-                } else if (ItemStack.isSameItemSameComponents(current, itemStack) && current.getCount() < 4) {
-                    current.grow(1);
-                    trough.setItem(0, current);
-                    if (!player.getAbilities().instabuild) itemStack.shrink(1);
-                    return ItemInteractionResult.SUCCESS;
-                }
-            }
-        }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    protected @NotNull ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (!stack.is(ItemTags.VILLAGER_PLANTABLE_SEEDS)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        BlockEntity be = level.getBlockEntity(pos);
+        if (!(be instanceof FeedingTroughBlockEntity trough)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (level.isClientSide) return ItemInteractionResult.SUCCESS;
+        if (!trough.addOne(stack.getItem())) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (!player.getAbilities().instabuild) stack.shrink(1);
+        return ItemInteractionResult.SUCCESS;
     }
 
     @Override

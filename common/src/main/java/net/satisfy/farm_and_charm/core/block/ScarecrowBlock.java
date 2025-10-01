@@ -42,34 +42,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-@SuppressWarnings("deprecation")
 public class ScarecrowBlock extends BaseEntityBlock {
     public static final MapCodec<ScarecrowBlock> CODEC = simpleCodec(ScarecrowBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     private static final Supplier<VoxelShape> voxelShapeSupplier = () -> {
         VoxelShape shape = Shapes.empty();
-        shape = Shapes.joinUnoptimized(shape,
-                Shapes.box(0.4375, 0,    0.4375, 0.5625, 0.75,   0.5625),
-                BooleanOp.OR
-        );
-        shape = Shapes.joinUnoptimized(shape,
-                Shapes.box(0.25,   0.625, 0.375,  0.75,   1.4375, 0.6875),
-                BooleanOp.OR
-        );
-        shape = Shapes.joinUnoptimized(shape,
-                Shapes.box(0.25,   1.4375,0.3125,  0.75,   1.9375, 0.8125),
-                BooleanOp.OR
-        );
-        shape = Shapes.joinUnoptimized(shape,
-                Shapes.box(0.6875, 1.125, 0.375,  1.0,    1.5,    0.6875),
-                BooleanOp.OR
-        );
-        shape = Shapes.joinUnoptimized(shape,
-                Shapes.box(0.0,    1.125, 0.375,  0.3125, 1.5,    0.6875),
-                BooleanOp.OR
-        );
+        shape = Shapes.joinUnoptimized(shape, Shapes.box(0.4375, 0, 0.4375, 0.5625, 0.75, 0.5625), BooleanOp.OR);
+        shape = Shapes.joinUnoptimized(shape, Shapes.box(0.25, 0.625, 0.375, 0.75, 1.4375, 0.6875), BooleanOp.OR);
+        shape = Shapes.joinUnoptimized(shape, Shapes.box(0.25, 1.4375, 0.3125, 0.75, 1.9375, 0.8125), BooleanOp.OR);
+        shape = Shapes.joinUnoptimized(shape, Shapes.box(0.6875, 1.125, 0.375, 1.0, 1.5, 0.6875), BooleanOp.OR);
+        shape = Shapes.joinUnoptimized(shape, Shapes.box(0.0, 1.125, 0.375, 0.3125, 1.5, 0.6875), BooleanOp.OR);
         return shape;
     };
+
     public static final Map<Direction, VoxelShape> SHAPE = Util.make(new HashMap<>(), m -> {
         for (Direction d : Direction.Plane.HORIZONTAL) {
             m.put(d, GeneralUtil.rotateShape(Direction.NORTH, d, voxelShapeSupplier.get()));
@@ -80,8 +65,7 @@ public class ScarecrowBlock extends BaseEntityBlock {
     public ScarecrowBlock(Properties props) {
         super(props);
         this.registerDefaultState(this.defaultBlockState()
-                .setValue(FACING, Direction.NORTH)
-                .setValue(HAS_DUNGAREES, true)
+                .setValue(FACING, Direction.NORTH).setValue(HAS_DUNGAREES, true)
         );
     }
 
@@ -103,7 +87,6 @@ public class ScarecrowBlock extends BaseEntityBlock {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public @NotNull VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return SHAPE.get(state.getValue(FACING));
     }

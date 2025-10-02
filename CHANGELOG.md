@@ -2,10 +2,11 @@
 
 **Fixed**
 * CraftingBowl stirring sometimes didnt trigger. Empty-hand use now reliably starts crafting!
+* Crash on player save from chicken coop items by migrating data to CustomData
 
 **Changed**
 * Smooth, BE-driven interpolation for CraftingBowl & Mincer renderers
-* 
+
 ***
 
 

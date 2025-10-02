@@ -101,9 +101,9 @@ public class ChickenCoopBlock extends BaseEntityBlock {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof ChickenCoopBlockEntity coop) {
                 boolean hasNbt = !coop.getStoredChickens().isEmpty() || coop.getEggCount() > 0;
-
                 if (hasNbt || !player.isCreative()) {
                     ItemStack stack = new ItemStack(ObjectRegistry.CHICKEN_COOP_ITEM.get());
+                    stack.remove(DataComponents.ENTITY_DATA);
                     if (hasNbt) {
                         CompoundTag tag = new CompoundTag();
                         coop.saveAdditional(tag, level.registryAccess());

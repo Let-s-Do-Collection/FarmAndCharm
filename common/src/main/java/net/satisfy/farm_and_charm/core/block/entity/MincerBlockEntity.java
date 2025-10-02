@@ -1,6 +1,10 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
-import net.minecraft.core.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.Position;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -40,8 +44,11 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
     public final int SLOT_COUNT = 2;
     public final int INPUT_SLOT = 0;
     public final int OUTPUT_SLOT = 1;
-
     private NonNullList<ItemStack> stacks = NonNullList.withSize(SLOT_COUNT, ItemStack.EMPTY);
+    private float crankAngle;
+    private float crankAnglePrev;
+    private float crankSpeed;
+    private float crankTargetSpeed;
 
     public MincerBlockEntity(BlockPos position, BlockState state) {
         super(EntityTypeRegistry.MINCER_BLOCK_ENTITY.get(), position, state);
@@ -51,12 +58,7 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
         double d = pos.x();
         double e = pos.y();
         double f = pos.z();
-        if (side.getAxis() == Direction.Axis.Y) {
-            e -= 0.125;
-        } else {
-            e -= 0.15625;
-        }
-
+        if (side.getAxis() == Direction.Axis.Y) e -= 0.125; else e -= 0.15625;
         ItemEntity itemEntity = new ItemEntity(world, d, e, f, stack);
         double g = world.random.nextDouble() * 0.1 + 0.2;
         itemEntity.setDeltaMovement(world.random.triangle((double) side.getStepX() * g, 0.0172275 * (double) speed), world.random.triangle(0.2, 0.0172275 * (double) speed), world.random.triangle((double) side.getStepZ() * g, 0.0172275 * (double) speed));
@@ -66,16 +68,20 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
     @Override
     public void loadAdditional(CompoundTag compound, HolderLookup.Provider provider) {
         super.loadAdditional(compound, provider);
-        if (!this.tryLoadLootTable(compound))
-            this.stacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+        if (!this.tryLoadLootTable(compound)) this.stacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
         ContainerHelper.loadAllItems(compound, this.stacks, provider);
+        this.crankAngle = compound.getFloat("CrankAngle");
+        this.crankSpeed = compound.getFloat("CrankSpeed");
+        this.crankTargetSpeed = compound.getFloat("CrankTargetSpeed");
     }
 
     @Override
     public void saveAdditional(CompoundTag compound, HolderLookup.Provider provider) {
         super.saveAdditional(compound, provider);
-        if (!this.trySaveLootTable(compound))
-            ContainerHelper.saveAllItems(compound, this.stacks, provider);
+        if (!this.trySaveLootTable(compound)) ContainerHelper.saveAllItems(compound, this.stacks, provider);
+        compound.putFloat("CrankAngle", this.crankAngle);
+        compound.putFloat("CrankSpeed", this.crankSpeed);
+        compound.putFloat("CrankTargetSpeed", this.crankTargetSpeed);
     }
 
     @Override
@@ -84,15 +90,13 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
     }
 
     @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.Provider provider) {
         return this.saveWithoutMetadata(provider);
     }
 
     @Override
     public boolean isEmpty() {
-        for (ItemStack itemstack : this.stacks)
-            if (!itemstack.isEmpty())
-                return false;
+        for (ItemStack itemstack : this.stacks) if (!itemstack.isEmpty()) return false;
         return true;
     }
 
@@ -107,14 +111,11 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
     }
 
     private void dropItemsInOutputSlot(Level level, BlockPos pos, BlockState state, MincerBlockEntity mincer) {
-
         Direction direction = state.getValue(MincerBlock.FACING).getClockWise();
-
         if (!level.isClientSide() && !this.stacks.get(OUTPUT_SLOT).isEmpty()) {
             ItemStack droppedStack = new ItemStack(mincer.stacks.get(OUTPUT_SLOT).getItem());
             droppedStack.setCount(mincer.stacks.get(OUTPUT_SLOT).getCount());
             this.stacks.set(OUTPUT_SLOT, ItemStack.EMPTY);
-
             Vec3 vec3d = Vec3.atCenterOf(pos);
             Vec3 vec3d2 = vec3d.relative(direction, 0.7);
             ((ServerLevel) level).sendParticles(ParticleTypes.SPIT, vec3d2.x(), vec3d2.y(), vec3d2.z(), 3, 0.2, 0.1, 0, 0.1);
@@ -168,91 +169,93 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
         return (direction == Direction.UP) && canPlaceItem(index, stack);
     }
 
+    private MincerRecipe getRecipe(List<RecipeHolder<MincerRecipe>> recipes, NonNullList<ItemStack> inventory) {
+        for (RecipeHolder<MincerRecipe> recipeHolder : recipes) {
+            MincerRecipe recipe = recipeHolder.value();
+            boolean ok = true;
+            for (Ingredient ingredient : recipe.getIngredients()) {
+                boolean found = false;
+                for (ItemStack slotItem : inventory) {
+                    if (ingredient.test(slotItem)) { found = true; break; }
+                }
+                if (!found) { ok = false; break; }
+            }
+            if (ok) return recipe;
+        }
+        return null;
+    }
+
+    public float getInterpolatedCrankAngle(float partial) {
+        float a0 = this.crankAnglePrev;
+        float a1 = this.crankAngle;
+        float da = a1 - a0;
+        float tau = (float) (Math.PI * 2D);
+        if (da > Math.PI) da -= tau;
+        if (da < -Math.PI) da += tau;
+        return a0 + da * partial;
+    }
+
+    public void addCrankImpulse(float v) {
+        this.crankTargetSpeed = Math.min(0.5F, this.crankTargetSpeed + v);
+    }
+
     @Override
     public void tick(Level level, BlockPos pos, BlockState state, MincerBlockEntity mincer) {
-
+        this.crankAnglePrev = this.crankAngle;
         dropItemsInOutputSlot(level, pos, state, mincer);
+        int crank = state.getValue(MincerBlock.CRANK);
+        if (crank > 0) this.crankTargetSpeed = 0.5F; else this.crankTargetSpeed = 0F;
+        float k = 0.22F;
+        this.crankSpeed += (this.crankTargetSpeed - this.crankSpeed) * k;
+        if (crank == 0) this.crankSpeed *= 0.96F;
+        this.crankAngle += this.crankSpeed;
+        float tau = (float) (Math.PI * 2D);
+        if (this.crankAngle > tau) this.crankAngle -= tau;
+        if (this.crankAngle < 0F) this.crankAngle += tau;
 
-        if (!level.isClientSide() && level.getBlockState(pos).getBlock() instanceof MincerBlock) {
-
-            int crank = state.getValue(MincerBlock.CRANK);
+        if (!level.isClientSide && state.getBlock() instanceof MincerBlock) {
             int cranked = state.getValue(MincerBlock.CRANKED);
-
             if (crank > 0) {
-                if (cranked < MincerBlock.CRANKS_NEEDED) {
-                    cranked++;
-                }
+                if (cranked < MincerBlock.CRANKS_NEEDED) cranked++;
                 crank -= 1;
                 if (cranked >= MincerBlock.CRANKS_NEEDED) {
                     cranked = 0;
-
-                    RecipeManager recipeManager = level.getRecipeManager();
-                    List<RecipeHolder<MincerRecipe>> recipes = recipeManager.getAllRecipesFor(RecipeTypeRegistry.MINCER_RECIPE_TYPE.get());
+                    RecipeManager rm = level.getRecipeManager();
+                    List<RecipeHolder<MincerRecipe>> recipes = rm.getAllRecipesFor(RecipeTypeRegistry.MINCER_RECIPE_TYPE.get());
                     Optional<MincerRecipe> recipe = Optional.ofNullable(getRecipe(recipes, stacks));
-
                     if (recipe.isPresent()) {
-
                         ItemStack inputStack = this.stacks.get(INPUT_SLOT);
-
-                        String recipe_type = recipe.get().getRecipeType();
-                        int recipe_difficulty = 5;
-
-                        switch (recipe_type) {
-                            case "MEAT" -> recipe_difficulty = 1;
-                            case "WOOD" -> recipe_difficulty = 2;
-                            case "STONE" -> recipe_difficulty = 3;
-                            case "METAL" -> recipe_difficulty = 4;
+                        String t = recipe.get().getRecipeType();
+                        int d = 5;
+                        switch (t) {
+                            case "MEAT" -> d = 1;
+                            case "WOOD" -> d = 2;
+                            case "STONE" -> d = 3;
+                            case "METAL" -> d = 4;
                         }
-
-                        AABB searched_area = new AABB(pos);
-                        searched_area.inflate(4.0D);
-                        List<ServerPlayer> playersNearby = level.getEntitiesOfClass(ServerPlayer.class, searched_area, Player::isAlive); // checking for nearby living player around the block
-
+                        AABB area = new AABB(pos).inflate(4.0D);
+                        List<ServerPlayer> playersNearby = level.getEntitiesOfClass(ServerPlayer.class, area, Player::isAlive);
                         if (!playersNearby.isEmpty()) {
-                            for (Player player : playersNearby) {
-                                if (player != null && player.getOffhandItem().is(inputStack.getItem())) {
-                                    recipe_difficulty -= 1;
-                                }
+                            for (Player p : playersNearby) {
+                                if (p != null && p.getOffhandItem().is(inputStack.getItem())) d -= 1;
                             }
                         }
-
-                        if (recipe_difficulty > 0) {
+                        if (d > 0) {
                             inputStack.shrink(1);
                             inputStack = inputStack.isEmpty() ? ItemStack.EMPTY : inputStack;
                             mincer.setItem(INPUT_SLOT, inputStack);
                             mincer.setItem(OUTPUT_SLOT, recipe.get().getResultItem(level.registryAccess()));
-
                             level.setBlock(pos, state.setValue(MincerBlock.CRANK, crank).setValue(MincerBlock.CRANKED, cranked), Block.UPDATE_ALL);
+                            if (level.getGameTime() % 5L == 0L) setChanged();
                             return;
                         }
-
                     }
                 }
                 level.setBlock(pos, state.setValue(MincerBlock.CRANK, crank).setValue(MincerBlock.CRANKED, cranked), Block.UPDATE_ALL);
             } else if (cranked > 0 && cranked < MincerBlock.CRANKS_NEEDED) {
                 level.setBlock(pos, state.setValue(MincerBlock.CRANKED, 0), Block.UPDATE_ALL);
             }
+            if (level.getGameTime() % 5L == 0L) setChanged();
         }
-    }
-
-    private MincerRecipe getRecipe(List<RecipeHolder<MincerRecipe>> recipes, NonNullList<ItemStack> inventory) {
-        recipeLoop:
-        for (RecipeHolder<MincerRecipe> recipeHolder : recipes) {
-            MincerRecipe recipe = recipeHolder.value();
-            for (Ingredient ingredient : recipe.getIngredients()) {
-                boolean ingredientFound = false;
-                for (ItemStack slotItem : inventory) {
-                    if (ingredient.test(slotItem)) {
-                        ingredientFound = true;
-                        break;
-                    }
-                }
-                if (!ingredientFound) {
-                    continue recipeLoop;
-                }
-            }
-            return recipe;
-        }
-        return null;
     }
 }

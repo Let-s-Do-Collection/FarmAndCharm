@@ -11,7 +11,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
@@ -46,7 +45,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-@SuppressWarnings("deprecation")
 public class CraftingBowlBlock extends BaseEntityBlock {
     public static final MapCodec<CraftingBowlBlock> CODEC = simpleCodec(CraftingBowlBlock::new);
     public static final int STIRS_NEEDED = 50;
@@ -60,7 +58,7 @@ public class CraftingBowlBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
+    protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }
 
@@ -95,61 +93,67 @@ public class CraftingBowlBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected @NotNull InteractionResult useWithoutItem(BlockState blockState, Level world, BlockPos pos, Player player, BlockHitResult blockHitResult) {
-        InteractionHand hand = blockHitResult.getDirection() == Direction.UP ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        ItemStack itemStack = player.getItemInHand(hand);
-        if (blockEntity instanceof CraftingBowlBlockEntity bowlEntity) {
-            int stirring = blockState.getValue(STIRRING);
-            int stirred = blockState.getValue(STIRRED);
-            if (player.isShiftKeyDown() && itemStack.isEmpty() && hand == InteractionHand.MAIN_HAND) {
-                for (int i = 0; i < bowlEntity.getContainerSize(); i++) {
-                    ItemStack stack = bowlEntity.getItem(i);
-                    if (!stack.isEmpty()) {
-                        popResource(world, pos, stack);
-                        bowlEntity.setItem(i, ItemStack.EMPTY);
-                    }
+    protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        BlockEntity be = level.getBlockEntity(pos);
+        if (!(be instanceof CraftingBowlBlockEntity bowl)) return InteractionResult.PASS;
+
+        ItemStack main = player.getMainHandItem();
+        ItemStack off = player.getOffhandItem();
+        boolean anyHeld = !main.isEmpty() || !off.isEmpty();
+
+        int stirring = state.getValue(STIRRING);
+        int stirred = state.getValue(STIRRED);
+
+        if (player.isShiftKeyDown() && !anyHeld) {
+            for (int i = 0; i < bowl.getContainerSize(); i++) {
+                ItemStack stack = bowl.getItem(i);
+                if (!stack.isEmpty()) {
+                    popResource(level, pos, stack);
+                    bowl.setItem(i, ItemStack.EMPTY);
                 }
-                bowlEntity.setChanged();
-                return InteractionResult.sidedSuccess(world.isClientSide);
             }
-            if (!itemStack.isEmpty() && stirring == 0) {
-                if (bowlEntity.canAddItem(itemStack)) {
-                    ItemStack toInsert = itemStack.copy();
-                    toInsert.setCount(1);
-                    bowlEntity.addItemStack(toInsert);
-                    if (!player.isCreative()) {
-                        itemStack.shrink(1);
-                    }
-                    return InteractionResult.SUCCESS;
-                }
-            } else if (itemStack.isEmpty()) {
-                if (stirred >= STIRS_NEEDED && stirring == 0) {
-                    ItemStack out = bowlEntity.getItem(4);
-                    if (!out.isEmpty()) {
-                        player.getInventory().add(out.copy());
-                        bowlEntity.setItem(4, ItemStack.EMPTY);
-                        world.setBlock(pos, blockState.setValue(STIRRED, 0), 3);
-                        return InteractionResult.SUCCESS;
-                    }
-                }
-                if (world instanceof ServerLevel serverWorld) {
-                    RandomSource randomSource = serverWorld.random;
-                    for (int i = 0; i < 4; i++) {
-                        ItemStack stack = bowlEntity.getItem(i);
-                        if (!stack.isEmpty()) {
-                            ItemParticleOption particleOption = new ItemParticleOption(ParticleTypes.ITEM, stack);
-                            serverWorld.sendParticles(particleOption, pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5, 1, randomSource.nextGaussian() * 0.15D, 0.05D, randomSource.nextGaussian() * 0.15D, 0.05D);
-                        }
-                    }
-                }
-                if (stirring <= 6 && bowlEntity.findRecipe(world).isPresent()) {
-                    world.setBlock(pos, blockState.setValue(STIRRING, 10), 3);
-                    world.playSound(null, pos, SoundEventRegistry.CRAFTING_BOWL_STIRRING.get(), SoundSource.BLOCKS, 0.05f, 1.0F);
-                    return InteractionResult.SUCCESS;
-                }
+            bowl.setChanged();
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
+
+        if (anyHeld && stirring == 0) {
+            ItemStack src = !main.isEmpty() ? main : off;
+            if (bowl.canAddItem()) {
+                ItemStack one = src.copy();
+                one.setCount(1);
+                bowl.addItemStack(one);
+                if (!player.isCreative()) src.shrink(1);
+                return InteractionResult.SUCCESS;
             }
         }
+
+        if (!anyHeld) {
+            if (stirred >= STIRS_NEEDED && stirring == 0) {
+                ItemStack out = bowl.getItem(4);
+                if (!out.isEmpty()) {
+                    player.getInventory().add(out.copy());
+                    bowl.setItem(4, ItemStack.EMPTY);
+                    level.setBlock(pos, state.setValue(STIRRED, 0), 3);
+                    return InteractionResult.SUCCESS;
+                }
+            }
+            if (level instanceof ServerLevel server) {
+                RandomSource r = server.random;
+                for (int i = 0; i < 4; i++) {
+                    ItemStack stack = bowl.getItem(i);
+                    if (!stack.isEmpty()) {
+                        server.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, stack), pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5, 1, r.nextGaussian() * 0.15D, 0.05D, r.nextGaussian() * 0.15D, 0.05D);
+                    }
+                }
+            }
+            if (stirring <= 6) {
+                level.setBlock(pos, state.setValue(STIRRING, 10), 3);
+                bowl.addWhiskImpulse(0.35F);
+                level.playSound(null, pos, SoundEventRegistry.CRAFTING_BOWL_STIRRING.get(), SoundSource.BLOCKS, 0.05f, 1.0F);
+                return InteractionResult.SUCCESS;
+            }
+        }
+
         return InteractionResult.PASS;
     }
 

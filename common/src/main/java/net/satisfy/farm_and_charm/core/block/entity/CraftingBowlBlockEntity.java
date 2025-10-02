@@ -34,6 +34,10 @@ import java.util.stream.IntStream;
 
 public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity implements WorldlyContainer, BlockEntityTicker<CraftingBowlBlockEntity> {
     private NonNullList<ItemStack> stacks = NonNullList.withSize(5, ItemStack.EMPTY);
+    private float whiskAngle;
+    private float whiskAnglePrev;
+    private float whiskSpeed;
+    private float whiskTargetSpeed;
 
     public CraftingBowlBlockEntity(BlockPos position, BlockState state) {
         super(EntityTypeRegistry.CRAFTING_BOWL_BLOCK_ENTITY.get(), position, state);
@@ -44,12 +48,18 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
         super.loadAdditional(tag, provider);
         if (!this.tryLoadLootTable(tag)) this.stacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
         ContainerHelper.loadAllItems(tag, this.stacks, provider);
+        this.whiskAngle = tag.getFloat("WhiskAngle");
+        this.whiskSpeed = tag.getFloat("WhiskSpeed");
+        this.whiskTargetSpeed = tag.getFloat("WhiskTargetSpeed");
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.saveAdditional(tag, provider);
         if (!this.trySaveLootTable(tag)) ContainerHelper.saveAllItems(tag, this.stacks, provider);
+        tag.putFloat("WhiskAngle", this.whiskAngle);
+        tag.putFloat("WhiskSpeed", this.whiskSpeed);
+        tag.putFloat("WhiskTargetSpeed", this.whiskTargetSpeed);
     }
 
     @Override
@@ -103,7 +113,7 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
         this.stacks = stacks;
     }
 
-    public boolean canAddItem(ItemStack stack) {
+    public boolean canAddItem() {
         for (int i = 0; i < 4; i++) if (this.getItem(i).isEmpty()) return true;
         return false;
     }
@@ -183,10 +193,38 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
         return null;
     }
 
+    public float getInterpolatedWhiskAngle(float partial) {
+        float a0 = this.whiskAnglePrev;
+        float a1 = this.whiskAngle;
+        float da = a1 - a0;
+        float tau = (float) (Math.PI * 2D);
+        if (da > Math.PI) da -= tau;
+        if (da < -Math.PI) da += tau;
+        return a0 + da * partial;
+    }
+
+    public void addWhiskImpulse(float v) {
+        this.whiskTargetSpeed = Math.min(0.5F, this.whiskTargetSpeed + v);
+    }
+
     @Override
     public void tick(Level level, BlockPos pos, BlockState state, CraftingBowlBlockEntity be) {
+        this.whiskAnglePrev = this.whiskAngle;
+        int stirring = state.getValue(CraftingBowlBlock.STIRRING);
+        if (stirring > 0) {
+            this.whiskTargetSpeed = 0.5F;
+        } else {
+            this.whiskTargetSpeed = 0F;
+        }
+        float k = 0.22F;
+        this.whiskSpeed += (this.whiskTargetSpeed - this.whiskSpeed) * k;
+        if (stirring == 0) this.whiskSpeed *= 0.96F;
+        this.whiskAngle += this.whiskSpeed;
+        float tau = (float) (Math.PI * 2D);
+        if (this.whiskAngle > tau) this.whiskAngle -= tau;
+        if (this.whiskAngle < 0F) this.whiskAngle += tau;
+
         if (!level.isClientSide && state.getBlock() instanceof CraftingBowlBlock) {
-            int stirring = state.getValue(CraftingBowlBlock.STIRRING);
             int stirred = state.getValue(CraftingBowlBlock.STIRRED);
             if (stirring > 0) {
                 Optional<CraftingBowlRecipe> recipe = be.findRecipe(level);
@@ -221,9 +259,13 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
                 }
                 stirring -= 1;
                 level.setBlock(pos, state.setValue(CraftingBowlBlock.STIRRING, stirring).setValue(CraftingBowlBlock.STIRRED, stirred), 3);
-            } else if (stirred > 0 && stirred < CraftingBowlBlock.STIRS_NEEDED) {
-                level.setBlock(pos, state.setValue(CraftingBowlBlock.STIRRED, 0), 3);
+            } else {
+                int stirredNow = state.getValue(CraftingBowlBlock.STIRRED);
+                if (stirredNow > 0 && stirredNow < CraftingBowlBlock.STIRS_NEEDED) {
+                    level.setBlock(pos, state.setValue(CraftingBowlBlock.STIRRED, 0), 3);
+                }
             }
+            if (level.getGameTime() % 5L == 0L) setChanged();
         }
     }
 }

@@ -26,53 +26,40 @@ public class CraftingBowlRenderer implements BlockEntityRenderer<CraftingBowlBlo
     private final ModelPart bowl;
     private final ModelPart swing;
 
-
     public CraftingBowlRenderer(BlockEntityRendererProvider.Context context) {
         ModelPart root = context.bakeLayer(CraftingBowlModel.LAYER_LOCATION);
-
         this.bowl = root.getChild("bowl");
         this.swing = root.getChild("swing");
     }
 
     @Override
-    public void render(CraftingBowlBlockEntity blockEntity, float f, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int j) {
+    public void render(CraftingBowlBlockEntity be, float f, PoseStack pose, MultiBufferSource buf, int light, int overlay) {
+        Level level = be.getLevel();
+        if (level == null) return;
+        BlockState state = level.getBlockState(be.getBlockPos());
+        if (!(state.getBlock() instanceof CraftingBowlBlock)) return;
 
-        Level level = blockEntity.getLevel();
-        assert level != null;
-        BlockState blockState = level.getBlockState(blockEntity.getBlockPos());
-        if (!(blockState.getBlock() instanceof CraftingBowlBlock)) return;
+        pose.pushPose();
+        pose.mulPose(Axis.XP.rotationDegrees(180));
+        pose.translate(0.5f, -1.5f, -0.5f);
 
-        poseStack.pushPose();
-        poseStack.mulPose(Axis.XP.rotationDegrees(180));
-        poseStack.translate(0.5f, -1.5f, -0.5f);
+        ResourceLocation tex = be.getStirringProgress() >= CraftingBowlBlock.STIRS_NEEDED
+                ? ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "textures/entity/crafting_bowl_full.png")
+                : ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "textures/entity/crafting_bowl.png");
 
+        VertexConsumer vc = buf.getBuffer(RenderType.entityTranslucent(tex));
 
-        ResourceLocation location;
-        if (blockEntity.getStirringProgress() >= CraftingBowlBlock.STIRS_NEEDED) {
-            location = ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "textures/entity/crafting_bowl_full.png");
-        } else {
-            location = ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "textures/entity/crafting_bowl.png");
-        }
+        bowl.render(pose, vc, light, overlay);
+        pose.mulPose(Axis.YP.rotation(be.getInterpolatedWhiskAngle(f)));
+        swing.render(pose, vc, light, overlay);
 
-
-        VertexConsumer vertexConsumer = multiBufferSource.getBuffer(RenderType.entityTranslucent(location));
-
-        bowl.render(poseStack, vertexConsumer, i, j);
-        if (level.getBlockState(blockEntity.getBlockPos()).getValue(CraftingBowlBlock.STIRRING) > 0)
-            poseStack.mulPose(Axis.YP.rotation(((float) (System.currentTimeMillis() % 100000) / 100f) % 360));
-        swing.render(poseStack, vertexConsumer, i, j);
-
-        this.renderItems(poseStack, multiBufferSource, blockEntity.getItems(), i, j);
-
-        poseStack.popPose();
-
-
+        this.renderItems(pose, buf, be.getItems(), light, overlay);
+        pose.popPose();
     }
 
     private void renderItems(PoseStack poseStack, MultiBufferSource multiBufferSource, NonNullList<ItemStack> items, int i, int j) {
-
-        final ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
-        final LocalPlayer player = Minecraft.getInstance().player;
+        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+        LocalPlayer player = Minecraft.getInstance().player;
 
         poseStack.translate(0f, 1.25f, 0f);
         poseStack.scale(0.35f, 0.35f, 0.35f);

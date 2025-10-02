@@ -2,6 +2,7 @@ package net.satisfy.farm_and_charm.client.renderer.block;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -15,8 +16,6 @@ import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.client.model.MincerModel;
 import net.satisfy.farm_and_charm.core.block.MincerBlock;
 import net.satisfy.farm_and_charm.core.block.entity.MincerBlockEntity;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class MincerRenderer implements BlockEntityRenderer<MincerBlockEntity> {
@@ -26,16 +25,14 @@ public class MincerRenderer implements BlockEntityRenderer<MincerBlockEntity> {
 
     public MincerRenderer(BlockEntityRendererProvider.Context context) {
         ModelPart root = context.bakeLayer(MincerModel.LAYER_LOCATION);
-
         this.mincer = root.getChild("mincer");
         this.crank = root.getChild("crank");
     }
 
     @Override
     public void render(MincerBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource multiBufferSource, int light, int overlay) {
-
         Level level = blockEntity.getLevel();
-        assert level != null;
+        if (level == null) return;
         BlockState blockState = level.getBlockState(blockEntity.getBlockPos());
         if (!(blockState.getBlock() instanceof MincerBlock)) return;
 
@@ -43,41 +40,27 @@ public class MincerRenderer implements BlockEntityRenderer<MincerBlockEntity> {
 
         Direction facing = blockState.getValue(MincerBlock.FACING);
         Vector3f offset = new Vector3f();
-        float rotationDegrees = 0;
+        float rotationDegrees = 0F;
 
         switch (facing) {
-            case NORTH:
-                offset.set(1f, 0f, 1f);
-                rotationDegrees = 180;
-                break;
-            case EAST:
-                offset.set(0f, 0f, 1f);
-                rotationDegrees = 90;
-                break;
-            case SOUTH:
-                offset.set(0.0f, 0f, 0f);
-                break;
-            case WEST:
-                offset.set(1f, 0f, 0f);
-                rotationDegrees = 270;
-                break;
+            case NORTH -> { offset.set(1F, 0F, 1F); rotationDegrees = 180F; }
+            case EAST  -> { offset.set(0F, 0F, 1F); rotationDegrees = 90F; }
+            case SOUTH -> offset.set(0F, 0F, 0F);
+            case WEST  -> { offset.set(1F, 0F, 0F); rotationDegrees = 270F; }
         }
 
         poseStack.translate(offset.x, offset.y, offset.z);
-        poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(rotationDegrees));
+        poseStack.mulPose(Axis.YP.rotationDegrees(rotationDegrees));
 
-        VertexConsumer vertexConsumer = multiBufferSource.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
+        VertexConsumer vc = multiBufferSource.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
 
-        mincer.render(poseStack, vertexConsumer, light, overlay);
+        mincer.render(poseStack, vc, light, overlay);
 
-        if (blockState.getValue(MincerBlock.CRANK) > 0) {
-            long time = System.currentTimeMillis();
-            float angle = (time % 3600) / 5f;
-            Quaternionf rotation = new Quaternionf().rotateX((float) Math.toRadians(-angle));
-            Matrix4f matrix = new Matrix4f().translate(0.5f, 0.625f, 0.5f).mul(rotation.get(new Matrix4f())).translate(-0.5f, -0.625f, -0.5f);
-            poseStack.last().pose().mul(matrix);
-        }
-        crank.render(poseStack, vertexConsumer, light, overlay);
+        poseStack.translate(0.5F, 0.625F, 0.5F);
+        poseStack.mulPose(Axis.XP.rotation(blockEntity.getInterpolatedCrankAngle(partialTicks)));
+        poseStack.translate(-0.5F, -0.625F, -0.5F);
+
+        crank.render(poseStack, vc, light, overlay);
 
         poseStack.popPose();
     }

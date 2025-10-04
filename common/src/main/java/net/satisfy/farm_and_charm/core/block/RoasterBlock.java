@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-@SuppressWarnings("deprecation, unused")
+@SuppressWarnings("unused")
 public class RoasterBlock extends BaseEntityBlock {
     public static final MapCodec<RoasterBlock> CODEC = simpleCodec(RoasterBlock::new);
 

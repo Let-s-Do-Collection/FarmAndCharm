@@ -1,4 +1,9 @@
-[1.1.11]
+[1.1.12]
+
+**Added**
+* A Sturdy Ladder! Freestanding. Can be placed without a support behind it.
+  *	Requires either a block underneath or a block adjacent as support.
+  *	Right-clicking the bottom with another ladder in hand automatically extends it upwards.
 
 **Fixed**
 * CraftingBowl stirring sometimes didnt trigger. Empty-hand use now reliably starts crafting!

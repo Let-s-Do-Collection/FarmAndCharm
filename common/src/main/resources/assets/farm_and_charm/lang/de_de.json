@@ -312,6 +312,8 @@
   "advancement.farm_and_charm.place_chicken_nest": "Was war zuerst da...?",
   "advancement.farm_and_charm.place_chicken_nest.desc": "Platziere ein Hühnernest",
   "block.farm_and_charm.rope_knot": "Strickknoten",
-  "block.farm_and_charm.rope": "Strick"
+  "block.farm_and_charm.rope": "Strick",
+  "block.farm_and_charm.sturdy_ladder": "Stabile Leiter",
+  "entity.farm_and_charm.cart": "Wagen"
 }
 

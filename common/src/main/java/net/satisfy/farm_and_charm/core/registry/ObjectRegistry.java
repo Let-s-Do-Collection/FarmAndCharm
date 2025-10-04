@@ -170,6 +170,7 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Block> ROPE_BLOCK = registerWithoutItem("rope", () -> new RopeBlock(BlockBehaviour.Properties.of().noOcclusion().strength(0.5F).sound(SoundType.WOOL)));
     public static final RegistrySupplier<Block> ROPE_KNOT = registerWithoutItem("rope_knot", () -> new RopeKnotBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_FENCE).noOcclusion()));
     public static final RegistrySupplier<Item> ROPE = registerItem("rope", () -> new RopeItem(ROPE_BLOCK.get(), getSettings()));
+    public static final RegistrySupplier<Block> STURDY_LADDER = registerWithItem("sturdy_ladder", () -> new SturdyLadderBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LADDER)));
 
     public static void init() {
         ITEMS.register();

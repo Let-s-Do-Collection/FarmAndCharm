@@ -100,7 +100,7 @@ public class SinkBlock extends Block {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+    protected @NotNull ItemInteractionResult useItemOn(ItemStack itemStack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
         if (world.isClientSide || state.getValue(HALF) != DoubleBlockHalf.LOWER) return ItemInteractionResult.SUCCESS;
         Item item = itemStack.getItem();
         if (itemStack.isEmpty() && !state.getValue(FILLED)) {
@@ -194,7 +194,7 @@ public class SinkBlock extends Block {
     }
 
     @Override
-    public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
+    public @NotNull BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
         DoubleBlockHalf half = state.getValue(HALF);
         BlockPos blockPos = half == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
         BlockState blockState = world.getBlockState(blockPos);

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "farm_and_charm:block/sturdy_ladder",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "farm_and_charm:block/sturdy_ladder"
+    },
+    "facing=south": {
+      "model": "farm_and_charm:block/sturdy_ladder",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "farm_and_charm:block/sturdy_ladder",
+      "y": 270
+    }
+  }
+}

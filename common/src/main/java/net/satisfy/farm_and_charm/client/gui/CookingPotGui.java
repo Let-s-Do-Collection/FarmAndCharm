@@ -14,6 +14,7 @@ import net.satisfy.farm_and_charm.client.gui.handler.CookingPotGuiHandler;
 
 @Environment(EnvType.CLIENT)
 public class CookingPotGui extends AbstractContainerScreen<CookingPotGuiHandler> {
+    
     public static final ResourceLocation BACKGROUND;
 
     public static final int ARROW_X = 95;

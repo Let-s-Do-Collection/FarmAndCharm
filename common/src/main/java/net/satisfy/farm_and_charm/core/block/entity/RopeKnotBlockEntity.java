@@ -3,6 +3,7 @@ package net.satisfy.farm_and_charm.core.block.entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -29,7 +30,7 @@ public class RopeKnotBlockEntity extends BlockEntity {
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.saveAdditional(tag, provider);
         if (held != null) {
-            BlockState.CODEC.encodeStart(provider.createSerializationContext(net.minecraft.nbt.NbtOps.INSTANCE), held)
+            BlockState.CODEC.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), held)
                     .result()
                     .ifPresent(n -> tag.put("Held", n));
         }
@@ -39,9 +40,9 @@ public class RopeKnotBlockEntity extends BlockEntity {
     public void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.loadAdditional(tag, provider);
         if (tag.contains("Held")) {
-            BlockState.CODEC.parse(provider.createSerializationContext(net.minecraft.nbt.NbtOps.INSTANCE), tag.get("Held"))
+            BlockState.CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), tag.get("Held"))
                     .result()
-                    .ifPresent(s -> this.held = s);
+                    .ifPresent(blockState -> this.held = blockState);
         }
     }
 

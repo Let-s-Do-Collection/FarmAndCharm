@@ -314,6 +314,10 @@
   "block.farm_and_charm.rope_knot": "Strickknoten",
   "block.farm_and_charm.rope": "Strick",
   "block.farm_and_charm.sturdy_ladder": "Stabile Leiter",
-  "entity.farm_and_charm.cart": "Wagen"
+  "entity.farm_and_charm.cart": "Wagen",
+  "block.farm_and_charm.cattlegrid": "Weiderost",
+  "block.farm_and_charm.chicken_fence": "Hühnergitter",
+  "block.farm_and_charm.iron_divider": "Stallgitter"
+
 }
 

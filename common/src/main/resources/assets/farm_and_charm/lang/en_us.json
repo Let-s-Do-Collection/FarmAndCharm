@@ -313,5 +313,8 @@
   "advancement.farm_and_charm.place_chicken_nest.desc": "Place a Chicken Nest",
   "advancement.farm_and_charm.place_chicken_nest": "What Came First...?",
   "block.farm_and_charm.rope_knot": "Rope Knot",
-  "block.farm_and_charm.rope": "Rope"
+  "block.farm_and_charm.rope": "Rope",
+  "block.farm_and_charm.cattlegrid": "Cattlegrid",
+  "block.farm_and_charm.chicken_fence": "Chicken Fence",
+  "block.farm_and_charm.iron_divider": "Iron Divider"
 }

@@ -1,0 +1,24 @@
+{
+	"format_version": "1.21.6",
+	"credit": "Made by Satisfy",
+	"ambientocclusion": false,
+	"textures": {
+		"particle": "farm_and_charm:block/iron_divider",
+		"bars": "farm_and_charm:block/iron_divider"
+	},
+	"elements": [
+		{
+			"from": [7, 0, 7],
+			"to": [9, 16, 9],
+			"rotation": {"angle": 0, "axis": "y", "origin": [-1, 0, 0]},
+			"faces": {
+				"north": {"uv": [16, 0, 14, 16], "texture": "#bars"},
+				"east": {"uv": [2, 0, 0, 16], "texture": "#bars"},
+				"south": {"uv": [0, 0, 2, 16], "texture": "#bars"},
+				"west": {"uv": [14, 0, 16, 16], "texture": "#bars"},
+				"up": {"uv": [0, 0, 2, 2], "rotation": 90, "texture": "#bars"},
+				"down": {"uv": [0, 0, 2, 2], "rotation": 90, "texture": "#bars"}
+			}
+		}
+	]
+}

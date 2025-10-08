@@ -1,16 +1,22 @@
 package net.satisfy.farm_and_charm.fabric.core.mixin;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.satisfy.farm_and_charm.core.entity.BowlAccessor;
 import net.satisfy.farm_and_charm.core.entity.ai.DogEatFromBowlGoal;
 import net.satisfy.farm_and_charm.core.entity.ai.WhineAtBowlGoal;
+import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Wolf.class)
 public class WolfMixin implements BowlAccessor.StayNearBowl {
@@ -51,6 +57,21 @@ public class WolfMixin implements BowlAccessor.StayNearBowl {
             }
         }
     }
+
+    @Inject(method = "mobInteract", at = @At("HEAD"), cancellable = true)
+    private void farmAndCharm$prioritizeDogFood(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+        Wolf wolf = (Wolf)(Object)this;
+        ItemStack stack = player.getItemInHand(hand);
+        if (!wolf.level().isClientSide && wolf.isTame() && stack.is(ObjectRegistry.DOG_FOOD.get())) {
+            if (wolf.getHealth() < wolf.getMaxHealth()) {
+                wolf.heal(4.0F);
+            }
+            wolf.eat(wolf.level(), stack.copyWithCount(1));
+            stack.shrink(1);
+            cir.setReturnValue(InteractionResult.CONSUME);
+        }
+    }
+
 
     @Inject(method = "die", at = @At("HEAD"))
     private void farmAndCharm$clearOnDeath(CallbackInfo ci) {

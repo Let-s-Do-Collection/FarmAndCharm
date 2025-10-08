@@ -6,6 +6,8 @@
     "farm_and_charm:cooking_pot",
     "farm_and_charm:mincer",
     "farm_and_charm:roaster",
-    "farm_and_charm:chicken_coop"
+    "farm_and_charm:chicken_coop",
+    "farm_and_charm:iron_divider",
+    "farm_and_charm:cattlegrid"
   ]
 }

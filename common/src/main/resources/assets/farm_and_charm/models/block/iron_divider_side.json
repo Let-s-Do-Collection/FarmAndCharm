@@ -1,0 +1,19 @@
+{
+	"format_version": "1.21.6",
+	"credit": "Made by Satisfy",
+	"ambientocclusion": false,
+	"textures": {
+		"particle": "farm_and_charm:block/iron_divider",
+		"bars": "farm_and_charm:block/iron_divider"
+	},
+	"elements": [
+		{
+			"from": [8, 0, 0],
+			"to": [8, 16, 8],
+			"faces": {
+				"east": {"uv": [2, 0, 10, 16], "texture": "#bars"},
+				"west": {"uv": [10, 0, 2, 16], "texture": "#bars"}
+			}
+		}
+	]
+}

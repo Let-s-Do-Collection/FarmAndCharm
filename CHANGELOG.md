@@ -4,13 +4,17 @@
 * A Sturdy Ladder! Freestanding. Can be placed without a support behind it.
   *	Requires either a block underneath or a block adjacent as support.
   *	Right-clicking the bottom with another ladder in hand automatically extends it upwards.
+* Cattlegrid: If you have ever been hiking in the Alps, you will know that these are designed to prevent animals from crossing them. These work in the same way. Farm animals (cows, pigs, etc.) cannot cross the block, dogs and players are slowed down... and cats can walk across them as normal!
+* Chicken Fence & Iron Divider: Fence Blocks for your Farm.
 
 **Fixed**
 * CraftingBowl stirring sometimes didnt trigger. Empty-hand use now reliably starts crafting!
 * Crash on player save from chicken coop items by migrating data to CustomData
+* Tamed Dogs not eating DogFood.
 
 **Changed**
 * Smooth, BE-driven interpolation for CraftingBowl & Mincer renderers
+* Lowered Pitchfork Attack Speed
 
 ***
 

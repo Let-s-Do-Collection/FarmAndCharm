@@ -36,7 +36,7 @@ public class FarmAndCharmClient {
                 WILD_TOMATOES.get(), WILD_STRAWBERRIES.get(), STUFFED_RABBIT.get(), STUFFED_CHICKEN.get(), FARMERS_BREAKFAST.get(),
                 ROASTED_CORN_BLOCK.get(), OAT_PANCAKE_BLOCK.get(), CORN_CROP.get(), OAT_CROP.get(), BARLEY_CROP.get(), LETTUCE_CROP.get(),
                 ONION_CROP.get(), TOMATO_CROP.get(), STRAWBERRY_CROP.get(), COOKING_POT.get(), ROASTER.get(), TOMATO_CROP_BODY.get(),
-                CHICKEN_NEST.get(), STURDY_LADDER.get()
+                CHICKEN_NEST.get(), STURDY_LADDER.get(), IRON_DIVIDER.get(), CHICKEN_FENCE.get(), CATTLEGRID.get()
         );
 
         ClientStorageTypes.init();

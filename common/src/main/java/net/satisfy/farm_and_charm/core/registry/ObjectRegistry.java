@@ -41,7 +41,7 @@ public class ObjectRegistry {
     public static final Registrar<Block> BLOCK_REGISTRAR = BLOCKS.getRegistrar();
 
     public static final RegistrySupplier<Item> FERTILIZER = registerItem("fertilizer", () -> new BoneMealItem(getSettings()));
-    public static final RegistrySupplier<Item> PITCHFORK = registerItem("pitchfork", () -> new HoeItem(Tiers.IRON, new Item.Properties()));
+    public static final RegistrySupplier<Item> PITCHFORK = registerItem("pitchfork", () -> new HoeItem(Tiers.WOOD, new Item.Properties()));
     public static final RegistrySupplier<Item> SUPPLY_CART = registerItem("supply_cart", () -> new CartItem(getSettings()));
     public static final RegistrySupplier<Item> PLOW = registerItem("plow", () -> new CartItem(getSettings()));
     public static final RegistrySupplier<Item> YEAST = registerItem("yeast", () -> new Item(getSettings()));
@@ -171,6 +171,10 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Block> ROPE_KNOT = registerWithoutItem("rope_knot", () -> new RopeKnotBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_FENCE).noOcclusion()));
     public static final RegistrySupplier<Item> ROPE = registerItem("rope", () -> new RopeItem(ROPE_BLOCK.get(), getSettings()));
     public static final RegistrySupplier<Block> STURDY_LADDER = registerWithItem("sturdy_ladder", () -> new SturdyLadderBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LADDER)));
+
+    public static final RegistrySupplier<Block> IRON_DIVIDER = registerWithItem("iron_divider", () -> new PenBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(5.0f, 6.0f).requiresCorrectToolForDrops().noOcclusion()));
+    public static final RegistrySupplier<Block> CHICKEN_FENCE = registerWithItem("chicken_fence", () -> new PenBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(1.5f, 3.0f).requiresCorrectToolForDrops().noOcclusion()));
+    public static final RegistrySupplier<Block> CATTLEGRID = registerWithItem("cattlegrid", () -> new CattlegridBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(2.0f, 6.0f).noOcclusion()));
 
     public static void init() {
         ITEMS.register();

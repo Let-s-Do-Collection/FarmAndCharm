@@ -128,6 +128,8 @@ curseforge {
     }
 }
 
+import groovy.json.JsonOutput
+
 def escapeJson = { String s ->
     if (s == null) return ""
     s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\r", "").replace("\n", "\\n")
@@ -139,68 +141,58 @@ tasks.register("releaseChangelog") {
 
     doLast {
         def discordWebhookUrl = (project.findProperty("webhook") ?: System.getenv("DISCORD_WEBHOOK_URL"))?.toString()?.trim()
-        if (!discordWebhookUrl) {
-            println "No Discord webhook set. Provide -Pwebhook=... or set DISCORD_WEBHOOK_URL"
-            return
-        }
+        if (!discordWebhookUrl) { println "No Discord webhook set. Provide -Pwebhook=... or set DISCORD_WEBHOOK_URL"; return }
+
         println "Using Discord webhook: ${discordWebhookUrl.replaceAll('/api/webhooks/[^/]+/[^/]+$', '/api/webhooks/********/********')}"
 
         def modName = (project.findProperty("modDisplayName") ?: "Farm & Charm").toString()
         def versionLabel = rootProject.mod_version
-        def full = rootProject.file("CHANGELOG.md").exists() ? rootProject.file("CHANGELOG.md").text : ""
+        def full = rootProject.file("CHANGELOG.md").exists() ? rootProject.file("CHANGELOG.md").getText("UTF-8") : ""
         def m = (full =~ /(?s)(\[[^\]]+][\s\S]*?)(\n\*\*\*\n)/)
         def block = m.find() ? m.group(1).trim() : full.trim()
         if (block.length() > 1900) block = block.substring(0, 1900) + "…"
 
         def linksMd = "[Modrinth](https://modrinth.com/mod/lets-do-farm-charm)\n[CurseForge](https://www.curseforge.com/minecraft/mc-mods/lets-do-farm-charm)"
         def contentLine = "**${modName} ${versionLabel} has been released! 🎉**\n\nLearn about all changes and improvements below:"
-        def payload = """{
-  "username": "Diligent [Let’s Do] Assistant",
-    "avatar_url": "https://raw.githubusercontent.com/Let-s-Do-Collection/FarmAndCharm/1.21.1/common/src/main/resources/pack.png",
-  "content": "${escapeJson(contentLine)}",
-    "embeds": [{
-    "title": "**Changelog**",
-    "description": "${escapeJson(block)}",
-    "fields": [
-      { "name": "**Download it on**", "value": "${escapeJson(linksMd)}", "inline": false }
-    ]
-  }],
-  "components": [{
-    "type": 1,
-    "components": [
-      { "type": 2, "style": 5, "label": "Download on Modrinth",   "url": "https://modrinth.com/mod/lets-do-farm-charm" },
-      { "type": 2, "style": 5, "label": "Download on CurseForge", "url": "https://www.curseforge.com/minecraft/mc-mods/lets-do-farm-charm" }
-    ]
-  }]
-}"""
+
+        def payloadObj = [
+                username         : "Diligent [Let’s Do] Assistant",
+                avatar_url       : "https://raw.githubusercontent.com/Let-s-Do-Collection/FarmAndCharm/1.21.1/common/src/main/resources/pack.png",
+                content          : contentLine,
+                allowed_mentions : [parse: []],
+                embeds           : [[
+                                            title      : "Changelog",
+                                            description: block,
+                                            fields     : [[name: "Download it on", value: linksMd, inline: false]]
+                                    ]],
+                components       : [[
+                                            type      : 1,
+                                            components: [
+                                                    [type: 2, style: 5, label: "Download on Modrinth",   url: "https://modrinth.com/mod/lets-do-farm-charm"],
+                                                    [type: 2, style: 5, label: "Download on CurseForge", url: "https://www.curseforge.com/minecraft/mc-mods/lets-do-farm-charm"]
+                                            ]
+                                    ]]
+        ]
+
+        def json = JsonOutput.toJson(payloadObj)
 
         if ((project.findProperty("dryRun") ?: "false").toString().toBoolean()) {
-            println "DRY RUN — would send payload:\n${payload}"
+            println "DRY RUN — would send payload:\n${JsonOutput.prettyPrint(json)}"
             return
         }
 
-        HttpURLConnection conn = null
-        try {
-            conn = (HttpURLConnection) new URL(discordWebhookUrl).openConnection()
-            conn.setRequestMethod("POST")
-            conn.setDoOutput(true)
-            byte[] body = payload.getBytes("UTF-8")
-            conn.setRequestProperty("Content-Type", "application/json")
-            conn.setRequestProperty("Content-Length", Integer.toString(body.length))
-            conn.getOutputStream().write(body)
-            int code = conn.getResponseCode()
-            String resp = ""
-            try {
-                resp = conn.getInputStream().getText("UTF-8")
-            } catch (IOException ignored) {
-                resp = conn.getErrorStream() != null ? conn.getErrorStream().getText("UTF-8") : ""
-            }
-            println "Discord webhook response: ${code} ${conn.getResponseMessage()}"
-            if (resp) println "Response body:\n${resp}"
-            if (code == 204) println "(204 No Content is success for Discord webhooks)"
-        } finally {
-            if (conn != null) conn.disconnect()
-        }
+        HttpURLConnection conn = (HttpURLConnection) new URL(discordWebhookUrl).openConnection()
+        conn.setRequestMethod("POST")
+        conn.setDoOutput(true)
+        conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+        conn.outputStream.withWriter("UTF-8") { it << json }
+        int code = conn.getResponseCode()
+        String resp = ""
+        try { resp = conn.getInputStream().getText("UTF-8") } catch (IOException ignored) { resp = conn.getErrorStream() ? conn.getErrorStream().getText("UTF-8") : "" }
+        println "Discord webhook response: ${code} ${conn.getResponseMessage()}"
+        if (resp) println "Response body:\n${resp}"
+        if (code == 204) println "(204 No Content is success for Discord webhooks)"
+        conn.disconnect()
     }
 }
 

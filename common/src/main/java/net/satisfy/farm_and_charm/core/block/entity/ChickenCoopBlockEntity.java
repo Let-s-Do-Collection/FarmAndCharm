@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Chicken;
@@ -134,7 +135,7 @@ public class ChickenCoopBlockEntity extends BlockEntity {
 
     public boolean containsChicken(Chicken chicken) {
         for (CompoundTag tag : storedChickens) {
-            if (tag.getUUID("UUID").equals(chicken.getUUID())) return true;
+            if (tag.contains("UUID", Tag.TAG_INT_ARRAY) && tag.getUUID("UUID").equals(chicken.getUUID())) return true;
         }
         return false;
     }

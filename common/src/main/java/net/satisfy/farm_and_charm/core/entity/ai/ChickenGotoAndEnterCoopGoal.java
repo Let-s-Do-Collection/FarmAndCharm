@@ -1,20 +1,26 @@
 package net.satisfy.farm_and_charm.core.entity.ai;
 
+import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.farm_and_charm.core.block.entity.ChickenCoopBlockEntity;
 import net.satisfy.farm_and_charm.core.entity.ChickenCoopAccess;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 
-import java.util.EnumSet;
-
 public class ChickenGotoAndEnterCoopGoal extends Goal {
     private final Chicken chicken;
     private int nextRepathTick;
+    private int failCount;
+    private BlockPos approachPos;
+    private int losNextTick;
+    private int spaceNextTick;
 
     public ChickenGotoAndEnterCoopGoal(Chicken chicken) {
         this.chicken = chicken;
@@ -31,15 +37,23 @@ public class ChickenGotoAndEnterCoopGoal extends Goal {
         if (!(be instanceof ChickenCoopBlockEntity coop)) return false;
         if (!coop.hasSpaceForChicken()) return false;
         if (coop.containsChicken(chicken)) return false;
-        return chicken.getNavigation().createPath(target, 0) != null;
+        BlockPos approach = findApproach(target);
+        if (approach == null) return false;
+        if (hasLineOfSight(Vec3.atCenterOf(approach))) return false;
+        return chicken.getNavigation().createPath(approach, 0) != null;
     }
 
     @Override
     public void start() {
         BlockPos coopPos = ((ChickenCoopAccess) chicken).farmAndCharm$getCoopTarget();
         if (coopPos == null) return;
-        nextRepathTick = chicken.tickCount;
-        Vec3 center = Vec3.atCenterOf(coopPos);
+        failCount = 0;
+        approachPos = findApproach(coopPos);
+        if (approachPos == null) {
+            clearWithCooldown(200);
+            return;
+        }
+        Vec3 center = Vec3.atCenterOf(approachPos);
         double d2 = chicken.position().distanceToSqr(center);
         if (d2 <= 1.44) {
             BlockEntity be = chicken.level().getBlockEntity(coopPos);
@@ -53,7 +67,9 @@ public class ChickenGotoAndEnterCoopGoal extends Goal {
             }
         }
         chicken.getNavigation().moveTo(center.x, center.y, center.z, 1.0);
-        nextRepathTick = chicken.tickCount + 10;
+        nextRepathTick = chicken.tickCount + 10 + chicken.getRandom().nextInt(5);
+        losNextTick = chicken.tickCount;
+        spaceNextTick = chicken.tickCount;
     }
 
     @Override
@@ -65,7 +81,30 @@ public class ChickenGotoAndEnterCoopGoal extends Goal {
             chicken.getNavigation().stop();
             return;
         }
-        Vec3 center = Vec3.atCenterOf(coopPos);
+        if (approachPos == null) {
+            approachPos = findApproach(coopPos);
+            if (approachPos == null) {
+                clearWithCooldown(200);
+                return;
+            }
+        }
+        if (chicken.tickCount >= losNextTick && hasLineOfSight(Vec3.atCenterOf(approachPos))) {
+            losNextTick = chicken.tickCount + 10;
+            failCount++;
+            if (failCount >= 3) {
+                clearWithCooldown(200);
+            }
+            return;
+        }
+        if (chicken.tickCount >= spaceNextTick) {
+            BlockEntity be = chicken.level().getBlockEntity(coopPos);
+            if (!(be instanceof ChickenCoopBlockEntity coop) || !coop.hasSpaceForChicken()) {
+                clearWithCooldown(100);
+                return;
+            }
+            spaceNextTick = chicken.tickCount + 10;
+        }
+        Vec3 center = Vec3.atCenterOf(approachPos);
         double d2 = chicken.position().distanceToSqr(center);
         if (d2 <= 1.44) {
             BlockEntity be = chicken.level().getBlockEntity(coopPos);
@@ -79,13 +118,45 @@ public class ChickenGotoAndEnterCoopGoal extends Goal {
             }
         }
         if (chicken.tickCount >= nextRepathTick) {
-            chicken.getNavigation().moveTo(center.x, center.y, center.z, 1.0);
-            nextRepathTick = chicken.tickCount + 10;
+            BlockPos targetPos = BlockPos.containing(center);
+            if (chicken.getNavigation().createPath(targetPos, 0) == null) {
+                failCount++;
+                if (failCount >= 3) {
+                    clearWithCooldown(200);
+                    return;
+                }
+            } else {
+                chicken.getNavigation().moveTo(center.x, center.y, center.z, 1.0);
+            }
+            nextRepathTick = chicken.tickCount + 10 + chicken.getRandom().nextInt(5);
         }
     }
 
     @Override
     public void stop() {
         chicken.getNavigation().stop();
+    }
+
+    private void clearWithCooldown(int ticks) {
+        ((ChickenCoopAccess) chicken).farmAndCharm$clearCoopTarget();
+        ((ChickenCoopAccess) chicken).farmAndCharm$setCoopCooldown(ticks);
+        chicken.getNavigation().stop();
+        approachPos = null;
+        failCount = 0;
+    }
+
+    private BlockPos findApproach(BlockPos coopPos) {
+        for (Direction d : Direction.Plane.HORIZONTAL) {
+            BlockPos side = coopPos.relative(d);
+            if (chicken.level().getBlockState(side).isAir() && chicken.level().getBlockState(side.above()).isAir()) return side;
+        }
+        return null;
+    }
+
+    private boolean hasLineOfSight(Vec3 to) {
+        if ((chicken.tickCount & 9) != 0) return false;
+        Vec3 from = chicken.getEyePosition();
+        HitResult hit = chicken.level().clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, chicken));
+        return hit.getType() != HitResult.Type.MISS;
     }
 }

@@ -1,3 +1,14 @@
+[1.0.14]
+
+**Fixed**
+* Chickens no longer try to walk through walls to reach coops; improved coop navigation with visibility checks, fail-handling, and pathfinding cooldowns.
+* Feeding trough interaction refined - animals now process movement updates before feeding, reducing premature consumption and client desyncs.
+
+**Added**
+* ko_kr translation
+
+***
+
 [1.0.13]
 
 **Changed**

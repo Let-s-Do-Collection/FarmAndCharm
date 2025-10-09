@@ -3,6 +3,7 @@ package net.satisfy.farm_and_charm.core.entity.ai;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -21,30 +22,32 @@ public class ApproachFeedingTroughGoal extends MoveToBlockGoal {
 
     @Override
     public void tick() {
-        Level world = this.animal.getCommandSenderWorld();
-        if (!world.isClientSide() && this.animal.canFallInLove()) {
-            BlockState blockState = world.getBlockState(this.blockPos);
-            if (blockState.getBlock() instanceof FeedingTroughBlock && blockState.getValue(FeedingTroughBlock.SIZE) > 0) {
-                this.animal.getLookControl().setLookAt(this.blockPos.getX() + 0.5D, this.blockPos.getY(), this.blockPos.getZ() + 0.5D, 10.0F, this.animal.getMaxHeadXRot());
-
-                if (this.isReachedTarget()) {
-                    world.setBlock(this.blockPos, blockState.setValue(FeedingTroughBlock.SIZE, blockState.getValue(FeedingTroughBlock.SIZE) - 1), 3);
-
-                    this.animal.setInLove(null);
-
-                    BlockEntity be = world.getBlockEntity(this.blockPos);
-                    if (be instanceof FeedingTroughBlockEntity trough) {
-                        trough.onAnimalFed(this.animal);
-                    }
-                }
-            }
-        }
-
         super.tick();
+        Level world = this.animal.getCommandSenderWorld();
+        if (world.isClientSide()) return;
+        if (!this.animal.canFallInLove()) return;
+
+        BlockState state = world.getBlockState(this.blockPos);
+        if (!(state.getBlock() instanceof FeedingTroughBlock)) return;
+        if (state.getValue(FeedingTroughBlock.SIZE) <= 0) return;
+
+        this.animal.getLookControl().setLookAt(this.blockPos.getX() + 0.5D, this.blockPos.getY(), this.blockPos.getZ() + 0.5D, 10.0F, this.animal.getMaxHeadXRot());
+        if (!this.isReachedTarget()) return;
+        world.setBlock(this.blockPos, state.setValue(FeedingTroughBlock.SIZE, state.getValue(FeedingTroughBlock.SIZE) - 1), 3);
+        this.animal.setInLove(null);
+
+        BlockEntity be = world.getBlockEntity(this.blockPos);
+        if (be instanceof FeedingTroughBlockEntity trough) {
+            trough.onAnimalFed(this.animal);
+        }
     }
 
     @Override
     public boolean canUse() {
+        Player p = animal.level().getNearestPlayer(animal, 8.0);
+        if (p != null) {
+            if (animal.isFood(p.getMainHandItem()) || animal.isFood(p.getOffhandItem())) return false;
+        }
         return this.animal.canFallInLove() && this.animal.getAge() == 0 && super.canUse();
     }
 

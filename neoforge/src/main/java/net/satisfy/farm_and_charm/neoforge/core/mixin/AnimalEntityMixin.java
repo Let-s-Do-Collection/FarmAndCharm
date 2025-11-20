@@ -101,7 +101,7 @@ public abstract class AnimalEntityMixin extends Mob implements SaturationTracker
 
         cir.setReturnValue(InteractionResult.sidedSuccess(animal.level().isClientSide));
     }
-
+    
     @Inject(method = "addAdditionalSaveData", at = @At("HEAD"))
     private void farm_and_charm$saveSaturation(CompoundTag tag, CallbackInfo ci) {
         SaturationTracker tracker = farm_and_charm$getSaturationTracker();

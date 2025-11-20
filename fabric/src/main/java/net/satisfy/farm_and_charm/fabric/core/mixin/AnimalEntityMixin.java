@@ -36,7 +36,7 @@ public abstract class AnimalEntityMixin extends Mob implements SaturationTracker
     @Inject(method = "<init>", at = @At("TAIL"))
     private void AFTAddSelfFeedingGoal(EntityType<? extends Mob> entityType, Level world, CallbackInfo ci) {
         if (!world.isClientSide) {
-            this.goalSelector.addGoal(3, new ApproachFeedingTroughGoal((Animal) (Object) this, 1.2D));
+            this.goalSelector.addGoal(3, new ApproachFeedingTroughGoal((Animal)(Object)this, 1.2D));
         }
     }
 
@@ -56,7 +56,7 @@ public abstract class AnimalEntityMixin extends Mob implements SaturationTracker
     @Inject(method = "<init>", at = @At("TAIL"))
     private void farm_and_charm$addSelfFeedingGoal(EntityType<? extends Mob> entityType, Level level, CallbackInfo ci) {
         if (!level.isClientSide) {
-            this.goalSelector.addGoal(3, new ApproachFeedingTroughGoal((Animal) (Object) this, 1.2D));
+            this.goalSelector.addGoal(3, new ApproachFeedingTroughGoal((Animal)(Object)this, 1.2D));
         }
     }
 

@@ -1,0 +1,7 @@
+{
+  "parent": "block/dirt_path",
+  "textures": {
+    "top": "farm_and_charm:block/trampled_packed_dirt_top",
+    "side": "farm_and_charm:block/trampled_packed_dirt_side"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "key": {
+    "#": {
+      "item": "farm_and_charm:packed_dirt"
+    }
+  },
+  "result": {
+    "id": "farm_and_charm:stable_floor",
+    "count": 4
+  }
+}

@@ -56,12 +56,18 @@ public class TabRegistry {
                 output.accept(ObjectRegistry.BARLEY_BALL.get());
                 output.accept(ObjectRegistry.FERTILIZED_SOIL_BLOCK.get());
                 output.accept(ObjectRegistry.FERTILIZED_FARM_BLOCK.get());
+                output.accept(ObjectRegistry.PACKED_DIRT.get());
+                output.accept(ObjectRegistry.TRAMPLED_PACKED_DIRT.get());
+                output.accept(ObjectRegistry.STABLE_FLOOR.get());
+                output.accept(ObjectRegistry.STRAW_STABLE_FLOOR.get());
+                output.accept(ObjectRegistry.TRAMPLED_STABLE_FLOOR.get());
                 output.accept(ObjectRegistry.STOVE.get());
                 output.accept(ObjectRegistry.FEEDING_TROUGH.get());
                 output.accept(ObjectRegistry.WATER_SPRINKLER.get());
                 output.accept(ObjectRegistry.CATTLEGRID.get());
                 output.accept(ObjectRegistry.IRON_DIVIDER.get());
                 output.accept(ObjectRegistry.CHICKEN_FENCE.get());
+                output.accept(ObjectRegistry.CHICKEN_COOP_ITEM.get());
                 output.accept(ObjectRegistry.SILO_WOOD.get());
                 output.accept(ObjectRegistry.SILO_COPPER.get());
                 output.accept(ObjectRegistry.PITCHFORK.get());
@@ -126,7 +132,6 @@ public class TabRegistry {
                 output.accept(ObjectRegistry.DOG_FOOD_BAG.get());
                 output.accept(ObjectRegistry.CAT_FOOD_BAG.get());
                 output.accept(ObjectRegistry.CHICKEN_NEST.get());
-                output.accept(ObjectRegistry.CHICKEN_COOP_ITEM.get());
                 output.accept(ObjectRegistry.STURDY_LADDER.get());
                 output.accept(ObjectRegistry.DUNGAREES.get());
                 output.accept(ObjectRegistry.SCARECROW.get());

@@ -317,7 +317,11 @@
   "entity.farm_and_charm.cart": "Wagen",
   "block.farm_and_charm.cattlegrid": "Weiderost",
   "block.farm_and_charm.chicken_fence": "Hühnergitter",
-  "block.farm_and_charm.iron_divider": "Stallgitter"
-
+  "block.farm_and_charm.iron_divider": "Stallgitter",
+  "block.farm_and_charm.packed_dirt": "Verdichtete Erde",
+  "block.farm_and_charm.trampled_packed_dirt": "Zertrampelte verdichtete Erde",
+  "block.farm_and_charm.trampled_stable_floor": "Zertrampelter Stallboden",
+  "block.farm_and_charm.stable_floor": "Stallboden",
+  "block.farm_and_charm.straw_stable_floor": "Strohstallboden"
 }
 

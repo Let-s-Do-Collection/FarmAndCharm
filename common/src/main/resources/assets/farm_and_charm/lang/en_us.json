@@ -316,5 +316,10 @@
   "block.farm_and_charm.rope": "Rope",
   "block.farm_and_charm.cattlegrid": "Cattlegrid",
   "block.farm_and_charm.chicken_fence": "Chicken Fence",
-  "block.farm_and_charm.iron_divider": "Iron Divider"
+  "block.farm_and_charm.iron_divider": "Iron Divider",
+  "block.farm_and_charm.packed_dirt": "Packed Dirt",
+  "block.farm_and_charm.trampled_packed_dirt": "Trampled Packed Dirt",
+  "block.farm_and_charm.trampled_stable_floor": "Trampled Stable Floor",
+  "block.farm_and_charm.stable_floor": "Stable Floor",
+  "block.farm_and_charm.straw_stable_floor": "Straw Stable Floor"
 }

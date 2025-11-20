@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.registry;
 
+import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.Registrar;
 import dev.architectury.registry.registries.RegistrySupplier;
@@ -10,13 +11,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.food.Foods;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.BoneMealItem;
-import net.minecraft.world.item.HoeItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemNameBlockItem;
-import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.Tiers;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -176,9 +171,24 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Block> CHICKEN_FENCE = registerWithItem("chicken_fence", () -> new PenBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(1.5f, 3.0f).requiresCorrectToolForDrops().noOcclusion()));
     public static final RegistrySupplier<Block> CATTLEGRID = registerWithItem("cattlegrid", () -> new CattlegridBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(2.0f, 6.0f).noOcclusion()));
 
+    public static final RegistrySupplier<Block> PACKED_DIRT = registerWithItem("packed_dirt", () -> new PackedDirtBlock(BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).strength(1.5f, 3.0f).sound(SoundType.PACKED_MUD)));
+    public static final RegistrySupplier<Block> TRAMPLED_PACKED_DIRT = registerWithItem("trampled_packed_dirt", () -> new TrampledPackedDirtBlock(BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).strength(1.0f, 3.0f).sound(SoundType.PACKED_MUD)));
+
+    public static final RegistrySupplier<Block> STABLE_FLOOR = registerWithItem("stable_floor", () -> new StableFloorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BROWN).sound(SoundType.WOOD).strength(1.5f, 3.0f)));
+    public static final RegistrySupplier<Block> TRAMPLED_STABLE_FLOOR = registerWithItem("trampled_stable_floor", () -> new TrampledStableFloorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BROWN).sound(SoundType.WOOD).strength(1.2f, 2.5f)));
+    public static final RegistrySupplier<Block> STRAW_STABLE_FLOOR = registerWithItem("straw_stable_floor", () -> new StrawStableFloorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_YELLOW).sound(SoundType.GRASS).strength(0.8f, 1.0f)));
+
     public static void init() {
         ITEMS.register();
         BLOCKS.register();
+        LifecycleEvent.SETUP.register(() -> {
+            ((PackedDirtBlock) PACKED_DIRT.get()).setTrampled(TRAMPLED_PACKED_DIRT);
+            ((TrampledPackedDirtBlock) TRAMPLED_PACKED_DIRT.get()).setBase(PACKED_DIRT);
+            ((StableFloorBlock) STABLE_FLOOR.get()).setTrampled(TRAMPLED_STABLE_FLOOR);
+            ((StableFloorBlock) STABLE_FLOOR.get()).setStraw(STRAW_STABLE_FLOOR);
+            ((StrawStableFloorBlock) STRAW_STABLE_FLOOR.get()).setBase(STABLE_FLOOR);
+            ((StrawStableFloorBlock) STRAW_STABLE_FLOOR.get()).setStrawItem(() -> Items.WHEAT);
+        });
     }
 
     public static BlockBehaviour.Properties properties(float strength) {

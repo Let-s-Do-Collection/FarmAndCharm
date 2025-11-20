@@ -1,3 +1,10 @@
+[1.0.15]
+
+**Added**
+* Spanish (es_es) translation, credit. Txissme
+
+***
+
 [1.0.14]
 
 **Fixed**

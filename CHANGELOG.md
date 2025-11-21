@@ -1,3 +1,19 @@
+[1.1.13]
+
+**Added**
+* **Packed Dirt**: A decorative compacted dirt block that gradually turns into *Trampled Packed Dirt* when walked over.
+* **Stablefloor**: A decorative stable ground block that slowly transforms into *Trampled Stablefloor* through frequent foot traffic.
+
+**Fixed**
+* Crash when Create Deployer interacted with animals
+* Wild Ribwort and Nettle not being bone-mealable
+* Wild Corn duplication via shears caused by an incorrect loot table
+
+**Changed**
+* Adjusted Wild Corn loot to match intended drop balance
+
+***
+
 [1.1.12]
 
 **Added**

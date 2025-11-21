@@ -19,7 +19,7 @@ public class BonemealableFlowerBlock extends FlowerBlock implements Bonemealable
 
     @Override
     public boolean isValidBonemealTarget(LevelReader levelReader, BlockPos blockPos, BlockState blockState) {
-        return false;
+        return true;
     }
 
     @Override

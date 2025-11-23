@@ -29,6 +29,12 @@ public abstract class AnimalEntityMixin extends Mob implements SaturationTracker
     @Unique
     private SaturationTracker farm_and_charm$saturation;
 
+    @Unique
+    private int farm_and_charm$lastSyncedSaturationLevel = -1;
+
+    @Unique
+    private int farm_and_charm$lastSyncedFoodCounter = -1;
+
     protected AnimalEntityMixin(EntityType<? extends Mob> entityType, Level world) {
         super(entityType, world);
     }
@@ -69,7 +75,17 @@ public abstract class AnimalEntityMixin extends Mob implements SaturationTracker
             SaturationTracker tracker = farm_and_charm$getSaturationTracker();
             tracker.tick((Animal)(Object)this);
 
-            SyncSaturationPacket packet = new SyncSaturationPacket(this.getId(), tracker.level(), tracker.foodCounter());
+            int saturationLevel = tracker.level();
+            int foodCounter = tracker.foodCounter();
+
+            if (saturationLevel == farm_and_charm$lastSyncedSaturationLevel && foodCounter == farm_and_charm$lastSyncedFoodCounter) {
+                return;
+            }
+
+            farm_and_charm$lastSyncedSaturationLevel = saturationLevel;
+            farm_and_charm$lastSyncedFoodCounter = foodCounter;
+
+            SyncSaturationPacket packet = new SyncSaturationPacket(this.getId(), saturationLevel, foodCounter);
             PacketHandler.sendSaturationSync(packet, this);
         }
     }
@@ -83,18 +99,20 @@ public abstract class AnimalEntityMixin extends Mob implements SaturationTracker
         ItemStack stack = player.getItemInHand(hand);
 
         if (!animal.isFood(stack) || animal.isBaby()) return;
-
         if (animal.canFallInLove()) return;
 
         SaturationTracker tracker = farm_and_charm$getSaturationTracker();
         tracker.tryFeed(animal, player, hand);
 
         if (!animal.level().isClientSide) {
-            SyncSaturationPacket packet = new SyncSaturationPacket(this.getId(), tracker.level(), tracker.foodCounter());
+            int saturationLevel = tracker.level();
+            int foodCounter = tracker.foodCounter();
 
-            if (player instanceof ServerPlayer serverPlayer) {
-                PacketHandler.sendToClient(serverPlayer, packet);
-            }
+            farm_and_charm$lastSyncedSaturationLevel = saturationLevel;
+            farm_and_charm$lastSyncedFoodCounter = foodCounter;
+
+            SyncSaturationPacket packet = new SyncSaturationPacket(this.getId(), saturationLevel, foodCounter);
+            PacketHandler.sendSaturationSync(packet, this);
 
             ((ServerLevel)animal.level()).sendParticles(ParticleTypes.HAPPY_VILLAGER, animal.getX(), animal.getY() + 1.0, animal.getZ(), 5, 0.2, 0.2, 0.2, 0.05);
         }

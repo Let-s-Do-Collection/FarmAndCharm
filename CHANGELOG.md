@@ -1,3 +1,10 @@
+[1.1.14]
+
+**Fixed**
+* Excessive saturation sync packets from animals now only send when values change and only to nearby players wearing Dungarees
+
+***
+
 [1.1.13]
 
 **Added**

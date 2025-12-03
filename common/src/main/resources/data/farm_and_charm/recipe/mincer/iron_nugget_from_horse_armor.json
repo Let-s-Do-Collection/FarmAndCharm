@@ -5,7 +5,7 @@
   },
   "recipe_type": "WOOD",
   "result": {
-    "id": "minecraft:gold_nugget",
+    "id": "minecraft:iron_nugget",
     "count": 12
   }
 }

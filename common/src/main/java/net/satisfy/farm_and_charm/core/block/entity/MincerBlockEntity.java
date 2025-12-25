@@ -258,4 +258,17 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
             if (level.getGameTime() % 5L == 0L) setChanged();
         }
     }
+
+    public boolean hasValidRecipe(Level level, ItemStack stack) {
+        if (level == null || level.isClientSide || stack.isEmpty()) return false;
+
+        RecipeManager recipeManager = level.getRecipeManager();
+        List<RecipeHolder<MincerRecipe>> recipes =
+                recipeManager.getAllRecipesFor(RecipeTypeRegistry.MINCER_RECIPE_TYPE.get());
+
+        NonNullList<ItemStack> testInventory = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+        testInventory.set(INPUT_SLOT, stack.copy());
+
+        return getRecipe(recipes, testInventory) != null;
+    }
 }

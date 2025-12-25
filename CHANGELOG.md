@@ -1,3 +1,16 @@
+[1.1.15]
+
+**Fixed**
+* Removed ApacheCommons usage from EffectFood blocks
+* Item duplication with the Mincer when inserting non-processable items in Creative
+* Stoves appeared lit without consuming fuel and had inconsistent lit state after placement
+* Feeding animals using Create Deployers causing the game to crash
+
+* **Changed**
+* Slightly changed following Textures: CraftingBowlBlock, MincerBlock
+
+***
+
 [1.1.14]
 
 **Fixed**

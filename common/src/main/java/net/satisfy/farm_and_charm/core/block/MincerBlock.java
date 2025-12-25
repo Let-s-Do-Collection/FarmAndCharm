@@ -134,12 +134,14 @@ public class MincerBlock extends BaseEntityBlock {
 
             if (!playerStack.isEmpty() && crank == 0) {
 
-                if (player.isCreative()) {
+                if (!level.isClientSide && !mincer.hasValidRecipe(level, playerStack)) {
+                    return InteractionResult.PASS;
+                }
 
+                if (player.isCreative()) {
                     ItemStack playerStackCopy = playerStack.copy();
                     playerStackCopy.setCount(playerStackCopy.getMaxStackSize());
                     mincer.setItem(mincer.INPUT_SLOT, playerStackCopy);
-
                     return InteractionResult.SUCCESS;
                 }
 
@@ -206,7 +208,6 @@ public class MincerBlock extends BaseEntityBlock {
             }
 
             if (crank <= 6) {
-
                 level.setBlock(pos, state.setValue(CRANK, 10), Block.UPDATE_ALL);
                 level.playSound(null, pos, SoundEventRegistry.MINCER_CRANKING.get(), SoundSource.BLOCKS, 0.05f, 2.5F);
                 return InteractionResult.SUCCESS;

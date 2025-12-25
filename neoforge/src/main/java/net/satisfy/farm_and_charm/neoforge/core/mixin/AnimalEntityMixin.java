@@ -83,7 +83,6 @@ public abstract class AnimalEntityMixin extends Mob implements SaturationTracker
         ItemStack stack = player.getItemInHand(hand);
 
         if (!animal.isFood(stack) || animal.isBaby()) return;
-
         if (animal.canFallInLove()) return;
 
         SaturationTracker tracker = farm_and_charm$getSaturationTracker();
@@ -91,11 +90,7 @@ public abstract class AnimalEntityMixin extends Mob implements SaturationTracker
 
         if (!animal.level().isClientSide) {
             SyncSaturationPacket packet = new SyncSaturationPacket(this.getId(), tracker.level(), tracker.foodCounter());
-
-            if (player instanceof ServerPlayer serverPlayer) {
-                PacketHandler.sendToClient(serverPlayer, packet);
-            }
-
+            PacketHandler.sendSaturationSync(packet, this);
             ((ServerLevel)animal.level()).sendParticles(ParticleTypes.HAPPY_VILLAGER, animal.getX(), animal.getY() + 1.0, animal.getZ(), 5, 0.2, 0.2, 0.2, 0.05);
         }
 

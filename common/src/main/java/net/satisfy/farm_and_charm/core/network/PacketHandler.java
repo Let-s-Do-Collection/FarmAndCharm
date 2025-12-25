@@ -35,7 +35,14 @@ public class PacketHandler {
         }
 
         for (ServerPlayer player : serverLevel.players()) {
-            if (!NetworkManager.canPlayerReceive(player, SyncSaturationPacket.TYPE)) {
+            boolean canReceive;
+            try {
+                canReceive = NetworkManager.canPlayerReceive(player, SyncSaturationPacket.TYPE);
+            } catch (RuntimeException exception) {
+                continue;
+            }
+
+            if (!canReceive) {
                 continue;
             }
             if (!isPlayerCloseToEntity(player, entity, 64.0)) {

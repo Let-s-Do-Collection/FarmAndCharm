@@ -6,6 +6,7 @@ import dev.architectury.registry.registries.Registrar;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -145,7 +146,7 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> GRANDMOTHERS_STRAWBERRY_CAKE_ITEM = registerItem("grandmothers_strawberry_cake", () -> new EffectBlockItem(GRANDMOTHERS_STRAWBERRY_CAKE.get(), getFoodItemSettings(PlatformHelper.getNutrition("grandmothers_strawberry_cake"), PlatformHelper.getSaturationMod("grandmothers_strawberry_cake"), MobEffectRegistry.GRANDMAS_BLESSING, 2400)));
     public static final RegistrySupplier<Item> FARMERS_BREAD_ITEM = registerItem("farmers_bread", () -> new EffectBlockItem(FARMERS_BREAD.get(), getFoodItemSettings(PlatformHelper.getNutrition("farmers_bread"), PlatformHelper.getSaturationMod("farmers_bread"), MobEffectRegistry.FARMERS_BLESSING, 3600)));
     public static final RegistrySupplier<Item> FARMER_SALAD = registerItem("farmer_salad", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("farmer_salad"), PlatformHelper.getSaturationMod("farmer_salad"), MobEffectRegistry.SATIATION, 4800, false, false), 4800, false));
-    public static final RegistrySupplier<Item> GOULASH = registerItem("goulash", () -> new EffectFoodItem(getFoodItemSettings(PlatformHelper.getNutrition("goulash"), PlatformHelper.getSaturationMod("goulash"), null, 0, true, false), 0));
+    public static final RegistrySupplier<Item> GOULASH = registerItem("goulash", () -> new EffectFoodItem(getFoodItemSettings(PlatformHelper.getNutrition("goulash"), PlatformHelper.getSaturationMod("goulash"), (Holder<MobEffect>) null, 0, true, false), 0));
     public static final RegistrySupplier<Item> SIMPLE_TOMATO_SOUP = registerItem("simple_tomato_soup", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("simple_tomato_soup"), PlatformHelper.getSaturationMod("simple_tomato_soup"), MobEffectRegistry.RESTED, 1800, true, false), 1800, true));
     public static final RegistrySupplier<Item> BARLEY_SOUP = registerItem("barley_soup", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("barley_soup"), PlatformHelper.getSaturationMod("barley_soup"), MobEffectRegistry.RESTED, 3000, true, false), 3000, true));
     public static final RegistrySupplier<Item> ONION_SOUP = registerItem("onion_soup", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("onion_soup"), PlatformHelper.getSaturationMod("onion_soup"), MobEffectRegistry.RESTED, 2400, true, false), 2400, true));
@@ -206,15 +207,23 @@ public class ObjectRegistry {
     }
 
     static Item.Properties getSettings() {
-        return getSettings(s -> {});
+        return getSettings(settings -> {});
     }
 
     private static Item.Properties getFoodItemSettings(int nutrition, float saturationMod, Holder<MobEffect> effect, int duration) {
-        return new Item.Properties().food(new FoodProperties.Builder().nutrition(nutrition).saturationModifier(saturationMod).effect(new MobEffectInstance(effect, duration), 1.0f).build());
+        return new Item.Properties().food(new FoodProperties.Builder()
+                .nutrition(nutrition)
+                .saturationModifier(saturationMod)
+                .effect(new MobEffectInstance(effect, duration), 1.0f)
+                .build());
     }
 
-    private static Item.Properties getFoodItemSettings(int nutrition, float saturationMod, RegistrySupplier<MobEffect> effect, int duration) {
-        return new Item.Properties().food(new FoodProperties.Builder().nutrition(nutrition).saturationModifier(saturationMod).effect(MobEffectRegistry.inst(effect, duration), 1.0f).build());
+    private static Item.Properties getFoodItemSettings(int nutrition, float saturationMod, ResourceLocation effectId, int duration) {
+        return new Item.Properties().food(new FoodProperties.Builder()
+                .nutrition(nutrition)
+                .saturationModifier(saturationMod)
+                .effect(MobEffectRegistry.inst(effectId, duration), 1.0f)
+                .build());
     }
 
     private static RegistrySupplier<Block> registerBlockWithItem(String blockName, String itemName, Supplier<Block> blockSupplier) {
@@ -227,8 +236,8 @@ public class ObjectRegistry {
         return getSettings().food(createFood(nutrition, saturationMod, effect, duration, alwaysEat, fast));
     }
 
-    private static Item.Properties getFoodItemSettings(int nutrition, float saturationMod, RegistrySupplier<MobEffect> effect, int duration, boolean alwaysEat, boolean fast) {
-        return getSettings().food(createFood(nutrition, saturationMod, effect, duration, alwaysEat, fast));
+    private static Item.Properties getFoodItemSettings(int nutrition, float saturationMod, ResourceLocation effectId, int duration, boolean alwaysEat, boolean fast) {
+        return getSettings().food(createFood(nutrition, saturationMod, effectId, duration, alwaysEat, fast));
     }
 
     private static FoodProperties createFood(int nutrition, float saturationMod, Holder<MobEffect> effect, int duration, boolean alwaysEat, boolean fast) {
@@ -239,11 +248,11 @@ public class ObjectRegistry {
         return food.build();
     }
 
-    private static FoodProperties createFood(int nutrition, float saturationMod, RegistrySupplier<MobEffect> effect, int duration, boolean alwaysEat, boolean fast) {
+    private static FoodProperties createFood(int nutrition, float saturationMod, ResourceLocation effectId, int duration, boolean alwaysEat, boolean fast) {
         FoodProperties.Builder food = new FoodProperties.Builder().nutrition(nutrition).saturationModifier(saturationMod);
         if (alwaysEat) food.alwaysEdible();
         if (fast) food.fast();
-        if (effect != null) food.effect(MobEffectRegistry.inst(effect, duration), 1.0f);
+        if (effectId != null) food.effect(MobEffectRegistry.inst(effectId, duration), 1.0f);
         return food.build();
     }
 

@@ -34,7 +34,7 @@ public class DogFoodItem extends Item {
                 wolf.setOwnerUUID(player.getUUID());
                 wolf.setInSittingPose(false);
                 wolf.heal(10.0F);
-                wolf.addEffect(new MobEffectInstance(MobEffectRegistry.DOG_FOOD, 3600, 0));
+                wolf.addEffect(new MobEffectInstance(MobEffectRegistry.getHolder(MobEffectRegistry.DOG_FOOD), 3600, 0));
                 if (!player.getAbilities().instabuild) {
                     stack.shrink(1);
                 }

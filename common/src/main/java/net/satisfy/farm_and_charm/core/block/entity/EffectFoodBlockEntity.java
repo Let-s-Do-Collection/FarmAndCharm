@@ -13,8 +13,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.farm_and_charm.core.item.food.EffectFoodHelper;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
-import org.apache.commons.compress.utils.Lists;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +37,7 @@ public class EffectFoodBlockEntity extends BlockEntity {
     }
 
     public List<Pair<MobEffectInstance, Float>> getEffects() {
-        return effects != null ? effects : Lists.newArrayList();
+        return effects != null ? effects : Collections.emptyList();
     }
 
     @Override

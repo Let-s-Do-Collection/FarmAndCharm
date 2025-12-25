@@ -37,9 +37,7 @@ import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class EffectFoodBlock extends BaseEntityBlock {
@@ -106,7 +104,7 @@ public class EffectFoodBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult blockHitResult) {
+    protected @NotNull InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult blockHitResult) {
         InteractionHand hand = player.getUsedItemHand();
         ItemStack itemStack = player.getItemInHand(hand);
         if (world.isClientSide) {
@@ -124,28 +122,31 @@ public class EffectFoodBlock extends BaseEntityBlock {
     private InteractionResult tryEat(LevelAccessor world, BlockPos pos, BlockState state, Player player) {
         if (!player.canEat(false)) {
             return InteractionResult.PASS;
-        } else {
-            player.getFoodData().eat(foodComponent.nutrition(), foodComponent.saturation());
-            world.playSound(null, pos, SoundEvents.FOX_EAT, SoundSource.PLAYERS, 0.5f, world.getRandom().nextFloat() * 0.1f + 0.9f);
-            world.gameEvent(player, GameEvent.EAT, pos);
-
-            int bites = state.getValue(BITES);
-            if (bites < maxBites) {
-                world.setBlock(pos, state.setValue(BITES, bites + 1), 3);
-            } else {
-                world.destroyBlock(pos, false);
-                world.gameEvent(player, GameEvent.BLOCK_DESTROY, pos);
-            }
-
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof EffectFoodBlockEntity effectFoodBlockEntity) {
-                for (Pair<MobEffectInstance, Float> effect : effectFoodBlockEntity.getEffects()) {
-                    player.addEffect(effect.getFirst());
-                }
-            }
-
-            return InteractionResult.SUCCESS;
         }
+
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        List<Pair<MobEffectInstance, Float>> storedEffects = Collections.emptyList();
+        if (blockEntity instanceof EffectFoodBlockEntity effectFoodBlockEntity) {
+            storedEffects = effectFoodBlockEntity.getEffects();
+        }
+
+        player.getFoodData().eat(foodComponent.nutrition(), foodComponent.saturation());
+        world.playSound(null, pos, SoundEvents.FOX_EAT, SoundSource.PLAYERS, 0.5f, world.getRandom().nextFloat() * 0.1f + 0.9f);
+        world.gameEvent(player, GameEvent.EAT, pos);
+
+        int bites = state.getValue(BITES);
+        if (bites < maxBites) {
+            world.setBlock(pos, state.setValue(BITES, bites + 1), 3);
+        } else {
+            world.destroyBlock(pos, false);
+            world.gameEvent(player, GameEvent.BLOCK_DESTROY, pos);
+        }
+
+        for (Pair<MobEffectInstance, Float> effect : storedEffects) {
+            player.addEffect(effect.getFirst());
+        }
+
+        return InteractionResult.SUCCESS;
     }
 
     public @NotNull BlockState rotate(BlockState state, Rotation rotation) {

@@ -1,12 +1,21 @@
 [1.1.15]
 
+[1.1.16]
+
+**Added**
+* Animals eating from Feeding Troughs now generate particles while doing so
+* Added a Water Trough for animals to drink from, also usable as a water source
+
+
 **Fixed**
 * Removed ApacheCommons usage from EffectFood blocks
 * Item duplication with the Mincer when inserting non-processable items in Creative
 * Stoves appeared lit without consuming fuel and had inconsistent lit state after placement
 * Feeding animals using Create Deployers causing the game to crash
+* MobEffects were not applied correctly due to invalid effect references
 
-* **Changed**
+
+**Changed**
 * Slightly changed following Textures: CraftingBowlBlock, MincerBlock
 
 ***

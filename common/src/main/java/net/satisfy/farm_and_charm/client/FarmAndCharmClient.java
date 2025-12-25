@@ -3,11 +3,13 @@ package net.satisfy.farm_and_charm.client;
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
+import dev.architectury.registry.client.rendering.ColorHandlerRegistry;
 import dev.architectury.registry.client.rendering.RenderTypeRegistry;
 import dev.architectury.registry.menu.MenuRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.satisfy.farm_and_charm.client.gui.CookingPotGui;
@@ -38,6 +40,13 @@ public class FarmAndCharmClient {
                 ONION_CROP.get(), TOMATO_CROP.get(), STRAWBERRY_CROP.get(), COOKING_POT.get(), ROASTER.get(), TOMATO_CROP_BODY.get(),
                 CHICKEN_NEST.get(), STURDY_LADDER.get(), IRON_DIVIDER.get(), CHICKEN_FENCE.get(), CATTLEGRID.get()
         );
+
+        ColorHandlerRegistry.registerBlockColors((state, world, pos, tintIndex) -> {
+            if (world == null || pos == null) {
+                return -1;
+            }
+            return BiomeColors.getAverageWaterColor(world, pos);
+        }, WATER_TROUGH.get());
 
         ClientStorageTypes.init();
         registerStorageTypeRenderers();

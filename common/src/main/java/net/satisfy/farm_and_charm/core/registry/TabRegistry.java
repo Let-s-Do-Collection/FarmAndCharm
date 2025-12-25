@@ -62,6 +62,7 @@ public class TabRegistry {
                 output.accept(ObjectRegistry.STRAW_STABLE_FLOOR.get());
                 output.accept(ObjectRegistry.TRAMPLED_STABLE_FLOOR.get());
                 output.accept(ObjectRegistry.STOVE.get());
+                output.accept(ObjectRegistry.WATER_TROUGH.get());
                 output.accept(ObjectRegistry.FEEDING_TROUGH.get());
                 output.accept(ObjectRegistry.WATER_SPRINKLER.get());
                 output.accept(ObjectRegistry.CATTLEGRID.get());

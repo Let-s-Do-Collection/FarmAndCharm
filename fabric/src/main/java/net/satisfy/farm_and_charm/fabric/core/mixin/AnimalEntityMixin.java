@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.satisfy.farm_and_charm.core.entity.ai.ApproachFeedingTroughGoal;
+import net.satisfy.farm_and_charm.core.entity.ai.ApproachWaterTroughGoal;
 import net.satisfy.farm_and_charm.core.network.PacketHandler;
 import net.satisfy.farm_and_charm.core.network.packet.SyncSaturationPacket;
 import net.satisfy.farm_and_charm.core.util.SaturationTracker;
@@ -39,13 +40,6 @@ public abstract class AnimalEntityMixin extends Mob implements SaturationTracker
         super(entityType, world);
     }
 
-    @Inject(method = "<init>", at = @At("TAIL"))
-    private void AFTAddSelfFeedingGoal(EntityType<? extends Mob> entityType, Level world, CallbackInfo ci) {
-        if (!world.isClientSide) {
-            this.goalSelector.addGoal(3, new ApproachFeedingTroughGoal((Animal)(Object)this, 1.2D));
-        }
-    }
-
     @Override
     public SaturationTracker farm_and_charm$getSaturationTracker() {
         if (farm_and_charm$saturation == null) {
@@ -60,9 +54,10 @@ public abstract class AnimalEntityMixin extends Mob implements SaturationTracker
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void farm_and_charm$addSelfFeedingGoal(EntityType<? extends Mob> entityType, Level level, CallbackInfo ci) {
+    private void farm_and_charm$addSelfFeedingGoal(EntityType<? extends Animal> entityType, Level level, CallbackInfo ci) {
         if (!level.isClientSide) {
-            this.goalSelector.addGoal(3, new ApproachFeedingTroughGoal((Animal)(Object)this, 1.2D));
+            this.goalSelector.addGoal(3, new ApproachFeedingTroughGoal((Animal) (Object) this, 1.2D));
+            this.goalSelector.addGoal(3, new ApproachWaterTroughGoal((Animal) (Object) this, 1.2D));
         }
     }
 

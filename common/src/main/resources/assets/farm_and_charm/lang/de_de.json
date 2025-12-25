@@ -322,6 +322,7 @@
   "block.farm_and_charm.trampled_packed_dirt": "Zertrampelte verdichtete Erde",
   "block.farm_and_charm.trampled_stable_floor": "Zertrampelter Stallboden",
   "block.farm_and_charm.stable_floor": "Stallboden",
-  "block.farm_and_charm.straw_stable_floor": "Strohstallboden"
+  "block.farm_and_charm.straw_stable_floor": "Strohstallboden",
+  "block.farm_and_charm.water_trough": "Tränke"
 }
 

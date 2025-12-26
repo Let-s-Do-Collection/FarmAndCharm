@@ -1,13 +1,9 @@
 package net.satisfy.farm_and_charm.core.entity;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.BlockParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -19,55 +15,42 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.farm_and_charm.core.block.FertilizedFarmlandBlock;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 
-public class PlowCartEntity extends AbstractTowableEntity {
-
-    public PlowCartEntity(EntityType<?> entityType, Level level) {
+public class PlowCartEntity extends AbstractCartEntity {
+    public PlowCartEntity(EntityType<? extends AbstractCartEntity> entityType, Level level) {
         super(entityType, level);
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
-
-    }
-
-    @Override
-    protected void readAdditionalSaveData(CompoundTag compoundTag) {
-    }
-
-    @Override
-    protected void addAdditionalSaveData(CompoundTag compoundTag) {
-    }
-
-    @Override
     public void tick() {
-        if (!this.isNoGravity()) {
-            this.setDeltaMovement(this.getDeltaMovement().add(0.0, -0.08, 0.0));
-        }
+        double prevX = this.getX();
+        double prevZ = this.getZ();
+
         super.tick();
-        this.tickLerp();
-        if (this.driver != null) {
-            this.pulledTick();
-        }
-        this.leftWheel.tick();
-        this.rightWheel.tick();
-        this.move(MoverType.SELF, this.getDeltaMovement());
 
-        if (level().isClientSide()) {
-            handleClientSide();
-        } else {
-            handleServerSide();
+        if (this.level().isClientSide) {
+            return;
         }
+        if (!(this.getPulling() instanceof net.minecraft.world.entity.player.Player)) {
+            return;
+        }
+        if (Math.abs(this.getX() - prevX) < 1.0E-4 && Math.abs(this.getZ() - prevZ) < 1.0E-4) {
+            return;
+        }
+
+        this.handlePlowServer();
     }
 
-    private void handleClientSide() {
-        BlockPos currentPos = this.blockPosition();
-        BlockPos[] positions = new BlockPos[] {
-                currentPos.below(),
-                currentPos.below().east()
-        };
+    @Override
+    protected ItemStack getCartItemStack() {
+        return new ItemStack(ObjectRegistry.PLOW.get());
+    }
 
-        for (BlockPos pos : positions) {
-            BlockState blockState = level().getBlockState(pos);
+    private void handlePlowServer() {
+        BlockPos currentPos = this.blockPosition();
+        BlockPos[] positions = new BlockPos[]{currentPos.below(), currentPos.below().east()};
+
+        for (BlockPos blockPos : positions) {
+            BlockState blockState = this.level().getBlockState(blockPos);
             BlockState newBlockState = null;
 
             if (blockState.is(Blocks.GRASS_BLOCK) || blockState.is(Blocks.DIRT)) {
@@ -77,56 +60,24 @@ public class PlowCartEntity extends AbstractTowableEntity {
             }
 
             if (newBlockState != null) {
-                for (int i = 0; i < 200; i++) {
-                    double x = pos.getX() + level().random.nextDouble();
-                    double y = pos.getY() + level().random.nextDouble();
-                    double z = pos.getZ() + level().random.nextDouble();
-                    level().addParticle(new BlockParticleOption(ParticleTypes.BLOCK, newBlockState), x, y, z, 0, 0, 0);
-                }
-            }
-        }
-    }
-
-    private void handleServerSide() {
-        BlockPos currentPos = this.blockPosition();
-        BlockPos[] positions = new BlockPos[] {
-                currentPos.below(),
-                currentPos.below().east()
-        };
-
-        for (BlockPos pos : positions) {
-            BlockState blockState = level().getBlockState(pos);
-            BlockState newBlockState = null;
-
-            if (blockState.is(Blocks.GRASS_BLOCK) || blockState.is(Blocks.DIRT)) {
-                newBlockState = Blocks.FARMLAND.defaultBlockState().setValue(FarmBlock.MOISTURE, 0);
-            } else if (blockState.is(ObjectRegistry.FERTILIZED_SOIL_BLOCK.get())) {
-                newBlockState = ObjectRegistry.FERTILIZED_FARM_BLOCK.get().defaultBlockState().setValue(FertilizedFarmlandBlock.MOISTURE, 0);
+                this.level().setBlock(blockPos, newBlockState, 3);
             }
 
-            if (newBlockState != null) {
-                level().setBlock(pos, newBlockState, 3);
-            }
+            BlockPos cropPos = blockPos.above();
+            BlockState cropState = this.level().getBlockState(cropPos);
 
-            BlockPos cropPos = pos.above();
-            BlockState cropState = level().getBlockState(cropPos);
+            if (cropState.getBlock() instanceof CropBlock cropBlock && cropBlock.isMaxAge(cropState)) {
+                BlockState resetState = cropBlock.getStateForAge(0);
+                this.level().setBlock(cropPos, resetState, 3);
+                this.level().updateNeighborsAt(cropPos, resetState.getBlock());
 
-            if (cropState.getBlock() instanceof CropBlock cropBlock) {
-                if (cropBlock.isMaxAge(cropState)) {
-                    BlockState newCropState = cropBlock.getStateForAge(0);
-                    level().setBlock(cropPos, newCropState, 3);
-                    level().updateNeighborsAt(cropPos, newCropState.getBlock());
-
-                    if (level() instanceof ServerLevel serverLevel) {
-                        for (ItemStack drop : Block.getDrops(cropState, serverLevel, cropPos, null)) {
-                            if (!drop.isEmpty()) {
-                                double dropX = cropPos.getX() + 0.5 + (level().random.nextDouble() - 0.5) * 0.5;
-                                double dropY = cropPos.getY() + 1.0;
-                                double dropZ = cropPos.getZ() + 0.5 + (level().random.nextDouble() - 0.5) * 0.5;
-
-                                ItemEntity itemEntity = new ItemEntity(level(), dropX, dropY, dropZ, drop);
-                                level().addFreshEntity(itemEntity);
-                            }
+                if (this.level() instanceof ServerLevel serverLevel) {
+                    for (ItemStack drop : Block.getDrops(cropState, serverLevel, cropPos, null)) {
+                        if (!drop.isEmpty()) {
+                            double dropX = cropPos.getX() + 0.5 + (this.level().random.nextDouble() - 0.5) * 0.5;
+                            double dropY = cropPos.getY() + 1.0;
+                            double dropZ = cropPos.getZ() + 0.5 + (this.level().random.nextDouble() - 0.5) * 0.5;
+                            this.level().addFreshEntity(new ItemEntity(this.level(), dropX, dropY, dropZ, drop));
                         }
                     }
                 }
@@ -135,7 +86,12 @@ public class PlowCartEntity extends AbstractTowableEntity {
     }
 
     @Override
-    protected ItemStack getDropItem() {
+    public Component getDisplayName() {
+        return ObjectRegistry.PLOW.get().getDefaultInstance().getHoverName();
+    }
+
+    @Override
+    public ItemStack getPickResult() {
         return new ItemStack(ObjectRegistry.PLOW.get());
     }
 }

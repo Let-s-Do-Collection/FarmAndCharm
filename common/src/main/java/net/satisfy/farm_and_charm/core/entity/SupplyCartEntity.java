@@ -3,12 +3,17 @@ package net.satisfy.farm_and_charm.core.entity;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.*;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.Containers;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
@@ -16,153 +21,127 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
 
-public class SupplyCartEntity extends AbstractTowableEntity implements MenuProvider, Container {
-    private final NonNullList<ItemStack> inventory = NonNullList.withSize(27, ItemStack.EMPTY);
-    private int openCount;
+public class SupplyCartEntity extends AbstractCartEntity implements MenuProvider {
+    private static final EntityDataAccessor<Boolean> DATA_OPEN = SynchedEntityData.defineId(SupplyCartEntity.class, EntityDataSerializers.BOOLEAN);
 
-    public SupplyCartEntity(EntityType<?> entityType, Level level) {
+    private final SimpleContainer inventory;
+    private int openTicks;
+
+    public SupplyCartEntity(EntityType<? extends SupplyCartEntity> entityType, Level level) {
         super(entityType, level);
+        this.inventory = new SimpleContainer(27);
+    }
+
+    @Override
+    public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
+        if (player.isSecondaryUseActive()) {
+            return this.onSecondaryUse(player, hand);
+        }
+        return this.onPrimaryUse(player, hand);
+    }
+
+    @Override
+    protected InteractionResult onPrimaryUse(Player player, InteractionHand hand) {
+        if (player.getItemInHand(hand).isEmpty()) {
+            return super.onPrimaryUse(player, hand);
+        }
+
+        if (this.level().isClientSide) {
+            return InteractionResult.SUCCESS;
+        }
+
+        player.openMenu(this);
+        this.entityData.set(DATA_OPEN, true);
+        this.openTicks = 10;
+        return InteractionResult.CONSUME;
+    }
+
+    @Override
+    protected InteractionResult onSecondaryUse(Player player, InteractionHand hand) {
+        InteractionResult pickupResult = super.onSecondaryUse(player, hand);
+        if (pickupResult.consumesAction()) {
+            return pickupResult;
+        }
+
+        if (!player.getItemInHand(hand).isEmpty()) {
+            return InteractionResult.PASS;
+        }
+
+        if (this.level().isClientSide) {
+            return InteractionResult.SUCCESS;
+        }
+
+        player.openMenu(this);
+        this.entityData.set(DATA_OPEN, true);
+        this.openTicks = 10;
+        return InteractionResult.CONSUME;
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
-
+        super.defineSynchedData(builder);
+        builder.define(DATA_OPEN, false);
     }
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compoundTag) {
         super.readAdditionalSaveData(compoundTag);
-        ContainerHelper.loadAllItems(compoundTag, this.inventory, this.registryAccess());
+        NonNullList<ItemStack> items = NonNullList.withSize(this.inventory.getContainerSize(), ItemStack.EMPTY);
+        ContainerHelper.loadAllItems(compoundTag, items, this.registryAccess());
+        for (int slotIndex = 0; slotIndex < items.size(); slotIndex++) {
+            this.inventory.setItem(slotIndex, items.get(slotIndex));
+        }
+        this.openTicks = compoundTag.getInt("OpenTicks");
+        this.entityData.set(DATA_OPEN, this.openTicks > 0);
     }
 
     @Override
     protected void addAdditionalSaveData(CompoundTag compoundTag) {
         super.addAdditionalSaveData(compoundTag);
-        ContainerHelper.saveAllItems(compoundTag, this.inventory, this.registryAccess());
+        NonNullList<ItemStack> items = NonNullList.withSize(this.inventory.getContainerSize(), ItemStack.EMPTY);
+        for (int slotIndex = 0; slotIndex < items.size(); slotIndex++) {
+            items.set(slotIndex, this.inventory.getItem(slotIndex));
+        }
+        ContainerHelper.saveAllItems(compoundTag, items, this.registryAccess());
+        compoundTag.putInt("OpenTicks", this.openTicks);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (!this.level().isClientSide && this.openTicks > 0) {
+            this.openTicks--;
+            if (this.openTicks == 0) {
+                this.entityData.set(DATA_OPEN, false);
+            }
+        }
+    }
+
+    public boolean isOpen() {
+        return this.entityData.get(DATA_OPEN);
     }
 
     @Override
     public @NotNull Component getDisplayName() {
-        return Component.translatable(ObjectRegistry.SUPPLY_CART.get().getDescriptionId());
+        return ObjectRegistry.SUPPLY_CART.get().getDefaultInstance().getHoverName();
     }
 
     @Override
-    public AbstractContainerMenu createMenu(int i, net.minecraft.world.entity.player.Inventory playerInventory, Player player) {
-        return ChestMenu.threeRows(i, playerInventory, this);
+    public AbstractContainerMenu createMenu(int syncId, Inventory playerInventory, Player player) {
+        return ChestMenu.threeRows(syncId, playerInventory, this.inventory);
     }
 
     @Override
-    public void remove(Entity.RemovalReason removalReason) {
-        if (!this.level().isClientSide && removalReason.shouldDestroy()) {
-            Vector3f pos = new Vector3f((float) getX(), (float) getY(), (float) getZ());
-            for (ItemStack stack : inventory) {
-                if (!stack.isEmpty()) {
-                    net.minecraft.world.entity.item.ItemEntity itementity = new net.minecraft.world.entity.item.ItemEntity(this.level(), pos.x, pos.y, pos.z, stack);
-                    this.level().addFreshEntity(itementity);
-                }
-            }
+    public void remove(RemovalReason removalReason) {
+        if (!this.level().isClientSide && removalReason == RemovalReason.KILLED) {
+            Containers.dropContents(this.level(), this.blockPosition(), this.inventory);
         }
         super.remove(removalReason);
     }
 
     @Override
-    public int getContainerSize() {
-        return this.inventory.size();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        for (ItemStack itemstack : this.inventory) {
-            if (!itemstack.isEmpty()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public @NotNull InteractionResult interact(Player player, InteractionHand interactionHand) {
-        if (this.hasDriver()) {
-            this.removeDriver();
-            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.WOOD_PLACE, SoundSource.PLAYERS, 1.0F, 1.0F);
-            return InteractionResult.SUCCESS;
-        } else if (!player.isShiftKeyDown()) {
-            player.openMenu(this);
-            this.startOpen(player);
-            this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.CHEST_OPEN, SoundSource.BLOCKS, 1.0F, 1.0F);
-            return InteractionResult.sidedSuccess(this.level().isClientSide);
-        } else {
-            boolean added = this.addDriver(player);
-            if (added) {
-                this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.WOOD_FALL, SoundSource.PLAYERS, 1.0F, 1.0F);
-                return InteractionResult.SUCCESS;
-            } else {
-                return InteractionResult.PASS;
-            }
-        }
-    }
-
-    @Override
-    public @NotNull ItemStack getItem(int i) {
-        return this.inventory.get(i);
-    }
-
-    @Override
-    public @NotNull ItemStack removeItem(int i, int count) {
-        return ContainerHelper.removeItem(this.inventory, i, count);
-    }
-
-    @Override
-    public @NotNull ItemStack removeItemNoUpdate(int i) {
-        return net.minecraft.world.ContainerHelper.takeItem(this.inventory, i);
-    }
-
-    @Override
-    public void setItem(int i, ItemStack itemStack) {
-        this.inventory.set(i, itemStack);
-    }
-
-    @Override
-    public int getMaxStackSize() {
-        return 64;
-    }
-
-    @Override
-    public void setChanged() {
-    }
-
-    @Override
-    public boolean stillValid(Player player) {
-        return !this.isRemoved() && player.distanceToSqr(this) <= 64.0;
-    }
-
-    @Override
-    public void clearContent() {
-        this.inventory.clear();
-    }
-
-    @Override
-    protected ItemStack getDropItem() {
+    protected ItemStack getCartItemStack() {
         return new ItemStack(ObjectRegistry.SUPPLY_CART.get());
-    }
-
-    @Override
-    public void startOpen(Player player) {
-        if (!this.level().isClientSide) {
-            ++this.openCount;
-        }
-    }
-
-    @Override
-    public void stopOpen(Player player) {
-        if (!this.level().isClientSide) {
-            --this.openCount;
-        }
-    }
-
-    public boolean isOpen() {
-        return this.openCount > 0;
     }
 }

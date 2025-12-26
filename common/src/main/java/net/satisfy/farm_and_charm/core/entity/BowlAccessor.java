@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 
 @SuppressWarnings("unused")
 public interface BowlAccessor {
-
     interface StayNearBowl {
         void farmAndCharm$setStayCenter(BlockPos pos);
         void farmAndCharm$clearStayRestriction();

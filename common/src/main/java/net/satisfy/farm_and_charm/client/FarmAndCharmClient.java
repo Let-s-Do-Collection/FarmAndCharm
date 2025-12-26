@@ -49,6 +49,7 @@ public class FarmAndCharmClient {
         }, WATER_TROUGH.get());
 
         ClientStorageTypes.init();
+        FarmAndCharmClientRuntime.init();
         registerStorageTypeRenderers();
         registerBlockEntityRenderer();
         MenuRegistry.registerScreenFactory(ScreenhandlerTypeRegistry.COOKING_POT_SCREEN_HANDLER.get(), CookingPotGui::new);

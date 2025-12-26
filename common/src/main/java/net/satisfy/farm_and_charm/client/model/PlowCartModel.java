@@ -64,8 +64,7 @@ public class PlowCartModel<T extends PlowCartEntity> extends EntityModel<T> {
 
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.right_wheel.xRot = -entity.getWheelRotation();
-        this.left_wheel.xRot = -entity.getWheelRotation();
+
     }
 
     @Override

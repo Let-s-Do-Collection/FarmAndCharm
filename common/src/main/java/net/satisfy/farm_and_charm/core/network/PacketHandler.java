@@ -10,9 +10,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.satisfy.farm_and_charm.FarmAndCharm;
+import net.satisfy.farm_and_charm.core.entity.AbstractCartEntity;
+import net.satisfy.farm_and_charm.core.network.handler.CartPullingPacketClientHandler;
 import net.satisfy.farm_and_charm.core.network.handler.SyncSaturationPacketClientHandler;
 import net.satisfy.farm_and_charm.core.network.packet.SetTextPacket;
 import net.satisfy.farm_and_charm.core.network.packet.SyncSaturationPacket;
+import net.satisfy.farm_and_charm.core.network.packet.UpdateCartPullingPacket;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 
 public class PacketHandler {
@@ -24,8 +27,28 @@ public class PacketHandler {
 
         if (Platform.getEnvironment() == Env.CLIENT) {
             NetworkManager.registerReceiver(NetworkManager.s2c(), SyncSaturationPacket.TYPE, SyncSaturationPacket.STREAM_CODEC, (pkt, ctx) -> ctx.queue(() -> SyncSaturationPacketClientHandler.handle(pkt)));
+            NetworkManager.registerReceiver(NetworkManager.s2c(), UpdateCartPullingPacket.TYPE, UpdateCartPullingPacket.STREAM_CODEC, (pkt, ctx) -> ctx.queue(() -> CartPullingPacketClientHandler.handle(pkt)));
         } else {
             NetworkManager.registerS2CPayloadType(SyncSaturationPacket.TYPE, SyncSaturationPacket.STREAM_CODEC);
+            NetworkManager.registerS2CPayloadType(UpdateCartPullingPacket.TYPE, UpdateCartPullingPacket.STREAM_CODEC);
+        }
+    }
+
+    public static void sendCartPullingSync(AbstractCartEntity cart, int pullingId) {
+        if (!(cart.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        UpdateCartPullingPacket packet = new UpdateCartPullingPacket(pullingId, cart.getId());
+
+        for (ServerPlayer player : serverLevel.players()) {
+            if (player.distanceToSqr(cart) > 128.0 * 128.0) {
+                continue;
+            }
+            if (!NetworkManager.canPlayerReceive(player, UpdateCartPullingPacket.TYPE)) {
+                continue;
+            }
+            NetworkManager.sendToPlayer(player, packet);
         }
     }
 

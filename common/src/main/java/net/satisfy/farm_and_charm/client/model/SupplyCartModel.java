@@ -6,7 +6,11 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.core.entity.SupplyCartEntity;
 
@@ -31,7 +35,7 @@ public class SupplyCartModel<T extends SupplyCartEntity> extends EntityModel<T> 
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
 
-        PartDefinition cart = partdefinition.addOrReplaceChild("cart", CubeListBuilder.create().texOffs(38, 43).addBox(-12.0F, 4.5F, -16.0833F, 24.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
+        partdefinition.addOrReplaceChild("cart", CubeListBuilder.create().texOffs(38, 43).addBox(-12.0F, 4.5F, -16.0833F, 24.0F, 2.0F, 2.0F, new CubeDeformation(0.0F))
                 .texOffs(88, 0).addBox(5.0F, 1.5F, 9.9167F, 3.0F, 3.0F, 18.0F, new CubeDeformation(0.0F))
                 .texOffs(88, 0).addBox(-8.0F, 1.5F, 9.9167F, 3.0F, 3.0F, 18.0F, new CubeDeformation(0.0F))
                 .texOffs(0, 43).addBox(-12.0F, -7.5F, -30.0833F, 3.0F, 9.0F, 32.0F, new CubeDeformation(0.0F))
@@ -39,13 +43,13 @@ public class SupplyCartModel<T extends SupplyCartEntity> extends EntityModel<T> 
                 .texOffs(88, 21).addBox(-9.0F, -7.5F, -1.0833F, 18.0F, 9.0F, 3.0F, new CubeDeformation(0.0F))
                 .texOffs(0, 0).addBox(-12.0F, 1.5F, -30.0833F, 24.0F, 3.0F, 40.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 12.5F, 10.0833F));
 
-        PartDefinition right_wheel = partdefinition.addOrReplaceChild("right_wheel", CubeListBuilder.create().texOffs(76, 43).addBox(-2.0F, -8.0F, -8.0F, 3.0F, 16.0F, 16.0F, new CubeDeformation(0.0F)), PartPose.offset(14.0F, 16.0F, -5.0F));
+        partdefinition.addOrReplaceChild("right_wheel", CubeListBuilder.create().texOffs(76, 43).addBox(-2.0F, -8.0F, -8.0F, 3.0F, 16.0F, 16.0F, new CubeDeformation(0.0F)), PartPose.offset(14.0F, 16.0F, -5.0F));
 
-        PartDefinition left_wheel = partdefinition.addOrReplaceChild("left_wheel", CubeListBuilder.create().texOffs(76, 43).mirror().addBox(2.0F, -8.0F, -8.0F, 3.0F, 16.0F, 16.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(-17.0F, 16.0F, -5.0F));
+        partdefinition.addOrReplaceChild("left_wheel", CubeListBuilder.create().texOffs(76, 43).mirror().addBox(2.0F, -8.0F, -8.0F, 3.0F, 16.0F, 16.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(-17.0F, 16.0F, -5.0F));
 
         PartDefinition chest = partdefinition.addOrReplaceChild("chest", CubeListBuilder.create().texOffs(0, 130).addBox(-7.0F, -22.0F, -6.0F, 14.0F, 10.0F, 14.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 26.0F, 0.0F));
 
-        PartDefinition chest_lid = chest.addOrReplaceChild("chest_lid", CubeListBuilder.create().texOffs(0, 111).addBox(-7.0F, -27.0F, -6.0F, 14.0F, 5.0F, 14.0F, new CubeDeformation(0.0F))
+        chest.addOrReplaceChild("chest_lid", CubeListBuilder.create().texOffs(0, 111).addBox(-7.0F, -27.0F, -6.0F, 14.0F, 5.0F, 14.0F, new CubeDeformation(0.0F))
                 .texOffs(0, 111).addBox(-1.0F, -24.0F, -7.0F, 2.0F, 4.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 256, 256);
@@ -53,8 +57,6 @@ public class SupplyCartModel<T extends SupplyCartEntity> extends EntityModel<T> 
 
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.right_wheel.xRot = -entity.getWheelRotation();
-        this.left_wheel.xRot = -entity.getWheelRotation();
         this.chest_lid.xRot = entity.isOpen() ? (float) Math.PI / 2F : 0.0F;
     }
 

@@ -44,7 +44,7 @@ public abstract class ItemStackMixin {
         if (!isSoup) return;
         int duration = 20 * 90;
         int amplifier = 0;
-        livingEntity.addEffect(new MobEffectInstance(MobEffectRegistry.SUSTENANCE, duration, amplifier));
+        livingEntity.addEffect(new MobEffectInstance(MobEffectRegistry.getHolder(MobEffectRegistry.SUSTENANCE), duration, amplifier));
     }
 
     @Inject(method = "getTooltipLines", at = @At("RETURN"), cancellable = true)

@@ -1,4 +1,4 @@
-package net.satisfy.farm_and_charm.core.entity;
+package net.satisfy.farm_and_charm.core.util;
 
 import dev.architectury.event.events.common.TickEvent;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.satisfy.farm_and_charm.core.entity.AbstractCartEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;

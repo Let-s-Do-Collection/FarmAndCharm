@@ -21,13 +21,15 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.farm_and_charm.core.network.PacketHandler;
+import net.satisfy.farm_and_charm.core.util.CartWorldData;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public abstract class AbstractCartEntity extends Entity {
     private static final EntityDataAccessor<Float> DATA_WHEEL_ROTATION = SynchedEntityData.defineId(AbstractCartEntity.class, EntityDataSerializers.FLOAT);
-
+    private float prevWheelRotation;
+    private float wheelRotation;
     private int lerpSteps;
     private double lerpX;
     private double lerpY;
@@ -157,6 +159,9 @@ public abstract class AbstractCartEntity extends Entity {
 
     @Override
     public void tick() {
+        this.prevWheelRotation = this.wheelRotation;
+        this.wheelRotation = this.entityData.get(DATA_WHEEL_ROTATION);
+
         if (!this.isNoGravity()) {
             this.setDeltaMovement(0.0D, this.getDeltaMovement().y - 0.08D, 0.0D);
         }
@@ -178,6 +183,16 @@ public abstract class AbstractCartEntity extends Entity {
         for (Entity entity : this.level().getEntities(this, this.getBoundingBox(), EntitySelector.pushableBy(this))) {
             this.push(entity);
         }
+    }
+
+    public float getWheelRotation(float partialTick) {
+        return Mth.lerp(partialTick, this.prevWheelRotation, this.wheelRotation);
+    }
+
+
+
+    protected float getWheelRadius() {
+        return 0.5F;
     }
 
     public void pulledPostTick() {
@@ -375,19 +390,27 @@ public abstract class AbstractCartEntity extends Entity {
     private void updateWheelRotationFromMovement() {
         double deltaX = this.getX() - this.xOld;
         double deltaZ = this.getZ() - this.zOld;
-        float distance = (float) Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
 
-        if (distance < 1.0E-4F) {
+        float distance = Mth.sqrt((float) (deltaX * deltaX + deltaZ * deltaZ));
+        if (distance < 1.0E-5F) {
             return;
         }
 
-        float newRotation = this.entityData.get(DATA_WHEEL_ROTATION) + distance * this.getWheelRotationMultiplier();
-        this.entityData.set(DATA_WHEEL_ROTATION, newRotation);
-    }
+        float yawRadians = (float) Math.toRadians(this.getYRot());
+        float forwardX = -Mth.sin(yawRadians);
+        float forwardZ = Mth.cos(yawRadians);
 
-    protected float getWheelRotationMultiplier() {
-        return 8.0F;
-    }
+        float forwardDot = (float) (deltaX * forwardX + deltaZ * forwardZ);
+        float direction = forwardDot >= 0.0F ? -1.0F : 1.0F;
 
+        float wheelRadius = this.getWheelRadius();
+        float deltaRotation = direction * (distance / wheelRadius);
+
+        this.wheelRotation += deltaRotation;
+
+        if (!this.level().isClientSide) {
+            this.entityData.set(DATA_WHEEL_ROTATION, this.wheelRotation);
+        }
+    }
     protected abstract ItemStack getCartItemStack();
 }

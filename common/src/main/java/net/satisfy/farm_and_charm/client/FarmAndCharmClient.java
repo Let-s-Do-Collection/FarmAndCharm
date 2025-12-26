@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+import net.satisfy.farm_and_charm.client.event.ClientEventHandler;
 import net.satisfy.farm_and_charm.client.gui.CookingPotGui;
 import net.satisfy.farm_and_charm.client.gui.PetBowlEditGui;
 import net.satisfy.farm_and_charm.client.gui.RoasterGui;
@@ -19,6 +20,8 @@ import net.satisfy.farm_and_charm.client.gui.StoveGui;
 import net.satisfy.farm_and_charm.client.model.*;
 import net.satisfy.farm_and_charm.client.renderer.block.*;
 import net.satisfy.farm_and_charm.client.renderer.entity.ChairRenderer;
+import net.satisfy.farm_and_charm.client.renderer.entity.PlowCartRenderer;
+import net.satisfy.farm_and_charm.client.renderer.entity.SupplyCartRenderer;
 import net.satisfy.farm_and_charm.core.block.entity.PetBowlBlockEntity;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.ModelRegistry;
@@ -49,7 +52,7 @@ public class FarmAndCharmClient {
         }, WATER_TROUGH.get());
 
         ClientStorageTypes.init();
-        FarmAndCharmClientRuntime.init();
+        ClientEventHandler.init();
         registerStorageTypeRenderers();
         registerBlockEntityRenderer();
         MenuRegistry.registerScreenFactory(ScreenhandlerTypeRegistry.COOKING_POT_SCREEN_HANDLER.get(), CookingPotGui::new);

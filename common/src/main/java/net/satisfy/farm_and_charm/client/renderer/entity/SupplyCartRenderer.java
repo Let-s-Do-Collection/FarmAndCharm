@@ -1,4 +1,4 @@
-package net.satisfy.farm_and_charm.client.renderer.block;
+package net.satisfy.farm_and_charm.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -9,27 +9,26 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.farm_and_charm.FarmAndCharm;
-import net.satisfy.farm_and_charm.client.model.PlowCartModel;
-import net.satisfy.farm_and_charm.core.entity.PlowCartEntity;
+import net.satisfy.farm_and_charm.client.model.SupplyCartModel;
+import net.satisfy.farm_and_charm.core.entity.SupplyCartEntity;
 import org.jetbrains.annotations.NotNull;
 
-public class PlowCartRenderer extends EntityRenderer<PlowCartEntity> {
+public class SupplyCartRenderer extends EntityRenderer<SupplyCartEntity> {
     public static final ResourceLocation CART_TEXTURE = FarmAndCharm.identifier("textures/entity/supply_cart.png");
-    private final PlowCartModel<PlowCartEntity> model;
+    private final SupplyCartModel<SupplyCartEntity> model;
 
-    public PlowCartRenderer(EntityRendererProvider.Context context) {
+    public SupplyCartRenderer(EntityRendererProvider.Context context) {
         super(context);
-        this.model = new PlowCartModel<>(context.bakeLayer(PlowCartModel.LAYER_LOCATION));
+        this.model = new SupplyCartModel<>(context.bakeLayer(SupplyCartModel.LAYER_LOCATION));
     }
 
-
     @Override
-    public @NotNull ResourceLocation getTextureLocation(PlowCartEntity entity) {
+    public @NotNull ResourceLocation getTextureLocation(SupplyCartEntity entity) {
         return CART_TEXTURE;
     }
 
     @Override
-    public void render(PlowCartEntity cart, float yaw, float g, PoseStack poseStack, MultiBufferSource multiBufferSource, int light) {
+    public void render(SupplyCartEntity cart, float yaw, float g, PoseStack poseStack, MultiBufferSource multiBufferSource, int light) {
         super.render(cart, yaw, g, poseStack, multiBufferSource, light);
         poseStack.pushPose();
 

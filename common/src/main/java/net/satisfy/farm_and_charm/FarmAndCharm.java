@@ -3,6 +3,7 @@ package net.satisfy.farm_and_charm;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.farm_and_charm.core.network.PacketHandler;
 import net.satisfy.farm_and_charm.core.registry.*;
+import net.satisfy.farm_and_charm.core.util.CartInteractionHooks;
 
 public class FarmAndCharm {
     public static final String MOD_ID = "farm_and_charm";
@@ -21,5 +22,6 @@ public class FarmAndCharm {
         RecipeTypeRegistry.init();
         VillagerTradeRegistryHandler.init();
         PacketHandler.init();
+        CartInteractionHooks.init();
     }
 }

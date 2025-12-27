@@ -30,7 +30,7 @@ public final class ClientEventHandler {
 
         ClientLevel level = minecraft.level;
 
-        CartWorldData.get(level).tick();
+        CartWorldData.get(level).tickClient(level);
 
         for (Entity entity : level.entitiesForRendering()) {
             if (!(entity instanceof AbstractCartEntity cart)) {

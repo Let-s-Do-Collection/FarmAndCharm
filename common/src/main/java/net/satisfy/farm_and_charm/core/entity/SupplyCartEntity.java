@@ -6,12 +6,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.util.Mth;
 import net.minecraft.world.Containers;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -19,6 +21,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,34 +39,34 @@ public class SupplyCartEntity extends AbstractCartEntity implements MenuProvider
     @Override
     public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
         if (player.isSecondaryUseActive()) {
-            return this.onSecondaryUse(player, hand);
+            return this.openInventory(player, hand);
         }
-        return this.onPrimaryUse(player, hand);
+        return this.primaryAction(player, hand);
     }
 
-    @Override
-    protected InteractionResult onPrimaryUse(Player player, InteractionHand hand) {
-        if (player.getItemInHand(hand).isEmpty()) {
-            return super.onPrimaryUse(player, hand);
+    private InteractionResult primaryAction(Player player, InteractionHand hand) {
+        if (!player.getItemInHand(hand).isEmpty()) {
+            return InteractionResult.PASS;
         }
 
-        if (this.level().isClientSide) {
-            return InteractionResult.SUCCESS;
+        Entity pullingEntity = this.getPulling();
+        if (pullingEntity != null && !(pullingEntity instanceof Player)) {
+            if (this.level().isClientSide) {
+                return InteractionResult.SUCCESS;
+            }
+            if (!this.getPassengers().isEmpty()) {
+                return InteractionResult.PASS;
+            }
+            if (player.isPassenger()) {
+                return InteractionResult.PASS;
+            }
+            return player.startRiding(this, true) ? InteractionResult.CONSUME : InteractionResult.PASS;
         }
 
-        player.openMenu(this);
-        this.entityData.set(DATA_OPEN, true);
-        this.openTicks = 10;
-        return InteractionResult.CONSUME;
+        return super.onPrimaryUse(player, hand);
     }
 
-    @Override
-    protected InteractionResult onSecondaryUse(Player player, InteractionHand hand) {
-        InteractionResult pickupResult = super.onSecondaryUse(player, hand);
-        if (pickupResult.consumesAction()) {
-            return pickupResult;
-        }
-
+    private InteractionResult openInventory(Player player, InteractionHand hand) {
         if (!player.getItemInHand(hand).isEmpty()) {
             return InteractionResult.PASS;
         }
@@ -76,6 +79,31 @@ public class SupplyCartEntity extends AbstractCartEntity implements MenuProvider
         this.entityData.set(DATA_OPEN, true);
         this.openTicks = 10;
         return InteractionResult.CONSUME;
+    }
+
+    @Override
+    public @NotNull Vec3 getPassengerRidingPosition(Entity passenger) {
+        float yawRadians = this.getYRot() * ((float) Math.PI / 180.0F);
+        double forwardX = -Mth.sin(yawRadians);
+        double forwardZ = Mth.cos(yawRadians);
+
+        double seatBack = -0.85D;
+        double seatUp = 0.7D;
+        double seatSide = 0.0D;
+
+        double sideX = -forwardZ;
+        double sideZ = forwardX;
+
+        return new Vec3(
+                this.getX() - forwardX * seatBack + sideX * seatSide,
+                this.getY() + seatUp,
+                this.getZ() - forwardZ * seatBack + sideZ * seatSide
+        );
+    }
+
+    @Override
+    public void positionRider(Entity passenger, MoveFunction moveFunction) {
+        super.positionRider(passenger, moveFunction);
     }
 
     @Override
@@ -118,10 +146,6 @@ public class SupplyCartEntity extends AbstractCartEntity implements MenuProvider
         }
     }
 
-    public boolean isOpen() {
-        return this.entityData.get(DATA_OPEN);
-    }
-
     @Override
     public @NotNull Component getDisplayName() {
         return ObjectRegistry.SUPPLY_CART.get().getDefaultInstance().getHoverName();
@@ -145,3 +169,4 @@ public class SupplyCartEntity extends AbstractCartEntity implements MenuProvider
         return new ItemStack(ObjectRegistry.SUPPLY_CART.get());
     }
 }
+

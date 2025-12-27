@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.client.model.SupplyCartModel;
 import net.satisfy.farm_and_charm.core.entity.SupplyCartEntity;
@@ -40,17 +41,20 @@ public class SupplyCartRenderer extends EntityRenderer<SupplyCartEntity> {
 
         boolean hasPassenger = !cart.getPassengers().isEmpty();
         boolean isPulled = cart.getPulling() != null;
+        boolean pulledByPlayer = cart.getPulling() instanceof Player;
+        boolean pulledByHorse = isPulled && !pulledByPlayer;
 
-        float basePitch;
-        if (isPulled) {
-            basePitch = 3F;
-        } else if (hasPassenger) {
-            basePitch = 11F;
-        } else {
-            basePitch = -11F;
+        if (!pulledByHorse) {
+            float basePitch;
+            if (isPulled) {
+                basePitch = 3F;
+            } else if (hasPassenger) {
+                basePitch = 11F;
+            } else {
+                basePitch = -11F;
+            }
+            poseStack.mulPose(Axis.XP.rotationDegrees(basePitch));
         }
-
-        poseStack.mulPose(Axis.XP.rotationDegrees(basePitch));
 
         double deltaX = cart.getX() - cart.xOld;
         double deltaZ = cart.getZ() - cart.zOld;

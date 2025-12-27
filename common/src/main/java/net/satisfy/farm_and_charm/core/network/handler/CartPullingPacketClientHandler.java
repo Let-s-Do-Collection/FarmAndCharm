@@ -1,8 +1,8 @@
 package net.satisfy.farm_and_charm.core.network.handler;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Level;
 import net.satisfy.farm_and_charm.core.entity.AbstractCartEntity;
 import net.satisfy.farm_and_charm.core.network.packet.UpdateCartPullingPacket;
 
@@ -10,22 +10,29 @@ public final class CartPullingPacketClientHandler {
     private CartPullingPacketClientHandler() {
     }
 
-    public static void handle(UpdateCartPullingPacket pkt) {
-        Level level = Minecraft.getInstance().level;
+    public static void handle(UpdateCartPullingPacket packet) {
+        Minecraft minecraft = Minecraft.getInstance();
+        ClientLevel level = minecraft.level;
         if (level == null) {
             return;
         }
 
-        Entity cartEntity = level.getEntity(pkt.cartId());
-        if (!(cartEntity instanceof AbstractCartEntity cart)) {
+        Entity entity = level.getEntity(packet.cartId());
+        if (!(entity instanceof AbstractCartEntity cart)) {
             return;
         }
 
-        if (pkt.pullingId() < 0) {
+        int pullingId = packet.pullingId();
+        if (pullingId < 0) {
             cart.setPulling(null);
             return;
         }
 
-        cart.setPulling(level.getEntity(pkt.pullingId()));
+        Entity pullingEntity = level.getEntity(pullingId);
+        if (pullingEntity != null && pullingEntity.isAlive()) {
+            cart.setPulling(pullingEntity);
+        } else {
+            cart.setPulling(null);
+        }
     }
 }

@@ -11,7 +11,9 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
@@ -23,11 +25,14 @@ import net.minecraft.world.phys.Vec3;
 import net.satisfy.farm_and_charm.core.network.PacketHandler;
 import net.satisfy.farm_and_charm.core.util.CartWorldData;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
 public abstract class AbstractCartEntity extends Entity {
     private static final EntityDataAccessor<Float> DATA_WHEEL_ROTATION = SynchedEntityData.defineId(AbstractCartEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Float> DATA_SPEED = SynchedEntityData.defineId(AbstractCartEntity.class, EntityDataSerializers.FLOAT);
+
     private float prevWheelRotation;
     private float wheelRotation;
     private int lerpSteps;
@@ -61,6 +66,7 @@ public abstract class AbstractCartEntity extends Entity {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(DATA_WHEEL_ROTATION, 0.0F);
+        builder.define(DATA_SPEED, 0.0F);
     }
 
     @Override
@@ -70,6 +76,9 @@ public abstract class AbstractCartEntity extends Entity {
         } else {
             this.pullingUuid = null;
         }
+        if (compound.contains("CartSpeed")) {
+            this.entityData.set(DATA_SPEED, compound.getFloat("CartSpeed"));
+        }
     }
 
     @Override
@@ -77,6 +86,20 @@ public abstract class AbstractCartEntity extends Entity {
         if (this.pulling != null && this.pullingUuid != null) {
             compound.putUUID("PullingUUID", this.pullingUuid);
         }
+        compound.putFloat("CartSpeed", this.entityData.get(DATA_SPEED));
+    }
+
+    @Override
+    public @Nullable LivingEntity getControllingPassenger() {
+        if (this.getPassengers().isEmpty()) {
+            return null;
+        }
+        Entity passenger = this.getPassengers().get(0);
+        return passenger instanceof LivingEntity livingEntity ? livingEntity : null;
+    }
+
+    protected boolean isPlayerDrivingPulledByHorse() {
+        return this.pulling instanceof AbstractHorse && this.getControllingPassenger() instanceof Player;
     }
 
     @Override
@@ -91,7 +114,13 @@ public abstract class AbstractCartEntity extends Entity {
 
     @Override
     protected boolean canAddPassenger(Entity passenger) {
-        return false;
+        if (!(passenger instanceof Player)) {
+            return false;
+        }
+        if (!(this.pulling instanceof AbstractHorse)) {
+            return false;
+        }
+        return this.getPassengers().isEmpty();
     }
 
     @Override
@@ -109,32 +138,8 @@ public abstract class AbstractCartEntity extends Entity {
         return this.onPrimaryUse(player, hand);
     }
 
-    protected boolean canBePickedUpBy() {
-        return this.pulling == null && this.isAlive() && this.getPassengers().isEmpty();
-    }
-
     protected InteractionResult onSecondaryUse(Player player, InteractionHand hand) {
-        if (!player.getItemInHand(hand).isEmpty()) {
-            return InteractionResult.PASS;
-        }
-
-        if (!this.level().isClientSide) {
-            if (!this.canBePickedUpBy()) {
-                return InteractionResult.PASS;
-            }
-
-            ItemStack drop = this.getCartItemStack();
-            if (!drop.isEmpty()) {
-                if (!player.getInventory().add(drop)) {
-                    player.drop(drop, false);
-                }
-            }
-            this.setPulling(null);
-            this.discard();
-            return InteractionResult.CONSUME;
-        }
-
-        return InteractionResult.SUCCESS;
+        return InteractionResult.PASS;
     }
 
     protected InteractionResult onPrimaryUse(Player player, InteractionHand hand) {
@@ -163,6 +168,11 @@ public abstract class AbstractCartEntity extends Entity {
             this.setDeltaMovement(0.0D, this.getDeltaMovement().y - 0.08D, 0.0D);
         }
 
+        if (this.isVehicle()) {
+            Vec3 current = this.getDeltaMovement();
+            this.setDeltaMovement(0.0D, current.y, 0.0D);
+        }
+
         super.tick();
 
         this.tickLerp();
@@ -182,14 +192,28 @@ public abstract class AbstractCartEntity extends Entity {
         }
     }
 
+    public @Nullable Player getCartDriver() {
+        if (this.getPassengers().isEmpty()) {
+            return null;
+        }
+        Entity passenger = this.getPassengers().get(0);
+        return passenger instanceof Player player ? player : null;
+    }
+
     public float getWheelRotation(float partialTick) {
         return Mth.lerp(partialTick, this.prevWheelRotation, this.wheelRotation);
     }
 
-
-
     protected float getWheelRadius() {
         return 0.5F;
+    }
+
+    public float getCartSpeed() {
+        return this.entityData.get(DATA_SPEED);
+    }
+
+    public void setCartSpeed(float speed) {
+        this.entityData.set(DATA_SPEED, speed);
     }
 
     public void pulledPostTick() {
@@ -234,10 +258,10 @@ public abstract class AbstractCartEntity extends Entity {
             targetVec = this.getRelativeTargetVec();
             if (targetVec.length() > relativeSpacing + 1.0D) {
                 this.setPulling(null);
+                return;
             }
+            this.updateWheelRotationFromMovement();
         }
-
-        this.updateWheelRotationFromMovement();
     }
 
     public boolean shouldStopPulledTick() {
@@ -269,13 +293,9 @@ public abstract class AbstractCartEntity extends Entity {
     }
 
     protected Vec3 getRelativeTargetVec() {
-        double x;
-        double y;
-        double z;
-
-        x = this.pulling.getX() - this.getX();
-        y = this.pulling.getY() - this.getY();
-        z = this.pulling.getZ() - this.getZ();
+        double x = this.pulling.getX() - this.getX();
+        double y = this.pulling.getY() - this.getY();
+        double z = this.pulling.getZ() - this.getZ();
 
         float yaw = (float) Math.toRadians(this.pulling.getYRot());
         float nx = -Mth.sin(yaw);
@@ -345,26 +365,43 @@ public abstract class AbstractCartEntity extends Entity {
                 this.pulling = null;
                 this.pullingId = -1;
                 this.pullingUuid = null;
+                CartWorldData.get(this.level()).removePullingByCart(this);
             } else {
                 this.pulling = entity;
                 this.pullingId = entity.getId();
                 this.pullingUuid = entity.getUUID();
+                CartWorldData.get(this.level()).addPulling(this);
             }
-            CartWorldData.get(this.level()).addPulling(this);
+            return;
+        }
+
+        CartWorldData worldData = CartWorldData.get(this.level());
+
+        if (this.pulling != null) {
+            worldData.removePullingByCart(this);
+        }
+
+        if (entity == null) {
+            this.pulling = null;
+            this.pullingUuid = null;
+            this.setCartSpeed(0.0F);
+            PacketHandler.sendCartPullingSync(this, -1);
+            return;
+        }
+
+        if (!worldData.canAttach(entity, this)) {
+            this.pulling = null;
+            this.pullingUuid = null;
+            this.setCartSpeed(0.0F);
+            PacketHandler.sendCartPullingSync(this, -1);
             return;
         }
 
         this.pulling = entity;
-        this.pullingUuid = entity == null ? null : entity.getUUID();
+        this.pullingUuid = entity.getUUID();
+        worldData.addPulling(this);
 
-        int newPullingId = entity == null ? -1 : entity.getId();
-        PacketHandler.sendCartPullingSync(this, newPullingId);
-
-        if (entity == null) {
-            CartWorldData.get(this.level()).removePullingByCart(this);
-        } else {
-            CartWorldData.get(this.level()).addPulling(this);
-        }
+        PacketHandler.sendCartPullingSync(this, entity.getId());
     }
 
     protected void clientResolvePullingIfPossible() {
@@ -385,29 +422,44 @@ public abstract class AbstractCartEntity extends Entity {
     }
 
     private void updateWheelRotationFromMovement() {
-        double deltaX = this.getX() - this.xOld;
-        double deltaZ = this.getZ() - this.zOld;
+        double deltaX;
+        double deltaZ;
+
+        if (this.pulling instanceof AbstractHorse) {
+            Vec3 pullerDelta = this.pulling.getDeltaMovement();
+            float pullerYawRad = this.pulling.getYRot() * ((float) Math.PI / 180.0F);
+            float pullerForwardX = -Mth.sin(pullerYawRad);
+            float pullerForwardZ = Mth.cos(pullerYawRad);
+            double forwardSpeed = pullerDelta.x * pullerForwardX + pullerDelta.z * pullerForwardZ;
+            float cartYawRad = this.getYRot() * ((float) Math.PI / 180.0F);
+            deltaX = -Mth.sin(cartYawRad) * forwardSpeed;
+            deltaZ = Mth.cos(cartYawRad) * forwardSpeed;
+        } else {
+            deltaX = this.getX() - this.xOld;
+            deltaZ = this.getZ() - this.zOld;
+        }
 
         float distance = Mth.sqrt((float) (deltaX * deltaX + deltaZ * deltaZ));
-        if (distance < 1.0E-5F) {
+        if (distance < 1.0E-5F || distance > 2.0F) {
             return;
         }
 
-        float yawRadians = (float) Math.toRadians(this.getYRot());
-        float forwardX = -Mth.sin(yawRadians);
-        float forwardZ = Mth.cos(yawRadians);
+        float clampedDistance = Math.min(distance, 0.35F);
+
+        float cartYawRadians = (float) Math.toRadians(this.getYRot());
+        float forwardX = -Mth.sin(cartYawRadians);
+        float forwardZ = Mth.cos(cartYawRadians);
 
         float forwardDot = (float) (deltaX * forwardX + deltaZ * forwardZ);
         float direction = forwardDot >= 0.0F ? -1.0F : 1.0F;
 
         float wheelRadius = this.getWheelRadius();
-        float deltaRotation = direction * (distance / wheelRadius);
+        float deltaRotation = direction * (clampedDistance / wheelRadius);
 
         this.wheelRotation += deltaRotation;
-
-        if (!this.level().isClientSide) {
-            this.entityData.set(DATA_WHEEL_ROTATION, this.wheelRotation);
-        }
+        this.entityData.set(DATA_WHEEL_ROTATION, this.wheelRotation);
     }
+
     protected abstract ItemStack getCartItemStack();
 }
+

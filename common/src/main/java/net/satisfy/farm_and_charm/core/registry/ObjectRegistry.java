@@ -38,8 +38,8 @@ public class ObjectRegistry {
 
     public static final RegistrySupplier<Item> FERTILIZER = registerItem("fertilizer", () -> new BoneMealItem(getSettings()));
     public static final RegistrySupplier<Item> PITCHFORK = registerItem("pitchfork", () -> new HoeItem(Tiers.WOOD, new Item.Properties()));
-    public static final RegistrySupplier<Item> SUPPLY_CART = registerItem("supply_cart", () -> new CartItem(getSettings()));
-    public static final RegistrySupplier<Item> PLOW = registerItem("plow", () -> new CartItem(getSettings()));
+    public static final RegistrySupplier<Item> SUPPLY_CART = registerItem("supply_cart", () -> new SupplyCartItem(getSettings()));
+    public static final RegistrySupplier<Item> PLOW = registerItem("plow", () -> new PlowCartItem(getSettings()));
     public static final RegistrySupplier<Item> YEAST = registerItem("yeast", () -> new Item(getSettings()));
     public static final RegistrySupplier<Item> BUTTER = registerItem("butter", () -> new Item(getSettings().food(Foods.CHICKEN)));
     public static final RegistrySupplier<Item> DOUGH = registerItem("dough", () -> new Item(getSettings().food(Foods.SWEET_BERRIES)));

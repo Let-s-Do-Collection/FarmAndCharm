@@ -20,14 +20,12 @@ public class SupplyCartModel<T extends SupplyCartEntity> extends EntityModel<T> 
     private final ModelPart right_wheel;
     private final ModelPart left_wheel;
     private final ModelPart chest;
-    private final ModelPart chest_lid;
 
     public SupplyCartModel(ModelPart root) {
         this.cart = root.getChild("cart");
         this.right_wheel = root.getChild("right_wheel");
         this.left_wheel = root.getChild("left_wheel");
         this.chest = root.getChild("chest");
-        this.chest_lid = this.chest.getChild("chest_lid");
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -87,8 +85,6 @@ public class SupplyCartModel<T extends SupplyCartEntity> extends EntityModel<T> 
 
         this.right_wheel.xRot = wheelRotation;
         this.left_wheel.xRot = wheelRotation;
-
-        this.chest_lid.xRot = entity.isOpen() ? (float) Math.PI / 2F : 0.0F;
     }
 
     @Override

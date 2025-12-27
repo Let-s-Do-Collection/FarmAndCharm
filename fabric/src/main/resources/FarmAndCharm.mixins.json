@@ -4,10 +4,10 @@
   "compatibilityLevel": "JAVA_17",
   "minVersion": "0.8",
   "client": [
-    "LivingEntityRendererMixin"
+    "LivingEntityRendererMixin",
+    "PlayerModelCartPullMixin"
   ],
   "mixins": [
-    "ExperienceOrbMixin",
     "AbstractHorseMixin",
     "AnimalEntityMixin",
     "CampfireBlockMixin",
@@ -17,6 +17,7 @@
     "CatTemptGoalMixin",
     "ChickenMixin",
     "CropBlockMixin",
+    "ExperienceOrbMixin",
     "FarmlandBlockMixin",
     "FoxMixin",
     "ItemStackMixin",

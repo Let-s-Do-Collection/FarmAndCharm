@@ -106,9 +106,6 @@ public abstract class AbstractCartEntity extends Entity {
 
     @Override
     public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
-        if (player.isShiftKeyDown()) {
-            return this.onSecondaryUse(player, hand);
-        }
         return this.onPrimaryUse(player, hand);
     }
 

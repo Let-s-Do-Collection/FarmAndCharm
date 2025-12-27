@@ -4,3 +4,4 @@ accessible class net/minecraft/world/entity/animal/Cat$CatTemptGoal
 accessible class net/minecraft/world/entity/animal/Cat$CatAvoidEntityGoal
 accessible field net/minecraft/world/entity/ai/goal/AvoidEntityGoal toAvoid Lnet/minecraft/world/entity/LivingEntity;
 accessible method net/minecraft/world/level/block/CropBlock randomTick (Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/util/RandomSource;)V
+accessible method net/minecraft/client/model/HumanoidModel getArm (Lnet/minecraft/world/entity/HumanoidArm;)Lnet/minecraft/client/model/geom/ModelPart;

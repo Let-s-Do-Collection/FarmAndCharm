@@ -322,5 +322,12 @@
   "block.farm_and_charm.trampled_packed_dirt": "Trampled Packed Dirt",
   "block.farm_and_charm.trampled_stable_floor": "Trampled Stable Floor",
   "block.farm_and_charm.stable_floor": "Stable Floor",
-  "block.farm_and_charm.straw_stable_floor": "Straw Stable Floor"
+  "block.farm_and_charm.straw_stable_floor": "Straw Stable Floor",
+  "tooltip.farm_and_charm.tooltip_information.hold": "Hold %s for more Information",
+
+  "tooltip.farm_and_charm.plow_cart.info_0": "Right-Click: Attach or detach.",
+  "tooltip.farm_and_charm.plow_cart.info_1": "Shift-Right-Click: Toggle Plow up or down.",
+  "tooltip.farm_and_charm.plow_cart.info_2": "Plow Down: Tills soil, clears plants, harvests crops.",
+
+  "tooltip.farm_and_charm.supply_cart.info_0": "Right-Click: Attach or detach."
 }

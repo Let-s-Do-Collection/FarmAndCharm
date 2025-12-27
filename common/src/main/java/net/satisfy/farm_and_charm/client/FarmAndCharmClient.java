@@ -6,8 +6,6 @@ import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import dev.architectury.registry.client.rendering.ColorHandlerRegistry;
 import dev.architectury.registry.client.rendering.RenderTypeRegistry;
 import dev.architectury.registry.menu.MenuRegistry;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
@@ -24,13 +22,11 @@ import net.satisfy.farm_and_charm.client.renderer.entity.PlowCartRenderer;
 import net.satisfy.farm_and_charm.client.renderer.entity.SupplyCartRenderer;
 import net.satisfy.farm_and_charm.core.block.entity.PetBowlBlockEntity;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
-import net.satisfy.farm_and_charm.core.registry.ModelRegistry;
 import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.StorageTypeRegistry;
 
 import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.*;
 
-@Environment(EnvType.CLIENT)
 public class FarmAndCharmClient {
 
     public static void onInitializeClient() {
@@ -64,6 +60,7 @@ public class FarmAndCharmClient {
         EntityRendererRegistry.register(EntityTypeRegistry.ROTTEN_TOMATO, ThrownItemRenderer::new);
         EntityRendererRegistry.register(EntityTypeRegistry.SUPPLY_CART, SupplyCartRenderer::new);
         EntityRendererRegistry.register(EntityTypeRegistry.PLOW, PlowCartRenderer::new);
+        EntityRendererRegistry.register(EntityTypeRegistry.CHAIR, ChairRenderer::new);
     }
 
 
@@ -77,9 +74,8 @@ public class FarmAndCharmClient {
         EntityModelLayerRegistry.register(CraftingBowlModel.LAYER_LOCATION, CraftingBowlModel::getTexturedModelData);
         EntityModelLayerRegistry.register(MincerModel.LAYER_LOCATION, MincerModel::getTexturedModelData);
         EntityModelLayerRegistry.register(ScarecrowModel.LAYER_LOCATION, ScarecrowModel::getTexturedModelData);
-        EntityModelLayerRegistry.register(ModelRegistry.SUPPLY_CART, SupplyCartModel::createBodyLayer);
-        EntityModelLayerRegistry.register(ModelRegistry.PLOW, PlowCartModel::createBodyLayer);
-        EntityRendererRegistry.register(EntityTypeRegistry.CHAIR, ChairRenderer::new);
+        EntityModelLayerRegistry.register(SupplyCartModel.LAYER_LOCATION, SupplyCartModel::createBodyLayer);
+        EntityModelLayerRegistry.register(PlowCartModel.LAYER_LOCATION, PlowCartModel::createBodyLayer);
         EntityModelLayerRegistry.register(DungareesLeggingsModel.LAYER_LOCATION, DungareesLeggingsModel::createBodyLayer);
     }
 

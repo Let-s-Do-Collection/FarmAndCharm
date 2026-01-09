@@ -12,9 +12,10 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 
 public class SweetsEffect extends MobEffect {
+
     public static final ResourceLocation SPEED_MODIFIER_ID = FarmAndCharm.identifier("sweets_speed_modifier");
-    public static final ResourceLocation ATTACK_DAMAGE_MODIFIER_ID = FarmAndCharm.identifier("sweets_attack_damage_modifier");
     public static final ResourceLocation ATTACK_SPEED_MODIFIER_ID = FarmAndCharm.identifier("sweets_attack_speed_modifier");
+    public static final ResourceLocation ATTACK_DAMAGE_MODIFIER_ID = FarmAndCharm.identifier("sweets_attack_damage_modifier");
 
     public SweetsEffect() {
         super(MobEffectCategory.BENEFICIAL, 0xFFFFC0CB);
@@ -22,27 +23,43 @@ public class SweetsEffect extends MobEffect {
 
     @Override
     public boolean applyEffectTick(LivingEntity entity, int amplifier) {
-        if (!entity.level().isClientSide) {
-            double percentIncrease = 0.02 * (amplifier + 1);
-            percentIncrease = Math.min(percentIncrease, 0.3);
-
-            applyModifier(entity, Attributes.MOVEMENT_SPEED, SPEED_MODIFIER_ID, percentIncrease);
-            applyModifier(entity, Attributes.ATTACK_SPEED, ATTACK_SPEED_MODIFIER_ID, percentIncrease);
-            applyModifier(entity, Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE_MODIFIER_ID, percentIncrease);
+        if (entity.level().isClientSide()) {
+            return false;
         }
+
+        int stacks = Math.min(10, Math.max(1, amplifier + 1));
+        double percentIncrease = 0.03D * stacks;
+
+        applyModifier(entity, Attributes.MOVEMENT_SPEED, SPEED_MODIFIER_ID, percentIncrease);
+        applyModifier(entity, Attributes.ATTACK_SPEED, ATTACK_SPEED_MODIFIER_ID, percentIncrease);
+        applyModifier(entity, Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE_MODIFIER_ID, percentIncrease);
+
         return true;
     }
 
     private void applyModifier(LivingEntity entity, Holder<Attribute> attribute, ResourceLocation id, double percentIncrease) {
         AttributeInstance instance = entity.getAttribute(attribute);
-        if (instance != null) {
-            AttributeModifier old = instance.getModifier(id);
-            if (old != null) {
-                instance.removeModifier(old);
-            }
-            double increase = attribute.value().getDefaultValue() * percentIncrease;
-            instance.addTransientModifier(new AttributeModifier(id, increase, AttributeModifier.Operation.ADD_VALUE));
+        if (instance == null) {
+            return;
         }
+
+        AttributeModifier existingModifier = instance.getModifier(id);
+        if (existingModifier != null) {
+            instance.removeModifier(existingModifier);
+        }
+
+        if (!Double.isFinite(percentIncrease) || percentIncrease <= 0.0D) {
+            return;
+        }
+
+        double amount = attribute.value().getDefaultValue() * percentIncrease;
+        if (!Double.isFinite(amount) || amount <= 0.0D) {
+            return;
+        }
+
+        instance.addTransientModifier(
+                new AttributeModifier(id, amount, AttributeModifier.Operation.ADD_VALUE)
+        );
     }
 
     @Override

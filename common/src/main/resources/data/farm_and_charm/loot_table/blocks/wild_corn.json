@@ -2,13 +2,36 @@
   "type": "minecraft:block",
   "pools": [
     {
+      "rolls": 1.0,
       "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "block": "farm_and_charm:wild_corn",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "half": "lower"
+          }
+        },
+        {
+          "condition": "minecraft:location_check",
+          "offsetY": 1,
+          "predicate": {
+            "block": {
+              "blocks": "farm_and_charm:wild_corn",
+              "state": {
+                "half": "upper"
+              }
+            }
+          }
+        }
+      ],
       "entries": [
         {
           "type": "minecraft:alternatives",
           "children": [
             {
               "type": "minecraft:item",
+              "name": "farm_and_charm:wild_corn",
               "conditions": [
                 {
                   "condition": "minecraft:match_tool",
@@ -18,22 +41,22 @@
                     ]
                   }
                 }
-              ],
-              "name": "farm_and_charm:wild_corn"
+              ]
             },
             {
               "type": "minecraft:item",
+              "name": "farm_and_charm:kernels",
               "conditions": [
                 {
-                  "chance": 0.125,
-                  "condition": "minecraft:random_chance"
+                  "condition": "minecraft:random_chance",
+                  "chance": 0.125
                 }
               ],
               "functions": [
                 {
+                  "function": "minecraft:apply_bonus",
                   "enchantment": "minecraft:fortune",
                   "formula": "minecraft:uniform_bonus_count",
-                  "function": "minecraft:apply_bonus",
                   "parameters": {
                     "bonusMultiplier": 2
                   }
@@ -41,17 +64,11 @@
                 {
                   "function": "minecraft:explosion_decay"
                 }
-              ],
-              "name": "farm_and_charm:kernels"
+              ]
             },
             {
               "type": "minecraft:item",
-              "conditions": [
-                {
-                  "chance": 1.0,
-                  "condition": "minecraft:random_chance"
-                }
-              ],
+              "name": "farm_and_charm:corn",
               "functions": [
                 {
                   "function": "minecraft:set_count",
@@ -60,14 +77,57 @@
                     "max": 5
                   }
                 }
-              ],
-              "name": "farm_and_charm:corn"
+              ]
             }
           ]
         }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "block": "farm_and_charm:wild_corn",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "half": "upper"
+          }
+        },
+        {
+          "condition": "minecraft:location_check",
+          "offsetY": -1,
+          "predicate": {
+            "block": {
+              "blocks": "farm_and_charm:wild_corn",
+              "state": {
+                "half": "lower"
+              }
+            }
+          }
+        }
       ],
-      "rolls": 1.0
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "name": "farm_and_charm:wild_corn",
+              "conditions": [
+                {
+                  "condition": "minecraft:match_tool",
+                  "predicate": {
+                    "items": [
+                      "minecraft:shears"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
-

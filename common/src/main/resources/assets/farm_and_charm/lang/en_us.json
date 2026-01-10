@@ -324,10 +324,20 @@
   "block.farm_and_charm.stable_floor": "Stable Floor",
   "block.farm_and_charm.straw_stable_floor": "Straw Stable Floor",
   "tooltip.farm_and_charm.tooltip_information.hold": "Hold %s for more Information",
-
+  "tooltip.farm_and_charm.water_sprinkler.info_0": "Waters nearby Farmland and prevents it from drying out.",
+  "tooltip.farm_and_charm.cattlegrid.info_0": "Allows Players to pass while blocking Livestock.",
+  "tooltip.farm_and_charm.fertilized_farmland.info_0": "Occasionally boosts Crop Growth.",
+  "tooltip.farm_and_charm.water_trough.info_0": "Stores Water. Livestock can drink from it, reducing Breeding Cooldowns.",
+  "tooltip.farm_and_charm.fertilizer.info_0": "Fertilizes multiple nearby Crops when used.",
   "tooltip.farm_and_charm.plow_cart.info_0": "Right-Click: Attach or detach.",
-  "tooltip.farm_and_charm.plow_cart.info_1": "Shift-Right-Click: Toggle Plow up or down.",
-  "tooltip.farm_and_charm.plow_cart.info_2": "Plow Down: Tills soil, clears plants, harvests crops.",
-
-  "tooltip.farm_and_charm.supply_cart.info_0": "Right-Click: Attach or detach."
+  "tooltip.farm_and_charm.plow_cart.info_1": "Shift + Right-Click: Toggle Plow up or down.",
+  "tooltip.farm_and_charm.plow_cart.info_2": "Plow Down: Tills Soil, clears Plants and harvests Crops.",
+  "tooltip.farm_and_charm.rope.info_0": "Can be attached to Fences and used to support certain Crops.",
+  "tooltip.farm_and_charm.feeding_trough.info_0": "Can be filled with Seeds. Nearby Animals can eat from it.",
+  "tooltip.farm_and_charm.sturdy_ladder.info_0": "A free-standing Ladder. Can be extended from the bottom.",
+  "tooltip.farm_and_charm.pet_bowl.info_0": "Feed Pets by placing Food inside.",
+  "tooltip.farm_and_charm.pet_bowl.info_1": "Attach a Name Tag to label the Bowl.",
+  "tooltip.farm_and_charm.supply_cart.info_0": "Right-Click: Attach or detach.",
+  "tooltip.farm_and_charm.fertilized_soil.info_0": "Use a Pitchfork to consume Compost and boost nearby Growth.",
+  "tooltip.farm_and_charm.fertilized_soil.info_1": "Use a Hoe to turn it into Fertilized Farmland when full."
 }

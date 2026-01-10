@@ -1,40 +1,37 @@
 package net.satisfy.farm_and_charm.core.block;
 
 import com.mojang.serialization.MapCodec;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CampfireBlock;
-import net.minecraft.world.level.block.CandleBlock;
-import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.farm_and_charm.core.block.entity.WaterSprinklerBlockEntity;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import net.satisfy.farm_and_charm.core.registry.SoundEventRegistry;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class WaterSprinklerBlock extends BaseEntityBlock {
     public static final MapCodec<WaterSprinklerBlock> CODEC = simpleCodec(WaterSprinklerBlock::new);
-    private static final VoxelShape SHAPE = Shapes.or(
-            Shapes.box(0.0625, 0, 0.0625, 0.9375, 0.0625, 0.9375),
-            Shapes.box(0.0625, 0.0625, 0.0625, 0.125, 0.75, 0.9375),
-            Shapes.box(0.875, 0.0625, 0.0625, 0.9375, 0.75, 0.9375),
-            Shapes.box(0.125, 0.0625, 0.0625, 0.875, 0.75, 0.125),
-            Shapes.box(0.125, 0.0625, 0.875, 0.875, 0.75, 0.9375),
-            Shapes.box(0.4375, 0.125, 0.4375, 0.5625, 1.0625, 0.5625)
-    );
+    private static final VoxelShape SHAPE = Block.box(1.0, 0.0, 1.0, 15.0, 12.0, 15.0);
 
     public WaterSprinklerBlock(Properties properties) {
         super(properties);
@@ -118,5 +115,21 @@ public class WaterSprinklerBlock extends BaseEntityBlock {
     @Override
     public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.ENTITYBLOCK_ANIMATED;
+    }
+
+    @Override
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
+        int earthy = 0xFFD966;
+        int gold = 0xFFD700;
+
+        if (Screen.hasShiftDown()) {
+            tooltip.add(Component.translatable("tooltip.farm_and_charm.water_sprinkler.info_0")
+                    .withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
+        } else {
+            tooltip.add(Component.translatable(
+                    "tooltip.farm_and_charm.tooltip_information.hold",
+                    Component.literal("[SHIFT]").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(gold)))
+            ).withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
+        }
     }
 }

@@ -99,7 +99,7 @@ public class EffectBlockItem extends BlockItem {
         }
 
         tooltip.add(Component.empty());
-        tooltip.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.GRAY));
     }
 
     @Override

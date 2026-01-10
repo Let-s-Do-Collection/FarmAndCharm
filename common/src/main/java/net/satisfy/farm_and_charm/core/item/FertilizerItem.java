@@ -1,8 +1,12 @@
 package net.satisfy.farm_and_charm.core.item;
 
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
@@ -14,6 +18,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
@@ -131,5 +136,21 @@ public class FertilizerItem extends Item {
     public @NotNull InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         player.startUsingItem(hand);
         return InteractionResultHolder.consume(player.getItemInHand(hand));
+    }
+
+    @Override
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
+        int earthy = 0xFFD966;
+        int gold = 0xFFD700;
+
+        if (Screen.hasShiftDown()) {
+            tooltip.add(Component.translatable("tooltip.farm_and_charm.fertilizer.info_0")
+                    .withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
+        } else {
+            tooltip.add(Component.translatable(
+                    "tooltip.farm_and_charm.tooltip_information.hold",
+                    Component.literal("[SHIFT]").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(gold)))
+            ).withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
+        }
     }
 }

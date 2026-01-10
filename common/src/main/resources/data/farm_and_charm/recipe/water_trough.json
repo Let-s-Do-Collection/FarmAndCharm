@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "M#M",
+    "# #"
+  ],
+  "key": {
+    "M": {
+      "tag": "minecraft:planks"
+    },
+    "#": {
+      "tag": "minecraft:wooden_slabs"
+    }
+  },
+  "result": {
+    "id": "farm_and_charm:water_trough",
+    "count": 2
+  }
+}

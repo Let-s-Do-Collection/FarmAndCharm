@@ -323,6 +323,21 @@
   "block.farm_and_charm.trampled_stable_floor": "Zertrampelter Stallboden",
   "block.farm_and_charm.stable_floor": "Stallboden",
   "block.farm_and_charm.straw_stable_floor": "Strohstallboden",
-  "block.farm_and_charm.water_trough": "Tränke"
+  "block.farm_and_charm.water_trough": "Tränke",
+  "tooltip.farm_and_charm.tooltip_information.hold": "Halte %s für mehr Informationen",
+  "tooltip.farm_and_charm.water_sprinkler.info_0": "Bewässert nahegelegenes Farmland und verhindert das Austrocknen.",
+  "tooltip.farm_and_charm.plow_cart.info_0": "Rechtsklick: Anbringen oder lösen.",
+  "tooltip.farm_and_charm.plow_cart.info_1": "Shift + Rechtsklick: Pflug hoch- oder herunterklappen.",
+  "tooltip.farm_and_charm.plow_cart.info_2": "Pflug unten: Pflügt Boden, entfernt Pflanzen und erntet Nutzpflanzen.",
+  "tooltip.farm_and_charm.supply_cart.info_0": "Rechtsklick: Anbringen oder lösen.",
+  "tooltip.farm_and_charm.cattlegrid.info_0": "Ermöglicht Spielern das Überqueren und blockiert Nutztiere.",
+  "tooltip.farm_and_charm.fertilized_farmland.info_0": "Fördert gelegentlich das Wachstum gepflanzter Nutzpflanzen.",
+  "tooltip.farm_and_charm.water_trough.info_0": "Speichert Wasser. Nutztiere können daraus trinken und die Zuchtzeit verkürzen.",
+  "tooltip.farm_and_charm.fertilizer.info_0": "Düngt beim Anwenden mehrere nahegelegene Nutzpflanzen.",
+  "tooltip.farm_and_charm.rope.info_0": "Kann an Zäunen befestigt werden und unterstützt bestimmte Nutzpflanzen.",
+  "tooltip.farm_and_charm.feeding_trough.info_0": "Kann mit Samen befüllt werden. Nahegelegene Tiere können daraus fressen.",
+  "tooltip.farm_and_charm.sturdy_ladder.info_0": "Freistehende Leiter. Kann am unteren Ende verlängert werden.",
+  "tooltip.farm_and_charm.pet_bowl.info_0": "Haustiere füttern, indem Futter hineingelegt wird.",
+  "tooltip.farm_and_charm.pet_bowl.info_1": "Namensschild anbringen, um den Napf zu beschriften."
 }
 

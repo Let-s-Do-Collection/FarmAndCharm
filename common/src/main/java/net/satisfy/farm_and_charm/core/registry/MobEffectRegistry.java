@@ -16,13 +16,11 @@ import net.satisfy.farm_and_charm.core.effect.HorseFodderEffect;
 import net.satisfy.farm_and_charm.core.effect.RestedEffect;
 import net.satisfy.farm_and_charm.core.effect.SatiationEffect;
 import net.satisfy.farm_and_charm.core.effect.SustenanceEffect;
-import net.satisfy.farm_and_charm.core.effect.SweetsEffect;
 
 public class MobEffectRegistry {
     private static final DeferredRegister<MobEffect> EFFECTS =
             DeferredRegister.create(FarmAndCharm.MOD_ID, Registries.MOB_EFFECT);
 
-    public static final ResourceLocation SWEETS = FarmAndCharm.identifier("sweets");
     public static final ResourceLocation HORSE_FODDER = FarmAndCharm.identifier("horse_fodder");
     public static final ResourceLocation DOG_FOOD = FarmAndCharm.identifier("dog_food");
     public static final ResourceLocation CLUCK = FarmAndCharm.identifier("cluck");
@@ -35,8 +33,6 @@ public class MobEffectRegistry {
 
     public static void init() {
         EFFECTS.register();
-
-        EFFECTS.register(SWEETS, SweetsEffect::new);
         EFFECTS.register(HORSE_FODDER, HorseFodderEffect::new);
         EFFECTS.register(DOG_FOOD, DogFoodEffect::new);
         EFFECTS.register(CLUCK, ChickenEffect::new);

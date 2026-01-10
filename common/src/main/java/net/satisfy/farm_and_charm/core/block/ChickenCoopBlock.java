@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.Containers;
@@ -38,6 +39,8 @@ import net.satisfy.farm_and_charm.core.block.entity.ChickenCoopBlockEntity;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public class ChickenCoopBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
@@ -98,17 +101,22 @@ public class ChickenCoopBlock extends BaseEntityBlock {
     @Override
     public @NotNull BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (!level.isClientSide) {
-            BlockEntity be = level.getBlockEntity(pos);
-            if (be instanceof ChickenCoopBlockEntity coop) {
-                boolean hasNbt = !coop.getStoredChickens().isEmpty() || coop.getEggCount() > 0;
-                if (hasNbt || !player.isCreative()) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof ChickenCoopBlockEntity coop) {
+                boolean hasData = !coop.getStoredChickens().isEmpty() || coop.getEggCount() > 0;
+                if (hasData || !player.isCreative()) {
                     ItemStack stack = new ItemStack(ObjectRegistry.CHICKEN_COOP_ITEM.get());
+
                     stack.remove(DataComponents.ENTITY_DATA);
-                    if (hasNbt) {
+
+                    if (hasData) {
                         CompoundTag tag = new CompoundTag();
+                        tag.putString("id", Objects.requireNonNull(BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(coop.getType())).toString());
                         coop.saveAdditional(tag, level.registryAccess());
                         stack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(tag));
                     }
+
+                    stack.remove(DataComponents.ENTITY_DATA);
                     Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), stack);
                 }
             }

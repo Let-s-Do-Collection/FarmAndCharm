@@ -1,10 +1,17 @@
 package net.satisfy.farm_and_charm.core.block;
 
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BonemealableBlock;
@@ -14,6 +21,8 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class FertilizedFarmlandBlock extends FarmBlock {
     public FertilizedFarmlandBlock(Properties properties) {
@@ -68,6 +77,22 @@ public class FertilizedFarmlandBlock extends FarmBlock {
 
     @Override
     public void fallOn(Level level, BlockState blockState, BlockPos blockPos, Entity entity, float f) {
+    }
+
+    @Override
+    public void appendHoverText(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
+        int earthy = 0xFFD966;
+        int gold = 0xFFD700;
+
+        if (Screen.hasShiftDown()) {
+            tooltip.add(Component.translatable("tooltip.farm_and_charm.fertilized_farmland.info_0")
+                    .withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
+        } else {
+            tooltip.add(Component.translatable(
+                    "tooltip.farm_and_charm.tooltip_information.hold",
+                    Component.literal("[SHIFT]").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(gold)))
+            ).withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
+        }
     }
 
 }

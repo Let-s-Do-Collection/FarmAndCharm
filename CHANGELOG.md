@@ -1,22 +1,25 @@
 [1.1.15]
 
-[1.1.16]
-
 **Added**
 * Animals eating from Feeding Troughs now generate particles while doing so
 * Added a Water Trough for animals to drink from, also usable as a water source
-
+* Added Shift tooltips to various blocks and items for in-game information
+* Updated Scarecrow interaction for 1.21.1: adding and removing Dungarees now works correctly with the new interaction methods
 
 **Fixed**
-* Removed ApacheCommons usage from EffectFood blocks
+* Removed Apache Commons usage from EffectFood blocks
 * Item duplication with the Mincer when inserting non-processable items in Creative
 * Stoves appeared lit without consuming fuel and had inconsistent lit state after placement
 * Feeding animals using Create Deployers causing the game to crash
 * MobEffects were not applied correctly due to invalid effect references
-
+* Ropes are now correctly tagged under `c:ropes`
+* Chicken Coop items storing invalid entity data could crash the game when saving. Affected items are now sanitized and stored data is preserved
+* Sturdy Ladder placement preview could briefly appear and then disappear when extending from the base
 
 **Changed**
-* Slightly changed following Textures: CraftingBowlBlock, MincerBlock
+* Feeding Troughs now use the `farm_and_charm:feeding_trough_food` item tag instead of relying on `minecraft:villager_plantable_seeds`
+* Slightly updated textures for Crafting Bowl and Mincer blocks
+* Updated fr_fr translation (thanks to acorsicanfrog)
 
 ***
 

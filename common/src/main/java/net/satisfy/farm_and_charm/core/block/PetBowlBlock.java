@@ -1,9 +1,12 @@
 package net.satisfy.farm_and_charm.core.block;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -37,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-@SuppressWarnings("deprecation")
 public class PetBowlBlock extends FacingBlock implements EntityBlock {
     public static final EnumProperty<GeneralUtil.FoodType> FOOD_TYPE = EnumProperty.create("food_type", GeneralUtil.FoodType.class);
     public static final BooleanProperty HAS_NAME_TAG = BooleanProperty.create("has_name_tag");
@@ -67,7 +69,7 @@ public class PetBowlBlock extends FacingBlock implements EntityBlock {
     }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack heldItem, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult blockHitResult) {
+    protected @NotNull ItemInteractionResult useItemOn(ItemStack heldItem, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult blockHitResult) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
 
         if (!(blockEntity instanceof PetBowlBlockEntity entity)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
@@ -144,6 +146,18 @@ public class PetBowlBlock extends FacingBlock implements EntityBlock {
 
     @Override
     public void appendHoverText(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Component> list, TooltipFlag tooltipFlag) {
-        list.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.GRAY));
+        int earthy = 0xFFD966;
+        int gold = 0xFFD700;
+
+        list.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+        list.add(Component.empty());
+
+        if (Screen.hasShiftDown()) {
+            list.add(Component.translatable("tooltip.farm_and_charm.pet_bowl.info_0").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
+            list.add(Component.translatable("tooltip.farm_and_charm.pet_bowl.info_1").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
+        } else {
+            list.add(Component.translatable("tooltip.farm_and_charm.tooltip_information.hold", Component.literal("[SHIFT]").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(gold)))
+            ).withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
+        }
     }
 }

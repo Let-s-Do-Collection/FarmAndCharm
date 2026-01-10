@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
 public class TeaJugItem extends BlockItem {
     public TeaJugItem(Block block, Properties settings) {
@@ -37,7 +38,9 @@ public class TeaJugItem extends BlockItem {
 
     @Override
     public void appendHoverText(ItemStack itemStack, TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
-        List<FoodProperties.PossibleEffect> list2 = itemStack.has(DataComponents.FOOD) ? itemStack.get(DataComponents.FOOD).effects() : Lists.newArrayList();
+        super.appendHoverText(itemStack, tooltipContext, tooltip, tooltipFlag);
+
+        List<FoodProperties.PossibleEffect> list2 = itemStack.has(DataComponents.FOOD) ? Objects.requireNonNull(itemStack.get(DataComponents.FOOD)).effects() : Lists.newArrayList();
         List<Pair<Holder<Attribute>, AttributeModifier>> list3 = Lists.newArrayList();
         if (list2.isEmpty()) {
             tooltip.add(Component.translatable("effect.none").withStyle(ChatFormatting.GRAY));
@@ -49,7 +52,7 @@ public class TeaJugItem extends BlockItem {
                 statusEffect.createModifiers(statusEffectInstance.effect().getAmplifier(), (holderx, attributeModifierx) -> {
                     AttributeModifier entityAttributeModifier = new AttributeModifier(
                             attributeModifierx.id(),
-                            attributeModifierx.amount() * (double)(statusEffectInstance.effect().getAmplifier() + 1),
+                            attributeModifierx.amount() * (double) (statusEffectInstance.effect().getAmplifier() + 1),
                             attributeModifierx.operation()
                     );
                     list3.add(new Pair<>(holderx, entityAttributeModifier));
@@ -80,20 +83,10 @@ public class TeaJugItem extends BlockItem {
                 }
 
                 if (d > 0.0) {
-                    tooltip.add(
-                            Component.translatable(
-                                            "attribute.modifier.plus." + entityAttributeModifier3.operation().id(),
-                                            ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(e), Component.translatable(pair.getFirst().value().getDescriptionId()))
-                                    .withStyle(ChatFormatting.BLUE)
-                    );
+                    tooltip.add(Component.translatable("attribute.modifier.plus." + entityAttributeModifier3.operation().id(), ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(e), Component.translatable(pair.getFirst().value().getDescriptionId())).withStyle(ChatFormatting.BLUE));
                 } else if (d < 0.0) {
                     e *= -1.0;
-                    tooltip.add(
-                            Component.translatable(
-                                            "attribute.modifier.take." + entityAttributeModifier3.operation().id(),
-                                            ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(e), Component.translatable(pair.getFirst().value().getDescriptionId()))
-                                    .withStyle(ChatFormatting.RED)
-                    );
+                    tooltip.add(Component.translatable("attribute.modifier.take." + entityAttributeModifier3.operation().id(), ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(e), Component.translatable(pair.getFirst().value().getDescriptionId())).withStyle(ChatFormatting.RED));
                 }
             }
         }

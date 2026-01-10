@@ -1,0 +1,49 @@
+{
+  "variants": {
+    "part=foot,facing=north": {
+      "model": "farm_and_charm:block/water_trough_left_3",
+      "y": 270
+    },
+    "part=foot,facing=south": {
+      "model": "farm_and_charm:block/water_trough_left_3",
+      "y": 90
+    },
+    "part=foot,facing=west": {
+      "model": "farm_and_charm:block/water_trough_left_3",
+      "y": 180
+    },
+    "part=foot,facing=east": {
+      "model": "farm_and_charm:block/water_trough_left_3"
+    },
+    "part=head,facing=north": {
+      "model": "farm_and_charm:block/water_trough_right_3",
+      "y": 270
+    },
+    "part=head,facing=south": {
+      "model": "farm_and_charm:block/water_trough_right_3",
+      "y": 90
+    },
+    "part=head,facing=west": {
+      "model": "farm_and_charm:block/water_trough_right_3",
+      "y": 180
+    },
+    "part=head,facing=east": {
+      "model": "farm_and_charm:block/water_trough_right_3"
+    },
+    "part=top,facing=north": {
+      "model": "farm_and_charm:block/well_top",
+      "y": 270
+    },
+    "part=top,facing=south": {
+      "model": "farm_and_charm:block/well_top",
+      "y": 90
+    },
+    "part=top,facing=west": {
+      "model": "farm_and_charm:block/well_top",
+      "y": 180
+    },
+    "part=top,facing=east": {
+      "model": "farm_and_charm:block/well_top"
+    }
+  }
+}

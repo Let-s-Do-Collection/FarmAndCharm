@@ -365,12 +365,10 @@ public abstract class AbstractCartEntity extends Entity {
                 this.pulling = null;
                 this.pullingId = -1;
                 this.pullingUuid = null;
-                CartWorldData.get(this.level()).removePullingByCart(this);
             } else {
                 this.pulling = entity;
                 this.pullingId = entity.getId();
                 this.pullingUuid = entity.getUUID();
-                CartWorldData.get(this.level()).addPulling(this);
             }
             return;
         }

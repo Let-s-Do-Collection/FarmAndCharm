@@ -259,4 +259,13 @@ public final class CartWheelUtil {
             this.fadeTicksLeft = FADE_TICKS;
         }
     }
+
+    public static void stopCartById(int cartId) {
+        PullSoundInstance sound = ACTIVE_SOUNDS.get(cartId);
+        if (sound != null) {
+            sound.requestFadeOut();
+            ACTIVE_SOUNDS.remove(cartId);
+        }
+        MOVE_ACCUMULATOR.remove(cartId);
+    }
 }

@@ -4,7 +4,7 @@
 * Animals eating from Feeding Troughs now generate particles while doing so
 * Added a Water Trough for animals to drink from, also usable as a water source
 * Added Shift tooltips to various blocks and items for in-game information
-* Updated Scarecrow interaction for 1.21.1: adding and removing Dungarees now works correctly with the new interaction methods
+* Updated Scarecrow interaction: adding and removing Dungarees now works correctly with the new interaction methods
 
 **Fixed**
 * Removed Apache Commons usage from EffectFood blocks
@@ -15,6 +15,7 @@
 * Ropes are now correctly tagged under `c:ropes`
 * Chicken Coop items storing invalid entity data could crash the game when saving. Affected items are now sanitized and stored data is preserved
 * Sturdy Ladder placement preview could briefly appear and then disappear when extending from the base
+* Fertilized Farmland not bonemealing (thanks to MisledWater79)
 
 **Changed**
 * Feeding Troughs now use the `farm_and_charm:feeding_trough_food` item tag instead of relying on `minecraft:villager_plantable_seeds`

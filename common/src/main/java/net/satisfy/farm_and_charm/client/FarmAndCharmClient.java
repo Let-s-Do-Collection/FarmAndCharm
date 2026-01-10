@@ -45,7 +45,7 @@ public class FarmAndCharmClient {
                 return -1;
             }
             return BiomeColors.getAverageWaterColor(world, pos);
-        }, WATER_TROUGH.get());
+        }, WATER_TROUGH.get(), TIMBER_WELL.get());
 
         ClientStorageTypes.init();
         ClientEventHandler.init();

@@ -168,17 +168,15 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Block> ROPE_KNOT = registerWithoutItem("rope_knot", () -> new RopeKnotBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_FENCE).noOcclusion()));
     public static final RegistrySupplier<Item> ROPE = registerItem("rope", () -> new RopeItem(ROPE_BLOCK.get(), getSettings()));
     public static final RegistrySupplier<Block> STURDY_LADDER = registerWithItem("sturdy_ladder", () -> new SturdyLadderBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LADDER)));
-
     public static final RegistrySupplier<Block> IRON_DIVIDER = registerWithItem("iron_divider", () -> new PenBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(5.0f, 6.0f).requiresCorrectToolForDrops().noOcclusion()));
     public static final RegistrySupplier<Block> CHICKEN_FENCE = registerWithItem("chicken_fence", () -> new PenBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).sound(SoundType.WOOD).strength(1.5f, 3.0f).requiresCorrectToolForDrops().noOcclusion()));
     public static final RegistrySupplier<Block> CATTLEGRID = registerWithItem("cattlegrid", () -> new CattlegridBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(2.0f, 6.0f).noOcclusion()));
-
     public static final RegistrySupplier<Block> PACKED_DIRT = registerWithItem("packed_dirt", () -> new PackedDirtBlock(BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).strength(1.5f, 3.0f).sound(SoundType.PACKED_MUD)));
     public static final RegistrySupplier<Block> TRAMPLED_PACKED_DIRT = registerWithItem("trampled_packed_dirt", () -> new TrampledPackedDirtBlock(BlockBehaviour.Properties.of().mapColor(MapColor.DIRT).strength(1.0f, 3.0f).sound(SoundType.PACKED_MUD)));
-
     public static final RegistrySupplier<Block> STABLE_FLOOR = registerWithItem("stable_floor", () -> new StableFloorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BROWN).sound(SoundType.WOOD).strength(1.5f, 3.0f)));
     public static final RegistrySupplier<Block> TRAMPLED_STABLE_FLOOR = registerWithItem("trampled_stable_floor", () -> new TrampledStableFloorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BROWN).sound(SoundType.WOOD).strength(1.2f, 2.5f)));
     public static final RegistrySupplier<Block> STRAW_STABLE_FLOOR = registerWithItem("straw_stable_floor", () -> new StrawStableFloorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_YELLOW).sound(SoundType.GRASS).strength(0.8f, 1.0f)));
+    public static final RegistrySupplier<Block> TIMBER_WELL = registerWithItem("timber_well", () -> new TimberWellBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS)));
 
     public static void init() {
         ITEMS.register();

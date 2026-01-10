@@ -15,6 +15,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -194,7 +196,7 @@ public class CartWorldData extends SavedData {
 
         Vec3 delta = new Vec3(forwardX * speed, 0.0D, forwardZ * speed);
         horse.setDeltaMovement(delta.x, horse.getDeltaMovement().y, delta.z);
-        horse.move(net.minecraft.world.entity.MoverType.SELF, new Vec3(delta.x, 0.0D, delta.z));
+        horse.move(MoverType.SELF, new Vec3(delta.x, 0.0D, delta.z));
         horse.hasImpulse = true;
     }
 
@@ -204,7 +206,7 @@ public class CartWorldData extends SavedData {
     }
 
     private void applyCartSlow(Entity entity) {
-        if (!(entity instanceof net.minecraft.world.entity.LivingEntity livingEntity)) {
+        if (!(entity instanceof LivingEntity livingEntity)) {
             return;
         }
         AttributeInstance attr = livingEntity.getAttribute(Attributes.MOVEMENT_SPEED);
@@ -219,7 +221,7 @@ public class CartWorldData extends SavedData {
     }
 
     private void removeCartSlow(Entity entity) {
-        if (!(entity instanceof net.minecraft.world.entity.LivingEntity livingEntity)) {
+        if (!(entity instanceof LivingEntity livingEntity)) {
             return;
         }
         AttributeInstance attr = livingEntity.getAttribute(Attributes.MOVEMENT_SPEED);

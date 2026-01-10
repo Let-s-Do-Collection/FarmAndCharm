@@ -105,7 +105,6 @@
   "effect.farm_and_charm.satiation": "Gesättigt",
   "effect.farm_and_charm.sustenance": "Genährt",
   "effect.farm_and_charm.sweets": "Süss!",
-  "entity.farm_and_charm.chest_cart": "Wagen",
   "entity.farm_and_charm.plow": "Pflug",
   "item.farm_and_charm.bacon": "Speck",
   "item.farm_and_charm.bacon_with_eggs": "Speck mit Eiern",
@@ -326,10 +325,6 @@
   "block.farm_and_charm.water_trough": "Tränke",
   "tooltip.farm_and_charm.tooltip_information.hold": "Halte %s für mehr Informationen",
   "tooltip.farm_and_charm.water_sprinkler.info_0": "Bewässert nahegelegenes Farmland und verhindert das Austrocknen.",
-  "tooltip.farm_and_charm.plow_cart.info_0": "Rechtsklick: Anbringen oder lösen.",
-  "tooltip.farm_and_charm.plow_cart.info_1": "Shift + Rechtsklick: Pflug hoch- oder herunterklappen.",
-  "tooltip.farm_and_charm.plow_cart.info_2": "Pflug unten: Pflügt Boden, entfernt Pflanzen und erntet Nutzpflanzen.",
-  "tooltip.farm_and_charm.supply_cart.info_0": "Rechtsklick: Anbringen oder lösen.",
   "tooltip.farm_and_charm.cattlegrid.info_0": "Ermöglicht Spielern das Überqueren und blockiert Nutztiere.",
   "tooltip.farm_and_charm.fertilized_farmland.info_0": "Fördert gelegentlich das Wachstum gepflanzter Nutzpflanzen.",
   "tooltip.farm_and_charm.water_trough.info_0": "Speichert Wasser. Nutztiere können daraus trinken und die Zuchtzeit verkürzen.",
@@ -338,6 +333,17 @@
   "tooltip.farm_and_charm.feeding_trough.info_0": "Kann mit Samen befüllt werden. Nahegelegene Tiere können daraus fressen.",
   "tooltip.farm_and_charm.sturdy_ladder.info_0": "Freistehende Leiter. Kann am unteren Ende verlängert werden.",
   "tooltip.farm_and_charm.pet_bowl.info_0": "Haustiere füttern, indem Futter hineingelegt wird.",
-  "tooltip.farm_and_charm.pet_bowl.info_1": "Namensschild anbringen, um den Napf zu beschriften."
+  "tooltip.farm_and_charm.pet_bowl.info_1": "Namensschild anbringen, um den Napf zu beschriften.",
+  "block.farm_and_charm.timber_well": "Brunnen",
+  "tooltip.farm_and_charm.fertilized_soil.info_0": "Mit einer Mistgabel Kompost verbrauchen und das Wachstum in der Nähe fördern.",
+  "tooltip.farm_and_charm.fertilized_soil.info_1": "Mit einer Hacke bei voller Ladung in gedüngtes Ackerland verwandeln.",
+  "tooltip.farm_and_charm.supply_cart.title": "Wagen",
+  "tooltip.farm_and_charm.supply_cart.action_open": "Schleichen und Rechtsklick, um die Truhe zu öffnen.",
+  "tooltip.farm_and_charm.plow_cart.title": "Pflug",
+  "tooltip.farm_and_charm.plow_cart.action_toggle": "Schleichen und Rechtsklick, um den Pflug zu aktivieren oder zu deaktivieren.",
+  "tooltip.farm_and_charm.cart.action_attach_self": "Rechtsklick, um den Pflug zu ziehen.",
+  "tooltip.farm_and_charm.cart.action_detach": "Schleichen und Rechtsklick, um ihn zu abzustellen.",
+  "tooltip.farm_and_charm.cart.attach_horse": "Rechtsklick auf ein gezähmtes Pferd oder einen Esel, um ihn anzuhängen.",
+  "tooltip.farm_and_charm.cart.while_pulling": "Während des Ziehens:"
 }
 

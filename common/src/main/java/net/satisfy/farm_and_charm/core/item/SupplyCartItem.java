@@ -1,12 +1,8 @@
 package net.satisfy.farm_and_charm.core.item;
 
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 
@@ -23,14 +19,14 @@ public class SupplyCartItem extends AbstractCartItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+    protected String getCartTitleKey() {
+        return "tooltip.farm_and_charm.supply_cart.title";
+    }
 
-        int earthy = 0xFFD966;
-
-        if (Screen.hasShiftDown()) {
-            tooltipComponents.add(Component.translatable("tooltip.farm_and_charm.supply_cart.info_0")
-                    .withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
-        }
+    @Override
+    protected void appendShiftDetails(List<Component> tooltipComponents, int earthy) {
+        tooltipComponents.add(Component.translatable("tooltip.farm_and_charm.cart.attach_horse").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
+        tooltipComponents.add(Component.empty());
+        tooltipComponents.add(Component.translatable("tooltip.farm_and_charm.supply_cart.action_open").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
     }
 }

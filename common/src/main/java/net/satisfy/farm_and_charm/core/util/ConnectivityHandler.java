@@ -15,17 +15,18 @@ public class ConnectivityHandler {
 
     public static <T extends BlockEntity & IMultiBlockEntityContainer> void formMulti(T be) {
         SearchCache<T> cache = new SearchCache<>();
-        List<T> frontier = new ArrayList<>();
+        Deque<T> frontier = new ArrayDeque<>();
         frontier.add(be);
         formMulti(be.getType(), be.getLevel(), cache, frontier);
     }
 
     private static <T extends BlockEntity & IMultiBlockEntityContainer> void formMulti(BlockEntityType<?> type,
-                                                                                       BlockGetter level, SearchCache<T> cache, List<T> frontier) {
+                                                                                       BlockGetter level, SearchCache<T> cache, Deque<T> frontier) {
         PriorityQueue<Pair<Integer, T>> creationQueue = makeCreationQueue();
         Set<BlockPos> visited = new HashSet<>();
-        Direction.Axis mainAxis = frontier.get(0)
-                .getMainConnectionAxis();
+        T first = frontier.peekFirst();
+        assert first != null;
+        Direction.Axis mainAxis = first.getMainConnectionAxis();
 
         int minX = (mainAxis == Direction.Axis.Y ? Integer.MAX_VALUE : Integer.MIN_VALUE);
         int minY = (mainAxis != Direction.Axis.Y ? Integer.MAX_VALUE : Integer.MIN_VALUE);
@@ -38,17 +39,14 @@ public class ConnectivityHandler {
             minZ = Math.min(pos.getZ(), minZ);
         }
         if (mainAxis == Direction.Axis.Y)
-            minX -= frontier.get(0)
-                    .getMaxWidth();
+            minX -= first.getMaxWidth();
         if (mainAxis != Direction.Axis.Y)
-            minY -= frontier.get(0)
-                    .getMaxWidth();
+            minY -= first.getMaxWidth();
         if (mainAxis == Direction.Axis.Y)
-            minZ -= frontier.get(0)
-                    .getMaxWidth();
+            minZ -= first.getMaxWidth();
 
         while (!frontier.isEmpty()) {
-            T part = frontier.remove(0);
+            T part = frontier.pollFirst();
             BlockPos partPos = part.getBlockPos();
             if (visited.contains(partPos))
                 continue;
@@ -73,7 +71,7 @@ public class ConnectivityHandler {
                     continue;
                 if (nextBe.isRemoved())
                     continue;
-                frontier.add(nextBe);
+                frontier.addLast(nextBe);
             }
         }
         visited.clear();
@@ -89,8 +87,7 @@ public class ConnectivityHandler {
         }
     }
 
-    private static <T extends BlockEntity & IMultiBlockEntityContainer> int tryToFormNewMulti(T be, SearchCache<T> cache,
-                                                                                              boolean simulate) {
+    private static <T extends BlockEntity & IMultiBlockEntityContainer> int tryToFormNewMulti(T be, SearchCache<T> cache, boolean simulate) {
         int bestWidth = 1;
         int bestAmount = -1;
         if (!be.isController())
@@ -121,8 +118,7 @@ public class ConnectivityHandler {
         return bestAmount;
     }
 
-    private static <T extends BlockEntity & IMultiBlockEntityContainer> int tryToFormNewMultiOfWidth(T be, int width,
-                                                                                                     SearchCache<T> cache, boolean simulate) {
+    private static <T extends BlockEntity & IMultiBlockEntityContainer> int tryToFormNewMultiOfWidth(T be, int width, SearchCache<T> cache, boolean simulate) {
         int amount = 0;
         int height = 0;
         BlockEntityType<?> type = be.getType();
@@ -229,8 +225,7 @@ public class ConnectivityHandler {
         splitMultiAndInvalidate(be, null);
     }
 
-    private static <T extends BlockEntity & IMultiBlockEntityContainer> void splitMultiAndInvalidate(T be,
-                                                                                                     @Nullable SearchCache<T> cache) {
+    private static <T extends BlockEntity & IMultiBlockEntityContainer> void splitMultiAndInvalidate(T be, @Nullable SearchCache<T> cache) {
         Level level = be.getLevel();
         if (level == null)
             return;
@@ -276,12 +271,11 @@ public class ConnectivityHandler {
     }
 
     private static <T extends BlockEntity & IMultiBlockEntityContainer> PriorityQueue<Pair<Integer, T>> makeCreationQueue() {
-        return new PriorityQueue<>((one, two) -> two.getFirst() - one.getFirst());
+        return new PriorityQueue<>((one, two) -> Integer.compare(two.getFirst(), one.getFirst()));
     }
 
     @Nullable
-    public static <T extends BlockEntity & IMultiBlockEntityContainer> T partAt(BlockEntityType<?> type, BlockGetter level,
-                                                                                BlockPos pos) {
+    public static <T extends BlockEntity & IMultiBlockEntityContainer> T partAt(BlockEntityType<?> type, BlockGetter level, BlockPos pos) {
         BlockEntity be = level.getBlockEntity(pos);
         if (be != null && be.getType() == type && !be.isRemoved())
             return checked(be);
@@ -289,8 +283,7 @@ public class ConnectivityHandler {
     }
 
     @SuppressWarnings("unused")
-    public static <T extends BlockEntity & IMultiBlockEntityContainer> boolean isConnected(BlockGetter level, BlockPos pos,
-                                                                                           BlockPos other) {
+    public static <T extends BlockEntity & IMultiBlockEntityContainer> boolean isConnected(BlockGetter level, BlockPos pos, BlockPos other) {
         T one = checked(level.getBlockEntity(pos));
         T two = checked(level.getBlockEntity(other));
         if (one == null || two == null)

@@ -39,20 +39,33 @@ public abstract class AbstractCartItem extends Item {
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
+    protected String getCartTitleKey() {
+        return "tooltip.farm_and_charm.cart.title";
+    }
+
+    protected void appendShiftDetails(List<Component> tooltipComponents, int earthy) {
+    }
+
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         int earthy = 0xFFD966;
         int gold = 0xFFD700;
 
-        tooltipComponents.add(Component.translatable("tooltip.farm_and_charm.canbeplaced")
-                .withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
         tooltipComponents.add(Component.empty());
 
         if (!Screen.hasShiftDown()) {
             Component key = Component.literal("[SHIFT]").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(gold)));
-            tooltipComponents.add(Component.translatable("tooltip.farm_and_charm.tooltip_information.hold", key)
-                    .withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
+            tooltipComponents.add(Component.translatable("tooltip.farm_and_charm.tooltip_information.hold", key).withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
+            return;
         }
+
+        tooltipComponents.add(Component.translatable(getCartTitleKey()).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+        tooltipComponents.add(Component.translatable("tooltip.farm_and_charm.cart.action_attach_self").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
+        tooltipComponents.add(Component.translatable("tooltip.farm_and_charm.cart.action_detach").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
+        tooltipComponents.add(Component.empty());
+        tooltipComponents.add(Component.translatable("tooltip.farm_and_charm.cart.while_pulling").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
+        appendShiftDetails(tooltipComponents, earthy);
 
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }

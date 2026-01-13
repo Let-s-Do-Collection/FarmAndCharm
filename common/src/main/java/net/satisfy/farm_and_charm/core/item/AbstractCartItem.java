@@ -51,7 +51,7 @@ public abstract class AbstractCartItem extends Item {
         int earthy = 0xFFD966;
         int gold = 0xFFD700;
 
-        tooltipComponents.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.GRAY));
         tooltipComponents.add(Component.empty());
 
         if (!Screen.hasShiftDown()) {

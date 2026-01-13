@@ -344,6 +344,8 @@
   "tooltip.farm_and_charm.cart.action_attach_self": "Rechtsklick, um den Pflug zu ziehen.",
   "tooltip.farm_and_charm.cart.action_detach": "Schleichen und Rechtsklick, um ihn zu abzustellen.",
   "tooltip.farm_and_charm.cart.attach_horse": "Rechtsklick auf ein gezähmtes Pferd oder einen Esel, um ihn anzuhängen.",
-  "tooltip.farm_and_charm.cart.while_pulling": "Während des Ziehens:"
+  "tooltip.farm_and_charm.cart.while_pulling": "Während des Ziehens:",
+  "tooltip.farm_and_charm.sink.info_0": "Rechtsklicken, um Wasser einzufüllen.",
+  "tooltip.farm_and_charm.sink.info_1": "Wenn gefüllt, mit Eimer benutzen, um Wasser zu entnehmen."
 }
 

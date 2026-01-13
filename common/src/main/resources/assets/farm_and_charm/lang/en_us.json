@@ -344,5 +344,7 @@
   "tooltip.farm_and_charm.cart.action_attach_self": "Right-Click to attach to yourself.",
   "tooltip.farm_and_charm.cart.action_detach": "Sneak and Right-Click to detach.",
   "tooltip.farm_and_charm.cart.attach_horse": "Right-Click a tamed Horse or Donkey to attach.",
-  "tooltip.farm_and_charm.cart.while_pulling": "While pulling:"
+  "tooltip.farm_and_charm.cart.while_pulling": "While pulling:",
+  "tooltip.farm_and_charm.sink.info_0": "Right-click to fill with Water.",
+  "tooltip.farm_and_charm.sink.info_1": "When filled, use a Bucket to collect Water."
 }

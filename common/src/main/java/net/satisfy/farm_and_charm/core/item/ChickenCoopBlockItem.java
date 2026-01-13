@@ -54,7 +54,7 @@ public class ChickenCoopBlockItem extends BlockItem {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext ctx, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.GRAY));
         CustomData data = stack.get(DataComponents.BLOCK_ENTITY_DATA);
         if (data == null) return;
         var tag = data.copyTag();

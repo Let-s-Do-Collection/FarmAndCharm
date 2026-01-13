@@ -149,7 +149,7 @@ public class PetBowlBlock extends FacingBlock implements EntityBlock {
         int earthy = 0xFFD966;
         int gold = 0xFFD700;
 
-        list.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+        list.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.GRAY));
         list.add(Component.empty());
 
         if (Screen.hasShiftDown()) {

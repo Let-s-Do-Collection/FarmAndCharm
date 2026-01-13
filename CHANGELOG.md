@@ -5,6 +5,7 @@
 * Added a Water Trough for animals to drink from, also usable as a water source
 * Added Shift tooltips to various blocks and items for in-game information
 * Updated Scarecrow interaction: adding and removing Dungarees now works correctly with the new interaction methods
+* Added Tooltips for Teas and Pitchfork
 
 **Fixed**
 * Removed Apache Commons usage from EffectFood blocks

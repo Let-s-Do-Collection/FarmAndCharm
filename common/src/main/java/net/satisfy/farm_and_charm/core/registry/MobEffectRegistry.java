@@ -32,7 +32,6 @@ public class MobEffectRegistry {
     public static final ResourceLocation FEAST = FarmAndCharm.identifier("feast");
 
     public static void init() {
-        EFFECTS.register();
         EFFECTS.register(HORSE_FODDER, HorseFodderEffect::new);
         EFFECTS.register(DOG_FOOD, DogFoodEffect::new);
         EFFECTS.register(CLUCK, ChickenEffect::new);
@@ -42,6 +41,7 @@ public class MobEffectRegistry {
         EFFECTS.register(SUSTENANCE, SustenanceEffect::new);
         EFFECTS.register(SATIATION, SatiationEffect::new);
         EFFECTS.register(FEAST, FeastEffect::new);
+        EFFECTS.register();
     }
 
     public static Holder<MobEffect> getHolder(ResourceLocation id) {

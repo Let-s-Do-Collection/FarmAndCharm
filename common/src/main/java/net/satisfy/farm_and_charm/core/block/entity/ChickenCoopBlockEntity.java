@@ -92,8 +92,12 @@ public class ChickenCoopBlockEntity extends BlockEntity {
     public void addChicken(Chicken chicken) {
         if (this.level == null || this.level.isClientSide) return;
         if (!hasSpaceForChicken()) return;
+
+        chicken.removeAllEffects();
+
         CompoundTag tag = new CompoundTag();
         chicken.save(tag);
+
         UUID u = chicken.getUUID();
         tag.putUUID(KEY_CAPTURED_UUID, u);
         tag.remove(KEY_LEASH);
@@ -102,20 +106,24 @@ public class ChickenCoopBlockEntity extends BlockEntity {
         tag.remove(KEY_UUID_LEAST);
         tag.putInt(KEY_COOP_TIME, 200 + chicken.getRandom().nextInt(200));
         storedChickens.add(tag);
+
         boolean hadLeash = chicken.getLeashHolder() != null;
         if (hadLeash) {
             chicken.dropLeash(true, false);
             chicken.spawnAtLocation(Items.LEAD);
         }
+
         chicken.stopRiding();
         chicken.ejectPassengers();
         chicken.setNoAi(true);
         chicken.setSilent(true);
         chicken.setInvisible(true);
         chicken.discard();
+
         if (!hadLeash) {
             addEgg();
         }
+
         this.setChanged();
         this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
     }

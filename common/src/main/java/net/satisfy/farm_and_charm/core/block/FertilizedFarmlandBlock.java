@@ -48,7 +48,7 @@ public class FertilizedFarmlandBlock extends FarmBlock {
     }
 
     private void applyBonemealEffect(ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource) {
-        if (PlatformHelper.isBonemealEffectEnabled()) {
+        if (!PlatformHelper.isBonemealEffectEnabled()) {
             return;
         }
         BlockPos posAbove = blockPos.above();

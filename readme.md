@@ -12,7 +12,7 @@
 **The farm calls.**  
 Farm & Charm expands Minecraft’s farming experience with deeper agriculture, functional farm blocks, and farmhouse-style cooking. The focus lies on systems that feel integrated, purposeful, and consistent with the Let’s Do collection.
 
-Farm & Charm is the **signature mod** of Let’s Do and acts as a central foundation for farming-related mechanics.
+Farm & Charm is the signature mod of the Let’s Do food mods, serving as a central foundation for farming-related mechanics.
 
 ---
 

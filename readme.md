@@ -1,92 +1,91 @@
 <p align="center">
-  <img
-    src="https://lets-do.ch/assets/mod-logos/farm_and_charm.png"
-    width="75%"
-    alt="Farm & Charm"
-  >
+  <img src="https://lets-do.ch/assets/mod-logos/farm_and_charm.png" width="60%" alt="Farm & Charm">
 </p>
 
-## Farm & Charm  
-**Advanced Agriculture & Farmhouse Cuisine**
+<p align="center">
+  <strong>Advanced Agriculture & Farmhouse Cuisine</strong><br>
+  <em>Farming & Food Core of the Let’s Do collection</em>
+</p>
 
-**The farm calls.**  
-Farm & Charm expands Minecraft’s farming experience with deeper agriculture, functional farm blocks, and farmhouse-style cooking. The focus lies on systems that feel integrated, purposeful, and consistent with the Let’s Do collection.
+<br>
 
-Farm & Charm is the signature mod of the Let’s Do food mods, serving as a central foundation for farming-related mechanics.
+<p align="center">
+  <em>The farm calls.</em>
+</p>
 
----
+Farm & Charm expands farming by adding more steps and structure.<br>
+You prepare soil, care for crops, process ingredients, and cook proper food.<br>
+<br>
+The path from field to table becomes more defined.<br>
+Nothing happens instantly.<br>
+<br>
+Farm & Charm is the Farming & Food Core of the Let’s Do collection and serves as the foundation for related food mods.
 
-## Features
+<br><br>
 
-### Farming & Agriculture
-- Improved Farmland, Fertilized Soil, and Fertilizer with multiple applications  
-- Functional farm blocks such as Water Sprinklers, Scarecrows, and Feeding Troughs  
-- New grains and fruit varieties for expanded crop progression  
+## Working the Land
 
-### Transport & Utility
-- Carts for easier transport of items and harvests  
+- Improved Farmland and Fertilized Soil
+- Fertilizer with multiple applications
+- Water Sprinklers
+- Scarecrows
+- Feeding Troughs
+- New grains and fruit varieties
+- Practical Carts for transporting harvests
 
-### Processing & Cooking
-- A Meat Grinder for stripping logs and processing food items  
-- Cooking Pots, tea, and farmhouse-style dishes  
-- Food for players as well as chickens, wolves, and cats  
+Farming becomes something you return to over time.
 
-### Decorative Elements
-- A selection of rustic decorative blocks for farms and kitchens  
+<br>
 
----
+## From Field to Table
 
-## Compatibility
+- A Meat Grinder for processing ingredients
+- Cooking Pots for traditional farmhouse cooking
+- Tea and hearty dishes
+- Dedicated food for the animals on your farmstead
 
-Farm & Charm is compatible with the standard releases of Brewery, Bakery, and Candlelight.  
-For the most consistent experience, the dedicated compatibility versions are recommended:
+Growing, processing, and cooking belong together.
 
-- Let’s Do Brewery – Compat Version  
-- Let’s Do Bakery – Compat Version  
-- Let’s Do Candlelight – Compat Version  
+<br>
 
----
+## Decorative Elements
 
-## Final Notes
+- Rustic farm blocks
+- Cozy kitchen elements
+- Additions that are partly functional and partly atmospheric
 
-Farm, cook, and build at your own pace.  
-Farm & Charm is about meaningful systems, cohesive design, and a grounded farming experience.
+<br><br>
 
-Dedicated to MissLilitu.
+<p align="center">
+  <strong>Farm slowly.</strong><br>
+  <strong>Cook properly.</strong><br>
+  <strong>Build something that lasts.</strong>
+</p>
 
----
+<br>
+
+<p align="center">
+  <em>Dedicated to MissLilitu</em>
+</p>
+
+<br><br>
 
 ## The Let’s Do Collection
 
-Other mods from the Let’s Do collection:
-
 <p align="center">
   <a href="https://lets-do.ch/mods/" target="_blank" rel="noopener noreferrer">
-    <img
-      src="https://github.com/Let-s-Do-Collection/Let-s-Do-Collection/raw/main/LOGO.png?raw=true"
-      width="420"
-      alt="The Let’s Do Collection"
-    >
+    <img src="https://github.com/Let-s-Do-Collection/Let-s-Do-Collection/raw/main/LOGO.png?raw=true" width="420" alt="The Let’s Do Collection">
   </a>
 </p>
 
----
+<br><br>
 
 ## Support & Community
 
-Farm & Charm is part of the Let’s Do collection and grows alongside its community.  
-Whether you are here to explore, give feedback, or support future ideas, you are always welcome.
-
 <p align="center">
-  <a href="https://github.com/Let-s-Do-Collection/Let-s-Do-Collection" target="_blank" rel="noopener noreferrer">
-    <img src="https://lets-do.ch/assets/icons/ui/github.png" width="84" alt="GitHub">
-  </a>
-  &nbsp;&nbsp;&nbsp;
-  <a href="https://discord.gg/Jb2bgpYr" target="_blank" rel="noopener noreferrer">
-    <img src="https://lets-do.ch/assets/icons/ui/discord.png" width="84" alt="Discord">
-  </a>
-  &nbsp;&nbsp;&nbsp;
-  <a href="https://www.patreon.com/c/u78595058" target="_blank" rel="noopener noreferrer">
-    <img src="https://lets-do.ch/assets/icons/ui/patreon.png" width="84" alt="Patreon">
-  </a>
+  Let’s Do grows through its community.<br>
+  <br>
+  <a href="https://github.com/Let-s-Do-Collection/Let-s-Do-Collection">GitHub</a> •
+  <a href="https://discord.gg/Jb2bgpYr">Discord</a> •
+  <a href="https://www.patreon.com/c/u78595058">Patreon</a>
 </p>

@@ -8,6 +8,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
@@ -32,6 +34,10 @@ import java.util.UUID;
 public abstract class AbstractCartEntity extends Entity {
     private static final EntityDataAccessor<Float> DATA_WHEEL_ROTATION = SynchedEntityData.defineId(AbstractCartEntity.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> DATA_SPEED = SynchedEntityData.defineId(AbstractCartEntity.class, EntityDataSerializers.FLOAT);
+
+    private static final EntityDataAccessor<Integer> DATA_HURT_TIME = SynchedEntityData.defineId(AbstractCartEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> DATA_HURT_DIR = SynchedEntityData.defineId(AbstractCartEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Float> DATA_DAMAGE = SynchedEntityData.defineId(AbstractCartEntity.class, EntityDataSerializers.FLOAT);
 
     private float prevWheelRotation;
     private float wheelRotation;
@@ -67,6 +73,9 @@ public abstract class AbstractCartEntity extends Entity {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(DATA_WHEEL_ROTATION, 0.0F);
         builder.define(DATA_SPEED, 0.0F);
+        builder.define(DATA_HURT_TIME, 0);
+        builder.define(DATA_HURT_DIR, 1);
+        builder.define(DATA_DAMAGE, 0.0F);
     }
 
     @Override
@@ -79,6 +88,9 @@ public abstract class AbstractCartEntity extends Entity {
         if (compound.contains("CartSpeed")) {
             this.entityData.set(DATA_SPEED, compound.getFloat("CartSpeed"));
         }
+        if (compound.contains("CartDamage")) {
+            this.entityData.set(DATA_DAMAGE, compound.getFloat("CartDamage"));
+        }
     }
 
     @Override
@@ -87,6 +99,7 @@ public abstract class AbstractCartEntity extends Entity {
             compound.putUUID("PullingUUID", this.pullingUuid);
         }
         compound.putFloat("CartSpeed", this.entityData.get(DATA_SPEED));
+        compound.putFloat("CartDamage", this.entityData.get(DATA_DAMAGE));
     }
 
     @Override
@@ -164,6 +177,16 @@ public abstract class AbstractCartEntity extends Entity {
         this.prevWheelRotation = this.wheelRotation;
         this.wheelRotation = this.entityData.get(DATA_WHEEL_ROTATION);
 
+        int hurtTime = this.entityData.get(DATA_HURT_TIME);
+        if (hurtTime > 0) {
+            this.entityData.set(DATA_HURT_TIME, hurtTime - 1);
+        }
+
+        float damage = this.entityData.get(DATA_DAMAGE);
+        if (damage > 0.0F) {
+            this.entityData.set(DATA_DAMAGE, Math.max(damage - 1.0F, 0.0F));
+        }
+
         if (!this.isNoGravity()) {
             this.setDeltaMovement(0.0D, this.getDeltaMovement().y - 0.08D, 0.0D);
         }
@@ -190,6 +213,63 @@ public abstract class AbstractCartEntity extends Entity {
         for (Entity entity : this.level().getEntities(this, this.getBoundingBox(), EntitySelector.pushableBy(this))) {
             this.push(entity);
         }
+
+        if (!this.level().isClientSide && this.getY() < this.level().getMinBuildHeight() - 64) {
+            this.destroyCart(null);
+        }
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        if (this.isRemoved() || this.isInvulnerableTo(source)) {
+            return false;
+        }
+
+        if (!this.level().isClientSide) {
+            this.entityData.set(DATA_HURT_DIR, -this.entityData.get(DATA_HURT_DIR));
+            this.entityData.set(DATA_HURT_TIME, 10);
+
+            float newDamage = this.entityData.get(DATA_DAMAGE) + amount * 10.0F;
+            this.entityData.set(DATA_DAMAGE, newDamage);
+
+            boolean instantBreak = false;
+
+            Entity direct = source.getDirectEntity();
+            Entity attacker = source.getEntity();
+
+            if (attacker instanceof Player player && player.getAbilities().instabuild) {
+                instantBreak = true;
+            }
+
+            if (source.is(DamageTypes.FELL_OUT_OF_WORLD)) {
+                instantBreak = true;
+            }
+
+            if (instantBreak || newDamage > 40.0F) {
+                if (!(attacker instanceof Player player) || !player.getAbilities().instabuild) {
+                    this.destroyCart(source);
+                } else {
+                    this.remove(RemovalReason.KILLED);
+                }
+                return true;
+            }
+        }
+
+        return true;
+    }
+
+    protected void destroyCart(@Nullable DamageSource source) {
+        this.setPulling(null);
+
+        if (this.isVehicle()) {
+            this.ejectPassengers();
+        }
+
+        this.remove(RemovalReason.KILLED);
+
+        if (!this.level().isClientSide) {
+            this.spawnAtLocation(this.getCartItemStack().copy());
+        }
     }
 
     public @Nullable Player getCartDriver() {
@@ -214,6 +294,18 @@ public abstract class AbstractCartEntity extends Entity {
 
     public void setCartSpeed(float speed) {
         this.entityData.set(DATA_SPEED, speed);
+    }
+
+    public int getHurtTime() {
+        return this.entityData.get(DATA_HURT_TIME);
+    }
+
+    public int getHurtDir() {
+        return this.entityData.get(DATA_HURT_DIR);
+    }
+
+    public float getDamage() {
+        return this.entityData.get(DATA_DAMAGE);
     }
 
     public void pulledPostTick() {
@@ -460,4 +552,3 @@ public abstract class AbstractCartEntity extends Entity {
 
     protected abstract ItemStack getCartItemStack();
 }
-

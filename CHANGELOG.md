@@ -1,3 +1,15 @@
+[1.1.16]
+
+**Fixed**
+* Carts being indestructible
+* Also they now properly take damage and break as intended
+
+**Changed**
+* Reworked Strawberry Texture
+* Adjusted pitchfork attributes: slightly increased damage, significantly reduced attack speed
+
+***
+
 [1.1.15]
 
 **Added**

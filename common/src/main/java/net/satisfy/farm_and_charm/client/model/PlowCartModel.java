@@ -11,6 +11,7 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.util.Mth;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.core.entity.PlowCartEntity;
 
@@ -86,16 +87,28 @@ public class PlowCartModel<T extends PlowCartEntity> extends EntityModel<T> {
         }
 
         float wheelRotation = entity.getWheelRotation(partialTick);
-
         this.right_wheel.xRot = wheelRotation;
         this.left_wheel.xRot = wheelRotation;
 
         boolean plowVisible = entity.isPlowEnabled();
-
         this.plow_r1.visible = plowVisible;
         this.plow_r2.visible = plowVisible;
         this.plow_r3.visible = plowVisible;
         this.plow_r4.visible = plowVisible;
+
+        float wobbleYaw = 0.0F;
+
+        int hurtTime = entity.getHurtTime();
+        if (hurtTime > 0) {
+            float damage = Mth.clamp(entity.getDamage() / 40.0F, 0.0F, 1.0F);
+            int hurtDir = entity.getHurtDir();
+            float time = hurtTime - partialTick;
+            wobbleYaw = Mth.sin(time * 2.2F) * time * 0.004F * hurtDir * damage;
+        }
+
+        this.cart.yRot = wobbleYaw;
+        this.right_wheel.yRot = wobbleYaw;
+        this.left_wheel.yRot = wobbleYaw;
     }
 
     @Override

@@ -26,6 +26,7 @@
     "PigMixin",
     "RabbitMixin",
     "TemptGoalAccessor",
+    "VanillaFarmlandPlantingParticlesMixin",
     "WolfMixin",
     "ZombieMixin"
   ],

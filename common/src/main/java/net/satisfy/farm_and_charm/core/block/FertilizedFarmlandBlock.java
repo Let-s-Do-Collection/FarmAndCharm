@@ -2,6 +2,7 @@ package net.satisfy.farm_and_charm.core.block;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -14,7 +15,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BonemealableBlock;
+import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.FarmBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -51,6 +54,35 @@ public class FertilizedFarmlandBlock extends FarmBlock {
         }
     }
 
+    @Override
+    public void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+        super.neighborChanged(blockState, level, blockPos, neighborBlock, neighborPos, movedByPiston);
+
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        if (!neighborPos.equals(blockPos.above())) {
+            return;
+        }
+
+        BlockState stateAbove = serverLevel.getBlockState(neighborPos);
+        if (!(stateAbove.getBlock() instanceof CropBlock)) {
+            return;
+        }
+
+        RandomSource randomSource = serverLevel.random;
+
+        for (int i = 0; i < 10; i++) {
+            double offsetX = blockPos.getX() + 0.5 + (randomSource.nextDouble() - 0.5) * 0.8;
+            double offsetY = blockPos.getY() + 1.0;
+            double offsetZ = blockPos.getZ() + 0.5 + (randomSource.nextDouble() - 0.5) * 0.8;
+
+            serverLevel.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, blockState), offsetX, offsetY, offsetZ, 1, 0.0, 0.0, 0.0, 0.0
+           );
+        }
+    }
+
     private float getGrowthChance(ServerLevel serverLevel, BlockPos blockPos) {
         int lightLevel = serverLevel.getMaxLocalRawBrightness(blockPos.above());
         return lightLevel >= 10 ? 0.055f : 0.05f;
@@ -64,7 +96,7 @@ public class FertilizedFarmlandBlock extends FarmBlock {
         BlockState stateAbove = serverLevel.getBlockState(posAbove);
         if (stateAbove.getBlock() instanceof BonemealableBlock bonemealableBlock && bonemealableBlock.isValidBonemealTarget(serverLevel, posAbove, stateAbove)) {
             bonemealableBlock.performBonemeal(serverLevel, randomSource, posAbove, stateAbove);
-            serverLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER, posAbove.getX() + 0.5, posAbove.getY() + 1.0, posAbove.getZ() + 0.5, 5, 0.5, 0.5, 0.5, 0.5);
+            serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.HAPPY_VILLAGER, posAbove.getX() + 0.5, posAbove.getY() + 1.0, posAbove.getZ() + 0.5, 5, 0.5, 0.5, 0.5, 0.5);
         }
         checkAndTurnToSoil(serverLevel, blockPos, serverLevel.getBlockState(blockPos));
     }
@@ -94,5 +126,4 @@ public class FertilizedFarmlandBlock extends FarmBlock {
             ).withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
         }
     }
-
 }

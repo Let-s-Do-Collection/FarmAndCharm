@@ -1,3 +1,10 @@
+[1.1.17]
+
+**Added**
+* Planting crops on Farmland now kicks up subtle soil particles for visual feedback.
+
+***
+
 [1.1.16]
 
 **Fixed**

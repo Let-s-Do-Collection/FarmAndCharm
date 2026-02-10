@@ -379,11 +379,13 @@ public abstract class AbstractCartEntity extends Entity {
             Vec3 start = new Vec3(this.getX(), this.getY() + this.getBbHeight(), this.getZ());
             Vec3 end = new Vec3(this.pulling.getX(), this.pulling.getY() + this.pulling.getBbHeight() / 2.0F, this.pulling.getZ());
             BlockHitResult result = this.level().clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
-            return result.getType() == HitResult.Type.BLOCK;
+            if (result.getType() == HitResult.Type.BLOCK) {
+                this.setPulling(null);
+                return true;
+            }
         }
         return false;
     }
-
     protected Vec3 getRelativeTargetVec() {
         double x = this.pulling.getX() - this.getX();
         double y = this.pulling.getY() - this.getY();

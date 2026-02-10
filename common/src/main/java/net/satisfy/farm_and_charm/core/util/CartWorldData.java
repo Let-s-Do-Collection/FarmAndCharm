@@ -86,10 +86,25 @@ public class CartWorldData extends SavedData {
 
     public void preTick(ServerLevel level) {
         this.horsePreTickPositions.clear();
+
+        ArrayList<AbstractCartEntity> cartsSnapshot = new ArrayList<>(this.pulling.size());
         for (AbstractCartEntity cart : this.pulling.values()) {
+            if (cart == null) {
+                continue;
+            }
+
+            cartsSnapshot.add(cart);
+
             Entity puller = cart.getPulling();
             if (puller instanceof AbstractHorse horse) {
                 this.horsePreTickPositions.put(horse.getId(), horse.position());
+            }
+        }
+
+        for (AbstractCartEntity cart : cartsSnapshot) {
+            cart.pulledPostTick();
+            if (cart.shouldStopPulledTick()) {
+                removePullingByCart(cart);
             }
         }
     }

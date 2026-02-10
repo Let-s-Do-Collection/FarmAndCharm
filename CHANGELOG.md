@@ -1,5 +1,8 @@
 [1.1.17]
 
+**Fixed**
+* Fixed a crash that could occur when a cart got stuck while being pulled.
+
 **Added**
 * Planting crops on Farmland now kicks up subtle soil particles for visual feedback.
 

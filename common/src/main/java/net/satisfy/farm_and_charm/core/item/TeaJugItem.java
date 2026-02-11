@@ -100,4 +100,38 @@ public class TeaJugItem extends BlockItem {
         }
         return InteractionResult.PASS;
     }
+
+    @Override
+    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity consumer) {
+        ItemStack containerStack = stack.getCraftingRemainingItem();
+        if (stack.getFoodProperties(consumer) != null) {
+            super.finishUsingItem(stack, level, consumer);
+        } else {
+            Player player = consumer instanceof Player ? (Player)consumer : null;
+            if (player instanceof ServerPlayer) {
+                CriteriaTriggers.CONSUME_ITEM.trigger((ServerPlayer)player, stack);
+            }
+
+            if (player != null) {
+                player.awardStat(Stats.ITEM_USED.get(this));
+                if (!player.getAbilities().instabuild) {
+                    stack.shrink(1);
+                }
+            }
+        }
+
+        if (stack.isEmpty()) {
+            return containerStack;
+        } else {
+            if (consumer instanceof Player) {
+                Player player = (Player)consumer;
+                if (!((Player)consumer).getAbilities().instabuild && !player.getInventory().add(containerStack)) {
+                    player.drop(containerStack, false);
+                }
+            }
+
+            return stack;
+        }
+
+    }
 }

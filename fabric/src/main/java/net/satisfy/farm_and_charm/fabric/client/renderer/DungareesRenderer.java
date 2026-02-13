@@ -18,12 +18,15 @@ public class DungareesRenderer implements ArmorRenderer {
     public void render(PoseStack matrices, MultiBufferSource vertexConsumers, ItemStack stack, LivingEntity entity, EquipmentSlot slot, int light, HumanoidModel<LivingEntity> contextModel) {
         if (slot != EquipmentSlot.LEGS) return;
         if (!(stack.getItem() instanceof DungareesItem leggings)) return;
-        Model model = ArmorRegistry.getLeggingsModel(leggings, contextModel.rightLeg, contextModel.leftLeg, contextModel.body);
+
+        Model model = ArmorRegistry.getLeggingsModel(leggings, contextModel.rightLeg, contextModel.leftLeg, contextModel.body, contextModel);
+
         ResourceLocation base = leggings.getLeggingsTexture();
         String path = base.getPath();
         if (!path.startsWith("textures/")) path = "textures/" + path;
         if (!path.endsWith(".png")) path = path + ".png";
         ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(base.getNamespace(), path);
-        model.renderToBuffer(matrices, vertexConsumers.getBuffer(model.renderType(texture)), light, OverlayTexture.NO_OVERLAY);
+
+        model.renderToBuffer(matrices, vertexConsumers.getBuffer(model.renderType(texture)), light, OverlayTexture.NO_OVERLAY, -1);
     }
 }

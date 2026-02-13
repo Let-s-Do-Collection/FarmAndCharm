@@ -1,0 +1,7 @@
+{
+  "parent": "farm_and_charm:block/template_pile",
+  "textures": {
+    "0": "farm_and_charm:block/feather_pile_1",
+    "particle": "farm_and_charm:block/feather_pile_1"
+  }
+}

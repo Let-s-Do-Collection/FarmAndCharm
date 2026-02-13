@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "layers=0": {
+      "model": "farm_and_charm:block/feather_pile_0"
+    },
+    "layers=1": {
+      "model": "farm_and_charm:block/feather_pile_1"
+    },
+    "layers=2": {
+      "model": "farm_and_charm:block/feather_pile_2"
+    },
+    "layers=3": {
+      "model": "farm_and_charm:block/feather_pile_3"
+    }
+  }
+}

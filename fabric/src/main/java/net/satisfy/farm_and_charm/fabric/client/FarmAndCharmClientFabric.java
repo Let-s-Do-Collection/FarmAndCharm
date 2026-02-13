@@ -6,7 +6,8 @@ import net.satisfy.farm_and_charm.client.FarmAndCharmClient;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import net.satisfy.farm_and_charm.fabric.client.renderer.DungareesRenderer;
 
-public class FarmAndCharmClientFabric implements ClientModInitializer {
+public class
+FarmAndCharmClientFabric implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         FarmAndCharmClient.preInitClient();

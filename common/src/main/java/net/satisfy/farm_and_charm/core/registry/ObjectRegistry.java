@@ -177,7 +177,8 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Block> TRAMPLED_STABLE_FLOOR = registerWithItem("trampled_stable_floor", () -> new TrampledStableFloorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BROWN).sound(SoundType.WOOD).strength(1.2f, 2.5f)));
     public static final RegistrySupplier<Block> STRAW_STABLE_FLOOR = registerWithItem("straw_stable_floor", () -> new StrawStableFloorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_YELLOW).sound(SoundType.GRASS).strength(0.8f, 1.0f)));
     public static final RegistrySupplier<Block> TIMBER_WELL = registerWithItem("timber_well", () -> new TimberWellBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS)));
-
+    public static final RegistrySupplier<Block> WHEAT_PILE = registerWithoutItem("wheat_pile", () -> new PileBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_CARPET).sound(SoundType.GRASS).noOcclusion(), () -> Items.WHEAT));
+    public static final RegistrySupplier<Block> FEATHER_PILE = registerWithoutItem("feather_pile", () -> new PileBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.WHITE_CARPET).sound(SoundType.GRASS).noOcclusion(), () -> Items.FEATHER));
     public static void init() {
         ITEMS.register();
         BLOCKS.register();

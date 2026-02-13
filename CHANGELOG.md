@@ -1,3 +1,16 @@
+[1.1.18]
+
+**Fixed**
+* Fixed a crash that could occur when a cart got stuck while being pulled.
+* Dungarees being HUGE when placed inside AlpineWhispers / Meadows wardrobe
+
+**Added**
+* Placeable Wheat Piles 
+* Placeable Feather Piles 
+
+***
+
+
 [1.1.17]
 
 **Fixed**

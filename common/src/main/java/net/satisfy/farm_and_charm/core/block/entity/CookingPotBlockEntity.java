@@ -170,6 +170,10 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
         return outputStack;
     }
 
+    public boolean hasOutputItem() {
+        return !getItem(OUTPUT_SLOT).isEmpty();
+    }
+
     public void tick(Level world, BlockPos pos, BlockState state, CookingPotBlockEntity blockEntity) {
         if (world.isClientSide()) return;
         boolean wasBeingBurned = isBeingBurned;

@@ -2,6 +2,7 @@ package net.satisfy.farm_and_charm.client;
 
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
+import dev.architectury.registry.client.particle.ParticleProviderRegistry;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import dev.architectury.registry.client.rendering.ColorHandlerRegistry;
 import dev.architectury.registry.client.rendering.RenderTypeRegistry;
@@ -16,12 +17,16 @@ import net.satisfy.farm_and_charm.client.gui.PetBowlEditGui;
 import net.satisfy.farm_and_charm.client.gui.RoasterGui;
 import net.satisfy.farm_and_charm.client.gui.StoveGui;
 import net.satisfy.farm_and_charm.client.model.*;
+import net.satisfy.farm_and_charm.client.particle.particle.SoupBubbleParticle;
+import net.satisfy.farm_and_charm.client.particle.particle.SoupCookingBubbleParticle;
+import net.satisfy.farm_and_charm.client.particle.particle.SoupSteamParticle;
 import net.satisfy.farm_and_charm.client.renderer.block.*;
 import net.satisfy.farm_and_charm.client.renderer.entity.ChairRenderer;
 import net.satisfy.farm_and_charm.client.renderer.entity.PlowCartRenderer;
 import net.satisfy.farm_and_charm.client.renderer.entity.SupplyCartRenderer;
 import net.satisfy.farm_and_charm.core.block.entity.PetBowlBlockEntity;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
+import net.satisfy.farm_and_charm.core.registry.ParticleTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.StorageTypeRegistry;
 
@@ -37,8 +42,13 @@ public class FarmAndCharmClient {
                 WILD_TOMATOES.get(), WILD_STRAWBERRIES.get(), STUFFED_RABBIT.get(), STUFFED_CHICKEN.get(), FARMERS_BREAKFAST.get(),
                 ROASTED_CORN_BLOCK.get(), OAT_PANCAKE_BLOCK.get(), CORN_CROP.get(), OAT_CROP.get(), BARLEY_CROP.get(), LETTUCE_CROP.get(),
                 ONION_CROP.get(), TOMATO_CROP.get(), STRAWBERRY_CROP.get(), COOKING_POT.get(), ROASTER.get(), TOMATO_CROP_BODY.get(),
-                CHICKEN_NEST.get(), STURDY_LADDER.get(), IRON_DIVIDER.get(), CHICKEN_FENCE.get(), CATTLEGRID.get()
+                CHICKEN_NEST.get(), STURDY_LADDER.get(), IRON_DIVIDER.get(), CHICKEN_FENCE.get(), CATTLEGRID.get(), FEATHER_PILE.get(),
+                WHEAT_PILE.get()
         );
+
+        ParticleProviderRegistry.register(ParticleTypeRegistry.SOUP_BUBBLE.get(), SoupBubbleParticle.Provider::new);
+        ParticleProviderRegistry.register(ParticleTypeRegistry.SOUP_STEAM.get(), SoupSteamParticle.Provider::new);
+        ParticleProviderRegistry.register(ParticleTypeRegistry.SOUP_COOKING_BUBBLE.get(), SoupCookingBubbleParticle.Provider::new);
 
         ColorHandlerRegistry.registerBlockColors((state, world, pos, tintIndex) -> {
             if (world == null || pos == null) {

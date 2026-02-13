@@ -5,6 +5,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import net.satisfy.farm_and_charm.FarmAndCharm;
@@ -12,7 +13,11 @@ import net.satisfy.farm_and_charm.client.FarmAndCharmClient;
 import net.satisfy.farm_and_charm.client.gui.CookingPotGui;
 import net.satisfy.farm_and_charm.client.gui.RoasterGui;
 import net.satisfy.farm_and_charm.client.gui.StoveGui;
+import net.satisfy.farm_and_charm.client.particle.particle.SoupBubbleParticle;
+import net.satisfy.farm_and_charm.client.particle.particle.SoupCookingBubbleParticle;
+import net.satisfy.farm_and_charm.client.particle.particle.SoupSteamParticle;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
+import net.satisfy.farm_and_charm.core.registry.ParticleTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
 import net.satisfy.farm_and_charm.neoforge.client.extensions.DungareesLeggingsExtensions;
 
@@ -28,6 +33,13 @@ public class FarmAndCharmClientForge {
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         FarmAndCharmClient.onInitializeClient();
+    }
+
+    @SubscribeEvent
+    public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(ParticleTypeRegistry.SOUP_BUBBLE.get(), SoupBubbleParticle.Provider::new);
+        event.registerSpriteSet(ParticleTypeRegistry.SOUP_STEAM.get(), SoupSteamParticle.Provider::new);
+        event.registerSpriteSet(ParticleTypeRegistry.SOUP_COOKING_BUBBLE.get(), SoupCookingBubbleParticle.Provider::new);
     }
 
     @SubscribeEvent

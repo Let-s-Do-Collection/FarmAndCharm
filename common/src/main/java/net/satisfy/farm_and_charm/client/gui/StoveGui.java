@@ -25,8 +25,6 @@ public class StoveGui extends AbstractContainerScreen<StoveGuiHandler> {
 
     @Override
     protected void init() {
-        this.titleLabelX += 2;
-        this.titleLabelY += -3;
         super.init();
     }
 

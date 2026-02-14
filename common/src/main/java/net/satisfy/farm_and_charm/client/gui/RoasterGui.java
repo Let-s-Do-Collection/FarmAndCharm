@@ -31,7 +31,6 @@ public class RoasterGui extends AbstractContainerScreen<RoasterGuiHandler> {
     @Override
     protected void init() {
         super.init();
-        this.titleLabelX += 20;
     }
 
     @Override

@@ -31,7 +31,6 @@ public class CookingPotGui extends AbstractContainerScreen<CookingPotGuiHandler>
     @Override
     protected void init() {
         super.init();
-        this.titleLabelX += 20;
     }
 
     @Override

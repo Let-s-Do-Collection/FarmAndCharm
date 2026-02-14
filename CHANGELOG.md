@@ -6,6 +6,7 @@
 * Scarecrow growth exploit caused by rapid breaking and replacing
 * Mincer softlock when inserting unsupported items such as shields or interacting rapidly
 * Containers such as bottles, bowls and buckets not being returned after cooking
+* Title lables not being consistent when opening GUIs
 
 **Added**
 * Placeable Wheat Piles 

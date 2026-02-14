@@ -2,7 +2,11 @@ package net.satisfy.farm_and_charm.core.block.entity;
 
 import com.mojang.datafixers.util.Pair;
 import dev.architectury.registry.fuel.FuelRegistry;
-import net.minecraft.core.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -42,8 +46,11 @@ import net.satisfy.farm_and_charm.core.world.ImplementedInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<StoveBlockEntity>, ImplementedInventory, MenuProvider {
 
@@ -216,7 +223,6 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         return output.getCount() + expected.getCount() <= output.getMaxStackSize();
     }
 
-
     private StoveRecipe getRecipe(List<RecipeHolder<StoveRecipe>> recipes, NonNullList<ItemStack> inventory) {
         for (RecipeHolder<StoveRecipe> holder : recipes) {
             StoveRecipe r = holder.value();
@@ -266,46 +272,81 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
 
     protected void craft(StoveRecipe recipe, RegistryAccess access) {
         if (recipe == null || !canCraft(recipe, access)) return;
+
         ItemStack recipeOutput = generateOutputItem(recipe, access);
         ItemStack outputSlotStack = this.getItem(0);
+
         if (outputSlotStack.isEmpty()) {
             setItem(0, recipeOutput);
         } else if (ItemStack.isSameItemSameComponents(outputSlotStack, recipeOutput)) {
             outputSlotStack.grow(recipeOutput.getCount());
         }
-        for (int slot : INGREDIENT_SLOTS) {
-            ItemStack stackInSlot = this.getItem(slot);
-            for (Ingredient ingredient : recipe.getIngredients()) {
-                if (ingredient.test(stackInSlot)) {
-                    ItemStack remainderStack = getRemainderItem(stackInSlot);
-                    stackInSlot.shrink(1);
-                    if (!remainderStack.isEmpty()) {
-                        if (stackInSlot.isEmpty()) {
-                            setItem(slot, remainderStack);
-                        } else {
-                            boolean added = false;
-                            for (int i : INGREDIENT_SLOTS) {
-                                ItemStack is = this.getItem(i);
-                                if (is.isEmpty()) {
-                                    this.setItem(i, remainderStack.copy());
-                                    added = true;
-                                    break;
-                                } else if (ItemStack.isSameItemSameComponents(is, remainderStack) && is.getCount() < is.getMaxStackSize()) {
-                                    is.grow(1);
-                                    added = true;
-                                    break;
-                                }
-                            }
-                            if (!added) {
-                                assert this.level != null;
+
+        for (Ingredient ingredient : recipe.getIngredients()) {
+            for (int slot : INGREDIENT_SLOTS) {
+                ItemStack stackInSlot = this.getItem(slot);
+                if (stackInSlot.isEmpty()) continue;
+                if (!ingredient.test(stackInSlot)) continue;
+
+                ItemStack remainderStack = getRemainderItem(stackInSlot);
+                stackInSlot.shrink(1);
+
+                if (!remainderStack.isEmpty()) {
+                    if (stackInSlot.isEmpty()) {
+                        setItem(slot, remainderStack);
+                    } else {
+                        if (!tryInsertRemainder(remainderStack)) {
+                            if (this.level != null) {
                                 Block.popResource(this.level, this.worldPosition, remainderStack);
                             }
                         }
                     }
-                    break;
+                }
+                break;
+            }
+        }
+
+        setChanged();
+    }
+
+    private boolean tryInsertRemainder(ItemStack remainderStack) {
+        if (remainderStack.isEmpty()) return true;
+
+        for (int slot : INGREDIENT_SLOTS) {
+            ItemStack existingStack = getItem(slot);
+            if (existingStack.isEmpty()) {
+                setItem(slot, remainderStack);
+                return true;
+            }
+            if (ItemStack.isSameItemSameComponents(existingStack, remainderStack) && existingStack.getCount() < existingStack.getMaxStackSize()) {
+                int transferableAmount = Math.min(remainderStack.getCount(), existingStack.getMaxStackSize() - existingStack.getCount());
+                if (transferableAmount > 0) {
+                    existingStack.grow(transferableAmount);
+                    remainderStack.shrink(transferableAmount);
+                    if (remainderStack.isEmpty()) {
+                        setChanged();
+                        return true;
+                    }
                 }
             }
         }
+
+        ItemStack fuelSlotStack = getItem(4);
+        if (fuelSlotStack.isEmpty()) {
+            setItem(4, remainderStack);
+            return true;
+        }
+        if (ItemStack.isSameItemSameComponents(fuelSlotStack, remainderStack) && fuelSlotStack.getCount() < fuelSlotStack.getMaxStackSize()) {
+            int transferableAmount = Math.min(remainderStack.getCount(), fuelSlotStack.getMaxStackSize() - fuelSlotStack.getCount());
+            if (transferableAmount > 0) {
+                fuelSlotStack.grow(transferableAmount);
+                remainderStack.shrink(transferableAmount);
+                setChanged();
+                return remainderStack.isEmpty();
+            }
+        }
+
+        return remainderStack.isEmpty();
     }
 
     private ItemStack generateOutputItem(StoveRecipe recipe, RegistryAccess access) {
@@ -335,12 +376,10 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         return ItemStack.EMPTY;
     }
 
-
     @Override
     public NonNullList<ItemStack> getItems() {
         return inventory;
     }
-
 
     @Override
     public void setItem(int slot, ItemStack stack) {
@@ -373,7 +412,6 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
             return player.distanceToSqr((double) this.worldPosition.getX() + 0.5, (double) this.worldPosition.getY() + 0.5, (double) this.worldPosition.getZ() + 0.5) <= 64.0;
         }
     }
-
 
     @Override
     public @NotNull Component getDisplayName() {

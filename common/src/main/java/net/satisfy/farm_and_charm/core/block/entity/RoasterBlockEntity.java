@@ -1,7 +1,11 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.core.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -60,12 +64,14 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
                 default -> 0;
             };
         }
+
         public void set(int index, int value) {
             switch (index) {
                 case 0 -> roastingTime = value;
                 case 1 -> isBeingBurned = value != 0;
             }
         }
+
         public int getCount() {
             return 2;
         }
@@ -131,30 +137,90 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
 
     private void craft(Recipe<?> recipe, RegistryAccess access) {
         if (!canCraft(recipe, access)) return;
+
         ItemStack recipeOutput = generateOutputItem(recipe, access);
         ItemStack outputSlotStack = getItem(OUTPUT_SLOT);
+
         if (outputSlotStack.isEmpty()) {
             setItem(OUTPUT_SLOT, recipeOutput);
         } else {
             outputSlotStack.grow(recipeOutput.getCount());
         }
+
         recipe.getIngredients().forEach(ingredient -> {
             for (int slot = FIRST_INGREDIENT_SLOT; slot <= LAST_INGREDIENT_SLOT; slot++) {
                 ItemStack stack = getItem(slot);
                 if (ingredient.test(stack)) {
                     ItemStack remainderStack = stack.getItem().hasCraftingRemainingItem() ? new ItemStack(Objects.requireNonNull(stack.getItem().getCraftingRemainingItem())) : ItemStack.EMPTY;
                     stack.shrink(1);
-                    if (!remainderStack.isEmpty()) setItem(slot, remainderStack);
+                    if (!remainderStack.isEmpty()) {
+                        if (stack.isEmpty()) {
+                            setItem(slot, remainderStack);
+                        } else {
+                            tryInsertRemainder(remainderStack);
+                        }
+                    }
                     break;
                 }
             }
         });
+
         ItemStack containerSlotStack = getItem(CONTAINER_SLOT);
-        if (!containerSlotStack.isEmpty()) {
+        if (!containerSlotStack.isEmpty() && containerSlotStack.getItem().hasCraftingRemainingItem()) {
+            ItemStack containerRemainder = new ItemStack(Objects.requireNonNull(containerSlotStack.getItem().getCraftingRemainingItem()));
             containerSlotStack.shrink(1);
-            if (containerSlotStack.isEmpty()) setItem(CONTAINER_SLOT, ItemStack.EMPTY);
+            if (containerSlotStack.isEmpty()) {
+                setItem(CONTAINER_SLOT, containerRemainder);
+            } else {
+                if (!tryInsertRemainder(containerRemainder)) {
+                    if (level != null) {
+                        Block.popResource(level, worldPosition, containerRemainder);
+                    }
+                }
+            }
         }
+
         setChanged();
+    }
+
+    private boolean tryInsertRemainder(ItemStack remainderStack) {
+        if (remainderStack.isEmpty()) return true;
+
+        for (int slot = FIRST_INGREDIENT_SLOT; slot <= LAST_INGREDIENT_SLOT; slot++) {
+            ItemStack existingStack = getItem(slot);
+            if (existingStack.isEmpty()) {
+                setItem(slot, remainderStack);
+                return true;
+            }
+            if (ItemStack.isSameItemSameComponents(existingStack, remainderStack) && existingStack.getCount() < existingStack.getMaxStackSize()) {
+                int transferableAmount = Math.min(remainderStack.getCount(), existingStack.getMaxStackSize() - existingStack.getCount());
+                if (transferableAmount > 0) {
+                    existingStack.grow(transferableAmount);
+                    remainderStack.shrink(transferableAmount);
+                    if (remainderStack.isEmpty()) {
+                        setChanged();
+                        return true;
+                    }
+                }
+            }
+        }
+
+        ItemStack containerSlotStack = getItem(CONTAINER_SLOT);
+        if (containerSlotStack.isEmpty()) {
+            setItem(CONTAINER_SLOT, remainderStack);
+            return true;
+        }
+        if (ItemStack.isSameItemSameComponents(containerSlotStack, remainderStack) && containerSlotStack.getCount() < containerSlotStack.getMaxStackSize()) {
+            int transferableAmount = Math.min(remainderStack.getCount(), containerSlotStack.getMaxStackSize() - containerSlotStack.getCount());
+            if (transferableAmount > 0) {
+                containerSlotStack.grow(transferableAmount);
+                remainderStack.shrink(transferableAmount);
+                setChanged();
+                return remainderStack.isEmpty();
+            }
+        }
+
+        return remainderStack.isEmpty();
     }
 
     private ItemStack generateOutputItem(Recipe<?> recipe, RegistryAccess access) {

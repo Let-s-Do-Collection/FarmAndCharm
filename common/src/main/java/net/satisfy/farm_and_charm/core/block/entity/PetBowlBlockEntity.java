@@ -217,7 +217,7 @@ public class PetBowlBlockEntity extends BlockEntity implements WorldlyContainer,
     }
 
     @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.Provider provider) {
         CompoundTag tag =  super.getUpdateTag(provider);
         saveAdditional(tag, provider);
         return tag;

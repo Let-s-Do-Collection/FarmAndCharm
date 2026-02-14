@@ -1,4 +1,4 @@
-package net.satisfy.farm_and_charm.client.particle.particle;
+package net.satisfy.farm_and_charm.client.particle;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;

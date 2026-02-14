@@ -3,6 +3,8 @@
 **Fixed**
 * Fixed a crash that could occur when a cart got stuck while being pulled.
 * Dungarees being HUGE when placed inside AlpineWhispers / Meadows wardrobe
+* Fixed Scarecrow growth exploit caused by rapid breaking and replacing.
+* Fixed Mincer softlock when inserting unsupported items (e.g. shields) or interacting rapidly
 
 **Added**
 * Placeable Wheat Piles 

@@ -265,7 +265,7 @@ public class ObjectRegistry {
 
     private static RegistrySupplier<Block> registerTea(String name, Supplier<Block> blockSupplier, Holder<MobEffect> effect, int duration) {
         RegistrySupplier<Block> toReturn = registerWithoutItem(name, blockSupplier);
-        registerItem(name, () -> new TeaJugItem(toReturn.get(), getSettings().food(teaFoodComponent(effect, duration))));
+        registerItem(name, () -> new TeaJugItem(toReturn.get(), getSettings().food(teaFoodComponent(effect, duration)).craftRemainder(Items.GLASS_BOTTLE)));
         return toReturn;
     }
 

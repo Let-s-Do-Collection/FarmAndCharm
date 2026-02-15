@@ -10,6 +10,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectUtil;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
@@ -20,6 +21,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
@@ -102,36 +104,27 @@ public class TeaJugItem extends BlockItem {
     }
 
     @Override
-    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity consumer) {
-        ItemStack containerStack = stack.getCraftingRemainingItem();
-        if (stack.getFoodProperties(consumer) != null) {
-            super.finishUsingItem(stack, level, consumer);
-        } else {
-            Player player = consumer instanceof Player ? (Player)consumer : null;
-            if (player instanceof ServerPlayer) {
-                CriteriaTriggers.CONSUME_ITEM.trigger((ServerPlayer)player, stack);
-            }
-
-            if (player != null) {
-                player.awardStat(Stats.ITEM_USED.get(this));
-                if (!player.getAbilities().instabuild) {
-                    stack.shrink(1);
-                }
-            }
+    public @NotNull ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity consumer) {
+        ItemStack containerStack = ItemStack.EMPTY;
+        if (stack.getItem().hasCraftingRemainingItem()) {
+            assert stack.getItem().getCraftingRemainingItem() != null;
+            containerStack = new ItemStack(stack.getItem().getCraftingRemainingItem());
         }
 
-        if (stack.isEmpty()) {
-            return containerStack;
-        } else {
-            if (consumer instanceof Player) {
-                Player player = (Player)consumer;
-                if (!((Player)consumer).getAbilities().instabuild && !player.getInventory().add(containerStack)) {
+        super.finishUsingItem(stack, level, consumer);
+
+        if (!containerStack.isEmpty()) {
+            if (stack.isEmpty()) {
+                return containerStack;
+            }
+
+            if (consumer instanceof Player player && !player.getAbilities().instabuild) {
+                if (!player.getInventory().add(containerStack)) {
                     player.drop(containerStack, false);
                 }
             }
-
-            return stack;
         }
 
+        return stack;
     }
 }

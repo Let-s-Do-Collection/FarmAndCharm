@@ -1,3 +1,19 @@
+[1.1.19]
+
+**Fixed**
+* TeaJugItem not returning empty container on use (thanks to KawaiShio)
+* CraftingBowl not properly resetting after taking out ingredients or the result item, preventing the next batch from being stirred without breaking the bowl (thanks to khoidauminh)
+* MincerBlock not correctly resetting its state after processing, which could interrupt further usage
+
+**Added**
+* Added zh_tw translation (thanks to cherrypuff1120)
+
+**Changed**
+* TeaCupItems are now always edible
+
+***
+
+
 [1.1.18]
 
 **Fixed**

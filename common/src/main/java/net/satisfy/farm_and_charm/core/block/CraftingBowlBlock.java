@@ -112,6 +112,7 @@ public class CraftingBowlBlock extends BaseEntityBlock {
                     bowl.setItem(i, ItemStack.EMPTY);
                 }
             }
+            level.setBlock(pos, state.setValue(STIRRED, 0), 3);
             bowl.setChanged();
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
@@ -134,6 +135,7 @@ public class CraftingBowlBlock extends BaseEntityBlock {
                     player.getInventory().add(out.copy());
                     bowl.setItem(4, ItemStack.EMPTY);
                     level.setBlock(pos, state.setValue(STIRRED, 0), 3);
+                    bowl.setChanged();
                     return InteractionResult.SUCCESS;
                 }
             }

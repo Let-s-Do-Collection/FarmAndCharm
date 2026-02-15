@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://lets-do.ch/assets/mod-logos/farm_and_charm.png" width="60%" alt="Farm & Charm">
+  <img src="https://lets-do.ch/assets/mod-logos/farm_and_charm.webp" width="60%" alt="Farm & Charm">
 </p>
 
 <p align="center">

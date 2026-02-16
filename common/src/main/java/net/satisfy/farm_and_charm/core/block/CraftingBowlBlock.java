@@ -98,13 +98,12 @@ public class CraftingBowlBlock extends BaseEntityBlock {
         if (!(be instanceof CraftingBowlBlockEntity bowl)) return InteractionResult.PASS;
 
         ItemStack main = player.getMainHandItem();
-        ItemStack off = player.getOffhandItem();
-        boolean anyHeld = !main.isEmpty() || !off.isEmpty();
+        boolean anyHeld = !main.isEmpty();
 
         int stirring = state.getValue(STIRRING);
         int stirred = state.getValue(STIRRED);
 
-        if (player.isShiftKeyDown() && !anyHeld) {
+        if (player.isShiftKeyDown()) {
             for (int i = 0; i < bowl.getContainerSize(); i++) {
                 ItemStack stack = bowl.getItem(i);
                 if (!stack.isEmpty()) {
@@ -118,12 +117,11 @@ public class CraftingBowlBlock extends BaseEntityBlock {
         }
 
         if (anyHeld && stirring == 0) {
-            ItemStack src = !main.isEmpty() ? main : off;
             if (bowl.canAddItem()) {
-                ItemStack one = src.copy();
+                ItemStack one = main.copy();
                 one.setCount(1);
                 bowl.addItemStack(one);
-                if (!player.isCreative()) src.shrink(1);
+                if (!player.isCreative()) main.shrink(1);
                 return InteractionResult.SUCCESS;
             }
         }
@@ -156,7 +154,7 @@ public class CraftingBowlBlock extends BaseEntityBlock {
             }
         }
 
-        return InteractionResult.PASS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override

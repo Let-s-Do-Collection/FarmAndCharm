@@ -122,10 +122,7 @@ public class MincerBlock extends BaseEntityBlock {
             return InteractionResult.PASS;
         }
 
-        ItemStack offhandStack = player.getItemInHand(InteractionHand.OFF_HAND);
-
-        InteractionHand usedHand = !offhandStack.isEmpty() ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
-        ItemStack playerStack = player.getItemInHand(usedHand);
+        ItemStack playerStack = player.getItemInHand(InteractionHand.MAIN_HAND);
 
         if (player.isShiftKeyDown()) {
             if (!level.isClientSide) {
@@ -146,7 +143,7 @@ public class MincerBlock extends BaseEntityBlock {
 
         if (!playerStack.isEmpty() && crank == 0) {
             if (!mincer.hasValidRecipe(level, playerStack)) {
-                return InteractionResult.PASS;
+                return InteractionResult.SUCCESS;
             }
 
             if (player.isCreative()) {
@@ -160,12 +157,7 @@ public class MincerBlock extends BaseEntityBlock {
                 if (inputStack.is(playerStack.getItem())) {
                     int countInPlayerHand = playerStack.getCount();
                     int insertableCount = inputStack.getMaxStackSize() - inputStack.getCount();
-                    int countToTakeFromPlayer = 0;
-
-                    while (countToTakeFromPlayer < insertableCount && countToTakeFromPlayer < countInPlayerHand) {
-                        countToTakeFromPlayer += 1;
-                    }
-
+                    int countToTakeFromPlayer = Math.min(insertableCount, countInPlayerHand);
                     if (countToTakeFromPlayer > 0) {
                         inputStack.setCount(inputStack.getCount() + countToTakeFromPlayer);
                         mincer.setItem(mincer.INPUT_SLOT, inputStack);
@@ -192,24 +184,6 @@ public class MincerBlock extends BaseEntityBlock {
                 level.setBlock(pos, state.setValue(CRANKED, 0), Block.UPDATE_ALL);
                 return InteractionResult.SUCCESS;
             }
-
-            if (level instanceof ServerLevel serverWorld) {
-                for (ItemStack stack : mincer.getItems()) {
-                    if (!stack.isEmpty() && mincer.getItem(mincer.OUTPUT_SLOT) != stack) {
-                        ItemParticleOption particleOption = new ItemParticleOption(ParticleTypes.ITEM, stack);
-                        serverWorld.sendParticles(particleOption, pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.4, 3, 0.2, 0.1, 0, 0.1);
-                    }
-                }
-            }
-
-            if (crank <= 6) {
-                level.setBlock(pos, state.setValue(CRANK, 10), Block.UPDATE_ALL);
-                mincer.addCrankImpulse(0.35F);
-                level.playSound(null, pos, SoundEventRegistry.MINCER_CRANKING.get(), SoundSource.BLOCKS, 1.0F, 2.5F);
-                return InteractionResult.SUCCESS;
-            }
-
-            return InteractionResult.PASS;
         }
 
         if (level instanceof ServerLevel serverWorld) {
@@ -227,7 +201,7 @@ public class MincerBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         }
 
-        return InteractionResult.PASS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override

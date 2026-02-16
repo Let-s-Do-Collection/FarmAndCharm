@@ -130,7 +130,7 @@ public class CraftingBowlBlock extends BaseEntityBlock {
             if (stirred >= STIRS_NEEDED && stirring == 0) {
                 ItemStack out = bowl.getItem(4);
                 if (!out.isEmpty()) {
-                    player.getInventory().add(out.copy());
+                    popResource(level, pos, out);
                     bowl.setItem(4, ItemStack.EMPTY);
                     level.setBlock(pos, state.setValue(STIRRED, 0), 3);
                     bowl.setChanged();

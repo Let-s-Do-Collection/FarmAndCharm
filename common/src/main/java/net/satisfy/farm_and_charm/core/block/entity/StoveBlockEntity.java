@@ -392,14 +392,16 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         if (stack.getCount() > this.getMaxStackSize()) {
             stack.setCount(this.getMaxStackSize());
         }
-        boolean hasIngredientChange = false;
-        for (int ingredientSlot : INGREDIENT_SLOTS) {
-            if (!ItemStack.isSameItemSameComponents(this.getItem(ingredientSlot), stackInSlot)) {
-                hasIngredientChange = true;
+
+        boolean isIngredientSlot = false;
+        for (int islot : INGREDIENT_SLOTS) {
+            if (slot == islot) {
+                isIngredientSlot = true;
                 break;
             }
         }
-        if (hasIngredientChange && !dirty) {
+
+        if (isIngredientSlot && !dirty) {
             this.cookTimeTotal = TOTAL_COOKING_TIME;
             this.cookTime = 0;
             this.setChanged();

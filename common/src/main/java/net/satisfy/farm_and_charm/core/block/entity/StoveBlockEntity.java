@@ -175,6 +175,7 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
                 this.cookTime = 0;
                 if (state.getValue(StoveBlock.LIT)) {
                     world.setBlock(pos, state.setValue(StoveBlock.LIT, false), Block.UPDATE_ALL);
+                    setChanged();
                 }
                 return;
             }
@@ -203,10 +204,12 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         } else if (recipe.isPresent() && !canCraft(recipe.get(), access)) {
             this.cookTime = 0;
         }
-        if (initialBurningState != isBurning() || state.getValue(StoveBlock.LIT) != (burnTime > 0 || (burnTime == 0 && burnTimeTotal > 0))) {
-            world.setBlock(pos, state.setValue(StoveBlock.LIT, burnTime > 0 || (burnTime == 0 && burnTimeTotal > 0)), Block.UPDATE_ALL);
+
+        if (state.getValue(StoveBlock.LIT) != isBurning()) {
+            world.setBlock(pos, state.setValue(StoveBlock.LIT, isBurning()), Block.UPDATE_ALL);
             dirty = true;
         }
+
         if (dirty) {
             setChanged();
         }

@@ -20,8 +20,7 @@ public class ConnectivityHandler {
         formMulti(be.getType(), be.getLevel(), cache, frontier);
     }
 
-    private static <T extends BlockEntity & IMultiBlockEntityContainer> void formMulti(BlockEntityType<?> type,
-                                                                                       BlockGetter level, SearchCache<T> cache, Deque<T> frontier) {
+    private static <T extends BlockEntity & IMultiBlockEntityContainer> void formMulti(BlockEntityType<?> type, BlockGetter level, SearchCache<T> cache, Deque<T> frontier) {
         PriorityQueue<Pair<Integer, T>> creationQueue = makeCreationQueue();
         Set<BlockPos> visited = new HashSet<>();
         T first = frontier.peekFirst();

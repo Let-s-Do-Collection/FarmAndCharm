@@ -6,9 +6,13 @@
 * Cooking progress now only resets when the recipe itself changes
 * Typo in Water Trough
 * Wild plants no longer transform into vanilla tall grass when bonemealed
+* Jade flickering when looking at Silos
+* Excessive blockstate updates in Silo multiblock structure
 
 **Changed**
 * Update ru_ru
+* Silo connectivity now updates only on structural changes
+* Improved performance of the Silo multiblock system
 
 ***
 

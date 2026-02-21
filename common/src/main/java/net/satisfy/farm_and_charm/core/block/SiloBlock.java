@@ -124,7 +124,6 @@ public class SiloBlock extends FacingBlock implements EntityBlock {
         return isSilo(itemStack) || player.isDiscrete() ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION : ItemInteractionResult.CONSUME;
     }
 
-
     @Override
     public void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean notify) {
         if (oldState.getBlock() == state.getBlock())
@@ -134,7 +133,19 @@ public class SiloBlock extends FacingBlock implements EntityBlock {
 
         BlockEntity be = world.getBlockEntity(pos);
         if (be instanceof SiloBlockEntity siloBlockEntity)
-            siloBlockEntity.updateConnectivity();
+            siloBlockEntity.requestConnectivityUpdate();
+    }
+
+    @Override
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean movedByPiston) {
+        if (level.isClientSide) {
+            return;
+        }
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof SiloBlockEntity siloBlockEntity) {
+            siloBlockEntity.requestConnectivityUpdate();
+        }
+        super.neighborChanged(state, level, pos, block, fromPos, movedByPiston);
     }
 
     @Override
@@ -179,10 +190,10 @@ public class SiloBlock extends FacingBlock implements EntityBlock {
     @SuppressWarnings("unchecked")
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
-        return (world1, pos, state1, blockEntity) -> {
-            if (blockEntity instanceof BlockEntityTicker<?>) {
-                ((BlockEntityTicker<T>) blockEntity).tick(world, pos, state1, blockEntity);
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level tickerLevel, BlockState state, BlockEntityType<T> type) {
+        return (level, pos, blockState, blockEntity) -> {
+            if (blockEntity instanceof BlockEntityTicker<?> ticker) {
+                ((BlockEntityTicker<T>) ticker).tick(level, pos, blockState, blockEntity);
             }
         };
     }

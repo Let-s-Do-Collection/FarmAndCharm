@@ -1,3 +1,17 @@
+[1.1.20]
+
+**Fixed**
+* Stove now properly resets its lit state when running out of fuel
+* Cooking progress no longer resets when modifying ingredient, fuel, or output slots
+* Cooking progress now only resets when the recipe itself changes
+* Typo in Water Trough
+* Wild plants no longer transform into vanilla tall grass when bonemealed
+
+**Changed**
+* Update ru_ru
+
+***
+
 [1.1.19]
 
 **Fixed**
@@ -12,7 +26,6 @@
 * TeaCupItems are now always edible
 
 ***
-
 
 [1.1.18]
 

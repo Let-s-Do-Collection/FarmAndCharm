@@ -1,6 +1,5 @@
 package net.satisfy.farm_and_charm.core.block;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -8,24 +7,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BonemealableBlock;
-import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.TallFlowerBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 
-public class BonemealableFlowerBlock extends BushBlock implements BonemealableBlock {
-
-    public static final MapCodec<BonemealableFlowerBlock> CODEC =
-            simpleCodec(BonemealableFlowerBlock::new);
-
+public class BonemealableTallFlowerBlock extends TallFlowerBlock implements BonemealableBlock {
     private static final float RETURN_CHANCE = 0.6F;
 
-    public BonemealableFlowerBlock(Properties properties) {
+    public BonemealableTallFlowerBlock(Properties properties) {
         super(properties);
-    }
-
-    @Override
-    protected @NotNull MapCodec<? extends BushBlock> codec() {
-        return CODEC;
     }
 
     @Override
@@ -40,6 +31,9 @@ public class BonemealableFlowerBlock extends BushBlock implements BonemealableBl
 
     @Override
     public void performBonemeal(ServerLevel serverLevel, RandomSource randomSource, BlockPos blockPos, BlockState blockState) {
+        if (blockState.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER) {
+            return;
+        }
         if (randomSource.nextFloat() < RETURN_CHANCE) {
             popResource(serverLevel, blockPos, new ItemStack(this));
         }

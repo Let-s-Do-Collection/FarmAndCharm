@@ -57,9 +57,9 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> TOMATO = registerItem("tomato", () -> new Item(getSettings().food(Foods.APPLE)));
     public static final RegistrySupplier<Item> ROTTEN_TOMATO = registerItem("rotten_tomato", () -> new RottenTomatoItem(getSettings().food(Foods.POISONOUS_POTATO)));
     public static final RegistrySupplier<Item> COMPOST = registerItem("compost", () -> new FertilizerItem(getSettings()));
-    public static final RegistrySupplier<Item> STRAWBERRY_TEA_CUP = registerItem("strawberry_tea_cup", () -> new EffectJugItem(getFoodItemSettings(1, 0.05f, MobEffects.DIG_SPEED, 120, true, false), 120, true));
-    public static final RegistrySupplier<Item> NETTLE_TEA_CUP = registerItem("nettle_tea_cup", () -> new EffectJugItem(getFoodItemSettings(1, 0.05f, MobEffects.HEAL, 0, true, false), 0, true));
-    public static final RegistrySupplier<Item> RIBWORT_TEA_CUP = registerItem("ribwort_tea_cup", () -> new EffectJugItem(getFoodItemSettings(1, 0.05f, MobEffects.REGENERATION, 60, true, false), 60, true));
+    public static final RegistrySupplier<Item> STRAWBERRY_TEA_CUP = registerItem("strawberry_tea_cup", () -> new EffectJugItem(getFoodItemSettings(1, 0.05f, MobEffects.DIG_SPEED, 120, false), 120, true));
+    public static final RegistrySupplier<Item> NETTLE_TEA_CUP = registerItem("nettle_tea_cup", () -> new EffectJugItem(getFoodItemSettings(1, 0.05f, MobEffects.HEAL, 0, false), 0, true));
+    public static final RegistrySupplier<Item> RIBWORT_TEA_CUP = registerItem("ribwort_tea_cup", () -> new EffectJugItem(getFoodItemSettings(1, 0.05f, MobEffects.REGENERATION, 60, false), 60, true));
     public static final RegistrySupplier<Item> CAT_FOOD = registerItem("cat_food", () -> new CatFoodItem(getSettings()));
     public static final RegistrySupplier<Item> HORSE_FODDER = registerItem("horse_fodder", () -> new HorseFodderItem(getSettings()));
     public static final RegistrySupplier<Item> DOG_FOOD = registerItem("dog_food", () -> new DogFoodItem(getSettings()));
@@ -79,19 +79,19 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> KERNELS = registerItem("kernels", () -> new ItemNameBlockItem(CORN_CROP.get(), getSettings()));
     public static final RegistrySupplier<Block> ONION_CROP = registerWithoutItem("onion_crop", () -> new OnionCropBlock(BlockBehaviour.Properties.of().randomTicks().noCollission().instabreak().strength(0.2f)));
     public static final RegistrySupplier<Item> ONION = registerItem("onion", () -> new ItemNameBlockItem(ONION_CROP.get(), getSettings().food(Foods.SWEET_BERRIES)));
-    public static final RegistrySupplier<Block> WILD_RIBWORT = registerWithItem("wild_ribwort", () -> new BonemealableFlowerBlock(MobEffects.HEAL, 1, BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
-    public static final RegistrySupplier<Block> WILD_NETTLE = registerWithItem("wild_nettle", () -> new BonemealableFlowerBlock(MobEffects.REGENERATION, 1, BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
-    public static final RegistrySupplier<Block> WILD_EMMER = registerWithItem("wild_emmer", () -> new BonemealableFlowerBlock(MobEffects.HEAL, 1, BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
-    public static final RegistrySupplier<Block> WILD_CORN = registerWithItem("wild_corn", () -> new BonemealableFlowerBlock(MobEffects.HEAL, 1, BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
-    public static final RegistrySupplier<Block> WILD_BARLEY = registerWithItem("wild_barley", () -> new BonemealableFlowerBlock(MobEffects.HEAL, 1, BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
-    public static final RegistrySupplier<Block> WILD_OAT = registerWithItem("wild_oat", () -> new BonemealableFlowerBlock(MobEffects.HEAL, 1, BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
-    public static final RegistrySupplier<Block> WILD_CARROTS = registerWithItem("wild_carrots", () -> new BonemealableFlowerBlock(MobEffects.HEAL, 1, BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
-    public static final RegistrySupplier<Block> WILD_BEETROOTS = registerWithItem("wild_beetroots", () -> new BonemealableFlowerBlock(MobEffects.HEAL, 1, BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
-    public static final RegistrySupplier<Block> WILD_POTATOES = registerWithItem("wild_potatoes", () -> new BonemealableFlowerBlock(MobEffects.HEAL, 1, BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
-    public static final RegistrySupplier<Block> WILD_TOMATOES = registerWithItem("wild_tomatoes", () -> new BonemealableFlowerBlock(MobEffects.HEAL, 1, BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
-    public static final RegistrySupplier<Block> WILD_LETTUCE = registerWithItem("wild_lettuce", () -> new BonemealableFlowerBlock(MobEffects.HEAL, 1, BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
-    public static final RegistrySupplier<Block> WILD_ONIONS = registerWithItem("wild_onions", () -> new BonemealableFlowerBlock(MobEffects.HEAL, 1, BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
-    public static final RegistrySupplier<Block> WILD_STRAWBERRIES = registerWithItem("wild_strawberries", () -> new BonemealableFlowerBlock(MobEffects.HEAL, 1, BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
+    public static final RegistrySupplier<Block> WILD_RIBWORT = registerWithItem("wild_ribwort", () -> new BonemealableFlowerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
+    public static final RegistrySupplier<Block> WILD_NETTLE = registerWithItem("wild_nettle", () -> new BonemealableFlowerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
+    public static final RegistrySupplier<Block> WILD_EMMER = registerWithItem("wild_emmer", () -> new BonemealableFlowerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
+    public static final RegistrySupplier<Block> WILD_CORN = registerWithItem("wild_corn", () -> new BonemealableTallFlowerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
+    public static final RegistrySupplier<Block> WILD_BARLEY = registerWithItem("wild_barley", () -> new BonemealableFlowerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
+    public static final RegistrySupplier<Block> WILD_OAT = registerWithItem("wild_oat", () -> new BonemealableFlowerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
+    public static final RegistrySupplier<Block> WILD_CARROTS = registerWithItem("wild_carrots", () -> new BonemealableFlowerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
+    public static final RegistrySupplier<Block> WILD_BEETROOTS = registerWithItem("wild_beetroots", () -> new BonemealableFlowerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
+    public static final RegistrySupplier<Block> WILD_POTATOES = registerWithItem("wild_potatoes", () -> new BonemealableFlowerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
+    public static final RegistrySupplier<Block> WILD_TOMATOES = registerWithItem("wild_tomatoes", () -> new BonemealableFlowerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
+    public static final RegistrySupplier<Block> WILD_LETTUCE = registerWithItem("wild_lettuce", () -> new BonemealableFlowerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
+    public static final RegistrySupplier<Block> WILD_ONIONS = registerWithItem("wild_onions", () -> new BonemealableFlowerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
+    public static final RegistrySupplier<Block> WILD_STRAWBERRIES = registerWithItem("wild_strawberries", () -> new BonemealableFlowerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)));
     public static final RegistrySupplier<Block> STRAWBERRY_BAG = registerWithItem("strawberry_bag", () -> new FacingBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.RED_WOOL)));
     public static final RegistrySupplier<Block> CARROT_BAG = registerWithItem("carrot_bag", () -> new FacingBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.RED_WOOL)));
     public static final RegistrySupplier<Block> POTATO_BAG = registerWithItem("potato_bag", () -> new FacingBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.RED_WOOL)));
@@ -147,7 +147,7 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> GRANDMOTHERS_STRAWBERRY_CAKE_ITEM = registerItem("grandmothers_strawberry_cake", () -> new EffectBlockItem(GRANDMOTHERS_STRAWBERRY_CAKE.get(), getFoodItemSettings(PlatformHelper.getNutrition("grandmothers_strawberry_cake"), PlatformHelper.getSaturationMod("grandmothers_strawberry_cake"), MobEffectRegistry.GRANDMAS_BLESSING, 2400)));
     public static final RegistrySupplier<Item> FARMERS_BREAD_ITEM = registerItem("farmers_bread", () -> new EffectBlockItem(FARMERS_BREAD.get(), getFoodItemSettings(PlatformHelper.getNutrition("farmers_bread"), PlatformHelper.getSaturationMod("farmers_bread"), MobEffectRegistry.FARMERS_BLESSING, 3600)));
     public static final RegistrySupplier<Item> FARMER_SALAD = registerItem("farmer_salad", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("farmer_salad"), PlatformHelper.getSaturationMod("farmer_salad"), MobEffectRegistry.SATIATION, 4800, true, false), 4800, false));
-    public static final RegistrySupplier<Item> GOULASH = registerItem("goulash", () -> new EffectFoodItem(getFoodItemSettings(PlatformHelper.getNutrition("goulash"), PlatformHelper.getSaturationMod("goulash"), (Holder<MobEffect>) null, 0, true, false), 0));
+    public static final RegistrySupplier<Item> GOULASH = registerItem("goulash", () -> new EffectFoodItem(getFoodItemSettings(PlatformHelper.getNutrition("goulash"), PlatformHelper.getSaturationMod("goulash"), (Holder<MobEffect>) null, 0, false), 0));
     public static final RegistrySupplier<Item> SIMPLE_TOMATO_SOUP = registerItem("simple_tomato_soup", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("simple_tomato_soup"), PlatformHelper.getSaturationMod("simple_tomato_soup"), MobEffectRegistry.RESTED, 1800, true, false), 1800, true));
     public static final RegistrySupplier<Item> BARLEY_SOUP = registerItem("barley_soup", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("barley_soup"), PlatformHelper.getSaturationMod("barley_soup"), MobEffectRegistry.RESTED, 3000, true, false), 3000, true));
     public static final RegistrySupplier<Item> ONION_SOUP = registerItem("onion_soup", () -> new EffectItem(getFoodItemSettings(PlatformHelper.getNutrition("onion_soup"), PlatformHelper.getSaturationMod("onion_soup"), MobEffectRegistry.RESTED, 2400, true, false), 2400, true));
@@ -233,8 +233,8 @@ public class ObjectRegistry {
         return block;
     }
 
-    private static Item.Properties getFoodItemSettings(int nutrition, float saturationMod, Holder<MobEffect> effect, int duration, boolean alwaysEat, boolean fast) {
-        return getSettings().food(createFood(nutrition, saturationMod, effect, duration, alwaysEat, fast));
+    private static Item.Properties getFoodItemSettings(int nutrition, float saturationMod, Holder<MobEffect> effect, int duration, boolean fast) {
+        return getSettings().food(createFood(nutrition, saturationMod, effect, duration, true, fast));
     }
 
     private static Item.Properties getFoodItemSettings(int nutrition, float saturationMod, ResourceLocation effectId, int duration, boolean alwaysEat, boolean fast) {

@@ -15,4 +15,5 @@ public class TagRegistry {
     public static final TagKey<Item> HANGABLE = TagKey.create(Registries.ITEM, FarmAndCharm.identifier("hangable"));
     public static final TagKey<Item> CONTAINER = TagKey.create(Registries.ITEM, FarmAndCharm.identifier("container"));
     public static final TagKey<EntityType<?>> IS_WOLF = TagKey.create(Registries.ENTITY_TYPE, FarmAndCharm.identifier("is_wolf"));
+    public static final TagKey<EntityType<?>> COOP_CHICKENS = TagKey.create(Registries.ENTITY_TYPE, FarmAndCharm.identifier("coop_chickens"));
 }

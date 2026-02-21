@@ -13,6 +13,7 @@
 * Update ru_ru
 * Silo connectivity now updates only on structural changes
 * Improved performance of the Silo multiblock system
+* Wild Plants now have a 60% chance to receive the plant item back when using bone meal, due to balancing reasons
 
 ***
 

@@ -227,30 +227,15 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
         if (!level.isClientSide && state.getBlock() instanceof CraftingBowlBlock) {
             int stirred = state.getValue(CraftingBowlBlock.STIRRED);
             if (stirring > 0) {
-                Optional<CraftingBowlRecipe> recipe = be.findRecipe(level);
-                if (recipe.isPresent() && stirred < CraftingBowlBlock.STIRS_NEEDED) {
-                    stirred++;
-                    if (stirred == CraftingBowlBlock.STIRS_NEEDED) {
-                        NonNullList<Ingredient> ings = recipe.get().getIngredients();
-                        boolean[] used = new boolean[4];
-                        for (Ingredient ing : ings) {
-                            if (ing.isEmpty()) continue;
-                            for (int i = 0; i < 4; i++) {
-                                if (!used[i] && ing.test(be.getItem(i))) {
-                                    ItemStack stack = be.getItem(i);
-                                    ItemStack remainder = getRemainderItem(stack);
-                                    stack.shrink(1);
-                                    if (stack.isEmpty()) be.setItem(i, ItemStack.EMPTY);
-                                    if (!remainder.isEmpty()) {
-                                        double ox = level.random.nextDouble() * 0.7D + 0.15D;
-                                        double oy = level.random.nextDouble() * 0.7D + 0.15D;
-                                        double oz = level.random.nextDouble() * 0.7D + 0.15D;
-                                        level.addFreshEntity(new ItemEntity(level, pos.getX() + ox, pos.getY() + oy, pos.getZ() + oz, remainder));
-                                    }
-                                    used[i] = true;
-                                    break;
-                                }
-                            }
+                if (stirred < CraftingBowlBlock.STIRS_NEEDED) stirred += 1;
+                if (stirred == CraftingBowlBlock.STIRS_NEEDED) {
+                    Optional<CraftingBowlRecipe> recipe = be.findRecipe(level);
+                    if (recipe.isPresent()) {
+                        stirred += 1;
+                        for (int i = 0; i < 4; i++) {
+                            ItemStack stack = be.getItem(i);
+                            ItemStack remainder = getRemainderItem(stack);
+                            be.setItem(i, remainder);
                         }
                         ItemStack resultItem = recipe.get().getResultItem(level.registryAccess()).copy();
                         resultItem.setCount(recipe.get().getOutputCount());

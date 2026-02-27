@@ -162,13 +162,17 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
         return Optional.ofNullable(matchExact(all));
     }
 
+    private int numberOfIngredientsInBowl() {
+        int num = 0;
+        if (!this.getItem(0).isEmpty()) num += 1;
+        if (!this.getItem(1).isEmpty()) num += 1;
+        if (!this.getItem(2).isEmpty()) num += 1;
+        if (!this.getItem(3).isEmpty()) num += 1;
+        return num;
+    }
+
     private CraftingBowlRecipe matchExact(List<RecipeHolder<CraftingBowlRecipe>> recipes) {
-        ItemStack[] inputs = new ItemStack[4];
-        int present = 0;
-        for (int i = 0; i < 4; i++) {
-            inputs[i] = this.getItem(i);
-            if (!inputs[i].isEmpty()) present++;
-        }
+        int present = this.numberOfIngredientsInBowl();
         for (RecipeHolder<CraftingBowlRecipe> holder : recipes) {
             CraftingBowlRecipe r = holder.value();
             int needed = 0;
@@ -180,7 +184,8 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
                 if (ing.isEmpty()) continue;
                 boolean matched = false;
                 for (int i = 0; i < 4; i++) {
-                    if (!used[i] && !inputs[i].isEmpty() && ing.test(inputs[i])) {
+                    ItemStack item = this.getItem(i);
+                    if (!used[i] && !item.isEmpty() && ing.test(item)) {
                         used[i] = true;
                         matched = true;
                         break;
@@ -228,7 +233,7 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
             int stirred = state.getValue(CraftingBowlBlock.STIRRED);
             if (stirring > 0) {
                 if (stirred < CraftingBowlBlock.STIRS_NEEDED) stirred += 1;
-                if (stirred == CraftingBowlBlock.STIRS_NEEDED) {
+                if (stirred == CraftingBowlBlock.STIRS_NEEDED && this.numberOfIngredientsInBowl() > 0) {
                     Optional<CraftingBowlRecipe> recipe = be.findRecipe(level);
                     if (recipe.isPresent()) {
                         stirred += 1;

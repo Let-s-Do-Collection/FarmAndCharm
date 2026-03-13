@@ -43,7 +43,7 @@ public class CraftingBowlRenderer implements BlockEntityRenderer<CraftingBowlBlo
         pose.mulPose(Axis.XP.rotationDegrees(180));
         pose.translate(0.5f, -1.5f, -0.5f);
 
-        ResourceLocation tex = be.getStirringProgress() >= CraftingBowlBlock.STIRS_NEEDED
+        ResourceLocation tex = be.getStirringProgress() > CraftingBowlBlock.STIRS_NEEDED
                 ? ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "textures/entity/crafting_bowl_full.png")
                 : ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "textures/entity/crafting_bowl.png");
 

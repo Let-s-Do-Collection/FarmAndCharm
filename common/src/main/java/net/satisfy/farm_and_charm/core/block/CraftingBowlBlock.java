@@ -103,7 +103,7 @@ public class CraftingBowlBlock extends BaseEntityBlock {
         int stirring = state.getValue(STIRRING);
         int stirred = state.getValue(STIRRED);
 
-        if (player.isShiftKeyDown()) {
+        if (player.isShiftKeyDown() || (stirred >= STIRS_NEEDED && stirring == 0)) {
             for (int i = 0; i < bowl.getContainerSize(); i++) {
                 ItemStack stack = bowl.getItem(i);
                 if (!stack.isEmpty()) {
@@ -122,21 +122,12 @@ public class CraftingBowlBlock extends BaseEntityBlock {
                 one.setCount(1);
                 bowl.addItemStack(one);
                 if (!player.isCreative()) main.shrink(1);
+                level.setBlock(pos, state.setValue(STIRRED, 0), 3);
                 return InteractionResult.SUCCESS;
             }
         }
 
-        if (!anyHeld) {
-            if (stirred >= STIRS_NEEDED && stirring == 0) {
-                ItemStack out = bowl.getItem(4);
-                if (!out.isEmpty()) {
-                    popResource(level, pos, out);
-                    bowl.setItem(4, ItemStack.EMPTY);
-                    level.setBlock(pos, state.setValue(STIRRED, 0), 3);
-                    bowl.setChanged();
-                    return InteractionResult.SUCCESS;
-                }
-            }
+        if (!anyHeld || !bowl.canAddItem()) {
             if (level instanceof ServerLevel server) {
                 RandomSource r = server.random;
                 for (int i = 0; i < 4; i++) {

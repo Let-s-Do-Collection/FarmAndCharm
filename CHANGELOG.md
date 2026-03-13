@@ -1,3 +1,16 @@
+[1.1.21]
+
+**Fixed**
+* Oatmeal with Strawberries using the wrong tag
+* Wild Corn not dropping anything when breaking the top block (Danieltl21)
+
+**Changed**
+* Introduction Mincing advancement is now triggered directly when inserting Beef into the Mincer
+* Stove can now be ignited manually with ignition items when fuel is present
+* Stove can be extinguished with tools like shovels or water
+
+***
+
 [1.1.20]
 
 **Fixed**

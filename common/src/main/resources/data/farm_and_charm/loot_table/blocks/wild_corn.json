@@ -2,12 +2,11 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "rolls": 1.0,
-      "bonus_rolls": 0.0,
+      "rolls": 1,
       "conditions": [
         {
-          "block": "farm_and_charm:wild_corn",
           "condition": "minecraft:block_state_property",
+          "block": "farm_and_charm:wild_corn",
           "properties": {
             "half": "lower"
           }
@@ -36,9 +35,7 @@
                 {
                   "condition": "minecraft:match_tool",
                   "predicate": {
-                    "items": [
-                      "minecraft:shears"
-                    ]
+                    "items": "minecraft:shears"
                   }
                 }
               ]
@@ -47,6 +44,9 @@
               "type": "minecraft:item",
               "name": "farm_and_charm:kernels",
               "conditions": [
+                {
+                  "condition": "minecraft:survives_explosion"
+                },
                 {
                   "condition": "minecraft:random_chance",
                   "chance": 0.125
@@ -60,15 +60,17 @@
                   "parameters": {
                     "bonusMultiplier": 2
                   }
-                },
-                {
-                  "function": "minecraft:explosion_decay"
                 }
               ]
             },
             {
               "type": "minecraft:item",
               "name": "farm_and_charm:corn",
+              "conditions": [
+                {
+                  "condition": "minecraft:survives_explosion"
+                }
+              ],
               "functions": [
                 {
                   "function": "minecraft:set_count",
@@ -84,12 +86,11 @@
       ]
     },
     {
-      "rolls": 1.0,
-      "bonus_rolls": 0.0,
+      "rolls": 1,
       "conditions": [
         {
-          "block": "farm_and_charm:wild_corn",
           "condition": "minecraft:block_state_property",
+          "block": "farm_and_charm:wild_corn",
           "properties": {
             "half": "upper"
           }
@@ -118,9 +119,48 @@
                 {
                   "condition": "minecraft:match_tool",
                   "predicate": {
-                    "items": [
-                      "minecraft:shears"
-                    ]
+                    "items": "minecraft:shears"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "minecraft:item",
+              "name": "farm_and_charm:kernels",
+              "conditions": [
+                {
+                  "condition": "minecraft:survives_explosion"
+                },
+                {
+                  "condition": "minecraft:random_chance",
+                  "chance": 0.125
+                }
+              ],
+              "functions": [
+                {
+                  "function": "minecraft:apply_bonus",
+                  "enchantment": "minecraft:fortune",
+                  "formula": "minecraft:uniform_bonus_count",
+                  "parameters": {
+                    "bonusMultiplier": 2
+                  }
+                }
+              ]
+            },
+            {
+              "type": "minecraft:item",
+              "name": "farm_and_charm:corn",
+              "conditions": [
+                {
+                  "condition": "minecraft:survives_explosion"
+                }
+              ],
+              "functions": [
+                {
+                  "function": "minecraft:set_count",
+                  "count": {
+                    "min": 2,
+                    "max": 5
                   }
                 }
               ]

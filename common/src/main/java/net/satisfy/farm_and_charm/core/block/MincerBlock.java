@@ -9,6 +9,7 @@ import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
@@ -16,10 +17,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -42,6 +40,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.core.block.entity.MincerBlockEntity;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.SoundEventRegistry;
@@ -150,6 +149,17 @@ public class MincerBlock extends BaseEntityBlock {
                 ItemStack playerStackCopy = playerStack.copy();
                 playerStackCopy.setCount(playerStackCopy.getMaxStackSize());
                 mincer.setItem(mincer.INPUT_SLOT, playerStackCopy);
+
+                if (!level.isClientSide && player instanceof ServerPlayer serverPlayer && playerStack.is(Items.BEEF)) {
+                    var advancement = serverPlayer.server.getAdvancements().get(FarmAndCharm.identifier("main/introduction_mincing"));
+                    if (advancement != null) {
+                        var progress = serverPlayer.getAdvancements().getOrStartProgress(advancement);
+                        for (String criterion : progress.getRemainingCriteria()) {
+                            serverPlayer.getAdvancements().award(advancement, criterion);
+                        }
+                    }
+                }
+
                 return InteractionResult.SUCCESS;
             }
 
@@ -162,11 +172,31 @@ public class MincerBlock extends BaseEntityBlock {
                         inputStack.setCount(inputStack.getCount() + countToTakeFromPlayer);
                         mincer.setItem(mincer.INPUT_SLOT, inputStack);
                         playerStack.shrink(countToTakeFromPlayer);
+
+                        if (!level.isClientSide && player instanceof ServerPlayer serverPlayer && playerStack.is(Items.BEEF)) {
+                            var advancement = serverPlayer.server.getAdvancements().get(FarmAndCharm.identifier("main/introduction_mincing"));
+                            if (advancement != null) {
+                                var progress = serverPlayer.getAdvancements().getOrStartProgress(advancement);
+                                for (String criterion : progress.getRemainingCriteria()) {
+                                    serverPlayer.getAdvancements().award(advancement, criterion);
+                                }
+                            }
+                        }
                     }
                 } else if (inputStack.isEmpty()) {
                     ItemStack insertedStack = playerStack.copy();
                     mincer.setItem(mincer.INPUT_SLOT, insertedStack);
                     playerStack.shrink(playerStack.getCount());
+
+                    if (!level.isClientSide && player instanceof ServerPlayer serverPlayer && insertedStack.is(Items.BEEF)) {
+                        var advancement = serverPlayer.server.getAdvancements().get(FarmAndCharm.identifier("main/introduction_mincing"));
+                        if (advancement != null) {
+                            var progress = serverPlayer.getAdvancements().getOrStartProgress(advancement);
+                            for (String criterion : progress.getRemainingCriteria()) {
+                                serverPlayer.getAdvancements().award(advancement, criterion);
+                            }
+                        }
+                    }
                 }
 
                 return InteractionResult.SUCCESS;

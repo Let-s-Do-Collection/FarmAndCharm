@@ -53,7 +53,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<StoveBlockEntity>, ImplementedInventory, MenuProvider {
-
     public static final int TOTAL_COOKING_TIME = 240;
     protected static final int[] INGREDIENT_SLOTS = {1, 2, 3};
     protected int burnTime;
@@ -61,6 +60,7 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
     protected int cookTime;
     protected int cookTimeTotal;
     private UUID ownerUuid;
+    private boolean manuallyExtinguished;
     private final ContainerData propertyDelegate = new ContainerData() {
         @Override
         public int get(int index) {
@@ -129,6 +129,7 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         this.cookTimeTotal = compoundTag.getShort("CookTimeTotal");
         this.burnTimeTotal = this.getTotalBurnTime(this.getItem(4));
         this.experience = compoundTag.getFloat("Experience");
+        this.manuallyExtinguished = compoundTag.getBoolean("ManuallyExtinguished");
         if (compoundTag.hasUUID("Owner")) {
             this.ownerUuid = compoundTag.getUUID("Owner");
         }
@@ -141,6 +142,7 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         compoundTag.putShort("CookTime", (short) this.cookTime);
         compoundTag.putShort("CookTimeTotal", (short) this.cookTimeTotal);
         compoundTag.putFloat("Experience", this.experience);
+        compoundTag.putBoolean("ManuallyExtinguished", this.manuallyExtinguished);
         if (this.ownerUuid != null) {
             compoundTag.putUUID("Owner", this.ownerUuid);
         }
@@ -151,13 +153,72 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         return this.burnTime > 0;
     }
 
+    public boolean canIgnite() {
+        return !this.isBurning() && this.getTotalBurnTime(this.getItem(4)) > 0;
+    }
+
+    public boolean ignite() {
+        if (!this.canIgnite()) {
+            return false;
+        }
+
+        this.burnTime = this.getTotalBurnTime(this.getItem(4));
+        this.burnTimeTotal = this.burnTime;
+        this.manuallyExtinguished = false;
+
+        ItemStack fuelStack = this.getItem(4);
+        if (fuelStack.getItem().hasCraftingRemainingItem()) {
+            setItem(4, new ItemStack(Objects.requireNonNull(fuelStack.getItem().getCraftingRemainingItem())));
+        } else if (fuelStack.getCount() > 1) {
+            removeItem(4, 1);
+        } else if (fuelStack.getCount() == 1) {
+            setItem(4, ItemStack.EMPTY);
+        }
+
+        if (this.level != null) {
+            BlockState blockState = this.getBlockState();
+            if (!blockState.getValue(StoveBlock.LIT)) {
+                this.level.setBlock(this.worldPosition, blockState.setValue(StoveBlock.LIT, true), Block.UPDATE_ALL);
+            }
+        }
+
+        this.setChanged();
+        return true;
+    }
+
+    public boolean canExtinguish() {
+        return this.isBurning();
+    }
+
+    public boolean extinguish() {
+        if (!this.canExtinguish()) {
+            return false;
+        }
+
+        this.burnTime = 0;
+        this.burnTimeTotal = 0;
+        this.manuallyExtinguished = true;
+
+        if (this.level != null) {
+            BlockState blockState = this.getBlockState();
+            if (blockState.getValue(StoveBlock.LIT)) {
+                this.level.setBlock(this.worldPosition, blockState.setValue(StoveBlock.LIT, false), Block.UPDATE_ALL);
+            }
+        }
+
+        this.setChanged();
+        return true;
+    }
+
     @Override
     public void tick(Level world, BlockPos pos, BlockState state, StoveBlockEntity blockEntity) {
         if (world.isClientSide) {
             return;
         }
+
         boolean initialBurningState = blockEntity.isBurning();
         boolean dirty = false;
+
         if (initialBurningState) {
             --this.burnTime;
         }
@@ -173,28 +234,35 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
             ServerPlayer owner = Objects.requireNonNull(world.getServer()).getPlayerList().getPlayer(ownerUuid);
             if (owner == null || RecipeUnlockManager.isRecipeLocked(owner, BuiltInRegistries.RECIPE_TYPE.getKey(recipe.get().getType()))) {
                 this.cookTime = 0;
-                if (state.getValue(StoveBlock.LIT)) {
+                if (!this.isBurning() && state.getValue(StoveBlock.LIT)) {
                     world.setBlock(pos, state.setValue(StoveBlock.LIT, false), Block.UPDATE_ALL);
                     setChanged();
                 }
                 return;
             }
         }
-        if (!initialBurningState && recipe.isPresent() && canCraft(recipe.get(), access)) {
-            this.burnTime = this.burnTimeTotal = this.getTotalBurnTime(this.getItem(4));
-            if (burnTime > 0) {
-                dirty = true;
-                ItemStack fuelStack = this.getItem(4);
-                if (fuelStack.getItem().hasCraftingRemainingItem()) {
-                    setItem(4, new ItemStack(Objects.requireNonNull(fuelStack.getItem().getCraftingRemainingItem())));
-                } else if (fuelStack.getCount() > 1) {
-                    removeItem(4, 1);
-                } else if (fuelStack.getCount() == 1) {
-                    setItem(4, ItemStack.EMPTY);
+
+        if (!this.isBurning() && !this.manuallyExtinguished) {
+            boolean shouldKeepBurning = state.getValue(StoveBlock.LIT) && this.getTotalBurnTime(this.getItem(4)) > 0;
+            boolean shouldStartCooking = recipe.isPresent() && canCraft(recipe.get(), access) && this.getTotalBurnTime(this.getItem(4)) > 0;
+
+            if (shouldKeepBurning || shouldStartCooking) {
+                this.burnTime = this.burnTimeTotal = this.getTotalBurnTime(this.getItem(4));
+                if (this.burnTime > 0) {
+                    dirty = true;
+                    ItemStack fuelStack = this.getItem(4);
+                    if (fuelStack.getItem().hasCraftingRemainingItem()) {
+                        setItem(4, new ItemStack(Objects.requireNonNull(fuelStack.getItem().getCraftingRemainingItem())));
+                    } else if (fuelStack.getCount() > 1) {
+                        removeItem(4, 1);
+                    } else if (fuelStack.getCount() == 1) {
+                        setItem(4, ItemStack.EMPTY);
+                    }
                 }
             }
         }
-        if ((isBurning() || initialBurningState) && recipe.isPresent() && canCraft(recipe.get(), access)) {
+
+        if (this.isBurning() && recipe.isPresent() && canCraft(recipe.get(), access)) {
             ++this.cookTime;
             if (this.cookTime == cookTimeTotal) {
                 this.cookTime = 0;
@@ -205,15 +273,14 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
             this.cookTime = 0;
         }
 
-        if (state.getValue(StoveBlock.LIT) != isBurning()) {
-            world.setBlock(pos, state.setValue(StoveBlock.LIT, isBurning()), Block.UPDATE_ALL);
+        if (state.getValue(StoveBlock.LIT) != this.isBurning()) {
+            world.setBlock(pos, state.setValue(StoveBlock.LIT, this.isBurning()), Block.UPDATE_ALL);
             dirty = true;
         }
 
         if (dirty) {
             setChanged();
         }
-
     }
 
     protected boolean canCraft(StoveRecipe recipe, RegistryAccess access) {
@@ -228,53 +295,29 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
 
     private StoveRecipe getRecipe(List<RecipeHolder<StoveRecipe>> recipes, NonNullList<ItemStack> inventory) {
         for (RecipeHolder<StoveRecipe> holder : recipes) {
-            StoveRecipe r = holder.value();
-            if (matchesInventory(r, inventory)) {
-                return r;
+            StoveRecipe recipe = holder.value();
+            if (matchesInventory(recipe, inventory)) {
+                return recipe;
             }
         }
         return null;
     }
 
     private boolean matchesInventory(StoveRecipe recipe, NonNullList<ItemStack> inventory) {
-        NonNullList<ItemStack> invCopy = NonNullList.withSize(inventory.size(), ItemStack.EMPTY);
-        for (int i : INGREDIENT_SLOTS) {
-            invCopy.set(i, inventory.get(i).copy());
+        NonNullList<ItemStack> inventoryCopy = NonNullList.withSize(inventory.size(), ItemStack.EMPTY);
+        for (int slot : INGREDIENT_SLOTS) {
+            inventoryCopy.set(slot, inventory.get(slot).copy());
         }
-        for (Ingredient ingredient : recipe.getIngredients()) {
-            boolean matched = false;
-            for (int i : INGREDIENT_SLOTS) {
-                ItemStack stack = invCopy.get(i);
-                if (!stack.isEmpty() && ingredient.test(stack)) {
-                    stack.shrink(1);
-                    matched = true;
-                    break;
-                }
-            }
-            if (!matched) {
-                return false;
-            }
-        }
-        for (int i : INGREDIENT_SLOTS) {
-            ItemStack remaining = invCopy.get(i);
-            if (!remaining.isEmpty()) {
-                boolean stillIngredient = false;
-                for (Ingredient ing : recipe.getIngredients()) {
-                    if (ing.test(remaining)) {
-                        stillIngredient = true;
-                        break;
-                    }
-                }
-                if (!stillIngredient) {
-                    return false;
-                }
-            }
-        }
-        return true;
+
+        List<Integer> plannedSlots = getPlannedIngredientSlots(recipe, inventoryCopy);
+        return plannedSlots != null;
     }
 
     protected void craft(StoveRecipe recipe, RegistryAccess access) {
         if (recipe == null || !canCraft(recipe, access)) return;
+
+        List<Integer> plannedSlots = getPlannedIngredientSlots(recipe, this.inventory);
+        if (plannedSlots == null) return;
 
         ItemStack recipeOutput = generateOutputItem(recipe, access);
         ItemStack outputSlotStack = this.getItem(0);
@@ -285,31 +328,108 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
             outputSlotStack.grow(recipeOutput.getCount());
         }
 
-        for (Ingredient ingredient : recipe.getIngredients()) {
-            for (int slot : INGREDIENT_SLOTS) {
-                ItemStack stackInSlot = this.getItem(slot);
-                if (stackInSlot.isEmpty()) continue;
-                if (!ingredient.test(stackInSlot)) continue;
+        List<Ingredient> ingredients = recipe.getIngredients();
+        for (int ingredientIndex = 0; ingredientIndex < ingredients.size(); ingredientIndex++) {
+            int slot = plannedSlots.get(ingredientIndex);
+            ItemStack stackInSlot = this.getItem(slot);
+            if (stackInSlot.isEmpty()) {
+                continue;
+            }
 
-                ItemStack remainderStack = getRemainderItem(stackInSlot);
-                stackInSlot.shrink(1);
+            ItemStack remainderStack = getRemainderItem(stackInSlot);
+            stackInSlot.shrink(1);
 
-                if (!remainderStack.isEmpty()) {
-                    if (stackInSlot.isEmpty()) {
-                        setItem(slot, remainderStack);
-                    } else {
-                        if (!tryInsertRemainder(remainderStack)) {
-                            if (this.level != null) {
-                                Block.popResource(this.level, this.worldPosition, remainderStack);
-                            }
+            if (!remainderStack.isEmpty()) {
+                if (stackInSlot.isEmpty()) {
+                    setItem(slot, remainderStack);
+                } else {
+                    if (!tryInsertRemainder(remainderStack)) {
+                        if (this.level != null) {
+                            Block.popResource(this.level, this.worldPosition, remainderStack);
                         }
                     }
                 }
-                break;
             }
         }
 
         setChanged();
+    }
+
+    private List<Integer> getPlannedIngredientSlots(StoveRecipe recipe, NonNullList<ItemStack> inventory) {
+        NonNullList<ItemStack> inventoryCopy = NonNullList.withSize(inventory.size(), ItemStack.EMPTY);
+        for (int slot : INGREDIENT_SLOTS) {
+            inventoryCopy.set(slot, inventory.get(slot).copy());
+        }
+
+        List<Integer> plannedSlots = new ArrayList<>();
+        List<Ingredient> ingredients = recipe.getIngredients();
+        List<Integer> ingredientOrder = new ArrayList<>();
+
+        for (int ingredientIndex = 0; ingredientIndex < ingredients.size(); ingredientIndex++) {
+            ingredientOrder.add(ingredientIndex);
+        }
+
+        ingredientOrder.sort((leftIndex, rightIndex) -> {
+            int leftMatches = countMatchingSlots(ingredients.get(leftIndex), inventoryCopy);
+            int rightMatches = countMatchingSlots(ingredients.get(rightIndex), inventoryCopy);
+            return Integer.compare(leftMatches, rightMatches);
+        });
+
+        Integer[] slotAssignments = new Integer[ingredients.size()];
+
+        for (int orderedIndex = 0; orderedIndex < ingredientOrder.size(); orderedIndex++) {
+            int ingredientIndex = ingredientOrder.get(orderedIndex);
+            Ingredient ingredient = ingredients.get(ingredientIndex);
+
+            int selectedSlot = findBestMatchingSlot(ingredient, inventoryCopy);
+            if (selectedSlot == -1) {
+                return null;
+            }
+
+            inventoryCopy.get(selectedSlot).shrink(1);
+            slotAssignments[ingredientIndex] = selectedSlot;
+        }
+
+        for (Integer slotAssignment : slotAssignments) {
+            if (slotAssignment == null) {
+                return null;
+            }
+            plannedSlots.add(slotAssignment);
+        }
+
+        return plannedSlots;
+    }
+
+    private int findBestMatchingSlot(Ingredient ingredient, NonNullList<ItemStack> inventory) {
+        int selectedSlot = -1;
+        int smallestStackCount = Integer.MAX_VALUE;
+
+        for (int slot : INGREDIENT_SLOTS) {
+            ItemStack stack = inventory.get(slot);
+            if (stack.isEmpty() || !ingredient.test(stack)) {
+                continue;
+            }
+
+            if (stack.getCount() < smallestStackCount) {
+                smallestStackCount = stack.getCount();
+                selectedSlot = slot;
+            }
+        }
+
+        return selectedSlot;
+    }
+
+    private int countMatchingSlots(Ingredient ingredient, NonNullList<ItemStack> inventory) {
+        int matchingSlots = 0;
+
+        for (int slot : INGREDIENT_SLOTS) {
+            ItemStack stack = inventory.get(slot);
+            if (!stack.isEmpty() && ingredient.test(stack)) {
+                matchingSlots++;
+            }
+        }
+
+        return matchingSlots;
     }
 
     private boolean tryInsertRemainder(ItemStack remainderStack) {
@@ -356,12 +476,12 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         ItemStack outputStack = recipe.getResultItem(access).copy();
         if (outputStack.getItem() instanceof EffectFood || outputStack.getItem() instanceof EffectFoodBlockItem) {
             List<ItemStack> stacks = new ArrayList<>();
-            for (int i : INGREDIENT_SLOTS) {
-                ItemStack s = this.getItem(i);
-                if (!s.isEmpty()) stacks.add(s);
+            for (int slot : INGREDIENT_SLOTS) {
+                ItemStack stack = this.getItem(slot);
+                if (!stack.isEmpty()) stacks.add(stack);
             }
-            for (MobEffectInstance inst : EffectFoodHelper.collectMergedSortedEffects(stacks)) {
-                EffectFoodHelper.addEffect(outputStack, new Pair<>(inst, 1.0f));
+            for (MobEffectInstance instance : EffectFoodHelper.collectMergedSortedEffects(stacks)) {
+                EffectFoodHelper.addEffect(outputStack, new Pair<>(instance, 1.0f));
             }
         }
         return outputStack;
@@ -394,11 +514,15 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         }
 
         boolean isIngredientSlot = false;
-        for (int islot : INGREDIENT_SLOTS) {
-            if (slot == islot) {
+        for (int ingredientSlot : INGREDIENT_SLOTS) {
+            if (slot == ingredientSlot) {
                 isIngredientSlot = true;
                 break;
             }
+        }
+
+        if (slot == 4 && !dirty) {
+            this.manuallyExtinguished = false;
         }
 
         if (isIngredientSlot && !dirty) {
@@ -432,8 +556,9 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
     @Override
     public void setChanged() {
         super.setChanged();
-        if (this.level != null)
+        if (this.level != null) {
             level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), Block.UPDATE_CLIENTS);
+        }
     }
 
     public void setOwner(UUID uuid) {

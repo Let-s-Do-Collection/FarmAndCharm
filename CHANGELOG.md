@@ -7,7 +7,14 @@
 **Changed**
 * Introduction Mincing advancement is now triggered directly when inserting Beef into the Mincer
 * Stove can now be ignited manually with ignition items when fuel is present
-* Stove can be extinguished with tools like shovels or water
+* Stove can be extinguished with tools like shovels or water without immediately relighting
+* Bowl recipe checks now only run once when the required stir count is reached
+
+**Improved**
+* Interacting with a finished bowl now always pops out its items
+* Adding ingredients to a bowl resets the STIRRED property
+* Remainder items now stay inside the bowl and are ejected with the result
+* Bowls can now be stirred even while holding an item
 
 ***
 

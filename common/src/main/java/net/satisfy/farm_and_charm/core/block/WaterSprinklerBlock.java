@@ -23,7 +23,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.farm_and_charm.core.block.entity.WaterSprinklerBlockEntity;
-import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import net.satisfy.farm_and_charm.core.registry.SoundEventRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -86,20 +85,20 @@ public class WaterSprinklerBlock extends BaseEntityBlock {
     @Override
     public void tick(@NotNull BlockState state, ServerLevel world, BlockPos pos, @NotNull RandomSource random) {
         BlockPos.betweenClosed(pos.offset(-4, -1, -4), pos.offset(4, 1, 4)).forEach(p -> {
-            BlockState bs = world.getBlockState(p);
-            if (bs.is(Blocks.FARMLAND) || bs.is(ObjectRegistry.FERTILIZED_FARM_BLOCK.get())) {
-                world.setBlock(p, bs.setValue(BlockStateProperties.MOISTURE, 7), 2);
+            BlockState blockState = world.getBlockState(p);
+            if (blockState.getBlock() instanceof FarmBlock && blockState.hasProperty(BlockStateProperties.MOISTURE)) {
+                world.setBlock(p, blockState.setValue(BlockStateProperties.MOISTURE, 7), 2);
             }
-            if (bs.is(Blocks.FIRE)) {
+            if (blockState.is(Blocks.FIRE)) {
                 world.removeBlock(p, false);
                 world.playSound(null, p, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 2.6F + (random.nextFloat() - random.nextFloat()) * 0.8F);
             }
-            if ((bs.is(Blocks.CAMPFIRE) || bs.is(Blocks.SOUL_CAMPFIRE)) && bs.getValue(CampfireBlock.LIT)) {
-                world.setBlock(p, bs.setValue(CampfireBlock.LIT, false), 3);
+            if ((blockState.is(Blocks.CAMPFIRE) || blockState.is(Blocks.SOUL_CAMPFIRE)) && blockState.getValue(CampfireBlock.LIT)) {
+                world.setBlock(p, blockState.setValue(CampfireBlock.LIT, false), 3);
                 world.playSound(null, p, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 1.0F);
             }
-            if (bs.getBlock() instanceof CandleBlock && bs.getValue(CandleBlock.LIT)) {
-                world.setBlock(p, bs.setValue(CandleBlock.LIT, false), 3);
+            if (blockState.getBlock() instanceof CandleBlock && blockState.getValue(CandleBlock.LIT)) {
+                world.setBlock(p, blockState.setValue(CandleBlock.LIT, false), 3);
                 world.playSound(null, p, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 1.0F);
             }
         });

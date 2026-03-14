@@ -1,3 +1,10 @@
+[1.1.22]
+
+**Changed**
+* Water Sprinkler now hydrates all farmland blocks extending FarmBlock
+
+***
+
 [1.1.21]
 
 **Fixed**

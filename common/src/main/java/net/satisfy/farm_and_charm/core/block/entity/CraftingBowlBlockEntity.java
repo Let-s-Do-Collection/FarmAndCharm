@@ -48,7 +48,6 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
         super.loadAdditional(tag, provider);
         if (!this.tryLoadLootTable(tag)) this.stacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
         ContainerHelper.loadAllItems(tag, this.stacks, provider);
-        this.whiskAngle = tag.getFloat("WhiskAngle");
         this.whiskSpeed = tag.getFloat("WhiskSpeed");
         this.whiskTargetSpeed = tag.getFloat("WhiskTargetSpeed");
     }
@@ -57,7 +56,6 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.saveAdditional(tag, provider);
         if (!this.trySaveLootTable(tag)) ContainerHelper.saveAllItems(tag, this.stacks, provider);
-        tag.putFloat("WhiskAngle", this.whiskAngle);
         tag.putFloat("WhiskSpeed", this.whiskSpeed);
         tag.putFloat("WhiskTargetSpeed", this.whiskTargetSpeed);
     }

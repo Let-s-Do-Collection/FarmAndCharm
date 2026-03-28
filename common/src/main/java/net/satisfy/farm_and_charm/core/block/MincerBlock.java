@@ -140,30 +140,15 @@ public class MincerBlock extends BaseEntityBlock {
         int crank = state.getValue(CRANK);
         int cranked = state.getValue(CRANKED);
 
-        if (!playerStack.isEmpty() && crank == 0) {
-            if (!mincer.hasValidRecipe(level, playerStack)) {
-                return InteractionResult.SUCCESS;
-            }
-
-            if (player.isCreative()) {
-                ItemStack playerStackCopy = playerStack.copy();
-                playerStackCopy.setCount(playerStackCopy.getMaxStackSize());
-                mincer.setItem(mincer.INPUT_SLOT, playerStackCopy);
-
-                if (!level.isClientSide && player instanceof ServerPlayer serverPlayer && playerStack.is(Items.BEEF)) {
-                    var advancement = serverPlayer.server.getAdvancements().get(FarmAndCharm.identifier("main/introduction_mincing"));
-                    if (advancement != null) {
-                        var progress = serverPlayer.getAdvancements().getOrStartProgress(advancement);
-                        for (String criterion : progress.getRemainingCriteria()) {
-                            serverPlayer.getAdvancements().award(advancement, criterion);
-                        }
-                    }
+        if (!playerStack.isEmpty() && crank == 0 && mincer.hasValidRecipe(level, playerStack)) {
+            if (mincer.canPlaceItem(mincer.INPUT_SLOT, playerStack)) {
+                if (player.isCreative()) {
+                    ItemStack playerStackCopy = playerStack.copy();
+                    playerStackCopy.setCount(playerStackCopy.getMaxStackSize());
+                    mincer.setItem(mincer.INPUT_SLOT, playerStackCopy);
+                    return InteractionResult.SUCCESS;
                 }
 
-                return InteractionResult.SUCCESS;
-            }
-
-            if (mincer.canPlaceItem(mincer.INPUT_SLOT, playerStack)) {
                 if (inputStack.is(playerStack.getItem())) {
                     int countInPlayerHand = playerStack.getCount();
                     int insertableCount = inputStack.getMaxStackSize() - inputStack.getCount();
@@ -202,18 +187,14 @@ public class MincerBlock extends BaseEntityBlock {
                 return InteractionResult.SUCCESS;
             }
 
-            if (level.isClientSide() && playerStack.getItem() instanceof BlockItem) {
-                return InteractionResult.sidedSuccess(level.isClientSide());
-            }
+            state.setValue(CRANKED, 0);
 
-            return InteractionResult.PASS;
+            return InteractionResult.sidedSuccess(level.isClientSide());
         }
 
-        if (playerStack.isEmpty()) {
-            if (cranked >= CRANKS_NEEDED && crank == 0) {
-                level.setBlock(pos, state.setValue(CRANKED, 0), Block.UPDATE_ALL);
-                return InteractionResult.SUCCESS;
-            }
+        if (cranked >= CRANKS_NEEDED && crank == 0) {
+            level.setBlock(pos, state.setValue(CRANKED, 0), Block.UPDATE_ALL);
+            return InteractionResult.SUCCESS;
         }
 
         if (level instanceof ServerLevel serverWorld) {

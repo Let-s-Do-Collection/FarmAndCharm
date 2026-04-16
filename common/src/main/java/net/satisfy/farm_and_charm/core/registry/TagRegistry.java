@@ -16,4 +16,5 @@ public class TagRegistry {
     public static final TagKey<Item> CONTAINER = TagKey.create(Registries.ITEM, FarmAndCharm.identifier("container"));
     public static final TagKey<EntityType<?>> IS_WOLF = TagKey.create(Registries.ENTITY_TYPE, FarmAndCharm.identifier("is_wolf"));
     public static final TagKey<EntityType<?>> COOP_CHICKENS = TagKey.create(Registries.ENTITY_TYPE, FarmAndCharm.identifier("coop_chickens"));
+    public static final TagKey<EntityType<?>> CAN_WALK_OVER_CATTLEGRID = TagKey.create(Registries.ENTITY_TYPE, FarmAndCharm.identifier("can_walk_over_cattlegrid"));
 }

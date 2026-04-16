@@ -1,0 +1,43 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:player",
+    "minecraft:cat",
+    "minecraft:zombie",
+    "minecraft:skeleton",
+    "minecraft:stray",
+    "minecraft:husk",
+    "minecraft:slime",
+    "minecraft:magma_cube",
+    "minecraft:iron_golem",
+    "minecraft:snow_golem",
+    {
+      "id": "wildernature:deer",
+      "required": false
+    },
+    {
+      "id": "wildernature:boar",
+      "required": false
+    },
+    {
+      "id": "wildernature:bison",
+      "required": false
+    },
+    {
+      "id": "wildernature:giraffe",
+      "required": false
+    },
+    {
+      "id": "wildernature:hippo",
+      "required": false
+    },
+    {
+      "id": "wildernature:elephant",
+      "required": false
+    },
+    {
+      "id": "wildernature:lion",
+      "required": false
+    }
+  ]
+}

@@ -15,16 +15,23 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
 
-    @Shadow public abstract Item getItem();
+    @Shadow
+    public abstract Item getItem();
 
     @Inject(method = "getRarity", at = @At("RETURN"), cancellable = true)
     private void farm_and_charm$modifyRarity(CallbackInfoReturnable<Rarity> cir) {
-        var farm_and_charm$stack = this.getItem().getDefaultInstance();
-        if (farm_and_charm$stack.is(ObjectRegistry.CHICKEN_COOP_ITEM.get())) {
+        try {
+            if (!ObjectRegistry.CHICKEN_COOP_ITEM.isBound())
+                return;
+            if (this.getItem() != ObjectRegistry.CHICKEN_COOP_ITEM.get())
+                return;
+            var farm_and_charm$stack = (ItemStack) (Object) this;
             CustomData data = farm_and_charm$stack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY);
             if (data.copyTag() != null && data.contains("BlockEntityTag")) {
                 cir.setReturnValue(Rarity.COMMON);
             }
+        } catch (Exception e) {
+            // Registry not ready yet, skip
         }
     }
 }

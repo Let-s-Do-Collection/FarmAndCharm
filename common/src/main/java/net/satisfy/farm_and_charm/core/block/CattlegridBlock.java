@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.farm_and_charm.core.registry.TagRegistry;
@@ -28,6 +29,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class CattlegridBlock extends Block {
+    private static final VoxelShape FLOOR_COLLISION = Shapes.block();
+    private static final VoxelShape MOB_WALLS = Shapes.or(
+            Block.box(0.0, 16.0, 0.0, 16.0, 28.0, 2.0),
+            Block.box(0.0, 16.0, 14.0, 16.0, 28.0, 16.0),
+            Block.box(0.0, 16.0, 0.0, 2.0, 28.0, 16.0),
+            Block.box(14.0, 16.0, 0.0, 16.0, 28.0, 16.0)
+    );
+    private static final VoxelShape MOB_COLLISION = Shapes.or(FLOOR_COLLISION, MOB_WALLS);
+
     public CattlegridBlock(Properties properties) {
         super(properties);
     }
@@ -54,8 +64,7 @@ public class CattlegridBlock extends Block {
             return;
         }
 
-        if (entity instanceof Mob mob) {
-            mob.makeStuckInBlock(state, new Vec3(0.0, 1.0, 0.0));
+        if (entity instanceof Mob) {
             return;
         }
 
@@ -71,7 +80,16 @@ public class CattlegridBlock extends Block {
 
     @Override
     public @NotNull VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return Shapes.block();
+        if (!(context instanceof EntityCollisionContext entityContext)) {
+            return MOB_COLLISION;
+        }
+
+        Entity entity = entityContext.getEntity();
+        if (!(entity instanceof Mob) || entity.getType().is(TagRegistry.CAN_WALK_OVER_CATTLEGRID)) {
+            return FLOOR_COLLISION;
+        }
+
+        return MOB_COLLISION;
     }
 
     @Override

@@ -1,7 +1,14 @@
 [1.1.22]
 
+**Fixed**
+* Visual glitches with crank and bowl animations (khoidauminh)
+* Compatibility with Sable/Create Aeronautics (lukeelrod)
+
 **Changed**
 * Water Sprinkler now hydrates all farmland blocks extending FarmBlock
+
+**Improved**
+* Mincer interaction and usability (khoidauminh)
 
 ***
 

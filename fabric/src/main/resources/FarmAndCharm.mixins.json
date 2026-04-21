@@ -20,7 +20,6 @@
     "ExperienceOrbMixin",
     "FarmlandBlockMixin",
     "FoxMixin",
-    "ItemStackMixin",
     "LivingEntityMixin",
     "MobAccessor",
     "ParrotMixin",

@@ -111,8 +111,7 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
     private void dropItemsInOutputSlot(Level level, BlockPos pos, BlockState state, MincerBlockEntity mincer) {
         Direction direction = state.getValue(MincerBlock.FACING).getClockWise();
         if (!level.isClientSide() && !this.stacks.get(OUTPUT_SLOT).isEmpty()) {
-            ItemStack droppedStack = new ItemStack(mincer.stacks.get(OUTPUT_SLOT).getItem());
-            droppedStack.setCount(mincer.stacks.get(OUTPUT_SLOT).getCount());
+            ItemStack droppedStack = mincer.stacks.get(OUTPUT_SLOT);
             this.stacks.set(OUTPUT_SLOT, ItemStack.EMPTY);
             Vec3 vec3d = Vec3.atCenterOf(pos);
             Vec3 vec3d2 = vec3d.relative(direction, 0.7);

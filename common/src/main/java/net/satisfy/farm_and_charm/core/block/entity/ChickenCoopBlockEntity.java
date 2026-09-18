@@ -29,7 +29,7 @@ public class ChickenCoopBlockEntity extends BlockEntity {
     private static final String KEY_UUID = "UUID";
     private static final String KEY_UUID_MOST = "UUIDMost";
     private static final String KEY_UUID_LEAST = "UUIDLeast";
-    private static final String KEY_LEASH = "Leash";
+    private static final String KEY_LEASH = "leash";
     private static final String KEY_CAPTURED_UUID = "CapturedUUID";
     private final List<CompoundTag> storedChickens = new ArrayList<>();
     private int eggCount = 0;

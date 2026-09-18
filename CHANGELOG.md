@@ -3,6 +3,8 @@
 **Fixed**
 * Nutrition and saturation values from the config file now actually apply on NeoForge — food items were registered before the config finished loading, so edits were silently ignored
 * Chickens no longer keep a lead attached to their previous holder after re-emerging from a Chicken Coop, even though the lead had already dropped and popped off when they entered
+* Tomato Crop no longer destroys itself right after growing a new segment, since the block below a growing head is now correctly recognized as valid support
+* Mincer no longer strips data components (such as attribute modifiers forwarded by other mods' recipes) from items dropped out of its output slot. (Thanks to odderb)
 
 **Added**
 * Wheat, Barley, Corn, Oat, Strawberry, Lettuce, Tomato and Onion can now be dried into Bone Meal in the Silo, matching their wild counterparts

@@ -1,3 +1,14 @@
+[1.1.24]
+
+**Fixed**
+* Nutrition and saturation values from the config file now actually apply on NeoForge — food items were registered before the config finished loading, so edits were silently ignored
+* Chickens no longer keep a lead attached to their previous holder after re-emerging from a Chicken Coop, even though the lead had already dropped and popped off when they entered
+
+**Added**
+* Wheat, Barley, Corn, Oat, Strawberry, Lettuce, Tomato and Onion can now be dried into Bone Meal in the Silo, matching their wild counterparts
+
+***
+
 [1.1.23]
 
 **Fixed**

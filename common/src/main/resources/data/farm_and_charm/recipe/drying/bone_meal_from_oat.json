@@ -1,0 +1,11 @@
+{
+  "type": "farm_and_charm:drying",
+  "ingredient": {
+    "item": "farm_and_charm:oat"
+  },
+  "recipe_type": "MEAT",
+  "result": {
+    "id": "minecraft:bone_meal",
+    "count": 1
+  }
+}

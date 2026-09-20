@@ -177,7 +177,7 @@ public class SiloBlockEntity extends BlockEntity implements IMultiBlockEntityCon
     }
 
     public ItemStack tryRemoveItem() {
-        for (int slot = MAX_CAPACITY + this.getCapacity(); slot > MAX_CAPACITY; --slot) {
+        for (int slot = MAX_CAPACITY + this.getCapacity() - 1; slot >= MAX_CAPACITY; --slot) {
             ItemStack stack = this.getItem(slot);
             if (!stack.isEmpty())
                 return this.removeItem(slot, stack.getCount());
@@ -213,39 +213,54 @@ public class SiloBlockEntity extends BlockEntity implements IMultiBlockEntityCon
     }
 
     public void updateShape() {
+        forEachSiloBlock((pos, blockState, xOffset, zOffset) -> {
+            SiloBlock.Shape shape = computeShape(xOffset, zOffset);
+            if (blockState.getValue(SiloBlock.SHAPE) != shape) {
+                level.setBlock(pos, blockState.setValue(SiloBlock.SHAPE, shape), 2);
+            }
+        });
+    }
+
+    private SiloBlock.Shape computeShape(int xOffset, int zOffset) {
+        if (width == 2) {
+            return xOffset == 0
+                    ? (zOffset == 0 ? SiloBlock.Shape.NORTH_WEST : SiloBlock.Shape.SOUTH_WEST)
+                    : (zOffset == 0 ? SiloBlock.Shape.NORTH_EAST : SiloBlock.Shape.SOUTH_EAST);
+        }
+        if (width == 3) {
+            return switch (xOffset) {
+                case 0 ->
+                        zOffset == 0 ? SiloBlock.Shape.NORTH_WEST : zOffset == 2 ? SiloBlock.Shape.SOUTH_WEST : SiloBlock.Shape.WEST;
+                case 1 ->
+                        zOffset == 0 ? SiloBlock.Shape.NORTH : zOffset == 2 ? SiloBlock.Shape.SOUTH : SiloBlock.Shape.NONE;
+                case 2 ->
+                        zOffset == 0 ? SiloBlock.Shape.NORTH_EAST : zOffset == 2 ? SiloBlock.Shape.SOUTH_EAST : SiloBlock.Shape.EAST;
+                default -> SiloBlock.Shape.NONE;
+            };
+        }
+        return SiloBlock.Shape.NONE;
+    }
+
+    private void forEachSiloBlock(SiloBlockAction action) {
         if (level == null) {
             return;
         }
-
         for (int yOffset = 0; yOffset < height; yOffset++) {
             for (int xOffset = 0; xOffset < width; xOffset++) {
                 for (int zOffset = 0; zOffset < width; zOffset++) {
                     BlockPos pos = this.worldPosition.offset(xOffset, yOffset, zOffset);
                     BlockState blockState = level.getBlockState(pos);
-                    if (!SiloBlock.isSilo(blockState))
-                        continue;
-
-                    SiloBlock.Shape shape = SiloBlock.Shape.NONE;
-                    if (width == 2)
-                        shape = xOffset == 0 ? zOffset == 0 ? SiloBlock.Shape.NORTH_WEST : SiloBlock.Shape.SOUTH_WEST
-                                : zOffset == 0 ? SiloBlock.Shape.NORTH_EAST : SiloBlock.Shape.SOUTH_EAST;
-                    if (width == 3)
-                        shape = switch (xOffset) {
-                            case 0 ->
-                                    zOffset == 0 ? SiloBlock.Shape.NORTH_WEST : zOffset == 2 ? SiloBlock.Shape.SOUTH_WEST : SiloBlock.Shape.WEST;
-                            case 1 ->
-                                    zOffset == 0 ? SiloBlock.Shape.NORTH : zOffset == 2 ? SiloBlock.Shape.SOUTH : SiloBlock.Shape.NONE;
-                            case 2 ->
-                                    zOffset == 0 ? SiloBlock.Shape.NORTH_EAST : zOffset == 2 ? SiloBlock.Shape.SOUTH_EAST : SiloBlock.Shape.EAST;
-                            default -> SiloBlock.Shape.NONE;
-                        };
-
-                    if (blockState.getValue(SiloBlock.SHAPE) != shape) {
-                        level.setBlock(pos, blockState.setValue(SiloBlock.SHAPE, shape), 2);
+                    if (SiloBlock.isSilo(blockState)) {
+                        action.accept(pos, blockState, xOffset, zOffset);
                     }
                 }
             }
         }
+    }
+
+    @FunctionalInterface
+    private interface SiloBlockAction {
+        void accept(BlockPos pos, BlockState blockState, int xOffset, int zOffset);
     }
 
     private void dry() {
@@ -303,19 +318,11 @@ public class SiloBlockEntity extends BlockEntity implements IMultiBlockEntityCon
         if (!this.isController() || level == null)
             return;
 
-        for (int yOffset = 0; yOffset < height; yOffset++) {
-            for (int xOffset = 0; xOffset < width; xOffset++) {
-                for (int zOffset = 0; zOffset < width; zOffset++) {
-                    BlockPos pos = this.worldPosition.offset(xOffset, yOffset, zOffset);
-                    BlockState blockState = level.getBlockState(pos);
-                    if (!SiloBlock.isSilo(blockState))
-                        continue;
-                    if (blockState.getValue(SiloBlock.OPEN) == open)
-                        continue;
-                    level.setBlock(pos, blockState.setValue(SiloBlock.OPEN, open), 2);
-                }
+        forEachSiloBlock((pos, blockState, xOffset, zOffset) -> {
+            if (blockState.getValue(SiloBlock.OPEN) != open) {
+                level.setBlock(pos, blockState.setValue(SiloBlock.OPEN, open), 2);
             }
-        }
+        });
     }
 
     @Override

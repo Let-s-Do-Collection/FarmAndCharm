@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "farm_and_charm:minced_beef",
+    "farm_and_charm:chicken_parts",
+    "farm_and_charm:lamb_ham",
+    "farm_and_charm:bacon"
+  ]
+}

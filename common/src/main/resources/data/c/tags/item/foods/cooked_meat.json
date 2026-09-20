@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "farm_and_charm:beef_patty_with_vegetables",
+    "farm_and_charm:potato_with_roast_meat",
+    "farm_and_charm:stuffed_chicken",
+    "farm_and_charm:roasted_chicken",
+    "farm_and_charm:chicken_wrapped_in_bacon",
+    "farm_and_charm:baked_lamb_ham",
+    "farm_and_charm:lamb_with_corn",
+    "farm_and_charm:goulash",
+    "farm_and_charm:bacon_with_eggs"
+  ]
+}

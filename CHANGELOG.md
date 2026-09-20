@@ -2,10 +2,12 @@
 
 **Fixed**
 * Fully built Silos (3x3x9) no longer crash the game when sneak-right-clicking to take a finished item out, and the first finished-item slot is no longer skipped
-* Tomato Crop Body now drops its Tomato, Tomato Seeds and Rope instead of nothing when broken
+* Tomato Crop now drops its Tomato, Tomato Seeds and Rope instead of nothing when broken
 * Chairs are no longer left behind or duplicated by Sable/Create: Aeronautics contraptions
 * Fixed `c:grains/wheats` incorrectly containing Oat, Barley and Corn in addition to Wheat
 * `c:grain` and `c:strawberry` now correctly alias `c:grains` and `c:strawberries` instead of duplicating an incomplete item list
+* Plow Cart now plows its second row relative to its actual driving direction instead of always offsetting towards world-east
+* Plow Cart now breaks flowers and other bushes on top of grass/dirt when plowing instead of leaving them floating on the new Farmland
 
 **Changed**
 * `c:crops` now also includes Barley, Oat and Strawberry alongside the existing Cabbage, Corn, Onion and Tomato

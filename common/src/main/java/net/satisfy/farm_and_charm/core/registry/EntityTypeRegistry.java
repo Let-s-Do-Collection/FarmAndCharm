@@ -13,6 +13,7 @@ import net.satisfy.farm_and_charm.core.block.entity.*;
 import net.satisfy.farm_and_charm.core.entity.ChairEntity;
 import net.satisfy.farm_and_charm.core.entity.PlowCartEntity;
 import net.satisfy.farm_and_charm.core.entity.RottenTomatoEntity;
+import net.satisfy.farm_and_charm.core.entity.SeederCartEntity;
 import net.satisfy.farm_and_charm.core.entity.SupplyCartEntity;
 
 import java.util.HashSet;
@@ -22,6 +23,7 @@ public class EntityTypeRegistry {
     private static final Registrar<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(FarmAndCharm.MOD_ID, Registries.BLOCK_ENTITY_TYPE).getRegistrar();
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(FarmAndCharm.MOD_ID, Registries.ENTITY_TYPE);
 
+    public static final RegistrySupplier<BlockEntityType<TimberWellBlockEntity>> TIMBER_WELL_BLOCK_ENTITY = registerBlockEntity("timber_well", () -> BlockEntityType.Builder.of(TimberWellBlockEntity::new, ObjectRegistry.TIMBER_WELL.get()).build(null));
     public static final RegistrySupplier<BlockEntityType<StorageBlockEntity>> STORAGE_ENTITY = registerBlockEntity("storage", () -> BlockEntityType.Builder.of(StorageBlockEntity::new, StorageTypeRegistry.registerBlocks(new HashSet<>()).toArray(new Block[0])).build(null));
     public static final RegistrySupplier<BlockEntityType<RoasterBlockEntity>> ROASTER_BLOCK_ENTITY = registerBlockEntity("roaster", () -> BlockEntityType.Builder.of(RoasterBlockEntity::new, ObjectRegistry.ROASTER.get()).build(null));
     public static final RegistrySupplier<BlockEntityType<CraftingBowlBlockEntity>> CRAFTING_BOWL_BLOCK_ENTITY = registerBlockEntity("crafting_bowl", () -> BlockEntityType.Builder.of(CraftingBowlBlockEntity::new, ObjectRegistry.CRAFTING_BOWL.get()).build(null));
@@ -40,6 +42,7 @@ public class EntityTypeRegistry {
     public static final RegistrySupplier<EntityType<RottenTomatoEntity>> ROTTEN_TOMATO = registerEntityType("rotten_tomato", () -> EntityType.Builder.<RottenTomatoEntity>of(RottenTomatoEntity::new, MobCategory.MISC).sized(0.25f, 0.25f).build(FarmAndCharm.identifier("rotten_tomato").toString()));
     public static final RegistrySupplier<EntityType<SupplyCartEntity>> SUPPLY_CART = registerEntityType("cart", () -> EntityType.Builder.of(SupplyCartEntity::new, MobCategory.MISC).sized(1.875f, 0.875f).clientTrackingRange(10).build(FarmAndCharm.identifier("supply_cart").toString()));
     public static final RegistrySupplier<EntityType<PlowCartEntity>> PLOW = registerEntityType("plow", () -> EntityType.Builder.of(PlowCartEntity::new, MobCategory.MISC).sized(1.875f, 0.875f).clientTrackingRange(10).build(FarmAndCharm.identifier("plow").toString()));
+    public static final RegistrySupplier<EntityType<SeederCartEntity>> SEEDER = registerEntityType("seeder", () -> EntityType.Builder.of(SeederCartEntity::new, MobCategory.MISC).sized(1.875f, 0.875f).clientTrackingRange(10).build(FarmAndCharm.identifier("seeder").toString()));
     public static final RegistrySupplier<EntityType<ChairEntity>> CHAIR = registerEntityType("chair", () -> EntityType.Builder.of(ChairEntity::new, MobCategory.MISC).sized(0.001F, 0.001F).build((FarmAndCharm.identifier("chair")).toString()));
 
     private static <T extends BlockEntityType<?>> RegistrySupplier<T> registerBlockEntity(final String path, final Supplier<T> type) {

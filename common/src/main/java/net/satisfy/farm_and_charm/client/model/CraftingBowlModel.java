@@ -25,7 +25,8 @@ public class CraftingBowlModel<T extends Entity> extends EntityModel<T> {
     public static LayerDefinition getTexturedModelData() {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
-        PartDefinition bowl = partdefinition.addOrReplaceChild("bowl", CubeListBuilder.create().texOffs(0, 0).addBox(-13.0F, -8.05F, 3.0F, 10.0F, 8.0F, 10.0F, new CubeDeformation(0.0F)).texOffs(0, 0).addBox(-4.0F, -3.0F, 12.0F, -8.0F, -5.0F, -8.0F, new CubeDeformation(0.0F)).texOffs(30, 0).addBox(-13.0F, -7.0F, 3.0F, 10.0F, 0.0F, 10.0F, new CubeDeformation(0.0F)), PartPose.offset(8.0F, 24.0F, -8.0F));
+        PartDefinition bowl = partdefinition.addOrReplaceChild("bowl", CubeListBuilder.create().texOffs(0, 0).addBox(-13.0F, -8.05F, 3.0F, 10.0F, 8.0F, 10.0F, new CubeDeformation(0.0F)).texOffs(0, 0).addBox(-4.0F, -3.0F, 12.0F, -8.0F, -5.0F, -8.0F, new CubeDeformation(0.0F)), PartPose.offset(8.0F, 24.0F, -8.0F));
+        PartDefinition dough = partdefinition.addOrReplaceChild("dough", CubeListBuilder.create().texOffs(30, 0).addBox(-13.0F, -7.0F, 3.0F, 10.0F, 0.0F, 10.0F, new CubeDeformation(0.0F)), PartPose.offset(8.0F, 24.0F, -8.0F));
         PartDefinition swing = partdefinition.addOrReplaceChild("swing", CubeListBuilder.create(), PartPose.offsetAndRotation(0.0F, 20.0F, 0.0F, 0.0F, 0.0F, 0.0873F));
         PartDefinition swing_r1 = swing.addOrReplaceChild("swing_r1", CubeListBuilder.create().texOffs(0, 0).addBox(-1.2556F, 0.5F, 1.125F, 5.0F, 6.0F, 0.0F, new CubeDeformation(0.0F)).texOffs(0, 13).addBox(1.7174F, 0.5F, -1.375F, 0.0F, 6.0F, 5.0F, new CubeDeformation(0.0F)).texOffs(10, 18).addBox(0.7174F, -5.5F, 0.625F, 1.0F, 8.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-2.5174F, -2.8143F, -1.125F, 0.0F, 0.0F, -0.7854F));
         PartDefinition item1 = swing.addOrReplaceChild("item1", CubeListBuilder.create(), PartPose.offset(0.0F, 1.0F, 2.0F));

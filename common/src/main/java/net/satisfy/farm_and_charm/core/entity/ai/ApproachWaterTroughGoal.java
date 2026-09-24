@@ -11,6 +11,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
+import net.satisfy.farm_and_charm.core.block.TimberWellBlock;
 import net.satisfy.farm_and_charm.core.block.WaterTroughBlock;
 import net.satisfy.farm_and_charm.platform.PlatformHelper;
 
@@ -37,10 +38,10 @@ public class ApproachWaterTroughGoal extends MoveToBlockGoal {
 
         if (!level.isClientSide) {
             BlockState state = level.getBlockState(this.blockPos);
-            if (drinkCooldownTicks <= 0 && state.getBlock() instanceof WaterTroughBlock && state.getValue(WaterTroughBlock.LEVEL) > 0) {
+            if (drinkCooldownTicks <= 0 && isValidTarget(level, this.blockPos)) {
                 this.animal.getLookControl().setLookAt(this.blockPos.getX() + 0.5D, this.blockPos.getY(), this.blockPos.getZ() + 0.5D, 10.0F, this.animal.getMaxHeadXRot());
                 if (this.isReachedTarget()) {
-                    boolean drank = drainConnected(level, this.blockPos, state);
+                    boolean drank = state.getBlock() instanceof TimberWellBlock ? drinkFromWell(level, state) : drainConnected(level, this.blockPos, state);
                     if (drank) {
                         drinkCooldownTicks = 200 + level.random.nextInt(200);
                     } else {
@@ -71,7 +72,18 @@ public class ApproachWaterTroughGoal extends MoveToBlockGoal {
     @Override
     protected boolean isValidTarget(LevelReader levelReader, BlockPos blockPos) {
         BlockState state = levelReader.getBlockState(blockPos);
+        if (state.getBlock() instanceof TimberWellBlock) {
+            return state.getValue(TimberWellBlock.PART) != TimberWellBlock.TimberWellPart.TOP && TimberWellBlock.hasWater(state);
+        }
         return state.getBlock() instanceof WaterTroughBlock && state.getValue(WaterTroughBlock.LEVEL) > 0;
+    }
+
+    private boolean drinkFromWell(Level level, BlockState state) {
+        if (!TimberWellBlock.drink(level, this.blockPos, state)) {
+            return false;
+        }
+        applyDrinkEffects(level);
+        return true;
     }
 
     private boolean drainConnected(Level level, BlockPos startPos, BlockState startState) {
@@ -94,23 +106,27 @@ public class ApproachWaterTroughGoal extends MoveToBlockGoal {
         }
 
         if (anyDrained) {
-            int age = this.animal.getAge();
-            if (age > 0) {
-                this.animal.setAge(Math.max(0, age - 400));
-            }
-
-            double x = this.blockPos.getX() + 0.5D;
-            double y = this.blockPos.getY() + 0.25D;
-            double z = this.blockPos.getZ() + 0.5D;
-
-            if (level instanceof ServerLevel serverLevel) {
-                serverLevel.sendParticles(ParticleTypes.SPLASH, x, y, z, 8, 0.20D, 0.05D, 0.20D, 0.02D);
-            }
-
-            level.playSound(null, x, y, z, SoundEvents.GENERIC_SPLASH, SoundSource.NEUTRAL, 0.4F, 0.9F + level.random.nextFloat() * 0.2F);
+            applyDrinkEffects(level);
         }
 
         return anyDrained;
+    }
+
+    private void applyDrinkEffects(Level level) {
+        int age = this.animal.getAge();
+        if (age > 0) {
+            this.animal.setAge(Math.max(0, age - 400));
+        }
+
+        double x = this.blockPos.getX() + 0.5D;
+        double y = this.blockPos.getY() + 0.25D;
+        double z = this.blockPos.getZ() + 0.5D;
+
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.SPLASH, x, y, z, 8, 0.20D, 0.05D, 0.20D, 0.02D);
+        }
+
+        level.playSound(null, x, y, z, SoundEvents.GENERIC_SPLASH, SoundSource.NEUTRAL, 0.4F, 0.9F + level.random.nextFloat() * 0.2F);
     }
 
     private List<BlockPos> getComponent(Level level, BlockPos start, Direction facing) {

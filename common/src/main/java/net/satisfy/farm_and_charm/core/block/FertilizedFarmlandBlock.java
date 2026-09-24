@@ -2,34 +2,141 @@ package net.satisfy.farm_and_charm.core.block;
 
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
+import net.satisfy.farm_and_charm.core.registry.TagRegistry;
 import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class FertilizedFarmlandBlock extends FarmBlock {
+public class FertilizedFarmlandBlock extends FarmBlock implements SimpleWaterloggedBlock {
+    public static final BooleanProperty LOWERED = BooleanProperty.create("lowered");
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+    private static final VoxelShape LOWERED_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 8.0, 16.0);
+
     public FertilizedFarmlandBlock(Properties properties) {
         super(properties);
+        this.registerDefaultState(this.defaultBlockState().setValue(LOWERED, false).setValue(WATERLOGGED, false));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(LOWERED, WATERLOGGED);
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext collisionContext) {
+        return blockState.getValue(LOWERED) ? LOWERED_SHAPE : super.getShape(blockState, blockGetter, blockPos, collisionContext);
+    }
+
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+        if (blockHitResult.getDirection() == Direction.UP && isPlantable(itemStack) && !canPlantOn(blockState, itemStack)) {
+            return ItemInteractionResult.FAIL;
+        }
+        if (!itemStack.is(ObjectRegistry.PITCHFORK.get()) || blockState.getValue(LOWERED) || !level.getBlockState(blockPos.above()).isAir()) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+        if (!level.isClientSide) {
+            BlockState lowered = blockState.setValue(LOWERED, true);
+            level.setBlock(blockPos, lowered, Block.UPDATE_ALL);
+            level.playSound(null, blockPos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0f, 0.8f);
+            level.gameEvent(GameEvent.BLOCK_CHANGE, blockPos, GameEvent.Context.of(player, lowered));
+            spawnDirtParticles(level, blockPos, blockState);
+            itemStack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(interactionHand));
+            if (hasAdjacentWater(level, blockPos)) {
+                flood(level, blockPos, lowered);
+            }
+        }
+        return ItemInteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    @Override
+    public boolean canPlaceLiquid(@Nullable Player player, BlockGetter blockGetter, BlockPos blockPos, BlockState blockState, Fluid fluid) {
+        return blockState.getValue(LOWERED) && SimpleWaterloggedBlock.super.canPlaceLiquid(player, blockGetter, blockPos, blockState, fluid);
+    }
+
+    @Override
+    public FluidState getFluidState(BlockState blockState) {
+        return blockState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(blockState);
+    }
+
+    @Override
+    public BlockState updateShape(BlockState blockState, Direction direction, BlockState neighborState, LevelAccessor levelAccessor, BlockPos blockPos, BlockPos neighborPos) {
+        if (blockState.getValue(WATERLOGGED)) {
+            levelAccessor.scheduleTick(blockPos, Fluids.WATER, Fluids.WATER.getTickDelay(levelAccessor));
+        }
+        return super.updateShape(blockState, direction, neighborState, levelAccessor, blockPos, neighborPos);
+    }
+
+    public static boolean canPlantOn(BlockState soilState, ItemStack seedStack) {
+        return !soilState.hasProperty(LOWERED) || !soilState.getValue(LOWERED) || seedStack.is(TagRegistry.NEEDS_LOWERED_FARMLAND);
+    }
+
+    private static boolean isPlantable(ItemStack itemStack) {
+        return itemStack.is(TagRegistry.SEEDS) || itemStack.is(TagRegistry.NEEDS_LOWERED_FARMLAND) || (itemStack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof BushBlock);
+    }
+
+    public static void spawnDirtParticles(Level level, BlockPos blockPos, BlockState blockState) {
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, blockState), blockPos.getX() + 0.5, blockPos.getY() + 1.0, blockPos.getZ() + 0.5, 20, 0.3, 0.1, 0.3, 0.1);
+        }
+    }
+
+    private static boolean hasAdjacentWater(Level level, BlockPos blockPos) {
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            if (level.getBlockState(blockPos.relative(direction)).is(Blocks.WATER)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void flood(Level level, BlockPos blockPos, BlockState blockState) {
+        level.setBlock(blockPos, blockState.setValue(WATERLOGGED, true), Block.UPDATE_ALL);
+        level.scheduleTick(blockPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
     }
 
     public static void turnToSoil(@Nullable Entity entity, BlockState blockState, Level level, BlockPos blockPos) {
@@ -49,6 +156,10 @@ public class FertilizedFarmlandBlock extends FarmBlock {
 
     @Override
     public void randomTick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource) {
+        if (blockState.getValue(LOWERED) && !blockState.getValue(WATERLOGGED) && hasAdjacentWater(serverLevel, blockPos)) {
+            flood(serverLevel, blockPos, blockState);
+            blockState = serverLevel.getBlockState(blockPos);
+        }
         if (randomSource.nextFloat() < getGrowthChance(serverLevel, blockPos)) {
             applyBonemealEffect(serverLevel, blockPos, randomSource);
         }
@@ -59,6 +170,11 @@ public class FertilizedFarmlandBlock extends FarmBlock {
         super.neighborChanged(blockState, level, blockPos, neighborBlock, neighborPos, movedByPiston);
 
         if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        if (blockState.getValue(LOWERED) && !blockState.getValue(WATERLOGGED) && hasAdjacentWater(serverLevel, blockPos)) {
+            flood(serverLevel, blockPos, blockState);
             return;
         }
 

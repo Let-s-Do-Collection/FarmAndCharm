@@ -1,0 +1,9 @@
+{
+  "parent": "farm_and_charm:block/template_farmland_lowered",
+  "textures": {
+    "6": "farm_and_charm:block/fertilized_soil",
+    "9": "farm_and_charm:block/fertilized_farmland_side",
+    "10": "farm_and_charm:block/fertilized_farmland_top",
+    "particle": "farm_and_charm:block/fertilized_farmland_top"
+  }
+}

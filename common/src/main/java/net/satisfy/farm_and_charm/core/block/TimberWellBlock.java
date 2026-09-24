@@ -1,8 +1,18 @@
 package net.satisfy.farm_and_charm.core.block;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.satisfy.farm_and_charm.core.block.entity.TimberWellBlockEntity;
+import net.satisfy.farm_and_charm.core.registry.SoundEventRegistry;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -11,6 +21,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -42,13 +53,16 @@ import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TimberWellBlock extends FacingBlock {
+public class TimberWellBlock extends FacingBlock implements EntityBlock {
     public static final MapCodec<TimberWellBlock> CODEC = simpleCodec(TimberWellBlock::new);
     public static final EnumProperty<TimberWellPart> PART = EnumProperty.create("part", TimberWellPart.class);
+    public static final IntegerProperty LEVEL = IntegerProperty.create("level", 0, 3);
+    public static final int GROUNDWATER_DEPTH = 6;
+    private static final int RAIN_FILL_CHANCE = 6;
 
     public TimberWellBlock(Properties settings) {
         super(settings);
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(PART, TimberWellPart.FOOT));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(PART, TimberWellPart.FOOT).setValue(LEVEL, 0));
     }
 
     @Override
@@ -101,12 +115,120 @@ public class TimberWellBlock extends FacingBlock {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
 
+        if (state.getValue(LEVEL) <= 0) {
+            if (!level.isClientSide) {
+                player.displayClientMessage(Component.translatable("message.farm_and_charm.timber_well.empty"), true);
+            }
+            return ItemInteractionResult.CONSUME;
+        }
+
         if (!level.isClientSide) {
+            level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
             ItemStack filledStack = ItemUtils.createFilledResult(stack, player, new ItemStack(Items.WATER_BUCKET));
             player.setItemInHand(hand, filledStack);
+            setWaterLevel(level, pos, state, state.getValue(LEVEL) - 1);
         }
 
         return ItemInteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        int currentLevel = state.getValue(LEVEL);
+        BlockPos topPos = getFootPos(pos, state).relative(state.getValue(FACING)).above();
+        if (currentLevel >= 3 || !(level.getBlockEntity(topPos) instanceof TimberWellBlockEntity well) || well.isPumping(level.getGameTime())) {
+            return InteractionResult.PASS;
+        }
+        if (!hasGroundwater(level, pos, state)) {
+            if (!level.isClientSide) {
+                player.displayClientMessage(Component.translatable("message.farm_and_charm.timber_well.no_groundwater"), true);
+            }
+            return InteractionResult.CONSUME;
+        }
+        if (!level.isClientSide) {
+            level.blockEvent(topPos, this, TimberWellBlockEntity.PUMP_EVENT, 0);
+            setWaterLevel(level, pos, state, currentLevel + 1);
+            level.playSound(null, topPos, SoundEventRegistry.WELL_PUMP.get(), SoundSource.BLOCKS, 0.5F, 0.9F + level.random.nextFloat() * 0.2F);
+            level.playSound(null, getFootPos(pos, state).relative(state.getValue(FACING)), SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 0.5F, 0.9F + level.random.nextFloat() * 0.2F);
+            if (level instanceof ServerLevel serverLevel) {
+                serverLevel.sendParticles(ParticleTypes.SPLASH, topPos.getX() + 0.5D, topPos.getY(), topPos.getZ() + 0.5D, 10, 0.15D, 0.05D, 0.15D, 0.02D);
+            }
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    public static boolean hasWater(BlockState state) {
+        return state.getValue(LEVEL) > 0;
+    }
+
+    public static boolean drink(Level level, BlockPos pos, BlockState state) {
+        int currentLevel = state.getValue(LEVEL);
+        if (currentLevel <= 0) {
+            return false;
+        }
+        setWaterLevel(level, pos, state, currentLevel - 1);
+        return true;
+    }
+
+    private static BlockPos getFootPos(BlockPos pos, BlockState state) {
+        Direction facing = state.getValue(FACING);
+        return switch (state.getValue(PART)) {
+            case FOOT -> pos;
+            case HEAD -> pos.relative(facing.getOpposite());
+            case TOP -> pos.below().relative(facing.getOpposite());
+        };
+    }
+
+    private static void setWaterLevel(Level level, BlockPos pos, BlockState state, int waterLevel) {
+        BlockPos footPos = getFootPos(pos, state);
+        BlockPos headPos = footPos.relative(state.getValue(FACING));
+        for (BlockPos partPos : new BlockPos[]{footPos, headPos, headPos.above()}) {
+            BlockState partState = level.getBlockState(partPos);
+            if (partState.getBlock() instanceof TimberWellBlock && partState.getValue(LEVEL) != waterLevel) {
+                level.setBlock(partPos, partState.setValue(LEVEL, waterLevel), 3);
+            }
+        }
+    }
+
+    @Override
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return state.getValue(PART) == TimberWellPart.TOP ? new TimberWellBlockEntity(pos, state) : null;
+    }
+
+    @Override
+    protected boolean triggerEvent(BlockState state, Level level, BlockPos pos, int id, int param) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        return blockEntity != null && blockEntity.triggerEvent(id, param);
+    }
+
+    @Override
+    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (state.getValue(PART) != TimberWellPart.FOOT) {
+            return;
+        }
+        int currentLevel = state.getValue(LEVEL);
+        BlockPos topPos = pos.relative(state.getValue(FACING)).above();
+        if (currentLevel < 3 && level.isRainingAt(topPos.above()) && random.nextInt(RAIN_FILL_CHANCE) == 0) {
+            setWaterLevel(level, pos, state, currentLevel + 1);
+        }
+    }
+
+    public static boolean hasGroundwater(LevelReader level, BlockPos pos, BlockState state) {
+        Direction facing = state.getValue(FACING);
+        BlockPos footPos = getFootPos(pos, state);
+        BlockPos headPos = footPos.relative(facing);
+        int minX = Math.min(footPos.getX(), headPos.getX()) - 1;
+        int maxX = Math.max(footPos.getX(), headPos.getX()) + 1;
+        int minZ = Math.min(footPos.getZ(), headPos.getZ()) - 1;
+        int maxZ = Math.max(footPos.getZ(), headPos.getZ()) + 1;
+
+        for (BlockPos checkPos : BlockPos.betweenClosed(minX, footPos.getY() - GROUNDWATER_DEPTH, minZ, maxX, footPos.getY() - 1, maxZ)) {
+            FluidState fluidState = level.getFluidState(checkPos);
+            if (fluidState.is(FluidTags.WATER) && fluidState.isSource()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -157,7 +279,7 @@ public class TimberWellBlock extends FacingBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(PART);
+        builder.add(PART, LEVEL);
     }
 
     private void removeOtherParts(Level level, BlockPos pos, BlockState state) {
@@ -231,7 +353,7 @@ public class TimberWellBlock extends FacingBlock {
         if (!level.isClientSide) {
             return;
         }
-        if (state.getValue(PART) != TimberWellPart.TOP) {
+        if (state.getValue(PART) != TimberWellPart.TOP || !hasGroundwater(level, pos, state)) {
             return;
         }
 
@@ -253,8 +375,18 @@ public class TimberWellBlock extends FacingBlock {
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.literal("Test item – not implemented. Nice that you found it!")
-                .withStyle(ChatFormatting.RED));
+        int earthy = 0xFFD966;
+        int gold = 0xFFD700;
+
+        if (Screen.hasShiftDown()) {
+            tooltip.add(Component.translatable("tooltip.farm_and_charm.timber_well.info_0", GROUNDWATER_DEPTH)
+                    .withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
+        } else {
+            tooltip.add(Component.translatable(
+                    "tooltip.farm_and_charm.tooltip_information.hold",
+                    Component.literal("[SHIFT]").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(gold)))
+            ).withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
+        }
     }
 
     private static final Supplier<VoxelShape> FOOT_SHAPE_SUPPLIER = () -> {

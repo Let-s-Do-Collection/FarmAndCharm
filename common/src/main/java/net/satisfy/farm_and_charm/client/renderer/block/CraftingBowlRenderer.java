@@ -23,12 +23,15 @@ import net.satisfy.farm_and_charm.core.block.CraftingBowlBlock;
 import net.satisfy.farm_and_charm.core.block.entity.CraftingBowlBlockEntity;
 
 public class CraftingBowlRenderer implements BlockEntityRenderer<CraftingBowlBlockEntity> {
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "textures/entity/crafting_bowl.png");
     private final ModelPart bowl;
+    private final ModelPart dough;
     private final ModelPart swing;
 
     public CraftingBowlRenderer(BlockEntityRendererProvider.Context context) {
         ModelPart root = context.bakeLayer(CraftingBowlModel.LAYER_LOCATION);
         this.bowl = root.getChild("bowl");
+        this.dough = root.getChild("dough");
         this.swing = root.getChild("swing");
     }
 
@@ -43,13 +46,12 @@ public class CraftingBowlRenderer implements BlockEntityRenderer<CraftingBowlBlo
         pose.mulPose(Axis.XP.rotationDegrees(180));
         pose.translate(0.5f, -1.5f, -0.5f);
 
-        ResourceLocation tex = be.getStirringProgress() > CraftingBowlBlock.STIRS_NEEDED
-                ? ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "textures/entity/crafting_bowl_full.png")
-                : ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "textures/entity/crafting_bowl.png");
-
-        VertexConsumer vc = buf.getBuffer(RenderType.entityTranslucent(tex));
+        VertexConsumer vc = buf.getBuffer(RenderType.entityTranslucent(TEXTURE));
 
         bowl.render(pose, vc, light, overlay);
+        if (be.getStirringProgress() > CraftingBowlBlock.STIRS_NEEDED) {
+            dough.render(pose, vc, light, overlay);
+        }
         pose.mulPose(Axis.YP.rotation(be.getInterpolatedWhiskAngle(f)));
         swing.render(pose, vc, light, overlay);
 

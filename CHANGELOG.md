@@ -1,3 +1,22 @@
+[1.1.26]
+
+**Added**
+* Seeder: a new cart that automatically sows Farmland with seeds from its storage while being driven
+* Flooded Farmland: right-click Fertilized Farmland with a Pitchfork to lower it to half height, then fill it with a Water Bucket (or place it next to water) to flood it. Other mods can check the new `lowered` and `waterlogged` block states for paddy-style crops. Lowered Farmland only accepts seeds from the `farm_and_charm:needs_lowered_farmland` item tag
+* Tilling Fertilized Soil into Farmland and lowering Fertilized Farmland with a Pitchfork now spawns dirt particles
+* Timber Well: pump water up by right-clicking it with an empty hand (with an animated pump lever), as long as there is a water source up to 6 blocks below (dripping water shows it). It also fills up step by step while it rains. Buckets and drinking Livestock use up its water, just like a Water Trough. It now has a recipe, drops itself when broken and is mined faster with an Axe
+
+**Fixed**
+* Dungarees no longer stack up to 64, they now stack to 1 like any other armor piece
+* Water Trough is now mined faster with an Axe
+* Scarecrows now face the player when placed instead of being turned around
+* Removed Wheat, Barley, Corn and Oats Silo drying recipes into Bone Meal, since they could silently win over Brewerys recipes for drying the same crops into other results :D
+
+**Changed**
+* Crafting Bowl now uses a single entity texture; the dough is a separate model part that only renders once stirring is finished. Resource packs should move their `crafting_bowl_full.png` content into `crafting_bowl.png`
+
+***
+
 [1.1.25]
 
 **Fixed**

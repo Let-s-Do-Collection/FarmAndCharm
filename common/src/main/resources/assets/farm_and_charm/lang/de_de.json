@@ -106,6 +106,7 @@
   "effect.farm_and_charm.sustenance": "Genährt",
   "effect.farm_and_charm.sweets": "Süss!",
   "entity.farm_and_charm.plow": "Pflug",
+  "entity.farm_and_charm.seeder": "Sämaschine",
   "item.farm_and_charm.bacon": "Speck",
   "item.farm_and_charm.bacon_with_eggs": "Speck mit Eiern",
   "item.farm_and_charm.barley": "Gerste",
@@ -144,6 +145,7 @@
   "item.farm_and_charm.pasta_with_onion_sauce": "Pasta mit Zwiebelsauce",
   "item.farm_and_charm.pitchfork": "Mistgabel",
   "item.farm_and_charm.plow": "Pflug",
+  "item.farm_and_charm.seeder": "Sämaschine",
   "item.farm_and_charm.potato_soup": "Kartoffelsuppe",
   "item.farm_and_charm.raw_pasta": "Rohe Nudeln",
   "item.farm_and_charm.ribwort_tea_cup": "Tasse voller Spitzwegerichtee",
@@ -341,11 +343,17 @@
   "tooltip.farm_and_charm.supply_cart.action_open": "Schleichen und Rechtsklick, um die Truhe zu öffnen.",
   "tooltip.farm_and_charm.plow_cart.title": "Pflug",
   "tooltip.farm_and_charm.plow_cart.action_toggle": "Schleichen und Rechtsklick, um den Pflug zu aktivieren oder zu deaktivieren.",
+  "tooltip.farm_and_charm.seeder.title": "Sämaschine",
+  "tooltip.farm_and_charm.seeder.action_open": "Schleichen und Rechtsklick, um das Saatgutlager zu öffnen.",
+  "tooltip.farm_and_charm.seeder.action_sow": "Sät während der Fahrt Saatgut aus dem Lager auf Ackerboden.",
   "tooltip.farm_and_charm.cart.action_attach_self": "Rechtsklick, um den Pflug zu ziehen.",
   "tooltip.farm_and_charm.cart.action_detach": "Schleichen und Rechtsklick, um ihn zu abzustellen.",
   "tooltip.farm_and_charm.cart.attach_horse": "Rechtsklick auf ein gezähmtes Pferd oder einen Esel, um ihn anzuhängen.",
   "tooltip.farm_and_charm.cart.while_pulling": "Während des Ziehens:",
   "tooltip.farm_and_charm.sink.info_0": "Rechtsklicken, um Wasser einzufüllen.",
-  "tooltip.farm_and_charm.sink.info_1": "Wenn gefüllt, mit Eimer benutzen, um Wasser zu entnehmen."
+  "tooltip.farm_and_charm.sink.info_1": "Wenn gefüllt, mit Eimer benutzen, um Wasser zu entnehmen.",
+  "tooltip.farm_and_charm.timber_well.info_0": "Mit leerer Hand rechtsklicken, um Wasser aus einer Wasserquelle bis zu %s Blöcke darunter hochzupumpen. Füllt sich außerdem langsam im Regen. Nutztiere können daraus trinken und die Zuchtzeit verkürzen.",
+  "message.farm_and_charm.timber_well.no_groundwater": "Kein Grundwasser unter diesem Brunnen",
+  "message.farm_and_charm.timber_well.empty": "Dieser Brunnen ist leer, pumpe zuerst Wasser hoch",
+  "sound.farm_and_charm.well_pump": "Brunnen pumpt"
 }
-

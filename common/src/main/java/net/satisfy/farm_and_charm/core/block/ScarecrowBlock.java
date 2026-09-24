@@ -83,7 +83,7 @@ public class ScarecrowBlock extends BaseEntityBlock {
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         return this.defaultBlockState()
-                .setValue(FACING, ctx.getHorizontalDirection())
+                .setValue(FACING, ctx.getHorizontalDirection().getOpposite())
                 .setValue(HAS_DUNGAREES, true);
     }
 

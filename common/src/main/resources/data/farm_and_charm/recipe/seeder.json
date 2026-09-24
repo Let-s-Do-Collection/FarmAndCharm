@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SSS",
+    "UUU",
+    "## "
+  ],
+  "key": {
+    "#": {
+      "tag": "minecraft:planks"
+    },
+    "U": {
+      "item": "minecraft:iron_nugget"
+    },
+    "S": {
+      "item": "minecraft:wheat_seeds"
+    }
+  },
+  "result": {
+    "id": "farm_and_charm:seeder",
+    "count": 1
+  }
+}

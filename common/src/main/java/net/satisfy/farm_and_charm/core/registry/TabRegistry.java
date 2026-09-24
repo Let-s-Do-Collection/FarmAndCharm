@@ -63,6 +63,7 @@ public class TabRegistry {
                 output.accept(ObjectRegistry.TRAMPLED_STABLE_FLOOR.get());
                 output.accept(ObjectRegistry.STOVE.get());
                 output.accept(ObjectRegistry.WATER_TROUGH.get());
+                output.accept(ObjectRegistry.TIMBER_WELL.get());
                 output.accept(ObjectRegistry.FEEDING_TROUGH.get());
                 output.accept(ObjectRegistry.WATER_SPRINKLER.get());
                 output.accept(ObjectRegistry.CATTLEGRID.get());
@@ -74,6 +75,7 @@ public class TabRegistry {
                 output.accept(ObjectRegistry.PITCHFORK.get());
                 output.accept(ObjectRegistry.SUPPLY_CART.get());
                 output.accept(ObjectRegistry.PLOW.get());
+                output.accept(ObjectRegistry.SEEDER.get());
                 output.accept(ObjectRegistry.WINDOW_SILL.get());
                 output.accept(ObjectRegistry.TOOL_RACK.get());
                 output.accept(ObjectRegistry.CRAFTING_BOWL.get());

@@ -1,48 +1,183 @@
 {
   "variants": {
-    "part=foot,facing=north": {
+    "part=foot,facing=north,level=0": {
+      "model": "farm_and_charm:block/water_trough_left_0",
+      "y": 270
+    },
+    "part=foot,facing=north,level=1": {
+      "model": "farm_and_charm:block/water_trough_left_1",
+      "y": 270
+    },
+    "part=foot,facing=north,level=2": {
+      "model": "farm_and_charm:block/water_trough_left_2",
+      "y": 270
+    },
+    "part=foot,facing=north,level=3": {
       "model": "farm_and_charm:block/water_trough_left_3",
       "y": 270
     },
-    "part=foot,facing=south": {
+    "part=foot,facing=south,level=0": {
+      "model": "farm_and_charm:block/water_trough_left_0",
+      "y": 90
+    },
+    "part=foot,facing=south,level=1": {
+      "model": "farm_and_charm:block/water_trough_left_1",
+      "y": 90
+    },
+    "part=foot,facing=south,level=2": {
+      "model": "farm_and_charm:block/water_trough_left_2",
+      "y": 90
+    },
+    "part=foot,facing=south,level=3": {
       "model": "farm_and_charm:block/water_trough_left_3",
       "y": 90
     },
-    "part=foot,facing=west": {
+    "part=foot,facing=west,level=0": {
+      "model": "farm_and_charm:block/water_trough_left_0",
+      "y": 180
+    },
+    "part=foot,facing=west,level=1": {
+      "model": "farm_and_charm:block/water_trough_left_1",
+      "y": 180
+    },
+    "part=foot,facing=west,level=2": {
+      "model": "farm_and_charm:block/water_trough_left_2",
+      "y": 180
+    },
+    "part=foot,facing=west,level=3": {
       "model": "farm_and_charm:block/water_trough_left_3",
       "y": 180
     },
-    "part=foot,facing=east": {
+    "part=foot,facing=east,level=0": {
+      "model": "farm_and_charm:block/water_trough_left_0"
+    },
+    "part=foot,facing=east,level=1": {
+      "model": "farm_and_charm:block/water_trough_left_1"
+    },
+    "part=foot,facing=east,level=2": {
+      "model": "farm_and_charm:block/water_trough_left_2"
+    },
+    "part=foot,facing=east,level=3": {
       "model": "farm_and_charm:block/water_trough_left_3"
     },
-    "part=head,facing=north": {
+    "part=head,facing=north,level=0": {
+      "model": "farm_and_charm:block/water_trough_right_0",
+      "y": 270
+    },
+    "part=head,facing=north,level=1": {
+      "model": "farm_and_charm:block/water_trough_right_1",
+      "y": 270
+    },
+    "part=head,facing=north,level=2": {
+      "model": "farm_and_charm:block/water_trough_right_2",
+      "y": 270
+    },
+    "part=head,facing=north,level=3": {
       "model": "farm_and_charm:block/water_trough_right_3",
       "y": 270
     },
-    "part=head,facing=south": {
+    "part=head,facing=south,level=0": {
+      "model": "farm_and_charm:block/water_trough_right_0",
+      "y": 90
+    },
+    "part=head,facing=south,level=1": {
+      "model": "farm_and_charm:block/water_trough_right_1",
+      "y": 90
+    },
+    "part=head,facing=south,level=2": {
+      "model": "farm_and_charm:block/water_trough_right_2",
+      "y": 90
+    },
+    "part=head,facing=south,level=3": {
       "model": "farm_and_charm:block/water_trough_right_3",
       "y": 90
     },
-    "part=head,facing=west": {
+    "part=head,facing=west,level=0": {
+      "model": "farm_and_charm:block/water_trough_right_0",
+      "y": 180
+    },
+    "part=head,facing=west,level=1": {
+      "model": "farm_and_charm:block/water_trough_right_1",
+      "y": 180
+    },
+    "part=head,facing=west,level=2": {
+      "model": "farm_and_charm:block/water_trough_right_2",
+      "y": 180
+    },
+    "part=head,facing=west,level=3": {
       "model": "farm_and_charm:block/water_trough_right_3",
       "y": 180
     },
-    "part=head,facing=east": {
+    "part=head,facing=east,level=0": {
+      "model": "farm_and_charm:block/water_trough_right_0"
+    },
+    "part=head,facing=east,level=1": {
+      "model": "farm_and_charm:block/water_trough_right_1"
+    },
+    "part=head,facing=east,level=2": {
+      "model": "farm_and_charm:block/water_trough_right_2"
+    },
+    "part=head,facing=east,level=3": {
       "model": "farm_and_charm:block/water_trough_right_3"
     },
-    "part=top,facing=north": {
+    "part=top,facing=north,level=0": {
       "model": "farm_and_charm:block/well_top",
       "y": 270
     },
-    "part=top,facing=south": {
+    "part=top,facing=north,level=1": {
+      "model": "farm_and_charm:block/well_top",
+      "y": 270
+    },
+    "part=top,facing=north,level=2": {
+      "model": "farm_and_charm:block/well_top",
+      "y": 270
+    },
+    "part=top,facing=north,level=3": {
+      "model": "farm_and_charm:block/well_top",
+      "y": 270
+    },
+    "part=top,facing=south,level=0": {
       "model": "farm_and_charm:block/well_top",
       "y": 90
     },
-    "part=top,facing=west": {
+    "part=top,facing=south,level=1": {
+      "model": "farm_and_charm:block/well_top",
+      "y": 90
+    },
+    "part=top,facing=south,level=2": {
+      "model": "farm_and_charm:block/well_top",
+      "y": 90
+    },
+    "part=top,facing=south,level=3": {
+      "model": "farm_and_charm:block/well_top",
+      "y": 90
+    },
+    "part=top,facing=west,level=0": {
       "model": "farm_and_charm:block/well_top",
       "y": 180
     },
-    "part=top,facing=east": {
+    "part=top,facing=west,level=1": {
+      "model": "farm_and_charm:block/well_top",
+      "y": 180
+    },
+    "part=top,facing=west,level=2": {
+      "model": "farm_and_charm:block/well_top",
+      "y": 180
+    },
+    "part=top,facing=west,level=3": {
+      "model": "farm_and_charm:block/well_top",
+      "y": 180
+    },
+    "part=top,facing=east,level=0": {
+      "model": "farm_and_charm:block/well_top"
+    },
+    "part=top,facing=east,level=1": {
+      "model": "farm_and_charm:block/well_top"
+    },
+    "part=top,facing=east,level=2": {
+      "model": "farm_and_charm:block/well_top"
+    },
+    "part=top,facing=east,level=3": {
       "model": "farm_and_charm:block/well_top"
     }
   }

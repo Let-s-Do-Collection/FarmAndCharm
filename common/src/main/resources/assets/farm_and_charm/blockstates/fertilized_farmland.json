@@ -1,28 +1,100 @@
 {
   "variants": {
-    "moisture=0": {
+    "lowered=false,moisture=0,waterlogged=false": {
       "model": "farm_and_charm:block/fertilized_farmland"
     },
-    "moisture=1": {
+    "lowered=false,moisture=0,waterlogged=true": {
       "model": "farm_and_charm:block/fertilized_farmland"
     },
-    "moisture=2": {
+    "lowered=false,moisture=1,waterlogged=false": {
       "model": "farm_and_charm:block/fertilized_farmland"
     },
-    "moisture=3": {
+    "lowered=false,moisture=1,waterlogged=true": {
       "model": "farm_and_charm:block/fertilized_farmland"
     },
-    "moisture=4": {
+    "lowered=false,moisture=2,waterlogged=false": {
       "model": "farm_and_charm:block/fertilized_farmland"
     },
-    "moisture=5": {
+    "lowered=false,moisture=2,waterlogged=true": {
       "model": "farm_and_charm:block/fertilized_farmland"
     },
-    "moisture=6": {
+    "lowered=false,moisture=3,waterlogged=false": {
       "model": "farm_and_charm:block/fertilized_farmland"
     },
-    "moisture=7": {
+    "lowered=false,moisture=3,waterlogged=true": {
+      "model": "farm_and_charm:block/fertilized_farmland"
+    },
+    "lowered=false,moisture=4,waterlogged=false": {
+      "model": "farm_and_charm:block/fertilized_farmland"
+    },
+    "lowered=false,moisture=4,waterlogged=true": {
+      "model": "farm_and_charm:block/fertilized_farmland"
+    },
+    "lowered=false,moisture=5,waterlogged=false": {
+      "model": "farm_and_charm:block/fertilized_farmland"
+    },
+    "lowered=false,moisture=5,waterlogged=true": {
+      "model": "farm_and_charm:block/fertilized_farmland"
+    },
+    "lowered=false,moisture=6,waterlogged=false": {
+      "model": "farm_and_charm:block/fertilized_farmland"
+    },
+    "lowered=false,moisture=6,waterlogged=true": {
+      "model": "farm_and_charm:block/fertilized_farmland"
+    },
+    "lowered=false,moisture=7,waterlogged=false": {
       "model": "farm_and_charm:block/fertilized_farmland_moist"
+    },
+    "lowered=false,moisture=7,waterlogged=true": {
+      "model": "farm_and_charm:block/fertilized_farmland_moist"
+    },
+    "lowered=true,moisture=0,waterlogged=false": {
+      "model": "farm_and_charm:block/fertilized_farmland_lowered"
+    },
+    "lowered=true,moisture=0,waterlogged=true": {
+      "model": "farm_and_charm:block/fertilized_farmland_lowered"
+    },
+    "lowered=true,moisture=1,waterlogged=false": {
+      "model": "farm_and_charm:block/fertilized_farmland_lowered"
+    },
+    "lowered=true,moisture=1,waterlogged=true": {
+      "model": "farm_and_charm:block/fertilized_farmland_lowered"
+    },
+    "lowered=true,moisture=2,waterlogged=false": {
+      "model": "farm_and_charm:block/fertilized_farmland_lowered"
+    },
+    "lowered=true,moisture=2,waterlogged=true": {
+      "model": "farm_and_charm:block/fertilized_farmland_lowered"
+    },
+    "lowered=true,moisture=3,waterlogged=false": {
+      "model": "farm_and_charm:block/fertilized_farmland_lowered"
+    },
+    "lowered=true,moisture=3,waterlogged=true": {
+      "model": "farm_and_charm:block/fertilized_farmland_lowered"
+    },
+    "lowered=true,moisture=4,waterlogged=false": {
+      "model": "farm_and_charm:block/fertilized_farmland_lowered"
+    },
+    "lowered=true,moisture=4,waterlogged=true": {
+      "model": "farm_and_charm:block/fertilized_farmland_lowered"
+    },
+    "lowered=true,moisture=5,waterlogged=false": {
+      "model": "farm_and_charm:block/fertilized_farmland_lowered"
+    },
+    "lowered=true,moisture=5,waterlogged=true": {
+      "model": "farm_and_charm:block/fertilized_farmland_lowered"
+    },
+    "lowered=true,moisture=6,waterlogged=false": {
+      "model": "farm_and_charm:block/fertilized_farmland_lowered"
+    },
+    "lowered=true,moisture=6,waterlogged=true": {
+      "model": "farm_and_charm:block/fertilized_farmland_lowered"
+    },
+    "lowered=true,moisture=7,waterlogged=false": {
+      "model": "farm_and_charm:block/fertilized_farmland_lowered_moist"
+    },
+    "lowered=true,moisture=7,waterlogged=true": {
+      "model": "farm_and_charm:block/fertilized_farmland_lowered_moist"
     }
   }
 }

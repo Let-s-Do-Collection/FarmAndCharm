@@ -17,6 +17,7 @@
     "CatTemptGoalMixin",
     "ChickenMixin",
     "CropBlockMixin",
+    "ExperienceOrbMixin",
     "FarmlandBlockMixin",
     "FoxMixin",
     "LivingEntityMixin",

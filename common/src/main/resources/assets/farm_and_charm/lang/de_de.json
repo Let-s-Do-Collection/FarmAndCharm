@@ -446,5 +446,7 @@
   "tooltip.farm_and_charm.timber_well.info_0": "Mit leerer Hand rechtsklicken, um Wasser aus einer Wasserquelle bis zu %s Blöcke darunter hochzupumpen. Füllt sich außerdem langsam im Regen. Nutztiere können daraus trinken und die Zuchtzeit verkürzen.",
   "tooltip.farm_and_charm.tooltip_information.hold": "Halte %s für mehr Informationen",
   "tooltip.farm_and_charm.water_sprinkler.info_0": "Bewässert nahegelegenes Farmland und verhindert das Austrocknen.",
-  "tooltip.farm_and_charm.water_trough.info_0": "Speichert Wasser. Nutztiere können daraus trinken und die Zuchtzeit verkürzen."
+  "tooltip.farm_and_charm.water_trough.info_0": "Speichert Wasser. Nutztiere können daraus trinken und die Zuchtzeit verkürzen.",
+  "pack.farm_and_charm.vanilla_blend": "Farm & Charm: VanillaBlend",
+  "pack.farm_and_charm.vanilla_blend.description": "Gedämpfte Farben, inspiriert von Vanilla und Vanilla-Style-Mods"
 }

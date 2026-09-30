@@ -446,5 +446,7 @@
   "tooltip.farm_and_charm.timber_well.info_0": "Right-click with an empty hand to pump water up from a water source up to %s blocks below. Also fills up slowly in the rain. Livestock can drink from it, reducing breeding cooldowns.",
   "tooltip.farm_and_charm.tooltip_information.hold": "Hold %s for more information",
   "tooltip.farm_and_charm.water_sprinkler.info_0": "Waters nearby farmland and prevents it from drying out.",
-  "tooltip.farm_and_charm.water_trough.info_0": "Stores water. Livestock can drink from it, reducing breeding cooldowns."
+  "tooltip.farm_and_charm.water_trough.info_0": "Stores water. Livestock can drink from it, reducing breeding cooldowns.",
+  "pack.farm_and_charm.vanilla_blend": "Farm & Charm: VanillaBlend",
+  "pack.farm_and_charm.vanilla_blend.description": "Muted colors inspired by Vanilla and Vanilla-Style-Mods"
 }

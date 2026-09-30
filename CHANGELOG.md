@@ -10,6 +10,7 @@
 * Breaking a Timber Well now splashes out some water
 * Mushroom Stew, Beetroot Soup and Rabbit Stew now also give Sustenance on NeoForge
 * New config options: Giant Crop chance, Scarecrow interval and range, Wild Crop drop chance, Timber Well groundwater depth and rain fill chance, Chicken Coop capacity, Dog and Cat begging, Pet Bowl search range and feeding times
+* VanillaBlend: an optional built-in resource pack with muted, vanilla-friendly colors for food, dishes, teas, Mob Effect icons and more. Enable it in the Resource Packs menu. Palettes inspired by Vanilla, Farmer's Delight, Supplementaries and Create
 
 **Changed**
 * The config is now split into Farming, Water, Animals, Kitchen, Effects and Food, and every option has an explanation. Options were moved, so changed values in an existing config file are reset to their defaults
@@ -19,6 +20,7 @@
 * Horses and Cats now behave the same on NeoForge as on Fabric when fed Barley, Oat, Horse Fodder or Cat Food
 * Cats now look for their Pet Bowl in a smaller radius, which saves performance
 * Polished the English and German translations
+* Pitchfork, Rope, Cooking Pot, Mincer and the Iron and Diamond Cleavers now use vanilla-style material colors
 
 **Fixed**
 * Rested now actually grants bonus experience on NeoForge

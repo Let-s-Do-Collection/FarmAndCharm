@@ -1,11 +1,20 @@
 package net.satisfy.farm_and_charm.neoforge;
 
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.packs.PackLocationInfo;
+import net.minecraft.server.packs.PackSelectionConfig;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.PathPackResources;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.satisfy.farm_and_charm.FarmAndCharm;
@@ -13,7 +22,14 @@ import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import net.satisfy.farm_and_charm.neoforge.core.config.FarmAndCharmNeoForgeConfig;
 import net.satisfy.farm_and_charm.platform.neoforge.PlatformHelperImpl;
 
+import org.jetbrains.annotations.Nullable;
+
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Objects;
+import java.util.Optional;
 
 @Mod(FarmAndCharm.MOD_ID)
 public class FarmAndCharmNeoForge {
@@ -23,7 +39,36 @@ public class FarmAndCharmNeoForge {
         Objects.requireNonNull(modContainer.getEventBus()).addListener(FarmAndCharmNeoForgeConfig::onLoad);
         modContainer.getEventBus().addListener(FarmAndCharmNeoForgeConfig::onReload);
         modContainer.getEventBus().addListener(FarmAndCharmNeoForge::reapplyFoodConfig);
+        modContainer.getEventBus().addListener(FarmAndCharmNeoForge::addBuiltinPacks);
         FarmAndCharm.init();
+    }
+
+    private static void addBuiltinPacks(AddPackFindersEvent event) {
+        if (event.getPackType() != PackType.CLIENT_RESOURCES) return;
+        Path root = findBuiltinPack("vanilla_blend");
+        if (root == null) return;
+        PackLocationInfo info = new PackLocationInfo("mod/" + FarmAndCharm.MOD_ID + ":vanilla_blend",
+                Component.translatable("pack.farm_and_charm.vanilla_blend"), PackSource.BUILT_IN, Optional.empty());
+        Pack pack = Pack.readMetaAndCreate(info, new PathPackResources.PathResourcesSupplier(root),
+                PackType.CLIENT_RESOURCES, new PackSelectionConfig(false, Pack.Position.TOP, false));
+        if (pack != null) {
+            event.addRepositorySource(consumer -> consumer.accept(pack));
+        }
+    }
+
+    /**
+     * Built-in packs live in the common module. In production they are shadowed into the mod jar, but in
+     * the dev environment the common resources are a separate classpath entry, so fall back to the classpath.
+     */
+    private static @Nullable Path findBuiltinPack(String name) {
+        Path modPath = ModList.get().getModFileById(FarmAndCharm.MOD_ID).getFile().findResource("resourcepacks", name);
+        if (Files.exists(modPath.resolve("pack.mcmeta"))) return modPath;
+        try {
+            URL url = FarmAndCharmNeoForge.class.getResource("/resourcepacks/" + name + "/pack.mcmeta");
+            if (url != null && "file".equals(url.getProtocol())) return Path.of(url.toURI()).getParent();
+        } catch (URISyntaxException ignored) {
+        }
+        return null;
     }
 
     /**

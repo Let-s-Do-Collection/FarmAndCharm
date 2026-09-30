@@ -70,6 +70,14 @@ Growing, processing, and cooking belong together.
 
 <br><br>
 
+## Credits
+
+The optional **VanillaBlend** resource pack uses color palettes inspired by
+Vanilla Minecraft, Farmer's Delight, Crops, Haunted Harvest and Create.
+All textures are original Farm & Charm artwork.
+
+<br><br>
+
 ## The Let’s Do Collection
 
 <p align="center">

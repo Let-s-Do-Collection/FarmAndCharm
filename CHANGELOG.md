@@ -14,8 +14,8 @@
 **Changed**
 * The config is now split into Farming, Water, Animals, Kitchen, Effects and Food, and every option has an explanation. Options were moved, so changed values in an existing config file are reset to their defaults
 * Water drips and splashes from the Timber Well, Sink, Water Sprinkler and troughs now match the biome's water color
-* Tool Rack is much easier to take items from
-* Timber Well now has an exact hitbox that follows its model
+* Tool Rack is much easier to take items from due to its increased voxelshape
+* Timber Well now has an exact voxelshape that follows its model
 * Horses and Cats now behave the same on NeoForge as on Fabric when fed Barley, Oat, Horse Fodder or Cat Food
 * Cats now look for their Pet Bowl in a smaller radius, which saves performance
 * Polished the English and German translations

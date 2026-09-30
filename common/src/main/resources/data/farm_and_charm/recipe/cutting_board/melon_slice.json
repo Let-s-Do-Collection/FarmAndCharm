@@ -1,0 +1,10 @@
+{
+  "type": "farm_and_charm:cutting_board",
+  "ingredient": {
+    "item": "minecraft:melon"
+  },
+  "result": {
+    "id": "minecraft:melon_slice",
+    "count": 9
+  }
+}

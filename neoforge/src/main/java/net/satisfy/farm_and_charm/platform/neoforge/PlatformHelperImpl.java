@@ -232,4 +232,20 @@ public class PlatformHelperImpl {
     public static int getSatiationEffectHealAmount() {
         return FarmAndCharmNeoForgeConfig.satiationEffectHealAmount;
     }
+
+    public static int getIronCleaverChops() {
+        return FarmAndCharmNeoForgeConfig.ironCleaverChops;
+    }
+
+    public static int getDiamondCleaverChops() {
+        return FarmAndCharmNeoForgeConfig.diamondCleaverChops;
+    }
+
+    public static int getNetheriteCleaverChops() {
+        return FarmAndCharmNeoForgeConfig.netheriteCleaverChops;
+    }
+
+    public static boolean isCleaverHeadDropsEnabled() {
+        return FarmAndCharmNeoForgeConfig.cleaverHeadDrops;
+    }
 }

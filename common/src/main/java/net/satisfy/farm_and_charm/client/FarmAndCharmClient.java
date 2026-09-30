@@ -17,6 +17,8 @@ import net.satisfy.farm_and_charm.client.gui.PetBowlEditGui;
 import net.satisfy.farm_and_charm.client.gui.RoasterGui;
 import net.satisfy.farm_and_charm.client.gui.StoveGui;
 import net.satisfy.farm_and_charm.client.model.*;
+import net.satisfy.farm_and_charm.client.particle.DyeSplashParticle;
+import net.satisfy.farm_and_charm.client.particle.FeatherParticle;
 import net.satisfy.farm_and_charm.client.particle.SoupBubbleParticle;
 import net.satisfy.farm_and_charm.client.particle.SoupCookingBubbleParticle;
 import net.satisfy.farm_and_charm.client.particle.SoupSteamParticle;
@@ -36,7 +38,7 @@ import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.*;
 public class FarmAndCharmClient {
 
     public static void onInitializeClient() {
-        RenderTypeRegistry.register(RenderType.cutout(), CRAFTING_BOWL.get(), WATER_SPRINKLER.get(),
+        RenderTypeRegistry.register(RenderType.cutout(), CRAFTING_BOWL.get(), CUTTING_BOARD.get(), WATER_SPRINKLER.get(),
                 SCARECROW.get(), STOVE.get(), MINCER.get(), WILD_RIBWORT.get(), WILD_BARLEY.get(), WILD_CARROTS.get(),
                 RIBWORT_TEA.get(), NETTLE_TEA.get(), STRAWBERRY_TEA.get(), WILD_BEETROOTS.get(), WILD_CORN.get(),
                 WILD_EMMER.get(), WILD_LETTUCE.get(), WILD_NETTLE.get(), WILD_OAT.get(), WILD_ONIONS.get(), WILD_POTATOES.get(),
@@ -50,6 +52,8 @@ public class FarmAndCharmClient {
         ParticleProviderRegistry.register(ParticleTypeRegistry.SOUP_BUBBLE.get(), SoupBubbleParticle.Provider::new);
         ParticleProviderRegistry.register(ParticleTypeRegistry.SOUP_STEAM.get(), SoupSteamParticle.Provider::new);
         ParticleProviderRegistry.register(ParticleTypeRegistry.SOUP_COOKING_BUBBLE.get(), SoupCookingBubbleParticle.Provider::new);
+        ParticleProviderRegistry.register(ParticleTypeRegistry.DYE_SPLASH.get(), DyeSplashParticle.Provider::new);
+        ParticleProviderRegistry.register(ParticleTypeRegistry.FEATHER.get(), FeatherParticle.Provider::new);
 
         ColorHandlerRegistry.registerBlockColors((state, world, pos, tintIndex) -> {
             if (world == null || pos == null) {
@@ -106,6 +110,7 @@ public class FarmAndCharmClient {
         BlockEntityRendererRegistry.register(EntityTypeRegistry.TIMBER_WELL_BLOCK_ENTITY.get(), TimberWellRenderer::new);
         BlockEntityRendererRegistry.register(EntityTypeRegistry.MINCER_BLOCK_ENTITY.get(), MincerRenderer::new);
         BlockEntityRendererRegistry.register(EntityTypeRegistry.CRAFTING_BOWL_BLOCK_ENTITY.get(), CraftingBowlRenderer::new);
+        BlockEntityRendererRegistry.register(EntityTypeRegistry.CUTTING_BOARD_BLOCK_ENTITY.get(), CuttingBoardRenderer::new);
         BlockEntityRendererRegistry.register(EntityTypeRegistry.SPRINKLER_BLOCK_ENTITY.get(), WaterSprinklerRenderer::new);
         BlockEntityRendererRegistry.register(EntityTypeRegistry.PET_BOWL_BLOCK_ENTITY.get(), context -> new PetBowlBlockRenderer());
         BlockEntityRendererRegistry.register(EntityTypeRegistry.STORAGE_ENTITY.get(), context -> new StorageBlockEntityRenderer());

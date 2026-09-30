@@ -1,0 +1,10 @@
+{
+  "type": "farm_and_charm:cutting_board",
+  "ingredient": {
+    "item": "farm_and_charm:tomato"
+  },
+  "result": {
+    "id": "farm_and_charm:tomato_seeds",
+    "count": 4
+  }
+}

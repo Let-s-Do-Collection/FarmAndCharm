@@ -1,0 +1,35 @@
+{
+  "parent": "farm_and_charm:main/root",
+  "display": {
+    "icon": {
+      "id": "farm_and_charm:iron_cleaver"
+    },
+    "title": {
+      "translate": "advancement.farm_and_charm.get_cleaver"
+    },
+    "description": {
+      "translate": "advancement.farm_and_charm.get_cleaver.desc"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "cleaver": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "#farm_and_charm:cleavers"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "cleaver"
+    ]
+  ]
+}

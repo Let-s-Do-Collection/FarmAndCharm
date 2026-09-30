@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SPP"
+  ],
+  "key": {
+    "S": { "item": "minecraft:stick" },
+    "P": { "item": "minecraft:birch_planks" }
+  },
+  "result": {
+    "id": "farm_and_charm:cutting_board",
+    "count": 1
+  }
+}

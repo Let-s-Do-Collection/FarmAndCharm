@@ -17,6 +17,10 @@ public class FarmAndCharmNeoForgeConfig {
     public static final ModConfigSpec.BooleanValue ENABLE_HORSE_EFFECTS;
     public static final ModConfigSpec.BooleanValue ENABLE_CHICKEN_EFFECTS;
     public static final ModConfigSpec.BooleanValue ENABLE_CAT_TAMING_CHANCE;
+    public static final ModConfigSpec.IntValue IRON_CLEAVER_CHOPS;
+    public static final ModConfigSpec.IntValue DIAMOND_CLEAVER_CHOPS;
+    public static final ModConfigSpec.IntValue NETHERITE_CLEAVER_CHOPS;
+    public static final ModConfigSpec.BooleanValue CLEAVER_HEAD_DROPS;
     public static final ModConfigSpec.IntValue OAT_PANCAKE_NUTRITION;
     public static final ModConfigSpec.DoubleValue OAT_PANCAKE_SATURATION_MOD;
     public static final ModConfigSpec.IntValue ROASTED_CORN_NUTRITION;
@@ -95,6 +99,10 @@ public class FarmAndCharmNeoForgeConfig {
     public static boolean enableHorseEffects = true;
     public static boolean enableChickenEffects = true;
     public static boolean enableCatTamingChance = true;
+    public static int ironCleaverChops = 5;
+    public static int diamondCleaverChops = 3;
+    public static int netheriteCleaverChops = 1;
+    public static boolean cleaverHeadDrops = true;
 
     public static int oatPancakeNutrition = 5;
     public static double oatPancakeSaturationMod = 0.6;
@@ -181,6 +189,10 @@ public class FarmAndCharmNeoForgeConfig {
         ENABLE_HORSE_EFFECTS = COMMON_BUILDER.define("enableHorseEffects", true);
         ENABLE_CHICKEN_EFFECTS = COMMON_BUILDER.define("enableChickenEffects", true);
         ENABLE_CAT_TAMING_CHANCE = COMMON_BUILDER.define("enableCatTamingChance", true);
+        IRON_CLEAVER_CHOPS = COMMON_BUILDER.defineInRange("ironCleaverChops", 5, 1, 20);
+        DIAMOND_CLEAVER_CHOPS = COMMON_BUILDER.defineInRange("diamondCleaverChops", 3, 1, 20);
+        NETHERITE_CLEAVER_CHOPS = COMMON_BUILDER.defineInRange("netheriteCleaverChops", 1, 1, 20);
+        CLEAVER_HEAD_DROPS = COMMON_BUILDER.define("cleaverHeadDrops", true);
 
         COMMON_BUILDER.push("Nutrition");
         OAT_PANCAKE_NUTRITION = COMMON_BUILDER.defineInRange("oatPancakeNutrition", 5, 0, Integer.MAX_VALUE);
@@ -279,6 +291,10 @@ public class FarmAndCharmNeoForgeConfig {
         enableHorseEffects = ENABLE_HORSE_EFFECTS.get();
         enableChickenEffects = ENABLE_CHICKEN_EFFECTS.get();
         enableCatTamingChance = ENABLE_CAT_TAMING_CHANCE.get();
+        ironCleaverChops = IRON_CLEAVER_CHOPS.get();
+        diamondCleaverChops = DIAMOND_CLEAVER_CHOPS.get();
+        netheriteCleaverChops = NETHERITE_CLEAVER_CHOPS.get();
+        cleaverHeadDrops = CLEAVER_HEAD_DROPS.get();
 
         oatPancakeNutrition = OAT_PANCAKE_NUTRITION.get();
         oatPancakeSaturationMod = OAT_PANCAKE_SATURATION_MOD.get();

@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "farm_and_charm:block/cutting_board" },
+    "facing=east": { "model": "farm_and_charm:block/cutting_board", "y": 90 },
+    "facing=south": { "model": "farm_and_charm:block/cutting_board", "y": 180 },
+    "facing=west": { "model": "farm_and_charm:block/cutting_board", "y": 270 }
+  }
+}

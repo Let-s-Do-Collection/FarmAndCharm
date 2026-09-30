@@ -1,9 +1,6 @@
 {
-  "type": "farm_and_charm:crafting_bowl",
+  "type": "farm_and_charm:cutting_board_assembly",
   "ingredients": [
-    {
-      "tag": "farm_and_charm:cooked_beef"
-    },
     {
       "tag": "farm_and_charm:raw_fishes"
     },
@@ -11,9 +8,12 @@
       "tag": "farm_and_charm:raw_chicken"
     },
     {
-      "tag": "farm_and_charm:raw_pork"
+      "tag": "farm_and_charm:cooked_beef"
     }
   ],
+  "finisher": {
+    "item": "minecraft:paper"
+  },
   "result": {
     "id": "farm_and_charm:cat_food",
     "count": 6

@@ -23,6 +23,9 @@ import net.satisfy.farm_and_charm.core.recipe.*;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
+import net.satisfy.farm_and_charm.core.util.Strippables;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -45,6 +48,7 @@ public class FarmAndCharmJEIPlugin implements IModPlugin {
         registration.addRecipeCategories(new RoasterCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new SiloCategory(registration.getJeiHelpers().getGuiHelper()));
         registration.addRecipeCategories(new MincerCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(new CuttingBoardCategory(registration.getJeiHelpers().getGuiHelper()), new AssemblyCategory(registration.getJeiHelpers().getGuiHelper()), new StrippingCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
@@ -93,6 +97,10 @@ public class FarmAndCharmJEIPlugin implements IModPlugin {
             mincerRecipes.add(recipeHolder.value());
         });
         registration.addRecipes(MincerCategory.MINCING_TYPE, mincerRecipes);
+
+        registration.addRecipes(CuttingBoardCategory.TYPE, rm.getAllRecipesFor(RecipeTypeRegistry.CUTTING_BOARD_RECIPE_TYPE.get()).stream().map(RecipeHolder::value).toList());
+        registration.addRecipes(AssemblyCategory.TYPE, rm.getAllRecipesFor(RecipeTypeRegistry.CUTTING_BOARD_ASSEMBLY_RECIPE_TYPE.get()).stream().map(RecipeHolder::value).toList());
+        registration.addRecipes(StrippingCategory.TYPE, Strippables.all());
     }
 
     @Override
@@ -117,6 +125,11 @@ public class FarmAndCharmJEIPlugin implements IModPlugin {
         registration.addRecipeCatalyst(ObjectRegistry.MINCER.get().asItem().getDefaultInstance(), MincerCategory.MINCING_TYPE);
         registration.addRecipeCatalyst(ObjectRegistry.SILO_WOOD.get().asItem().getDefaultInstance(), SiloCategory.DRYING_TYPE);
         registration.addRecipeCatalyst(ObjectRegistry.SILO_COPPER.get().asItem().getDefaultInstance(), SiloCategory.DRYING_TYPE);
+        registration.addRecipeCatalyst(new ItemStack(ObjectRegistry.CUTTING_BOARD.get()), CuttingBoardCategory.TYPE, AssemblyCategory.TYPE, StrippingCategory.TYPE);
+        registration.addRecipeCatalyst(new ItemStack(ObjectRegistry.IRON_CLEAVER.get()), CuttingBoardCategory.TYPE);
+        registration.addRecipeCatalyst(new ItemStack(ObjectRegistry.DIAMOND_CLEAVER.get()), CuttingBoardCategory.TYPE);
+        registration.addRecipeCatalyst(new ItemStack(ObjectRegistry.NETHERITE_CLEAVER.get()), CuttingBoardCategory.TYPE);
+        registration.addRecipeCatalyst(new ItemStack(Items.IRON_AXE), StrippingCategory.TYPE);
 
     }
 }

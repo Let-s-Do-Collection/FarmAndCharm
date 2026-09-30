@@ -8,6 +8,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeInput;
+import net.minecraft.world.item.Items;
+import net.satisfy.farm_and_charm.core.compat.rei.cutting.AssemblyCategory;
+import net.satisfy.farm_and_charm.core.compat.rei.cutting.AssemblyDisplay;
+import net.satisfy.farm_and_charm.core.compat.rei.cutting.CuttingBoardCategory;
+import net.satisfy.farm_and_charm.core.compat.rei.cutting.CuttingBoardDisplay;
+import net.satisfy.farm_and_charm.core.compat.rei.cutting.StrippingCategory;
+import net.satisfy.farm_and_charm.core.compat.rei.cutting.StrippingDisplay;
+import net.satisfy.farm_and_charm.core.util.Strippables;
 import net.satisfy.farm_and_charm.core.compat.rei.cooking.CookingPotCategory;
 import net.satisfy.farm_and_charm.core.compat.rei.cooking.CookingPotDisplay;
 import net.satisfy.farm_and_charm.core.compat.rei.doughing.CraftingBowlCategory;
@@ -35,6 +43,10 @@ public class Farm_And_CharmREIClientPlugin implements REIClientPlugin {
         registry.add(new RoasterCategory());
         registry.add(new SiloCategory());
         registry.add(new MincingCategory());
+        registry.add(new CuttingBoardCategory(), new AssemblyCategory(), new StrippingCategory());
+        registry.addWorkstations(CuttingBoardDisplay.ID, EntryStacks.of(ObjectRegistry.CUTTING_BOARD.get()), EntryStacks.of(ObjectRegistry.IRON_CLEAVER.get()), EntryStacks.of(ObjectRegistry.DIAMOND_CLEAVER.get()), EntryStacks.of(ObjectRegistry.NETHERITE_CLEAVER.get()));
+        registry.addWorkstations(AssemblyDisplay.ID, EntryStacks.of(ObjectRegistry.CUTTING_BOARD.get()));
+        registry.addWorkstations(StrippingDisplay.ID, EntryStacks.of(ObjectRegistry.CUTTING_BOARD.get()), EntryStacks.of(Items.IRON_AXE));
         registry.addWorkstations(MincingCategory.MINCING_DISPLAY, EntryStacks.of(ObjectRegistry.MINCER.get()));
         registry.addWorkstations(CraftingBowlCategory.CRAFTING_BOWL_DISPLAY, EntryStacks.of(ObjectRegistry.CRAFTING_BOWL.get()));
         registry.addWorkstations(CookingPotDisplay.COOKING_POT_DISPLAY, EntryStacks.of(ObjectRegistry.COOKING_POT.get()));
@@ -75,6 +87,9 @@ public class Farm_And_CharmREIClientPlugin implements REIClientPlugin {
                 RecipeTypeRegistry.SILO_RECIPE_TYPE.get(),
                 holder -> new SiloDisplay(holder.value())
         );
+        registry.registerRecipeFiller(CuttingBoardRecipe.class, RecipeTypeRegistry.CUTTING_BOARD_RECIPE_TYPE.get(), holder -> new CuttingBoardDisplay(holder.value()));
+        registry.registerRecipeFiller(CuttingBoardAssemblyRecipe.class, RecipeTypeRegistry.CUTTING_BOARD_ASSEMBLY_RECIPE_TYPE.get(), holder -> new AssemblyDisplay(holder.value()));
+        Strippables.all().forEach(entry -> registry.add(new StrippingDisplay(entry)));
     }
 
 

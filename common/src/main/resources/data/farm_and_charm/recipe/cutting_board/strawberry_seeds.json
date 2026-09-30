@@ -1,0 +1,10 @@
+{
+  "type": "farm_and_charm:cutting_board",
+  "ingredient": {
+    "item": "farm_and_charm:strawberry"
+  },
+  "result": {
+    "id": "farm_and_charm:strawberry_seeds",
+    "count": 4
+  }
+}

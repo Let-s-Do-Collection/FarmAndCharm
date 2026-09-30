@@ -1,20 +1,16 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "WWA",
-    "CAW"
-  ],
-  "key": {
-    "W": {
+  "type": "farm_and_charm:cutting_board_assembly",
+  "ingredients": [
+    {
       "tag": "farm_and_charm:wheat"
     },
-    "A": {
+    {
       "item": "minecraft:apple"
     },
-    "C": {
+    {
       "item": "minecraft:carrot"
     }
-  },
+  ],
   "result": {
     "id": "farm_and_charm:horse_fodder",
     "count": 1

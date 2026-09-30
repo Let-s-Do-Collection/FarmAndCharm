@@ -73,12 +73,16 @@ public class TabRegistry {
                 output.accept(ObjectRegistry.SILO_WOOD.get());
                 output.accept(ObjectRegistry.SILO_COPPER.get());
                 output.accept(ObjectRegistry.PITCHFORK.get());
+                output.accept(ObjectRegistry.IRON_CLEAVER.get());
+                output.accept(ObjectRegistry.DIAMOND_CLEAVER.get());
+                output.accept(ObjectRegistry.NETHERITE_CLEAVER.get());
                 output.accept(ObjectRegistry.SUPPLY_CART.get());
                 output.accept(ObjectRegistry.PLOW.get());
                 output.accept(ObjectRegistry.SEEDER.get());
                 output.accept(ObjectRegistry.WINDOW_SILL.get());
                 output.accept(ObjectRegistry.TOOL_RACK.get());
                 output.accept(ObjectRegistry.CRAFTING_BOWL.get());
+                output.accept(ObjectRegistry.CUTTING_BOARD.get());
                 output.accept(ObjectRegistry.MINCER.get());
                 output.accept(ObjectRegistry.COOKING_POT.get());
                 output.accept(ObjectRegistry.ROASTER.get());

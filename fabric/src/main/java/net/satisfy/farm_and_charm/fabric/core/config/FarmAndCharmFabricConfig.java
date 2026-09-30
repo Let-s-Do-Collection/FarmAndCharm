@@ -47,6 +47,21 @@ public class FarmAndCharmFabricConfig implements ConfigData {
         public boolean enableChickenEffects = true;
         public boolean enableCatTamingChance = true;
 
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 20)
+        @ConfigEntry.Gui.Tooltip
+        public int ironCleaverChops = 5;
+
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 20)
+        @ConfigEntry.Gui.Tooltip
+        public int diamondCleaverChops = 3;
+
+        @ConfigEntry.BoundedDiscrete(min = 1, max = 20)
+        @ConfigEntry.Gui.Tooltip
+        public int netheriteCleaverChops = 1;
+
+        @ConfigEntry.Gui.Tooltip
+        public boolean cleaverHeadDrops = true;
+
         @ConfigEntry.Gui.CollapsibleObject
         public NutritionSettings nutrition = new NutritionSettings();
 

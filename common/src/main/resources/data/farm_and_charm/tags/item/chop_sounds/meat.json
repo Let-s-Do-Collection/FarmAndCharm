@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "#c:foods/raw_meat",
+      "required": false
+    }
+  ]
+}

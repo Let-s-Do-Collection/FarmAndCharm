@@ -1,0 +1,21 @@
+{
+  "type": "farm_and_charm:cutting_board_assembly",
+  "ingredients": [
+    {
+      "item": "farm_and_charm:fertilizer"
+    },
+    {
+      "item": "farm_and_charm:fertilizer"
+    },
+    {
+      "item": "farm_and_charm:fertilizer"
+    },
+    {
+      "item": "farm_and_charm:fertilizer"
+    }
+  ],
+  "result": {
+    "id": "farm_and_charm:compost",
+    "count": 1
+  }
+}

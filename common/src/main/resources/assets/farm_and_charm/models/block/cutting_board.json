@@ -1,0 +1,68 @@
+{
+	"format_version": "26.3",
+	"credit": "Made by Satisfy",
+	"textures": {
+		"0": "farm_and_charm:block/cutting_board_0",
+		"1": "farm_and_charm:block/cutting_board_1",
+		"particle": "farm_and_charm:block/cutting_board_0"
+	},
+	"elements": [
+		{
+			"from": [1, 0, 3],
+			"to": [11, 1, 13],
+			"rotation": {"angle": 0, "axis": "y", "origin": [1, 0, 3]},
+			"faces": {
+				"north": {"uv": [5, 12, 15, 13], "texture": "#0"},
+				"east": {"uv": [14, 4, 15, 12], "rotation": 90, "texture": "#0"},
+				"south": {"uv": [5, 3, 15, 4], "texture": "#0"},
+				"west": {"uv": [5, 4, 6, 12], "rotation": 90, "texture": "#0"},
+				"up": {"uv": [5, 3, 15, 13], "texture": "#1"},
+				"down": {"uv": [5, 3, 15, 13], "texture": "#0"}
+			}
+		},
+		{
+			"from": [11, 0, 6],
+			"to": [15, 1, 10],
+			"rotation": {"angle": 0, "axis": "y", "origin": [11, 0, 6]},
+			"faces": {
+				"north": {"uv": [1, 6, 5, 7], "texture": "#0"},
+				"east": {"uv": [1, 6, 2, 10], "rotation": 90, "texture": "#0"},
+				"south": {"uv": [1, 6, 5, 7], "texture": "#0"},
+				"west": {"uv": [0, 1, 4, 2], "texture": "#missing"},
+				"up": {"uv": [1, 6, 5, 10], "texture": "#0"},
+				"down": {"uv": [1, 6, 5, 10], "texture": "#0"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [75, 45, 0],
+			"translation": [0, 2.5, 0],
+			"scale": [0.375, 0.375, 0.375]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [75, 45, 0],
+			"translation": [0, 2.5, 0],
+			"scale": [0.375, 0.375, 0.375]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 45, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, -135, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"ground": {
+			"translation": [0, 3, 0],
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"gui": {
+			"rotation": [30, -135, 0],
+			"scale": [0.625, 0.625, 0.625]
+		},
+		"fixed": {
+			"scale": [0.5, 0.5, 0.5]
+		}
+	}
+}

@@ -27,6 +27,10 @@ public class RecipeTypeRegistry {
     public static final RegistrySupplier<RecipeSerializer<MincerRecipe>> MINCER_RECIPE_SERIALIZER = create("mincer", MincerRecipe.Serializer::new);
     public static final RegistrySupplier<RecipeSerializer<RoasterRecipe>> ROASTER_RECIPE_SERIALIZER = create("roaster", RoasterRecipe.Serializer::new);
     public static final RegistrySupplier<RecipeSerializer<SiloRecipe>> SILO_RECIPE_SERIALIZER = create("drying", SiloRecipe.Serializer::new);
+    public static final RegistrySupplier<RecipeType<CuttingBoardRecipe>> CUTTING_BOARD_RECIPE_TYPE = create("cutting_board");
+    public static final RegistrySupplier<RecipeSerializer<CuttingBoardRecipe>> CUTTING_BOARD_RECIPE_SERIALIZER = create("cutting_board", CuttingBoardRecipe.Serializer::new);
+    public static final RegistrySupplier<RecipeType<CuttingBoardAssemblyRecipe>> CUTTING_BOARD_ASSEMBLY_RECIPE_TYPE = create("cutting_board_assembly");
+    public static final RegistrySupplier<RecipeSerializer<CuttingBoardAssemblyRecipe>> CUTTING_BOARD_ASSEMBLY_RECIPE_SERIALIZER = create("cutting_board_assembly", CuttingBoardAssemblyRecipe.Serializer::new);
 
 
     private static <T extends Recipe<?>> RegistrySupplier<RecipeSerializer<T>> create(String name, Supplier<RecipeSerializer<T>> serializer) {

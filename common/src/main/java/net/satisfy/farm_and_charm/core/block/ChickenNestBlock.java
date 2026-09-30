@@ -3,18 +3,24 @@ package net.satisfy.farm_and_charm.core.block;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ColorParticleOption;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.satisfy.farm_and_charm.core.block.entity.StorageBlockEntity;
+import net.satisfy.farm_and_charm.core.registry.ParticleTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.StorageTypeRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,6 +47,24 @@ public class ChickenNestBlock extends StorageBlock {
     @Override
     public boolean canInsertStack(ItemStack stack) {
         return stack.is(Items.EGG);
+    }
+
+    @Override
+    public void add(Level level, BlockPos pos, Player player, StorageBlockEntity storageEntity, ItemStack itemStack, int index) {
+        super.add(level, pos, player, storageEntity, itemStack, index);
+        spawnFeathers(level, pos);
+    }
+
+    @Override
+    public void remove(Level level, BlockPos pos, Player player, StorageBlockEntity storageEntity, int index) {
+        super.remove(level, pos, player, storageEntity, index);
+        spawnFeathers(level, pos);
+    }
+
+    private static void spawnFeathers(Level level, BlockPos pos) {
+        if (level instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(ColorParticleOption.create(ParticleTypeRegistry.FEATHER.get(), 0xFFFFFFFF), pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5, 3 + level.random.nextInt(3), 0.25, 0.05, 0.25, 0.0);
+        }
     }
 
     @Override

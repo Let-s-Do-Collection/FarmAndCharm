@@ -1,5 +1,5 @@
 {
-  "type": "farm_and_charm:crafting_bowl",
+  "type": "farm_and_charm:cutting_board_assembly",
   "ingredients": [
     {
       "tag": "farm_and_charm:cooked_beef"
@@ -11,6 +11,9 @@
       "tag": "farm_and_charm:bones"
     }
   ],
+  "finisher": {
+    "item": "minecraft:paper"
+  },
   "result": {
     "id": "farm_and_charm:dog_food",
     "count": 4

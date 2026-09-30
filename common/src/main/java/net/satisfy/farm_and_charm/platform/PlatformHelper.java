@@ -127,4 +127,24 @@ public abstract class PlatformHelper {
     public static int getSatiationEffectHealAmount() {
         throw new AssertionError();
     }
+
+    @ExpectPlatform
+    public static int getIronCleaverChops() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static int getDiamondCleaverChops() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static int getNetheriteCleaverChops() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static boolean isCleaverHeadDropsEnabled() {
+        throw new AssertionError();
+    }
 }

@@ -1,20 +1,11 @@
 {
-  "type": "crafting_shapeless",
+  "type": "farm_and_charm:cutting_board_assembly",
   "ingredients": [
     {
       "tag": "farm_and_charm:wheat"
     },
     {
-      "tag": "farm_and_charm:wheat"
-    },
-    {
       "item": "minecraft:carrot"
-    },
-    {
-      "item": "minecraft:carrot"
-    },
-    {
-      "item": "minecraft:wheat_seeds"
     },
     {
       "item": "minecraft:wheat_seeds"

@@ -35,9 +35,14 @@ public class ObjectRegistry {
     public static final Registrar<Item> ITEM_REGISTRAR = ITEMS.getRegistrar();
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(FarmAndCharm.MOD_ID, Registries.BLOCK);
     public static final Registrar<Block> BLOCK_REGISTRAR = BLOCKS.getRegistrar();
+    private static final float CLEAVER_DAMAGE = 4.0F;
+    private static final float CLEAVER_SPEED = -2.8F;
 
     public static final RegistrySupplier<Item> FERTILIZER = registerItem("fertilizer", () -> new BoneMealItem(getSettings()));
     public static final RegistrySupplier<Item> PITCHFORK = registerItem("pitchfork", () -> new HoeItem(Tiers.IRON, new Item.Properties().attributes(DiggerItem.createAttributes(Tiers.IRON, -1.5F, -3.4F))));
+    public static final RegistrySupplier<Item> IRON_CLEAVER = registerItem("iron_cleaver", () -> new CleaverItem(Tiers.IRON, PlatformHelper::getIronCleaverChops, getSettings().attributes(AxeItem.createAttributes(Tiers.IRON, CLEAVER_DAMAGE, CLEAVER_SPEED))));
+    public static final RegistrySupplier<Item> DIAMOND_CLEAVER = registerItem("diamond_cleaver", () -> new CleaverItem(Tiers.DIAMOND, PlatformHelper::getDiamondCleaverChops, getSettings().attributes(AxeItem.createAttributes(Tiers.DIAMOND, CLEAVER_DAMAGE, CLEAVER_SPEED))));
+    public static final RegistrySupplier<Item> NETHERITE_CLEAVER = registerItem("netherite_cleaver", () -> new CleaverItem(Tiers.NETHERITE, PlatformHelper::getNetheriteCleaverChops, getSettings().fireResistant().attributes(AxeItem.createAttributes(Tiers.NETHERITE, CLEAVER_DAMAGE, CLEAVER_SPEED))));
     public static final RegistrySupplier<Item> SUPPLY_CART = registerItem("supply_cart", () -> new SupplyCartItem(getSettings()));
     public static final RegistrySupplier<Item> PLOW = registerItem("plow", () -> new PlowCartItem(getSettings()));
     public static final RegistrySupplier<Item> SEEDER = registerItem("seeder", () -> new SeederCartItem(getSettings()));
@@ -114,6 +119,7 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Block> STOVE = registerWithItem("stove", () -> new StoveBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BRICKS).lightLevel(state -> state.getValue(StoveBlock.LIT) ? 13 : 0)));
     public static final RegistrySupplier<Block> MINCER = registerWithItem("mincer", () -> new MincerBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.FLOWER_POT).instabreak()));
     public static final RegistrySupplier<Block> CRAFTING_BOWL = registerWithItem("crafting_bowl", () -> new CraftingBowlBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.FLOWER_POT).instabreak()));
+    public static final RegistrySupplier<Block> CUTTING_BOARD = registerWithItem("cutting_board", () -> new CuttingBoardBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BIRCH_PLANKS).strength(1.0F).sound(SoundType.WOOD).noOcclusion()));
     public static final RegistrySupplier<Block> COOKING_POT = registerWithItem("cooking_pot", () -> new CookingPotBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.FLOWER_POT).noOcclusion()));
     public static final RegistrySupplier<Block> ROASTER = registerWithItem("roaster", () -> new RoasterBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.FLOWER_POT).noOcclusion()));
     public static final RegistrySupplier<Block> WINDOW_SILL = registerWithItem("window_sill", () -> new WindowSillBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.FLOWER_POT).noCollission()));

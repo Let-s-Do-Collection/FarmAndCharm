@@ -187,4 +187,24 @@ public class PlatformHelperImpl extends PlatformHelper {
         FarmAndCharmFabricConfig config = AutoConfig.getConfigHolder(FarmAndCharmFabricConfig.class).getConfig();
         return config.effects.satiationEffect.satiationEffectHealAmount;
     }
+
+    public static int getIronCleaverChops() {
+        FarmAndCharmFabricConfig config = AutoConfig.getConfigHolder(FarmAndCharmFabricConfig.class).getConfig();
+        return config.items.ironCleaverChops;
+    }
+
+    public static int getDiamondCleaverChops() {
+        FarmAndCharmFabricConfig config = AutoConfig.getConfigHolder(FarmAndCharmFabricConfig.class).getConfig();
+        return config.items.diamondCleaverChops;
+    }
+
+    public static int getNetheriteCleaverChops() {
+        FarmAndCharmFabricConfig config = AutoConfig.getConfigHolder(FarmAndCharmFabricConfig.class).getConfig();
+        return config.items.netheriteCleaverChops;
+    }
+
+    public static boolean isCleaverHeadDropsEnabled() {
+        FarmAndCharmFabricConfig config = AutoConfig.getConfigHolder(FarmAndCharmFabricConfig.class).getConfig();
+        return config.items.cleaverHeadDrops;
+    }
 }

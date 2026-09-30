@@ -34,6 +34,12 @@ public class ToolRackBlock extends StorageBlock {
         shape = Shapes.joinUnoptimized(shape, Shapes.box(0, 0.8125, 0.875, 1, 0.9375, 1), BooleanOp.OR);
         return shape;
     };
+    private static final Map<Direction, VoxelShape> INTERACTION_SHAPE = Util.make(new HashMap<>(), map -> {
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            map.put(direction, GeneralUtil.rotateShape(Direction.NORTH, direction, Shapes.box(0, 0.25, 0.75, 1, 1, 1)));
+        }
+    });
+
     public static final Map<Direction, VoxelShape> SHAPE = Util.make(new HashMap<>(), map -> {
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             map.put(direction, GeneralUtil.rotateShape(Direction.NORTH, direction, voxelShapeSupplier.get()));
@@ -46,6 +52,11 @@ public class ToolRackBlock extends StorageBlock {
 
     @Override
     public @NotNull VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        return INTERACTION_SHAPE.get(state.getValue(FACING));
+    }
+
+    @Override
+    public @NotNull VoxelShape getCollisionShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return SHAPE.get(state.getValue(FACING));
     }
 

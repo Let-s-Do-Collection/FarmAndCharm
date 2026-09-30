@@ -10,10 +10,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.satisfy.farm_and_charm.core.block.crops.ClimbingCropBlock;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 
 public class ScarecrowBlockEntity extends BlockEntity {
-    private static final long GROWTH_INTERVAL_TICKS = 20L * 25L;
 
     private long nextGrowthTime;
 
@@ -40,19 +40,20 @@ public class ScarecrowBlockEntity extends BlockEntity {
         long currentTime = serverLevel.getGameTime();
 
         if (self.nextGrowthTime == 0L) {
-            self.nextGrowthTime = currentTime + GROWTH_INTERVAL_TICKS;
+            self.nextGrowthTime = currentTime + PlatformHelper.getScarecrowGrowthInterval() * 20L;
             self.setChanged();
             return;
         }
 
         if (currentTime < self.nextGrowthTime) return;
 
-        self.nextGrowthTime = currentTime + GROWTH_INTERVAL_TICKS;
+        self.nextGrowthTime = currentTime + PlatformHelper.getScarecrowGrowthInterval() * 20L;
         self.setChanged();
 
+        int range = PlatformHelper.getScarecrowRange();
         BlockPos.betweenClosedStream(
-                self.worldPosition.offset(-8, -1, -8),
-                self.worldPosition.offset(8, 1, 8)
+                self.worldPosition.offset(-range, -1, -range),
+                self.worldPosition.offset(range, 1, range)
         ).forEach(targetPos -> {
             BlockState targetState = serverLevel.getBlockState(targetPos);
 

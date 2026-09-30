@@ -70,8 +70,8 @@
 			"to": [16, 9, 14],
 			"rotation": {"angle": 0, "axis": "y", "origin": [4, 9, 2]},
 			"faces": {
-				"up": {"uv": [2, 2, 14, 14], "texture": "#2", "tintindex": 0},
-				"down": {"uv": [2, 2, 14, 14], "texture": "#2", "tintindex": 0}
+				"up": {"uv": [2, 2, 14, 14], "texture": "#2", "tintindex": 1},
+				"down": {"uv": [2, 2, 14, 14], "texture": "#2", "tintindex": 1}
 			}
 		}
 	]

@@ -32,7 +32,8 @@
       ]
   },
   "mixins": [
-    "FarmAndCharm.mixins.json"
+    "FarmAndCharm.mixins.json",
+    "farm_and_charm-common.mixins.json"
   ],
   "depends": {
     "fabric-api": "*",

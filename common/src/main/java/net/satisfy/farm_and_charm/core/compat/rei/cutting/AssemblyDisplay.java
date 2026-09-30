@@ -12,8 +12,15 @@ import java.util.Optional;
 public class AssemblyDisplay extends BasicDisplay {
     public static final CategoryIdentifier<AssemblyDisplay> ID = CategoryIdentifier.of(FarmAndCharm.MOD_ID, "cutting_board_assembly");
 
+    private final boolean ordered;
+
     public AssemblyDisplay(CuttingBoardAssemblyRecipe recipe) {
         super(recipe.getIngredients().stream().map(EntryIngredients::ofIngredient).toList(), List.of(EntryIngredients.of(recipe.getResult())), Optional.empty());
+        this.ordered = recipe.isOrdered();
+    }
+
+    public boolean isOrdered() {
+        return this.ordered;
     }
 
     @Override

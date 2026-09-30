@@ -14,7 +14,8 @@ import net.satisfy.farm_and_charm.core.block.entity.TimberWellBlockEntity;
 import net.satisfy.farm_and_charm.core.registry.SoundEventRegistry;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.satisfy.farm_and_charm.core.registry.ParticleTypeRegistry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -51,14 +52,13 @@ import java.util.List;
 
 import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import org.jetbrains.annotations.Nullable;
 
 public class TimberWellBlock extends FacingBlock implements EntityBlock {
     public static final MapCodec<TimberWellBlock> CODEC = simpleCodec(TimberWellBlock::new);
     public static final EnumProperty<TimberWellPart> PART = EnumProperty.create("part", TimberWellPart.class);
     public static final IntegerProperty LEVEL = IntegerProperty.create("level", 0, 3);
-    public static final int GROUNDWATER_DEPTH = 6;
-    private static final int RAIN_FILL_CHANCE = 6;
 
     public TimberWellBlock(Properties settings) {
         super(settings);
@@ -151,7 +151,7 @@ public class TimberWellBlock extends FacingBlock implements EntityBlock {
             level.playSound(null, topPos, SoundEventRegistry.WELL_PUMP.get(), SoundSource.BLOCKS, 0.5F, 0.9F + level.random.nextFloat() * 0.2F);
             level.playSound(null, getFootPos(pos, state).relative(state.getValue(FACING)), SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 0.5F, 0.9F + level.random.nextFloat() * 0.2F);
             if (level instanceof ServerLevel serverLevel) {
-                serverLevel.sendParticles(ParticleTypes.SPLASH, topPos.getX() + 0.5D, topPos.getY(), topPos.getZ() + 0.5D, 10, 0.15D, 0.05D, 0.15D, 0.02D);
+                serverLevel.sendParticles(ParticleTypeRegistry.WATER_SPLASH.get(), topPos.getX() + 0.5D, topPos.getY(), topPos.getZ() + 0.5D, 10, 0.15D, 0.05D, 0.15D, 0.02D);
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
@@ -208,7 +208,7 @@ public class TimberWellBlock extends FacingBlock implements EntityBlock {
         }
         int currentLevel = state.getValue(LEVEL);
         BlockPos topPos = pos.relative(state.getValue(FACING)).above();
-        if (currentLevel < 3 && level.isRainingAt(topPos.above()) && random.nextInt(RAIN_FILL_CHANCE) == 0) {
+        if (currentLevel < 3 && level.isRainingAt(topPos.above()) && random.nextInt(100) < PlatformHelper.getWellRainFillChance()) {
             setWaterLevel(level, pos, state, currentLevel + 1);
         }
     }
@@ -222,7 +222,7 @@ public class TimberWellBlock extends FacingBlock implements EntityBlock {
         int minZ = Math.min(footPos.getZ(), headPos.getZ()) - 1;
         int maxZ = Math.max(footPos.getZ(), headPos.getZ()) + 1;
 
-        for (BlockPos checkPos : BlockPos.betweenClosed(minX, footPos.getY() - GROUNDWATER_DEPTH, minZ, maxX, footPos.getY() - 1, maxZ)) {
+        for (BlockPos checkPos : BlockPos.betweenClosed(minX, footPos.getY() - PlatformHelper.getWellGroundwaterDepth(), minZ, maxX, footPos.getY() - 1, maxZ)) {
             FluidState fluidState = level.getFluidState(checkPos);
             if (fluidState.is(FluidTags.WATER) && fluidState.isSource()) {
                 return true;
@@ -235,6 +235,9 @@ public class TimberWellBlock extends FacingBlock implements EntityBlock {
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (state.getBlock() != newState.getBlock()) {
             removeOtherParts(level, pos, state);
+            if (level instanceof ServerLevel serverLevel) {
+                spawnBreakWater(serverLevel, pos);
+            }
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
@@ -323,6 +326,7 @@ public class TimberWellBlock extends FacingBlock implements EntityBlock {
         if (otherState.getValue(PART) != expectedPart) {
             return;
         }
+        level.levelEvent(2001, pos, Block.getId(otherState));
         level.setBlock(pos, Blocks.AIR.defaultBlockState(), 35);
     }
 
@@ -348,6 +352,18 @@ public class TimberWellBlock extends FacingBlock implements EntityBlock {
         }
     }
 
+    private static void spawnBreakWater(ServerLevel level, BlockPos pos) {
+        SimpleParticleType drip = ParticleTypeRegistry.WATER_DRIP.get();
+        RandomSource random = level.random;
+        for (int i = 0; i < 4; i++) {
+            double x = pos.getX() + 0.2D + random.nextDouble() * 0.6D;
+            double y = pos.getY() + 0.3D + random.nextDouble() * 0.5D;
+            double z = pos.getZ() + 0.2D + random.nextDouble() * 0.6D;
+            level.sendParticles(drip, x, y, z, 0, (random.nextDouble() - 0.5D) * 0.2D, 0.1D + random.nextDouble() * 0.15D, (random.nextDouble() - 0.5D) * 0.2D, 1.0D);
+        }
+        level.sendParticles(ParticleTypeRegistry.WATER_SPLASH.get(), pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, 6, 0.3D, 0.2D, 0.3D, 0.05D);
+    }
+
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (!level.isClientSide) {
@@ -361,10 +377,11 @@ public class TimberWellBlock extends FacingBlock implements EntityBlock {
         double y = pos.getY() + 0.075D;
         double z = pos.getZ() + 0.5D;
 
-        level.addParticle(ParticleTypes.DRIPPING_WATER, x, y, z, 0.0D, 0.0D, 0.0D);
+        SimpleParticleType drip = ParticleTypeRegistry.WATER_DRIP.get();
+        level.addParticle(drip, x, y, z, 0.0D, 0.0D, 0.0D);
 
         if (random.nextInt(12) == 0) {
-            level.addParticle(ParticleTypes.DRIPPING_WATER, x, y, z, 0.0D, -0.01D, 0.0D);
+            level.addParticle(drip, x, y, z, 0.0D, -0.01D, 0.0D);
         }
 
         if (random.nextInt(40) == 0) {
@@ -379,7 +396,7 @@ public class TimberWellBlock extends FacingBlock implements EntityBlock {
         int gold = 0xFFD700;
 
         if (Screen.hasShiftDown()) {
-            tooltip.add(Component.translatable("tooltip.farm_and_charm.timber_well.info_0", GROUNDWATER_DEPTH)
+            tooltip.add(Component.translatable("tooltip.farm_and_charm.timber_well.info_0", PlatformHelper.getWellGroundwaterDepth())
                     .withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
         } else {
             tooltip.add(Component.translatable(
@@ -392,14 +409,20 @@ public class TimberWellBlock extends FacingBlock implements EntityBlock {
     private static final Supplier<VoxelShape> FOOT_SHAPE_SUPPLIER = () -> {
         VoxelShape shape = Shapes.empty();
         shape = Shapes.joinUnoptimized(shape, Block.box(1.0D, 0.0D, 0.0D, 5.0D, 4.0D, 16.0D), BooleanOp.OR);
-        shape = Shapes.joinUnoptimized(shape, Block.box(0.0D, 4.0D, 0.0D, 16.0D, 12.0D, 16.0D), BooleanOp.OR);
+        shape = Shapes.joinUnoptimized(shape, Block.box(0.0D, 4.0D, 0.0D, 16.0D, 6.0D, 16.0D), BooleanOp.OR);
+        shape = Shapes.joinUnoptimized(shape, Block.box(0.0D, 6.0D, 0.0D, 4.0D, 12.0D, 16.0D), BooleanOp.OR);
+        shape = Shapes.joinUnoptimized(shape, Block.box(4.0D, 6.0D, 0.0D, 16.0D, 12.0D, 2.0D), BooleanOp.OR);
+        shape = Shapes.joinUnoptimized(shape, Block.box(4.0D, 6.0D, 14.0D, 16.0D, 12.0D, 16.0D), BooleanOp.OR);
         return GeneralUtil.rotateShape(Direction.NORTH, Direction.WEST, shape);
     };
 
     private static final Supplier<VoxelShape> HEAD_SHAPE_SUPPLIER = () -> {
         VoxelShape shape = Shapes.empty();
         shape = Shapes.joinUnoptimized(shape, Block.box(11.0D, 0.0D, 0.0D, 15.0D, 4.0D, 16.0D), BooleanOp.OR);
-        shape = Shapes.joinUnoptimized(shape, Block.box(0.0D, 4.0D, 0.0D, 16.0D, 12.0D, 16.0D), BooleanOp.OR);
+        shape = Shapes.joinUnoptimized(shape, Block.box(0.0D, 4.0D, 0.0D, 16.0D, 6.0D, 16.0D), BooleanOp.OR);
+        shape = Shapes.joinUnoptimized(shape, Block.box(12.0D, 6.0D, 0.0D, 16.0D, 12.0D, 16.0D), BooleanOp.OR);
+        shape = Shapes.joinUnoptimized(shape, Block.box(0.0D, 6.0D, 0.0D, 12.0D, 12.0D, 2.0D), BooleanOp.OR);
+        shape = Shapes.joinUnoptimized(shape, Block.box(0.0D, 6.0D, 14.0D, 12.0D, 12.0D, 16.0D), BooleanOp.OR);
         shape = Shapes.joinUnoptimized(shape, Block.box(12.0D, 12.0D, 6.0D, 16.0D, 16.0D, 10.0D), BooleanOp.OR);
         return GeneralUtil.rotateShape(Direction.NORTH, Direction.WEST, shape);
     };
@@ -439,5 +462,13 @@ public class TimberWellBlock extends FacingBlock implements EntityBlock {
             case HEAD -> HEAD_SHAPES.get(facing);
             case TOP -> TOP_SHAPES.get(facing);
         };
+    }
+
+    private static final VoxelShape TUB_FILL = Block.box(0.0D, 4.0D, 0.0D, 16.0D, 12.0D, 16.0D);
+
+    @Override
+    protected @NotNull VoxelShape getInteractionShape(BlockState state, BlockGetter level, BlockPos pos) {
+        VoxelShape shape = this.getShape(state, level, pos, CollisionContext.empty());
+        return state.getValue(PART) == TimberWellPart.TOP ? shape : Shapes.or(shape, TUB_FILL);
     }
 }

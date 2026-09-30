@@ -65,7 +65,7 @@ public class CuttingBoardBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     private static final int CRUMBS = 8;
-    private static final int TOOLTIP_LINES = 4;
+    private static final int TOOLTIP_LINES = 3;
     private static final int TOOLTIP_TEXT_COLOR = 0xFFD966;
     private static final int TOOLTIP_KEY_COLOR = 0xFFD700;
     public static final TagKey<Item> CLEAVERS = TagKey.create(Registries.ITEM, FarmAndCharm.identifier("cleavers"));
@@ -156,7 +156,9 @@ public class CuttingBoardBlock extends BaseEntityBlock {
         }
         Optional<RecipeHolder<CuttingBoardAssemblyRecipe>> assembly = player.isShiftKeyDown() ? Optional.empty() : findAssembly(level, board.getItems());
         if (assembly.isPresent()) {
-            board.setContents(assembly.get().value().assemble(new CuttingBoardAssemblyRecipe.Input(board.getItems()), level.registryAccess()));
+            ItemStack result = assembly.get().value().assemble(new CuttingBoardAssemblyRecipe.Input(board.getItems()), level.registryAccess());
+            board.setContents(ItemStack.EMPTY);
+            CuttingBoardBlockEntity.output(level, pos, result);
             level.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 1.0F, 1.0F);
             return InteractionResult.CONSUME;
         }
@@ -249,7 +251,7 @@ public class CuttingBoardBlock extends BaseEntityBlock {
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("tooltip.farm_and_charm.can_be_placed").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.empty());
         Style text = Style.EMPTY.withColor(TextColor.fromRgb(TOOLTIP_TEXT_COLOR));
         if (!Screen.hasShiftDown()) {

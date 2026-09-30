@@ -44,6 +44,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 
 public class ChickenCoopBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
@@ -86,7 +87,7 @@ public class ChickenCoopBlock extends BaseEntityBlock {
             if (be instanceof ChickenCoopBlockEntity coop) {
                 ChickenCoopBlockEntity.tick(lvl, pos, coop);
                 int eggCount = coop.getEggCount();
-                int stage = eggCount >= 7 ? 3 : eggCount >= 4 ? 2 : eggCount >= 1 ? 1 : 0;
+                int stage = eggCount <= 0 ? 0 : Math.min(3, (eggCount * 3 + PlatformHelper.getChickenCoopMaxEggs() - 1) / PlatformHelper.getChickenCoopMaxEggs());
                 BlockState blockState = lvl.getBlockState(pos);
                 if (blockState.getBlock() instanceof ChickenCoopBlock && blockState.getValue(EGGS) != stage) {
                     lvl.setBlock(pos, blockState.setValue(EGGS, stage), Block.UPDATE_CLIENTS);

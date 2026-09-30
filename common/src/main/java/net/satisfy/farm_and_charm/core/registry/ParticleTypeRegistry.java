@@ -20,6 +20,8 @@ public class ParticleTypeRegistry {
     public static final RegistrySupplier<SimpleParticleType> SOUP_COOKING_BUBBLE = PARTICLE_TYPES.register("soup_cooking_bubble", () -> new SimpleParticleType(false) {});
     public static final RegistrySupplier<ParticleType<ColorParticleOption>> DYE_SPLASH = PARTICLE_TYPES.register("dye_splash", ParticleTypeRegistry::colored);
     public static final RegistrySupplier<ParticleType<ColorParticleOption>> FEATHER = PARTICLE_TYPES.register("feather", ParticleTypeRegistry::colored);
+    public static final RegistrySupplier<SimpleParticleType> WATER_DRIP = PARTICLE_TYPES.register("water_drip", () -> new SimpleParticleType(false) {});
+    public static final RegistrySupplier<SimpleParticleType> WATER_SPLASH = PARTICLE_TYPES.register("water_splash", () -> new SimpleParticleType(false) {});
 
     private static ParticleType<ColorParticleOption> colored() {
         return new ParticleType<>(false) {

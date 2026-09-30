@@ -9,6 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 
 public interface BigCropCapable {
@@ -53,7 +54,7 @@ public interface BigCropCapable {
             RandomSource staticRandom = RandomSource.create(seed);
             if (staticRandom.nextFloat() >= 0.25f) return;
 
-            if (!isBig && isRaining && lightLevel > 12 && random.nextFloat() < 0.03f) {
+            if (!isBig && isRaining && lightLevel > 12 && random.nextInt(100) < PlatformHelper.getBigCropChance()) {
                 level.setBlock(pos, state.setValue(big, true), 2);
                 spawnHappyParticles(serverLevel, pos);
             } else if (!isBig && hasWater && random.nextFloat() < 0.144f) {

@@ -1,3 +1,34 @@
+[1.1.27]
+
+**Added**
+* Cutting Board: Welcome to chopping, cutting and stripping!
+* Iron, Diamond and Netherite Cleavers: the better the cleaver, the fewer chops it needs on the Cutting Board. Mobs and players killed with a cleaver drop their head
+* Horse Fodder, Chicken Feed, Cat Food and Dog Food are now assembled on the Cutting Board instead of the Crafting Table or Crafting Bowl. 
+* Cat and Dog Food Bags are now made on the Cutting Board from 4 Food and Paper, and unpack into 4 Food
+* Rope, Compost and Chicken Nest can now also be assembled on the Cutting Board, their Crafting Table recipes stay
+* Feathers now fly when taking eggs from a Chicken Nest or putting them in, and when chasing Chickens out of a Chicken Coop with a Pitchfork
+* Breaking a Timber Well now splashes out some water
+* Mushroom Stew, Beetroot Soup and Rabbit Stew now also give Sustenance on NeoForge
+* New config options: Giant Crop chance, Scarecrow interval and range, Wild Crop drop chance, Timber Well groundwater depth and rain fill chance, Chicken Coop capacity, Dog and Cat begging, Pet Bowl search range and feeding times
+
+**Changed**
+* The config is now split into Farming, Water, Animals, Kitchen, Effects and Food, and every option has an explanation. Options were moved, so changed values in an existing config file are reset to their defaults
+* Water drips and splashes from the Timber Well, Sink, Water Sprinkler and troughs now match the biome's water color
+* Tool Rack is much easier to take items from
+* Timber Well now has an exact hitbox that follows its model
+* Horses and Cats now behave the same on NeoForge as on Fabric when fed Barley, Oat, Horse Fodder or Cat Food
+* Cats now look for their Pet Bowl in a smaller radius, which saves performance
+* Polished the English and German translations
+
+**Fixed**
+* Rested now actually grants bonus experience on NeoForge
+* Crops now actually grow faster in the rain, the config options for it did nothing before
+* The Water Sprinkler range config option now actually changes the range of the Water Sprinkler
+* Breaking a Timber Well or Water Trough now shows wood particles instead of blue ones
+* Chicken Nest now reliably takes and gives eggs no matter where you click on it
+
+***
+
 [1.1.26]
 
 **Added**

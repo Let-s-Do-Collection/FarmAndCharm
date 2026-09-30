@@ -1,5 +1,6 @@
 {
   "type": "farm_and_charm:cutting_board_assembly",
+  "ordered": true,
   "ingredients": [
     {
       "item": "minecraft:string"

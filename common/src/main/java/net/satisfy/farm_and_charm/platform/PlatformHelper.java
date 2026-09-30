@@ -4,16 +4,6 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 
 public abstract class PlatformHelper {
     @ExpectPlatform
-    public static boolean isBonemealEffectEnabled() {
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
-    public static int getWaterSprinklerRange() {
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
     public static boolean isRainGrowthEffectEnabled() {
         throw new AssertionError();
     }
@@ -24,7 +14,17 @@ public abstract class PlatformHelper {
     }
 
     @ExpectPlatform
-    public static int getFeedingTroughRange() {
+    public static int getBigCropChance() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static boolean isBonemealEffectEnabled() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static boolean isFertilizerEnabled() {
         throw new AssertionError();
     }
 
@@ -34,17 +34,47 @@ public abstract class PlatformHelper {
     }
 
     @ExpectPlatform
-    public static int getNutrition(String itemName) {
+    public static int getScarecrowGrowthInterval() {
         throw new AssertionError();
     }
 
     @ExpectPlatform
-    public static float getSaturationMod(String itemName) {
+    public static int getScarecrowRange() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static int getWildCropDropChance() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static int getWaterSprinklerRange() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static int getWellGroundwaterDepth() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static int getWellRainFillChance() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static int getFeedingTroughRange() {
         throw new AssertionError();
     }
 
     @ExpectPlatform
     public static boolean isTamingEnabled() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static boolean enableCatTamingChance() {
         throw new AssertionError();
     }
 
@@ -64,12 +94,67 @@ public abstract class PlatformHelper {
     }
 
     @ExpectPlatform
-    public static boolean enableCatTamingChance() {
+    public static int getChickenCoopMaxChickens() {
         throw new AssertionError();
     }
 
     @ExpectPlatform
-    public static boolean isFertilizerEnabled() {
+    public static int getChickenCoopMaxEggs() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static boolean isDogBeggingEnabled() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static boolean isCatBeggingEnabled() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static int getPetBowlSearchRange() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static int getFeedingTimeMiddayStart() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static int getFeedingTimeMiddayEnd() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static int getFeedingTimeEveningStart() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static int getFeedingTimeEveningEnd() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static int getIronCleaverChops() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static int getDiamondCleaverChops() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static int getNetheriteCleaverChops() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static boolean isCleaverHeadDropsEnabled() {
         throw new AssertionError();
     }
 
@@ -129,22 +214,12 @@ public abstract class PlatformHelper {
     }
 
     @ExpectPlatform
-    public static int getIronCleaverChops() {
+    public static int getNutrition(String itemName) {
         throw new AssertionError();
     }
 
     @ExpectPlatform
-    public static int getDiamondCleaverChops() {
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
-    public static int getNetheriteCleaverChops() {
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
-    public static boolean isCleaverHeadDropsEnabled() {
+    public static float getSaturationMod(String itemName) {
         throw new AssertionError();
     }
 }

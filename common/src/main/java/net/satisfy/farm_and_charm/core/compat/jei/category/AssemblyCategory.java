@@ -23,8 +23,6 @@ import java.util.List;
 
 public class AssemblyCategory implements IRecipeCategory<CuttingBoardAssemblyRecipe> {
     public static final RecipeType<CuttingBoardAssemblyRecipe> TYPE = RecipeType.create(FarmAndCharm.MOD_ID, "cutting_board_assembly", CuttingBoardAssemblyRecipe.class);
-    private static final int SLOT_X = (RecipeViewerLayout.ASSEMBLY_WIDTH - RecipeViewerLayout.SLOT) / 2;
-    private static final int ARROW_X = (RecipeViewerLayout.ASSEMBLY_WIDTH - RecipeViewerLayout.ARROW_THICKNESS) / 2;
 
     private final IDrawable icon;
     private final IDrawable slot;
@@ -62,20 +60,19 @@ public class AssemblyCategory implements IRecipeCategory<CuttingBoardAssemblyRec
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, CuttingBoardAssemblyRecipe recipe, IFocusGroup focuses) {
         List<Ingredient> ingredients = recipe.getIngredients();
-        int y = RecipeViewerLayout.assemblyTop(ingredients.size());
-        for (Ingredient ingredient : ingredients) {
-            builder.addSlot(RecipeIngredientRole.INPUT, SLOT_X + 1, y + 1).setBackground(this.slot, -1, -1).addIngredients(ingredient);
-            y += RecipeViewerLayout.ASSEMBLY_STEP;
+        RecipeViewerLayout.AssemblyLayout layout = RecipeViewerLayout.assembly(ingredients.size(), recipe.isOrdered());
+        for (int i = 0; i < ingredients.size(); i++) {
+            RecipeViewerLayout.Pos pos = layout.slots().get(i);
+            builder.addSlot(RecipeIngredientRole.INPUT, pos.x() + 1, pos.y() + 1).setBackground(this.slot, -1, -1).addIngredients(ingredients.get(i));
         }
-        builder.addSlot(RecipeIngredientRole.OUTPUT, SLOT_X + 1, y + 1).setBackground(this.slot, -1, -1).addItemStack(recipe.getResult());
+        RecipeViewerLayout.Pos output = layout.output();
+        builder.addSlot(RecipeIngredientRole.OUTPUT, output.x() + 1, output.y() + 1).setBackground(this.slot, -1, -1).addItemStack(recipe.getResult());
     }
 
     @Override
     public void draw(CuttingBoardAssemblyRecipe recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
-        int y = RecipeViewerLayout.assemblyTop(recipe.getIngredients().size()) + RecipeViewerLayout.SLOT + 1;
-        for (int i = 0; i < recipe.getIngredients().size(); i++) {
-            RecipeViewerLayout.drawDownArrow(graphics, ARROW_X, y);
-            y += RecipeViewerLayout.ASSEMBLY_STEP;
+        for (RecipeViewerLayout.Pos pos : RecipeViewerLayout.assembly(recipe.getIngredients().size(), recipe.isOrdered()).arrows()) {
+            RecipeViewerLayout.drawRightArrow(graphics, pos.x(), pos.y());
         }
     }
 }

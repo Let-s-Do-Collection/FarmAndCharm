@@ -18,11 +18,10 @@ import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import java.util.UUID;
 
 public class ChickenCoopBlockEntity extends BlockEntity {
-    private static final int MAX_CHICKENS = 3;
-    private static final int MAX_EGGS = 9;
     private static final String KEY_CHICKENS = "Chickens";
     private static final String KEY_EGGS = "EggCount";
     private static final String KEY_COOP_TIME = "CoopTime";
@@ -86,7 +85,7 @@ public class ChickenCoopBlockEntity extends BlockEntity {
     }
 
     public boolean hasSpaceForChicken() {
-        return storedChickens.size() < MAX_CHICKENS;
+        return storedChickens.size() < PlatformHelper.getChickenCoopMaxChickens();
     }
 
     public void addChicken(Chicken chicken) {
@@ -167,7 +166,7 @@ public class ChickenCoopBlockEntity extends BlockEntity {
     }
 
     public void addEgg() {
-        if (eggCount < MAX_EGGS) {
+        if (eggCount < PlatformHelper.getChickenCoopMaxEggs()) {
             eggCount++;
             setChanged();
         }

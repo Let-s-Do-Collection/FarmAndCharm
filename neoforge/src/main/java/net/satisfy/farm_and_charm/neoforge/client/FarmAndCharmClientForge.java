@@ -18,6 +18,8 @@ import net.satisfy.farm_and_charm.client.particle.FeatherParticle;
 import net.satisfy.farm_and_charm.client.particle.SoupBubbleParticle;
 import net.satisfy.farm_and_charm.client.particle.SoupCookingBubbleParticle;
 import net.satisfy.farm_and_charm.client.particle.SoupSteamParticle;
+import net.satisfy.farm_and_charm.client.particle.WaterDripParticle;
+import net.satisfy.farm_and_charm.client.particle.WaterSplashParticle;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import net.satisfy.farm_and_charm.core.registry.ParticleTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
@@ -44,6 +46,8 @@ public class FarmAndCharmClientForge {
         event.registerSpriteSet(ParticleTypeRegistry.SOUP_COOKING_BUBBLE.get(), SoupCookingBubbleParticle.Provider::new);
         event.registerSpriteSet(ParticleTypeRegistry.DYE_SPLASH.get(), DyeSplashParticle.Provider::new);
         event.registerSpriteSet(ParticleTypeRegistry.FEATHER.get(), FeatherParticle.Provider::new);
+        event.registerSpriteSet(ParticleTypeRegistry.WATER_DRIP.get(), WaterDripParticle.Provider::new);
+        event.registerSpriteSet(ParticleTypeRegistry.WATER_SPLASH.get(), WaterSplashParticle.Provider::new);
     }
 
     @SubscribeEvent

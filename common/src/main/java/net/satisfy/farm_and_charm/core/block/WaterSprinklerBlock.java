@@ -3,7 +3,7 @@ package net.satisfy.farm_and_charm.core.block;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
+import net.satisfy.farm_and_charm.core.registry.ParticleTypeRegistry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
@@ -27,6 +27,7 @@ import net.satisfy.farm_and_charm.core.registry.SoundEventRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 
 public class WaterSprinklerBlock extends BaseEntityBlock {
     public static final MapCodec<WaterSprinklerBlock> CODEC = simpleCodec(WaterSprinklerBlock::new);
@@ -74,7 +75,7 @@ public class WaterSprinklerBlock extends BaseEntityBlock {
                         for (double len = 0; len < 3; len += 0.5) {
                             double cx = startX + dx * len;
                             double cz = startZ + dz * len;
-                            world.addParticle(ParticleTypes.SPLASH, cx, y, cz, dx, 0.0D, dz);
+                            world.addParticle(ParticleTypeRegistry.WATER_SPLASH.get(), cx, y, cz, dx, 0.0D, dz);
                         }
                     }
                 }
@@ -84,7 +85,8 @@ public class WaterSprinklerBlock extends BaseEntityBlock {
 
     @Override
     public void tick(@NotNull BlockState state, ServerLevel world, BlockPos pos, @NotNull RandomSource random) {
-        BlockPos.betweenClosed(pos.offset(-4, -1, -4), pos.offset(4, 1, 4)).forEach(p -> {
+        int range = PlatformHelper.getWaterSprinklerRange();
+        BlockPos.betweenClosed(pos.offset(-range, -1, -range), pos.offset(range, 1, range)).forEach(p -> {
             BlockState blockState = world.getBlockState(p);
             if (blockState.getBlock() instanceof FarmBlock && blockState.hasProperty(BlockStateProperties.MOISTURE)) {
                 world.setBlock(p, blockState.setValue(BlockStateProperties.MOISTURE, 7), 2);

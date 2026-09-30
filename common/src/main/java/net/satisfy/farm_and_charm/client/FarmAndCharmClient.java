@@ -12,6 +12,8 @@ import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.satisfy.farm_and_charm.client.event.ClientEventHandler;
+import net.satisfy.farm_and_charm.client.gui.overlay.BlockInfoOverlay;
+import net.satisfy.farm_and_charm.client.gui.overlay.CuttingBoardInfoProvider;
 import net.satisfy.farm_and_charm.client.gui.CookingPotGui;
 import net.satisfy.farm_and_charm.client.gui.PetBowlEditGui;
 import net.satisfy.farm_and_charm.client.gui.RoasterGui;
@@ -19,6 +21,8 @@ import net.satisfy.farm_and_charm.client.gui.StoveGui;
 import net.satisfy.farm_and_charm.client.model.*;
 import net.satisfy.farm_and_charm.client.particle.DyeSplashParticle;
 import net.satisfy.farm_and_charm.client.particle.FeatherParticle;
+import net.satisfy.farm_and_charm.client.particle.WaterDripParticle;
+import net.satisfy.farm_and_charm.client.particle.WaterSplashParticle;
 import net.satisfy.farm_and_charm.client.particle.SoupBubbleParticle;
 import net.satisfy.farm_and_charm.client.particle.SoupCookingBubbleParticle;
 import net.satisfy.farm_and_charm.client.particle.SoupSteamParticle;
@@ -54,9 +58,11 @@ public class FarmAndCharmClient {
         ParticleProviderRegistry.register(ParticleTypeRegistry.SOUP_COOKING_BUBBLE.get(), SoupCookingBubbleParticle.Provider::new);
         ParticleProviderRegistry.register(ParticleTypeRegistry.DYE_SPLASH.get(), DyeSplashParticle.Provider::new);
         ParticleProviderRegistry.register(ParticleTypeRegistry.FEATHER.get(), FeatherParticle.Provider::new);
+        ParticleProviderRegistry.register(ParticleTypeRegistry.WATER_DRIP.get(), WaterDripParticle.Provider::new);
+        ParticleProviderRegistry.register(ParticleTypeRegistry.WATER_SPLASH.get(), WaterSplashParticle.Provider::new);
 
         ColorHandlerRegistry.registerBlockColors((state, world, pos, tintIndex) -> {
-            if (world == null || pos == null) {
+            if (tintIndex != 1 || world == null || pos == null) {
                 return -1;
             }
             return BiomeColors.getAverageWaterColor(world, pos);
@@ -64,6 +70,8 @@ public class FarmAndCharmClient {
 
         ClientStorageTypes.init();
         ClientEventHandler.init();
+        BlockInfoOverlay.init();
+        BlockInfoOverlay.registerProvider(new CuttingBoardInfoProvider());
         registerStorageTypeRenderers();
         registerBlockEntityRenderer();
         MenuRegistry.registerScreenFactory(ScreenhandlerTypeRegistry.COOKING_POT_SCREEN_HANDLER.get(), CookingPotGui::new);

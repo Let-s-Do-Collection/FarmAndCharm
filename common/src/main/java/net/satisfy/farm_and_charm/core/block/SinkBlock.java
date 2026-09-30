@@ -1,10 +1,10 @@
 package net.satisfy.farm_and_charm.core.block;
 
 import net.minecraft.core.BlockPos;
+import net.satisfy.farm_and_charm.core.registry.ParticleTypeRegistry;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -248,7 +248,7 @@ public class SinkBlock extends Block {
         double e = (double) blockPos.getX() + 0.5 + vec3.x;
         double f = (double) ((float) (blockPos.getY() + 0.9) - 0.6875F) - d;
         double g = (double) blockPos.getZ() + 0.5 + vec3.z;
-        ParticleOptions particleOptions = ParticleTypes.DRIPPING_WATER;
+        ParticleOptions particleOptions = ParticleTypeRegistry.WATER_DRIP.get();
         level.addParticle(particleOptions, e, f, g, 0.0, 0.0, 0.0);
     }
 }

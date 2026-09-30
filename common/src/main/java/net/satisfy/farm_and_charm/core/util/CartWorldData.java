@@ -142,7 +142,7 @@ public class CartWorldData extends SavedData {
                 applyCartSlow(horse);
                 currentHorses.add(horse.getId());
 
-                Entity controller = cart.getControllingPassenger();
+                Entity controller = cart.getCartDriver();
                 boolean controlled = controller instanceof Player controllingPlayer && controllingPlayer.getVehicle() == cart;
 
                 if (controlled) {

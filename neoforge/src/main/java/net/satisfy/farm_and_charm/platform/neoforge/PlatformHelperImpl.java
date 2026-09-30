@@ -3,15 +3,6 @@ package net.satisfy.farm_and_charm.platform.neoforge;
 import net.satisfy.farm_and_charm.neoforge.core.config.FarmAndCharmNeoForgeConfig;
 
 public class PlatformHelperImpl {
-
-    public static boolean isBonemealEffectEnabled() {
-        return FarmAndCharmNeoForgeConfig.enableBonemealEffect;
-    }
-
-    public static int getWaterSprinklerRange() {
-        return FarmAndCharmNeoForgeConfig.waterSprinklerRange;
-    }
-
     public static boolean isRainGrowthEffectEnabled() {
         return FarmAndCharmNeoForgeConfig.enableRainGrowthEffect;
     }
@@ -20,13 +11,164 @@ public class PlatformHelperImpl {
         return (float) FarmAndCharmNeoForgeConfig.rainGrowthMultiplier;
     }
 
+    public static int getBigCropChance() {
+        return FarmAndCharmNeoForgeConfig.bigCropChance;
+    }
+
+    public static boolean isBonemealEffectEnabled() {
+        return FarmAndCharmNeoForgeConfig.enableBonemealEffect;
+    }
+
+    public static boolean isFertilizerEnabled() {
+        return FarmAndCharmNeoForgeConfig.enableFertilizer;
+    }
+
+    public static int getFertilizedSoilRange() {
+        return FarmAndCharmNeoForgeConfig.fertilizedSoilRange;
+    }
+
+    public static int getScarecrowGrowthInterval() {
+        return FarmAndCharmNeoForgeConfig.scarecrowGrowthInterval;
+    }
+
+    public static int getScarecrowRange() {
+        return FarmAndCharmNeoForgeConfig.scarecrowRange;
+    }
+
+    public static int getWildCropDropChance() {
+        return FarmAndCharmNeoForgeConfig.wildCropDropChance;
+    }
+
+    public static int getWaterSprinklerRange() {
+        return FarmAndCharmNeoForgeConfig.waterSprinklerRange;
+    }
+
+    public static int getWellGroundwaterDepth() {
+        return FarmAndCharmNeoForgeConfig.wellGroundwaterDepth;
+    }
+
+    public static int getWellRainFillChance() {
+        return FarmAndCharmNeoForgeConfig.wellRainFillChance;
+    }
+
     public static int getFeedingTroughRange() {
         return FarmAndCharmNeoForgeConfig.feedingTroughRange;
     }
 
+    public static boolean isTamingEnabled() {
+        return FarmAndCharmNeoForgeConfig.enableDogFoodTaming;
+    }
 
-    public static int getFertilizedSoilRange() {
-        return FarmAndCharmNeoForgeConfig.fertilizedSoilRange;
+    public static boolean enableCatTamingChance() {
+        return FarmAndCharmNeoForgeConfig.enableCatTamingChance;
+    }
+
+    public static boolean isHorseTamingEnabled() {
+        return FarmAndCharmNeoForgeConfig.enableHorseTaming;
+    }
+
+    public static boolean isHorseEffectsEnabled() {
+        return FarmAndCharmNeoForgeConfig.enableHorseEffects;
+    }
+
+    public static boolean isChickenEffectsEnabled() {
+        return FarmAndCharmNeoForgeConfig.enableChickenEffects;
+    }
+
+    public static int getChickenCoopMaxChickens() {
+        return FarmAndCharmNeoForgeConfig.chickenCoopMaxChickens;
+    }
+
+    public static int getChickenCoopMaxEggs() {
+        return FarmAndCharmNeoForgeConfig.chickenCoopMaxEggs;
+    }
+
+    public static boolean isDogBeggingEnabled() {
+        return FarmAndCharmNeoForgeConfig.enableDogBegging;
+    }
+
+    public static boolean isCatBeggingEnabled() {
+        return FarmAndCharmNeoForgeConfig.enableCatBegging;
+    }
+
+    public static int getPetBowlSearchRange() {
+        return FarmAndCharmNeoForgeConfig.petBowlSearchRange;
+    }
+
+    public static int getFeedingTimeMiddayStart() {
+        return FarmAndCharmNeoForgeConfig.feedingTimeMiddayStart;
+    }
+
+    public static int getFeedingTimeMiddayEnd() {
+        return FarmAndCharmNeoForgeConfig.feedingTimeMiddayEnd;
+    }
+
+    public static int getFeedingTimeEveningStart() {
+        return FarmAndCharmNeoForgeConfig.feedingTimeEveningStart;
+    }
+
+    public static int getFeedingTimeEveningEnd() {
+        return FarmAndCharmNeoForgeConfig.feedingTimeEveningEnd;
+    }
+
+    public static int getIronCleaverChops() {
+        return FarmAndCharmNeoForgeConfig.ironCleaverChops;
+    }
+
+    public static int getDiamondCleaverChops() {
+        return FarmAndCharmNeoForgeConfig.diamondCleaverChops;
+    }
+
+    public static int getNetheriteCleaverChops() {
+        return FarmAndCharmNeoForgeConfig.netheriteCleaverChops;
+    }
+
+    public static boolean isCleaverHeadDropsEnabled() {
+        return FarmAndCharmNeoForgeConfig.cleaverHeadDrops;
+    }
+
+    public static int getChickenEffectTickInterval() {
+        return FarmAndCharmNeoForgeConfig.chickenEffectTickInterval;
+    }
+
+    public static int getChickenEffectEggChance() {
+        return FarmAndCharmNeoForgeConfig.chickenEffectEggChance;
+    }
+
+    public static int getChickenEffectFeatherChance() {
+        return FarmAndCharmNeoForgeConfig.chickenEffectFeatherChance;
+    }
+
+    public static int getFeastEffectSatiationInterval() {
+        return FarmAndCharmNeoForgeConfig.feastEffectSatiationInterval;
+    }
+
+    public static int getFeastEffectSustenanceInterval() {
+        return FarmAndCharmNeoForgeConfig.feastEffectSustenanceInterval;
+    }
+
+    public static int getFeastEffectHealAmount() {
+        return FarmAndCharmNeoForgeConfig.feastEffectHealAmount;
+    }
+
+    public static int getSustenanceEffectInterval() {
+        return FarmAndCharmNeoForgeConfig.sustenanceEffectInterval;
+    }
+
+    public static int getSustenanceEffectHealAmount() {
+        return FarmAndCharmNeoForgeConfig.sustenanceEffectHealAmount;
+    }
+
+    public static int getSustenanceEffectFoodIncrement() {
+        return FarmAndCharmNeoForgeConfig.sustenanceEffectFoodIncrement;
+    }
+
+    public static int getSatiationEffectInterval() {
+        return FarmAndCharmNeoForgeConfig.satiationEffectInterval;
+    }
+
+    public static int getSatiationEffectHealAmount() {
+        return FarmAndCharmNeoForgeConfig.satiationEffectHealAmount;
     }
 
     public static int getNutrition(String itemName) {
@@ -163,89 +305,5 @@ public class PlatformHelperImpl {
                 default -> 0.0f;
             };
         }
-    }
-
-    public static boolean isTamingEnabled() {
-        return FarmAndCharmNeoForgeConfig.enableTaming;
-    }
-
-    public static boolean isHorseTamingEnabled() {
-        return FarmAndCharmNeoForgeConfig.enableHorseTaming;
-    }
-
-    public static boolean isHorseEffectsEnabled() {
-        return FarmAndCharmNeoForgeConfig.enableHorseEffects;
-    }
-
-    public static boolean isChickenEffectsEnabled() {
-        return FarmAndCharmNeoForgeConfig.enableChickenEffects;
-    }
-
-    public static boolean enableCatTamingChance() {
-        return FarmAndCharmNeoForgeConfig.enableCatTamingChance;
-    }
-
-    public static boolean isFertilizerEnabled() {
-        return FarmAndCharmNeoForgeConfig.enableFertilizer;
-    }
-
-    public static int getChickenEffectTickInterval() {
-        return FarmAndCharmNeoForgeConfig.chickenEffectTickInterval;
-    }
-
-    public static int getChickenEffectEggChance() {
-        return FarmAndCharmNeoForgeConfig.chickenEffectEggChance;
-    }
-
-    public static int getChickenEffectFeatherChance() {
-        return FarmAndCharmNeoForgeConfig.chickenEffectFeatherChance;
-    }
-
-    public static int getFeastEffectSatiationInterval() {
-        return FarmAndCharmNeoForgeConfig.feastEffectSatiationInterval;
-    }
-
-    public static int getFeastEffectSustenanceInterval() {
-        return FarmAndCharmNeoForgeConfig.feastEffectSustenanceInterval;
-    }
-
-    public static int getFeastEffectHealAmount() {
-        return FarmAndCharmNeoForgeConfig.feastEffectHealAmount;
-    }
-
-    public static int getSustenanceEffectInterval() {
-        return FarmAndCharmNeoForgeConfig.sustenanceEffectInterval;
-    }
-
-    public static int getSustenanceEffectHealAmount() {
-        return FarmAndCharmNeoForgeConfig.sustenanceEffectHealAmount;
-    }
-
-    public static int getSustenanceEffectFoodIncrement() {
-        return FarmAndCharmNeoForgeConfig.sustenanceEffectFoodIncrement;
-    }
-
-    public static int getSatiationEffectInterval() {
-        return FarmAndCharmNeoForgeConfig.satiationEffectInterval;
-    }
-
-    public static int getSatiationEffectHealAmount() {
-        return FarmAndCharmNeoForgeConfig.satiationEffectHealAmount;
-    }
-
-    public static int getIronCleaverChops() {
-        return FarmAndCharmNeoForgeConfig.ironCleaverChops;
-    }
-
-    public static int getDiamondCleaverChops() {
-        return FarmAndCharmNeoForgeConfig.diamondCleaverChops;
-    }
-
-    public static int getNetheriteCleaverChops() {
-        return FarmAndCharmNeoForgeConfig.netheriteCleaverChops;
-    }
-
-    public static boolean isCleaverHeadDropsEnabled() {
-        return FarmAndCharmNeoForgeConfig.cleaverHeadDrops;
     }
 }

@@ -47,16 +47,18 @@ public class AssemblyCategory implements DisplayCategory<AssemblyDisplay> {
     public List<Widget> setupDisplay(AssemblyDisplay display, Rectangle bounds) {
         List<Widget> widgets = new ArrayList<>();
         widgets.add(Widgets.createRecipeBase(bounds));
-        int slotX = bounds.x + PADDING + (RecipeViewerLayout.ASSEMBLY_WIDTH - RecipeViewerLayout.SLOT) / 2;
-        int arrowX = bounds.x + PADDING + (RecipeViewerLayout.ASSEMBLY_WIDTH - RecipeViewerLayout.ARROW_THICKNESS) / 2;
         List<EntryIngredient> inputs = display.getInputEntries();
-        int y = bounds.y + PADDING + RecipeViewerLayout.assemblyTop(inputs.size());
-        for (EntryIngredient input : inputs) {
-            ReiWidgets.inputSlot(widgets, slotX, y, input);
-            ReiWidgets.downArrow(widgets, arrowX, y + RecipeViewerLayout.SLOT + 1);
-            y += RecipeViewerLayout.ASSEMBLY_STEP;
+        RecipeViewerLayout.AssemblyLayout layout = RecipeViewerLayout.assembly(inputs.size(), display.isOrdered());
+        int x = bounds.x + PADDING;
+        int y = bounds.y + PADDING;
+        for (int i = 0; i < inputs.size(); i++) {
+            RecipeViewerLayout.Pos pos = layout.slots().get(i);
+            ReiWidgets.inputSlot(widgets, x + pos.x(), y + pos.y(), inputs.get(i));
         }
-        ReiWidgets.outputSlot(widgets, slotX, y, display.getOutputEntries().getFirst());
+        for (RecipeViewerLayout.Pos pos : layout.arrows()) {
+            ReiWidgets.rightArrow(widgets, x + pos.x(), y + pos.y());
+        }
+        ReiWidgets.outputSlot(widgets, x + layout.output().x(), y + layout.output().y(), display.getOutputEntries().getFirst());
         return widgets;
     }
 }

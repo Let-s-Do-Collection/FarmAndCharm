@@ -7,11 +7,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.TallGrassBlock;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class WildPlantBlock extends TallGrassBlock {
-
-    private static final float DROP_CHANCE = 0.6F;
 
     public WildPlantBlock(Properties properties) {
         super(properties);
@@ -29,7 +28,7 @@ public class WildPlantBlock extends TallGrassBlock {
 
     @Override
     public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
-        if (random.nextFloat() < DROP_CHANCE) {
+        if (random.nextInt(100) < PlatformHelper.getWildCropDropChance()) {
             popResource(level, pos, new ItemStack(this.asItem()));
         }
     }

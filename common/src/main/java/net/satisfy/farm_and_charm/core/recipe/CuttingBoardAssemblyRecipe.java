@@ -24,14 +24,18 @@ import java.util.List;
 import java.util.Optional;
 
 public class CuttingBoardAssemblyRecipe implements Recipe<CuttingBoardAssemblyRecipe.Input> {
+    public static final int MAX_ORDERED_ITEMS = 3;
+
     private final NonNullList<Ingredient> ingredients;
     private final Optional<Ingredient> finisher;
     private final ItemStack result;
+    private final boolean ordered;
 
-    public CuttingBoardAssemblyRecipe(List<Ingredient> ingredients, Optional<Ingredient> finisher, ItemStack result) {
+    public CuttingBoardAssemblyRecipe(List<Ingredient> ingredients, Optional<Ingredient> finisher, ItemStack result, boolean ordered) {
         this.ingredients = NonNullList.of(Ingredient.EMPTY, ingredients.toArray(Ingredient[]::new));
         this.finisher = finisher;
         this.result = result;
+        this.ordered = ordered;
     }
 
     @Override
@@ -43,6 +47,15 @@ public class CuttingBoardAssemblyRecipe implements Recipe<CuttingBoardAssemblyRe
         int count = this.ingredients.size();
         if (items.size() > this.totalSize()) {
             return false;
+        }
+        if (this.ordered) {
+            for (int i = 0; i < items.size(); i++) {
+                Ingredient expected = i < count ? this.ingredients.get(i) : this.finisher.orElseThrow();
+                if (!expected.test(items.get(i))) {
+                    return false;
+                }
+            }
+            return true;
         }
         if (this.finisher.isPresent() && items.size() == count + 1) {
             return this.finisher.get().test(items.getLast()) && assign(items.subList(0, count), 0, new boolean[count]);
@@ -123,6 +136,10 @@ public class CuttingBoardAssemblyRecipe implements Recipe<CuttingBoardAssemblyRe
         return this.result;
     }
 
+    public boolean isOrdered() {
+        return this.ordered;
+    }
+
     public record Input(List<ItemStack> items) implements RecipeInput {
         @Override
         public @NotNull ItemStack getItem(int index) {
@@ -146,15 +163,23 @@ public class CuttingBoardAssemblyRecipe implements Recipe<CuttingBoardAssemblyRe
         public static final MapCodec<CuttingBoardAssemblyRecipe> CODEC = RecordCodecBuilder.<CuttingBoardAssemblyRecipe>mapCodec(instance -> instance.group(
                 INGREDIENTS_CODEC.fieldOf("ingredients").forGetter(CuttingBoardAssemblyRecipe::getBaseIngredients),
                 Ingredient.CODEC_NONEMPTY.optionalFieldOf("finisher").forGetter(CuttingBoardAssemblyRecipe::getFinisher),
-                ItemStack.STRICT_CODEC.fieldOf("result").forGetter(CuttingBoardAssemblyRecipe::getResult)
-        ).apply(instance, CuttingBoardAssemblyRecipe::new)).validate(recipe -> recipe.totalSize() > CuttingBoardBlockEntity.MAX_ITEMS
-                ? DataResult.error(() -> "Cutting board assembly holds at most " + CuttingBoardBlockEntity.MAX_ITEMS + " items including the finisher")
-                : DataResult.success(recipe));
+                ItemStack.STRICT_CODEC.fieldOf("result").forGetter(CuttingBoardAssemblyRecipe::getResult),
+                Codec.BOOL.optionalFieldOf("ordered", false).forGetter(CuttingBoardAssemblyRecipe::isOrdered)
+        ).apply(instance, CuttingBoardAssemblyRecipe::new)).validate(recipe -> {
+            if (recipe.totalSize() > CuttingBoardBlockEntity.MAX_ITEMS) {
+                return DataResult.error(() -> "Cutting board assembly holds at most " + CuttingBoardBlockEntity.MAX_ITEMS + " items including the finisher");
+            }
+            if (recipe.isOrdered() && recipe.totalSize() > MAX_ORDERED_ITEMS) {
+                return DataResult.error(() -> "Ordered cutting board assembly holds at most " + MAX_ORDERED_ITEMS + " items including the finisher");
+            }
+            return DataResult.success(recipe);
+        });
 
         public static final StreamCodec<RegistryFriendlyByteBuf, CuttingBoardAssemblyRecipe> STREAM_CODEC = StreamCodec.composite(
                 Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()), CuttingBoardAssemblyRecipe::getBaseIngredients,
                 ByteBufCodecs.optional(Ingredient.CONTENTS_STREAM_CODEC), CuttingBoardAssemblyRecipe::getFinisher,
                 ItemStack.STREAM_CODEC, CuttingBoardAssemblyRecipe::getResult,
+                ByteBufCodecs.BOOL, CuttingBoardAssemblyRecipe::isOrdered,
                 CuttingBoardAssemblyRecipe::new
         );
 

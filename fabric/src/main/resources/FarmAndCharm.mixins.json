@@ -3,33 +3,8 @@
   "package": "net.satisfy.farm_and_charm.fabric.core.mixin",
   "compatibilityLevel": "JAVA_17",
   "minVersion": "0.8",
-  "client": [
-    "LivingEntityRendererMixin",
-    "PlayerModelCartPullMixin"
-  ],
   "mixins": [
-    "AbstractHorseMixin",
-    "AnimalEntityMixin",
-    "CampfireBlockMixin",
-    "CatAvoidEntityGoalMixin",
-    "CatGiftChanceMixin",
-    "CatMixin",
-    "CatTemptGoalMixin",
-    "ChickenMixin",
-    "CropBlockMixin",
-    "ExperienceOrbMixin",
-    "FarmlandBlockMixin",
-    "FoxMixin",
-    "ItemStackMixin",
-    "LivingEntityMixin",
-    "MobAccessor",
-    "ParrotMixin",
-    "PigMixin",
-    "RabbitMixin",
-    "TemptGoalAccessor",
-    "VanillaFarmlandPlantingParticlesMixin",
-    "WolfMixin",
-    "ZombieMixin"
+    "CropBlockMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -33,8 +33,4 @@ final class ReiWidgets {
             graphics.drawString(Minecraft.getInstance().font, label, x + (RecipeViewerLayout.ARROW_LENGTH - width) / 2, y + 19, 0x808080, false);
         }));
     }
-
-    static void downArrow(List<Widget> widgets, int x, int y) {
-        widgets.add(Widgets.createDrawableWidget((graphics, mouseX, mouseY, delta) -> RecipeViewerLayout.drawDownArrow(graphics, x, y)));
-    }
 }

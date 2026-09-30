@@ -6,6 +6,9 @@ issueTrackerURL = "https://github.com/satisfyu/Let-s-Do-Hub"
 [[mixins]]
 config = "FarmAndCharm-neoforge.mixins.json"
 
+[[mixins]]
+config = "farm_and_charm-common.mixins.json"
+
 [[mods]]
 modId = "farm_and_charm"
 version = "${version}"

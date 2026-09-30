@@ -25,6 +25,9 @@ import net.satisfy.farm_and_charm.core.recipe.CuttingBoardRecipe;
 import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
 import net.satisfy.farm_and_charm.core.item.CleaverItem;
 import net.satisfy.farm_and_charm.core.util.Strippables;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -37,7 +40,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class CuttingBoardBlockEntity extends BlockEntity {
-    public static final int MAX_ITEMS = 4;
+    public static final int MAX_ITEMS = 5;
 
     private static final String ITEMS_KEY = "Items";
     private static final String CHOPS_KEY = "Chops";
@@ -200,7 +203,20 @@ public class CuttingBoardBlockEntity extends BlockEntity {
                 return;
             }
         }
-        Block.popResource(level, pos, remaining);
+        launch(level, pos, remaining);
+    }
+
+    private static void launch(Level level, BlockPos pos, ItemStack stack) {
+        if (level.isClientSide || stack.isEmpty()) {
+            return;
+        }
+        RandomSource random = level.random;
+        ItemEntity item = new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.2, pos.getZ() + 0.5, stack);
+        float angle = random.nextFloat() * Mth.TWO_PI;
+        double spread = 0.08 + random.nextDouble() * 0.06;
+        item.setDeltaMovement(Mth.cos(angle) * spread, 0.3 + random.nextDouble() * 0.1, Mth.sin(angle) * spread);
+        item.setPickUpDelay(15);
+        level.addFreshEntity(item);
     }
 
     public static void playChopSound(Level level, BlockPos pos, ItemStack stack) {

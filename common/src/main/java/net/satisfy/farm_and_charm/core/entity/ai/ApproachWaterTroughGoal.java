@@ -1,8 +1,8 @@
 package net.satisfy.farm_and_charm.core.entity.ai;
 
 import net.minecraft.core.BlockPos;
+import net.satisfy.farm_and_charm.core.registry.ParticleTypeRegistry;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -123,7 +123,7 @@ public class ApproachWaterTroughGoal extends MoveToBlockGoal {
         double z = this.blockPos.getZ() + 0.5D;
 
         if (level instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ParticleTypes.SPLASH, x, y, z, 8, 0.20D, 0.05D, 0.20D, 0.02D);
+            serverLevel.sendParticles(ParticleTypeRegistry.WATER_SPLASH.get(), x, y, z, 8, 0.20D, 0.05D, 0.20D, 0.02D);
         }
 
         level.playSound(null, x, y, z, SoundEvents.GENERIC_SPLASH, SoundSource.NEUTRAL, 0.4F, 0.9F + level.random.nextFloat() * 0.2F);

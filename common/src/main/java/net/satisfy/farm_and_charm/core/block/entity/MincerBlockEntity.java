@@ -248,8 +248,6 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
                         mincer.setItem(OUTPUT_SLOT, recipe.getResultItem(level.registryAccess()));
                     }
                 }
-            } else if (cranked > 0 && cranked < MincerBlock.CRANKS_NEEDED) {
-                cranked = 0;
             }
             level.setBlock(pos, state.setValue(MincerBlock.CRANK, crank).setValue(MincerBlock.CRANKED, cranked), Block.UPDATE_ALL);
             if (crank > 0 && level.getGameTime() % 5L == 0L) setChanged();

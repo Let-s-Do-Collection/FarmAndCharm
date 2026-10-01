@@ -29,6 +29,7 @@
 * Horses and Cats now behave the same on NeoForge as on Fabric when fed Barley, Oat, Horse Fodder or Cat Food
 * Cats now look for their Pet Bowl in a smaller radius, which saves performance
 * Polished the English and German translations
+* Mincer and Crafting Bowl no longer lose their progress when you pause cranking or stirring
 * Pitchfork, Rope, Cooking Pot, Mincer and the Iron and Diamond Cleavers now use vanilla-style material colors
 
 **Fixed**

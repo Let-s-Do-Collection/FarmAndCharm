@@ -12,6 +12,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.satisfy.farm_and_charm.core.block.entity.CuttingBoardBlockEntity;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
+import net.satisfy.foundation.overlay.BlockInfoProvider;
+import net.satisfy.foundation.overlay.InfoSection;
 import net.satisfy.farm_and_charm.core.recipe.CuttingBoardAssemblyRecipe;
 import net.satisfy.farm_and_charm.core.recipe.CuttingBoardRecipe;
 import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
@@ -25,6 +28,9 @@ import java.util.Optional;
 public class CuttingBoardInfoProvider implements BlockInfoProvider {
     @Override
     public List<InfoSection> describe(Level level, BlockPos pos, BlockState state, @Nullable BlockHitResult hit) {
+        if (InfoTooltips.isHidden(PlatformHelper.showCuttingBoardInfo())) {
+            return List.of();
+        }
         if (!(level.getBlockEntity(pos) instanceof CuttingBoardBlockEntity board)) {
             return List.of();
         }

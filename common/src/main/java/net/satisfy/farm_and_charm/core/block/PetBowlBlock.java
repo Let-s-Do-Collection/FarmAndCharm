@@ -1,5 +1,7 @@
 package net.satisfy.farm_and_charm.core.block;
 
+import net.satisfy.foundation.util.ShapeUtil;
+import net.satisfy.foundation.block.FacingBlock;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
@@ -50,7 +52,7 @@ public class PetBowlBlock extends FacingBlock implements EntityBlock {
 
     static {
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            SHAPE.put(direction, GeneralUtil.rotateShape(Direction.NORTH, direction, voxelShapeSupplier.get()));
+            SHAPE.put(direction, ShapeUtil.rotateShape(Direction.NORTH, direction, voxelShapeSupplier.get()));
         }
     }
 

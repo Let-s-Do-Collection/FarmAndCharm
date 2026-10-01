@@ -3,6 +3,7 @@ package net.satisfy.farm_and_charm.core.compat.jei.category;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
+import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
@@ -14,7 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.satisfy.farm_and_charm.FarmAndCharm;
-import net.satisfy.farm_and_charm.core.compat.RecipeViewerLayout;
+import net.satisfy.foundation.compat.RecipeViewerLayout;
 import net.satisfy.farm_and_charm.core.recipe.CuttingBoardAssemblyRecipe;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +45,7 @@ public class AssemblyCategory implements IRecipeCategory<CuttingBoardAssemblyRec
 
     @Override
     public int getWidth() {
-        return RecipeViewerLayout.ASSEMBLY_WIDTH;
+        return RecipeViewerLayout.assemblyWidth(CuttingBoardAssemblyRecipe.MAX_ORDERED_ITEMS);
     }
 
     @Override
@@ -60,10 +61,13 @@ public class AssemblyCategory implements IRecipeCategory<CuttingBoardAssemblyRec
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, CuttingBoardAssemblyRecipe recipe, IFocusGroup focuses) {
         List<Ingredient> ingredients = recipe.getIngredients();
-        RecipeViewerLayout.AssemblyLayout layout = RecipeViewerLayout.assembly(ingredients.size(), recipe.isOrdered());
-        for (int i = 0; i < ingredients.size(); i++) {
+        RecipeViewerLayout.AssemblyLayout layout = RecipeViewerLayout.assembly(ingredients.size(), recipe.isOrdered(), CuttingBoardAssemblyRecipe.MAX_ORDERED_ITEMS);
+        for (int i = 0; i < layout.slots().size(); i++) {
             RecipeViewerLayout.Pos pos = layout.slots().get(i);
-            builder.addSlot(RecipeIngredientRole.INPUT, pos.x() + 1, pos.y() + 1).setBackground(this.slot, -1, -1).addIngredients(ingredients.get(i));
+            IRecipeSlotBuilder input = builder.addSlot(RecipeIngredientRole.INPUT, pos.x() + 1, pos.y() + 1).setBackground(this.slot, -1, -1);
+            if (i < ingredients.size()) {
+                input.addIngredients(ingredients.get(i));
+            }
         }
         RecipeViewerLayout.Pos output = layout.output();
         builder.addSlot(RecipeIngredientRole.OUTPUT, output.x() + 1, output.y() + 1).setBackground(this.slot, -1, -1).addItemStack(recipe.getResult());
@@ -71,7 +75,7 @@ public class AssemblyCategory implements IRecipeCategory<CuttingBoardAssemblyRec
 
     @Override
     public void draw(CuttingBoardAssemblyRecipe recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
-        for (RecipeViewerLayout.Pos pos : RecipeViewerLayout.assembly(recipe.getIngredients().size(), recipe.isOrdered()).arrows()) {
+        for (RecipeViewerLayout.Pos pos : RecipeViewerLayout.assembly(recipe.getIngredients().size(), recipe.isOrdered(), CuttingBoardAssemblyRecipe.MAX_ORDERED_ITEMS).arrows()) {
             RecipeViewerLayout.drawRightArrow(graphics, pos.x(), pos.y());
         }
     }

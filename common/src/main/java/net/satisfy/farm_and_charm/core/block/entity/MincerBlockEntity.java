@@ -117,6 +117,7 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
             Vec3 vec3d2 = vec3d.relative(direction, 0.7);
             ((ServerLevel) level).sendParticles(ParticleTypes.SPIT, vec3d2.x(), vec3d2.y(), vec3d2.z(), 3, 0.2, 0.1, 0, 0.1);
             spawnItem(level, droppedStack, 6, direction, vec3d2);
+            setChanged();
         }
     }
 
@@ -182,6 +183,24 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
         return null;
     }
 
+    public @Nullable MincerRecipe findRecipe(Level level) {
+        return getRecipe(level.getRecipeManager().getAllRecipesFor(RecipeTypeRegistry.MINCER_RECIPE_TYPE.get()), stacks);
+    }
+
+    @Override
+    public void setItem(int slot, ItemStack stack) {
+        super.setItem(slot, stack);
+        setChanged();
+    }
+
+    @Override
+    public void setChanged() {
+        super.setChanged();
+        if (level != null && !level.isClientSide) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        }
+    }
+
     public float getInterpolatedCrankAngle(float partial) {
         float a0 = this.crankAnglePrev;
         float a1 = this.crankAngle;
@@ -233,7 +252,7 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
                 cranked = 0;
             }
             level.setBlock(pos, state.setValue(MincerBlock.CRANK, crank).setValue(MincerBlock.CRANKED, cranked), Block.UPDATE_ALL);
-            if (level.getGameTime() % 5L == 0L) setChanged();
+            if (crank > 0 && level.getGameTime() % 5L == 0L) setChanged();
         }
     }
 

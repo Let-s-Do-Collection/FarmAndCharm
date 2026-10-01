@@ -1,6 +1,7 @@
 package net.satisfy.farm_and_charm.core.registry;
 
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -13,9 +14,11 @@ public class TagRegistry {
     public static final TagKey<Block> ALLOWS_COOKING = TagKey.create(Registries.BLOCK, FarmAndCharm.identifier("allows_cooking"));
     public static final TagKey<Item> FEEDING_TROUGH_FOOD = TagKey.create(Registries.ITEM, FarmAndCharm.identifier("feeding_trough_food"));
     public static final TagKey<Item> HANGABLE = TagKey.create(Registries.ITEM, FarmAndCharm.identifier("hangable"));
+    public static final TagKey<Item> SHIELDS = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "tools/shield"));
     public static final TagKey<Item> CONTAINER = TagKey.create(Registries.ITEM, FarmAndCharm.identifier("container"));
     public static final TagKey<Item> NEEDS_LOWERED_FARMLAND = TagKey.create(Registries.ITEM, FarmAndCharm.identifier("needs_lowered_farmland"));
     public static final TagKey<Item> SEEDS = TagKey.create(Registries.ITEM, FarmAndCharm.identifier("seeds"));
+    public static final TagKey<Item> CAKE_CUTTERS = TagKey.create(Registries.ITEM, FarmAndCharm.identifier("cake_cutters"));
     public static final TagKey<EntityType<?>> IS_WOLF = TagKey.create(Registries.ENTITY_TYPE, FarmAndCharm.identifier("is_wolf"));
     public static final TagKey<EntityType<?>> COOP_CHICKENS = TagKey.create(Registries.ENTITY_TYPE, FarmAndCharm.identifier("coop_chickens"));
     public static final TagKey<EntityType<?>> CAN_WALK_OVER_CATTLEGRID = TagKey.create(Registries.ENTITY_TYPE, FarmAndCharm.identifier("can_walk_over_cattlegrid"));

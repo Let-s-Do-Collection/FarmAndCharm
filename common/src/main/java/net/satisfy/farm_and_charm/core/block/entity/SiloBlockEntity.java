@@ -1,10 +1,14 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
+import net.satisfy.foundation.util.LibUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.ContainerHelper;
@@ -17,6 +21,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,9 +30,8 @@ import net.satisfy.farm_and_charm.core.block.SiloBlock;
 import net.satisfy.farm_and_charm.core.recipe.SiloRecipe;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.util.ConnectivityHandler;
-import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import net.satisfy.farm_and_charm.core.util.IMultiBlockEntityContainer;
-import net.satisfy.farm_and_charm.core.world.ImplementedInventory;
+import net.satisfy.foundation.util.ImplementedInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -378,7 +382,7 @@ public class SiloBlockEntity extends BlockEntity implements IMultiBlockEntityCon
     protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
         super.saveAdditional(compoundTag, provider);
         if (this.controller != null)
-            GeneralUtil.putBlockPos(compoundTag, this.controller);
+            LibUtil.putBlockPos(compoundTag, this.controller);
         compoundTag.putBoolean("Update", this.updateConnectivity);
         compoundTag.putInt("Width", this.width);
         compoundTag.putInt("Height", this.height);
@@ -389,13 +393,31 @@ public class SiloBlockEntity extends BlockEntity implements IMultiBlockEntityCon
     @Override
     protected void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
         super.loadAdditional(compoundTag, provider);
-        this.controller = GeneralUtil.readBlockPos(compoundTag);
+        this.controller = LibUtil.readBlockPos(compoundTag);
         this.updateConnectivity = !compoundTag.contains("Update") || compoundTag.getBoolean("Update");
         this.width = compoundTag.contains("Width") ? compoundTag.getInt("Width") : 1;
         this.height = compoundTag.contains("Height") ? compoundTag.getInt("Height") : 1;
         this.items = NonNullList.withSize(MAX_CAPACITY * 2, ItemStack.EMPTY);
         ContainerHelper.loadAllItems(compoundTag, this.items, provider);
         this.times = compoundTag.contains("Times") ? compoundTag.getIntArray("Times") : new int[MAX_CAPACITY];
+    }
+
+    @Override
+    public void setChanged() {
+        super.setChanged();
+        if (level != null && !level.isClientSide) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        }
+    }
+
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+        return this.saveWithoutMetadata(provider);
     }
 
     @Override

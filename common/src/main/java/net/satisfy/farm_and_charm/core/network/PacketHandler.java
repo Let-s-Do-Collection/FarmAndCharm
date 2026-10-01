@@ -13,7 +13,7 @@ import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.core.entity.AbstractCartEntity;
 import net.satisfy.farm_and_charm.core.network.handler.CartPullingPacketClientHandler;
 import net.satisfy.farm_and_charm.core.network.handler.SyncSaturationPacketClientHandler;
-import net.satisfy.farm_and_charm.core.network.packet.SetTextPacket;
+import net.satisfy.foundation.text.SetTextPacket;
 import net.satisfy.farm_and_charm.core.network.packet.SyncSaturationPacket;
 import net.satisfy.farm_and_charm.core.network.packet.UpdateCartPullingPacket;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
@@ -23,7 +23,6 @@ public class PacketHandler {
     public static final ResourceLocation SYNC_SATURATION = FarmAndCharm.identifier("sync_saturation");
 
     public static void init() {
-        NetworkManager.registerReceiver(NetworkManager.c2s(), SetTextPacket.TYPE, SetTextPacket.STREAM_CODEC, (pkt, ctx) -> ctx.queue(() -> SetTextPacket.handle(pkt, (ServerPlayer) ctx.getPlayer())));
 
         if (Platform.getEnvironment() == Env.CLIENT) {
             NetworkManager.registerReceiver(NetworkManager.s2c(), SyncSaturationPacket.TYPE, SyncSaturationPacket.STREAM_CODEC, (pkt, ctx) -> ctx.queue(() -> SyncSaturationPacketClientHandler.handle(pkt)));

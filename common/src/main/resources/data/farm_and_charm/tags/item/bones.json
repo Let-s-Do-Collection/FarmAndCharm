@@ -1,7 +1,10 @@
 {
-    "replace": false,
-    "values": [
-        "minecraft:bone",
-        "#c:bones"
-    ]
+  "replace": false,
+  "values": [
+    "minecraft:bone",
+    {
+      "id": "#c:bones",
+      "required": false
+    }
+  ]
 }

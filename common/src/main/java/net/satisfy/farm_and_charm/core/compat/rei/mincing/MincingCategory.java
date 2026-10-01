@@ -11,6 +11,7 @@ import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.network.chat.Component;
 import net.satisfy.farm_and_charm.FarmAndCharm;
+import net.satisfy.foundation.compat.RecipeViewerLayout;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 
 import java.util.List;
@@ -48,18 +49,15 @@ public class MincingCategory implements DisplayCategory<MincingDisplay> {
         Point startPoint = new Point(bounds.getCenterX(), bounds.getCenterY());
         List<Widget> widgets = Lists.newArrayList();
         widgets.add(Widgets.createRecipeBase(bounds));
-        widgets.add(Widgets.createDrawableWidget((drawableHelper, matrices, mouseX, mouseY) -> {
-            int arrowX = startPoint.x - 5;
-            int arrowY = startPoint.y - 12;
-        }));
+        widgets.add(Widgets.createDrawableWidget((graphics, mouseX, mouseY, delta) -> RecipeViewerLayout.drawDownArrow(graphics, startPoint.x - 8, startPoint.y - 19)));
         widgets.add(Widgets.createResultSlotBackground(new Point(startPoint.x - 8, startPoint.y + 12)));
         widgets.add(Widgets.createSlot(new Point(startPoint.x - 8, startPoint.y + 12))
                 .entries(display.getOutputEntries().get(0)).disableBackground().markOutput());
 
         if (display.getInputEntries().isEmpty())
-            widgets.add(Widgets.createSlotBackground(new Point(startPoint.x - 8, startPoint.y - 32)));
+            widgets.add(Widgets.createSlotBackground(new Point(startPoint.x - 8, startPoint.y - 40)));
         else
-            widgets.add(Widgets.createSlot(new Point(startPoint.x - 8, startPoint.y - 32))
+            widgets.add(Widgets.createSlot(new Point(startPoint.x - 8, startPoint.y - 40))
                     .entries(display.getInputEntries().get(0)).markInput());
 
         return widgets;

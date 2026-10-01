@@ -35,6 +35,7 @@ repositories {
 }
 
 dependencies {
+    include(modImplementation("net.satisfy.foundation:foundation-fabric:${rootProject.foundation_version}") { transitive = false })
     modImplementation "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
     modImplementation("me.shedaniel:RoughlyEnoughItems-fabric:$rei_version") { exclude group: 'net.fabricmc', module: 'fabric-loader' }
 

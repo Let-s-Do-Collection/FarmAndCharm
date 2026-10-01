@@ -1,5 +1,8 @@
 package net.satisfy.farm_and_charm.core.block;
 
+import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.satisfy.foundation.storage.StorageBlock;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,8 +26,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.satisfy.farm_and_charm.core.block.entity.StorageBlockEntity;
-import net.satisfy.farm_and_charm.core.registry.ParticleTypeRegistry;
+import net.satisfy.foundation.storage.StorageBlockEntity;
+import net.satisfy.foundation.registry.FoundationParticles;
 import net.satisfy.farm_and_charm.core.registry.StorageTypeRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,6 +44,11 @@ public class ChickenNestBlock extends StorageBlock {
     @Override
     public @NotNull VoxelShape getShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext collisionContext) {
         return CHICKEN_NEST;
+    }
+
+    @Override
+    public BlockEntityType<?> blockEntityType() {
+        return EntityTypeRegistry.STORAGE_ENTITY.get();
     }
 
     @Override
@@ -90,7 +98,7 @@ public class ChickenNestBlock extends StorageBlock {
 
     private static void spawnFeathers(Level level, BlockPos pos) {
         if (level instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ColorParticleOption.create(ParticleTypeRegistry.FEATHER.get(), 0xFFFFFFFF), pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5, 3 + level.random.nextInt(3), 0.25, 0.05, 0.25, 0.0);
+            serverLevel.sendParticles(ColorParticleOption.create(FoundationParticles.FEATHER.get(), 0xFFFFFFFF), pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5, 3 + level.random.nextInt(3), 0.25, 0.05, 0.25, 0.0);
         }
     }
 

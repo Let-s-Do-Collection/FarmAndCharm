@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
+import net.satisfy.foundation.text.TextEditableBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;

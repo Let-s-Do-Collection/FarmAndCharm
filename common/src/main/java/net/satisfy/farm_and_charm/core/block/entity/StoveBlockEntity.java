@@ -35,14 +35,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.satisfy.farm_and_charm.client.gui.handler.StoveGuiHandler;
 import net.satisfy.farm_and_charm.core.block.StoveBlock;
-import net.satisfy.farm_and_charm.core.item.food.EffectFood;
-import net.satisfy.farm_and_charm.core.item.food.EffectFoodBlockItem;
-import net.satisfy.farm_and_charm.core.item.food.EffectFoodHelper;
-import net.satisfy.farm_and_charm.core.recipe.RecipeUnlockManager;
+import net.satisfy.foundation.food.IngredientEffectCarrier;
+import net.satisfy.foundation.food.PlaceableIngredientEffectFoodItem;
+import net.satisfy.foundation.food.IngredientEffects;
+import net.satisfy.foundation.recipe.RecipeUnlockManager;
 import net.satisfy.farm_and_charm.core.recipe.StoveRecipe;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
-import net.satisfy.farm_and_charm.core.world.ImplementedInventory;
+import net.satisfy.foundation.util.ImplementedInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -486,14 +486,14 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
 
     private ItemStack generateOutputItem(StoveRecipe recipe, RegistryAccess access) {
         ItemStack outputStack = recipe.getResultItem(access).copy();
-        if (outputStack.getItem() instanceof EffectFood || outputStack.getItem() instanceof EffectFoodBlockItem) {
+        if (outputStack.getItem() instanceof IngredientEffectCarrier || outputStack.getItem() instanceof PlaceableIngredientEffectFoodItem) {
             List<ItemStack> stacks = new ArrayList<>();
             for (int slot : INGREDIENT_SLOTS) {
                 ItemStack stack = this.getItem(slot);
                 if (!stack.isEmpty()) stacks.add(stack);
             }
-            for (MobEffectInstance instance : EffectFoodHelper.collectMergedSortedEffects(stacks)) {
-                EffectFoodHelper.addEffect(outputStack, new Pair<>(instance, 1.0f));
+            for (MobEffectInstance instance : IngredientEffects.collectMergedSortedEffects(stacks)) {
+                IngredientEffects.addEffect(outputStack, new Pair<>(instance, 1.0f));
             }
         }
         return outputStack;

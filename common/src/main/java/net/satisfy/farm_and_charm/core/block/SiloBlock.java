@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.block;
 
+import net.satisfy.foundation.block.FacingBlock;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -44,7 +45,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-@SuppressWarnings({"deprecation", "unused"})
 public class SiloBlock extends FacingBlock implements EntityBlock {
     public static final BooleanProperty TOP = BooleanProperty.create("top");
     public static final BooleanProperty BOTTOM = BooleanProperty.create("bottom");
@@ -187,13 +187,15 @@ public class SiloBlock extends FacingBlock implements EntityBlock {
         builder.add(TOP, BOTTOM, OPEN, SHAPE, FACING);
     }
 
-    @SuppressWarnings("unchecked")
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level tickerLevel, BlockState state, BlockEntityType<T> type) {
+        if (tickerLevel.isClientSide) {
+            return null;
+        }
         return (level, pos, blockState, blockEntity) -> {
-            if (blockEntity instanceof BlockEntityTicker<?> ticker) {
-                ((BlockEntityTicker<T>) ticker).tick(level, pos, blockState, blockEntity);
+            if (blockEntity instanceof SiloBlockEntity silo) {
+                silo.tick(level, pos, blockState, silo);
             }
         };
     }

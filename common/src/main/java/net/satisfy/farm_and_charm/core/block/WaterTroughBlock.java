@@ -1,5 +1,7 @@
 package net.satisfy.farm_and_charm.core.block;
 
+import net.satisfy.foundation.block.LineConnectingBlock;
+import net.satisfy.foundation.util.ShapeUtil;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,7 +29,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
@@ -224,7 +225,7 @@ public class WaterTroughBlock extends LineConnectingBlock {
     private static EnumMap<Direction, VoxelShape> createRotations(VoxelShape northShape) {
         EnumMap<Direction, VoxelShape> map = new EnumMap<>(Direction.class);
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            map.put(direction, GeneralUtil.rotateShape(Direction.NORTH, direction, northShape));
+            map.put(direction, ShapeUtil.rotateShape(Direction.NORTH, direction, northShape));
         }
         return map;
     }

@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.block;
 
+import net.satisfy.foundation.util.ShapeUtil;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
@@ -39,7 +40,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.farm_and_charm.core.block.entity.ScarecrowBlockEntity;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
-import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,7 +63,7 @@ public class ScarecrowBlock extends BaseEntityBlock {
 
     public static final Map<Direction, VoxelShape> SHAPE = Util.make(new HashMap<>(), m -> {
         for (Direction d : Direction.Plane.HORIZONTAL) {
-            m.put(d, GeneralUtil.rotateShape(Direction.NORTH, d, voxelShapeSupplier.get()));
+            m.put(d, ShapeUtil.rotateShape(Direction.NORTH, d, voxelShapeSupplier.get()));
         }
     });
     public static final BooleanProperty HAS_DUNGAREES = BooleanProperty.create("has_dungarees");

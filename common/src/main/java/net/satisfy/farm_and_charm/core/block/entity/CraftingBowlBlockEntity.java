@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -196,6 +197,20 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
         return null;
     }
 
+    @Override
+    public void setItem(int slot, ItemStack stack) {
+        super.setItem(slot, stack);
+        setChanged();
+    }
+
+    @Override
+    public void setChanged() {
+        super.setChanged();
+        if (level != null && !level.isClientSide) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        }
+    }
+
     public float getInterpolatedWhiskAngle(float partial) {
         float a0 = this.whiskAnglePrev;
         float a1 = this.whiskAngle;
@@ -247,13 +262,8 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
                 }
                 stirring -= 1;
                 level.setBlock(pos, state.setValue(CraftingBowlBlock.STIRRING, stirring).setValue(CraftingBowlBlock.STIRRED, stirred), 3);
-            } else {
-                int stirredNow = state.getValue(CraftingBowlBlock.STIRRED);
-                if (stirredNow > 0 && stirredNow < CraftingBowlBlock.STIRS_NEEDED) {
-                    level.setBlock(pos, state.setValue(CraftingBowlBlock.STIRRED, 0), 3);
-                }
             }
-            if (level.getGameTime() % 5L == 0L) setChanged();
+            if (stirring > 0 && level.getGameTime() % 5L == 0L) setChanged();
         }
     }
 }

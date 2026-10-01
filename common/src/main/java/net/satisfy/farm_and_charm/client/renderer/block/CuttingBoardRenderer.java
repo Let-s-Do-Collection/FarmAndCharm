@@ -9,11 +9,9 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.satisfy.farm_and_charm.core.block.CuttingBoardBlock;
 import net.satisfy.farm_and_charm.core.block.entity.CuttingBoardBlockEntity;
-
-import org.jetbrains.annotations.Nullable;
+import net.satisfy.foundation.render.DisplayItemRenderer;
 
 import java.util.List;
 
@@ -47,31 +45,18 @@ public class CuttingBoardRenderer implements BlockEntityRenderer<CuttingBoardBlo
 
         List<ItemStack> items = board.getItems();
         for (int i = 0; i < items.size(); i++) {
-            renderFlat(items.get(i), poseStack, buffers, light, overlay, board.getLevel(),
+            DisplayItemRenderer.renderFlat(items.get(i), poseStack, buffers, light, overlay, board.getLevel(),
                     itemX, BOARD_TOP + i * STACK_STEP, itemZ, yaw + i * 25.0F, ITEM_SCALE, seed + i);
         }
 
         if (board.isCutting()) {
-            renderFlat(board.getPending(), poseStack, buffers, light, overlay, board.getLevel(),
+            DisplayItemRenderer.renderFlat(board.getPending(), poseStack, buffers, light, overlay, board.getLevel(),
                     itemX, BOARD_TOP, itemZ, yaw, ITEM_SCALE, seed);
         }
 
         if (board.hasKnife()) {
             this.renderKnife(board, facing, yaw, partialTick, poseStack, buffers, light, overlay, seed);
         }
-    }
-
-    private static void renderFlat(ItemStack stack, PoseStack poseStack, MultiBufferSource buffers, int light, int overlay, @Nullable Level level, double x, double y, double z, float yaw, float scale, int seed) {
-        if (stack.isEmpty()) {
-            return;
-        }
-        poseStack.pushPose();
-        poseStack.translate(x, y, z);
-        poseStack.mulPose(Axis.YP.rotationDegrees(yaw));
-        poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-        poseStack.scale(scale, scale, scale);
-        Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, light, overlay, poseStack, buffers, level, seed);
-        poseStack.popPose();
     }
 
     private void renderKnife(CuttingBoardBlockEntity board, Direction facing, float yaw, float partialTick, PoseStack poseStack, MultiBufferSource buffers, int light, int overlay, int seed) {

@@ -39,3 +39,10 @@ type = "required"
 versionRange = "[9.0.8,)"
 ordering = "AFTER"
 side = "BOTH"
+
+[[dependencies.farm_and_charm]]
+modId = "foundation"
+type = "required"
+versionRange = "[1.0.0,)"
+ordering = "AFTER"
+side = "BOTH"

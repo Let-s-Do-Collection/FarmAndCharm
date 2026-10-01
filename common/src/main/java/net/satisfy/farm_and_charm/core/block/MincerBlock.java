@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.block;
 
+import net.satisfy.foundation.util.ShapeUtil;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
@@ -44,7 +45,6 @@ import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.core.block.entity.MincerBlockEntity;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.SoundEventRegistry;
-import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,7 +71,7 @@ public class MincerBlock extends BaseEntityBlock {
     };
     public static final Map<Direction, VoxelShape> SHAPE = Util.make(new HashMap<>(), map -> {
         for (Direction direction : Direction.Plane.HORIZONTAL.stream().toList()) {
-            map.put(direction, GeneralUtil.rotateShape(Direction.NORTH, direction, voxelShapeSupplier.get()));
+            map.put(direction, ShapeUtil.rotateShape(Direction.NORTH, direction, voxelShapeSupplier.get()));
         }
     });
 

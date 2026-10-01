@@ -1,6 +1,10 @@
 {
   "replace": false,
   "values": [
-    "#c:milk"
+    "#c:buckets/milk",
+    {
+      "id": "#c:milk",
+      "required": false
+    }
   ]
 }

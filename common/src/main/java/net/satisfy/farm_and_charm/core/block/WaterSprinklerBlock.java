@@ -3,7 +3,7 @@ package net.satisfy.farm_and_charm.core.block;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
-import net.satisfy.farm_and_charm.core.registry.ParticleTypeRegistry;
+import net.satisfy.foundation.registry.FoundationParticles;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
@@ -75,7 +75,7 @@ public class WaterSprinklerBlock extends BaseEntityBlock {
                         for (double len = 0; len < 3; len += 0.5) {
                             double cx = startX + dx * len;
                             double cz = startZ + dz * len;
-                            world.addParticle(ParticleTypeRegistry.WATER_SPLASH.get(), cx, y, cz, dx, 0.0D, dz);
+                            world.addParticle(FoundationParticles.WATER_SPLASH.get(), cx, y, cz, dx, 0.0D, dz);
                         }
                     }
                 }

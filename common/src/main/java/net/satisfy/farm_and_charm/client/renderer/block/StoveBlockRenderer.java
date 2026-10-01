@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Con
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.satisfy.farm_and_charm.client.util.ClientUtil;
+import net.satisfy.foundation.render.ClientUtil;
 import net.satisfy.farm_and_charm.core.block.StoveBlock;
 import net.satisfy.farm_and_charm.core.block.entity.StoveBlockEntity;
 

@@ -34,6 +34,7 @@ repositories {
 }
 
 dependencies {
+    include(modImplementation("net.satisfy.foundation:foundation-neoforge:${rootProject.foundation_version}") { transitive = false })
     neoForge "net.neoforged:neoforge:${rootProject.neoforge_version}"
     modApi "dev.architectury:architectury-neoforge:${rootProject.architectury_version}"
 

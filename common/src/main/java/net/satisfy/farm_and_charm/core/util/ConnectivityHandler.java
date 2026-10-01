@@ -154,7 +154,7 @@ public class ConnectivityHandler {
 
                     BlockPos conPos = controller.getBlockPos();
                     if (!conPos.equals(origin)) {
-                        if (axis == Direction.Axis.Y) { // vertical multi, like a FluidTank
+                        if (axis == Direction.Axis.Y) {
                             if (conPos.getX() < origin.getX())
                                 break Search;
                             if (conPos.getZ() < origin.getZ())
@@ -163,7 +163,7 @@ public class ConnectivityHandler {
                                 break Search;
                             if (conPos.getZ() + otherWidth > origin.getZ() + width)
                                 break Search;
-                        } else { // horizontal multi, like an ItemVault
+                        } else {
                             if (axis == Direction.Axis.Z && conPos.getX() < origin.getX())
                                 break Search;
                             if (conPos.getY() < origin.getY())

@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.block;
 
+import net.satisfy.foundation.util.ShapeUtil;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
@@ -39,7 +40,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.farm_and_charm.core.block.entity.RoasterBlockEntity;
 import net.satisfy.farm_and_charm.core.registry.SoundEventRegistry;
-import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -75,7 +75,7 @@ public class RoasterBlock extends BaseEntityBlock {
                 Shapes.box(0.875, 0.1875, 0.3125, 1, 0.3125, 0.6875)
         );
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            map.put(direction, GeneralUtil.rotateShape(Direction.NORTH, direction, voxelShapeSupplier.get()));
+            map.put(direction, ShapeUtil.rotateShape(Direction.NORTH, direction, voxelShapeSupplier.get()));
         }
     });
 
@@ -99,7 +99,7 @@ public class RoasterBlock extends BaseEntityBlock {
         boolean hanging = state.getValue(HANGING);
 
         if (hanging) {
-            return GeneralUtil.rotateShape(Direction.NORTH, facing, HANGING_SHAPE);
+            return ShapeUtil.rotateShape(Direction.NORTH, facing, HANGING_SHAPE);
         } else {
             return SHAPES.get(facing);
         }

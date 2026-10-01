@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.block.crops;
 
+import net.satisfy.farm_and_charm.core.block.crops.BigCropCapable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;

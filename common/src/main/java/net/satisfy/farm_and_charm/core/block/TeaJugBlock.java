@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.block;
 
+import net.satisfy.foundation.block.FacingBlock;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

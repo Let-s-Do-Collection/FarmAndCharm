@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.compat.rei.cutting;
 
+import net.satisfy.foundation.compat.rei.ReiWidgets;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
@@ -9,7 +10,7 @@ import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Items;
-import net.satisfy.farm_and_charm.core.compat.RecipeViewerLayout;
+import net.satisfy.foundation.compat.RecipeViewerLayout;
 import net.satisfy.farm_and_charm.core.util.Strippables;
 
 import java.util.ArrayList;

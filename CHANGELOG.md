@@ -9,14 +9,23 @@
 * Feathers now fly when taking eggs from a Chicken Nest or putting them in, and when chasing Chickens out of a Chicken Coop with a Pitchfork
 * Breaking a Timber Well now splashes out some water
 * Mushroom Stew, Beetroot Soup and Rabbit Stew now also give Sustenance on NeoForge
-* New config options: Giant Crop chance, Scarecrow interval and range, Wild Crop drop chance, Timber Well groundwater depth and rain fill chance, Chicken Coop capacity, Dog and Cat begging, Pet Bowl search range and feeding times
+* New config options: Giant Crop chance, Scarecrow interval and range, Wild Crop drop chance, Timber Well groundwater depth and rain fill chance, Chicken Coop capacity, Dog and Cat begging, Pet Bowl search range and feeding times, and switches to turn off the info tooltips of the Cutting Board, Mincer, Crafting Bowl and Silo or to only show them while wearing Dungarees
 * VanillaBlend: an optional built-in resource pack with muted, vanilla-friendly colors for food, dishes, teas, Mob Effect icons and more. Enable it in the Resource Packs menu. Palettes inspired by Vanilla, Farmer's Delight, Supplementaries and Create
+* Tool Rack now accepts every item in the `c:tools` tag, including Bows, Crossbows, Tridents, Maces, Brushes, Flint and Steel and tools from other mods. Shields are excluded
+* Silo now shows an info tooltip when you look at it: how full it is, what is drying, and what is already dried
+* Mincer now shows an info tooltip once something is inside: the input, the result and the cranking progress
+* Crafting Bowl now shows an info tooltip once something is inside: the ingredients, the result and the stirring progress
+* 22 new Farm & Charm splash texts on the title screen
+* New common tags for better mod compatibility: `c:foods`, `c:foods/berry`, `c:foods/food_poisoning`, `c:foods/edible_when_placed`, `c:tools`, `c:storage_blocks` (Bags and Bales), `c:crops/lettuce`, `c:seeds/tomato` and `c:seeds/lettuce`
 
 **Changed**
 * The config is now split into Farming, Water, Animals, Kitchen, Effects and Food, and every option has an explanation. Options were moved, so changed values in an existing config file are reset to their defaults
 * Water drips and splashes from the Timber Well, Sink, Water Sprinkler and troughs now match the biome's water color
 * Tool Rack is much easier to take items from due to its increased voxelshape
 * Timber Well now has an exact voxelshape that follows its model
+* Timber Well messages such as "No groundwater below this Well" now pop up briefly above the Well in a golden info frame and fade out, instead of showing in the action bar
+* Advancement descriptions now capitalize item and block names like Vanilla does
+* Recipes now use the common tags shared by Fabric and NeoForge (`c:buckets/water`, `c:buckets/milk`, `c:foods/raw_fish`, `c:foods/cooked_fish`, `c:foods/vegetable`, `c:foods/bread`)
 * Horses and Cats now behave the same on NeoForge as on Fabric when fed Barley, Oat, Horse Fodder or Cat Food
 * Cats now look for their Pet Bowl in a smaller radius, which saves performance
 * Polished the English and German translations
@@ -28,6 +37,7 @@
 * The Water Sprinkler range config option now actually changes the range of the Water Sprinkler
 * Breaking a Timber Well or Water Trough now shows wood particles instead of blue ones
 * Chicken Nest now reliably takes and gives eggs no matter where you click on it
+* Common tags no longer contain wrong items: dishes were removed from `c:cooked_beef`, `c:cooked_chicken`, `c:cooked_mutton`, `c:cooked_pork` and `c:foods/cooked_meat`, Bacon from `c:raw_pork` and Strawberries from `c:vegetables`. Tomatoes are now vegetables, Strawberries are berries. `c:water_bottles` no longer contains the Water Bucket
 
 ***
 

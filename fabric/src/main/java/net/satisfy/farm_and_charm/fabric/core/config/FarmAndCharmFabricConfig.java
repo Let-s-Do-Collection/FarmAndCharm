@@ -21,6 +21,9 @@ public class FarmAndCharmFabricConfig implements ConfigData {
     public KitchenSettings kitchen = new KitchenSettings();
 
     @ConfigEntry.Gui.CollapsibleObject
+    public InfoTooltipSettings infoTooltips = new InfoTooltipSettings();
+
+    @ConfigEntry.Gui.CollapsibleObject
     public EffectsSettings effects = new EffectsSettings();
 
     @ConfigEntry.Gui.CollapsibleObject
@@ -29,6 +32,9 @@ public class FarmAndCharmFabricConfig implements ConfigData {
     public static class FarmingSettings {
         @ConfigEntry.Gui.Tooltip
         public boolean enableRainGrowthEffect = true;
+
+        @ConfigEntry.Gui.Tooltip
+        public boolean enableFireflies = true;
 
         @ConfigEntry.Gui.Tooltip
         public float rainGrowthMultiplier = 0.5f;
@@ -144,6 +150,23 @@ public class FarmAndCharmFabricConfig implements ConfigData {
 
         @ConfigEntry.Gui.Tooltip
         public boolean cleaverHeadDrops = true;
+    }
+
+    public static class InfoTooltipSettings {
+        @ConfigEntry.Gui.Tooltip
+        public boolean needDungarees = false;
+
+        @ConfigEntry.Gui.Tooltip
+        public boolean showCuttingBoardInfo = true;
+
+        @ConfigEntry.Gui.Tooltip
+        public boolean showMincerInfo = true;
+
+        @ConfigEntry.Gui.Tooltip
+        public boolean showCraftingBowlInfo = true;
+
+        @ConfigEntry.Gui.Tooltip
+        public boolean showSiloInfo = true;
     }
 
     public static class EffectsSettings {

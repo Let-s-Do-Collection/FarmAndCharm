@@ -1,5 +1,7 @@
 package net.satisfy.farm_and_charm.core.compat.rei.cutting;
 
+import net.satisfy.farm_and_charm.core.recipe.CuttingBoardAssemblyRecipe;
+import net.satisfy.foundation.compat.rei.ReiWidgets;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
@@ -9,7 +11,7 @@ import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.network.chat.Component;
-import net.satisfy.farm_and_charm.core.compat.RecipeViewerLayout;
+import net.satisfy.foundation.compat.RecipeViewerLayout;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 
 import java.util.ArrayList;
@@ -35,7 +37,7 @@ public class AssemblyCategory implements DisplayCategory<AssemblyDisplay> {
 
     @Override
     public int getDisplayWidth(AssemblyDisplay display) {
-        return RecipeViewerLayout.ASSEMBLY_WIDTH + PADDING * 2;
+        return RecipeViewerLayout.assemblyWidth(CuttingBoardAssemblyRecipe.MAX_ORDERED_ITEMS) + PADDING * 2;
     }
 
     @Override
@@ -48,12 +50,12 @@ public class AssemblyCategory implements DisplayCategory<AssemblyDisplay> {
         List<Widget> widgets = new ArrayList<>();
         widgets.add(Widgets.createRecipeBase(bounds));
         List<EntryIngredient> inputs = display.getInputEntries();
-        RecipeViewerLayout.AssemblyLayout layout = RecipeViewerLayout.assembly(inputs.size(), display.isOrdered());
+        RecipeViewerLayout.AssemblyLayout layout = RecipeViewerLayout.assembly(inputs.size(), display.isOrdered(), CuttingBoardAssemblyRecipe.MAX_ORDERED_ITEMS);
         int x = bounds.x + PADDING;
         int y = bounds.y + PADDING;
-        for (int i = 0; i < inputs.size(); i++) {
+        for (int i = 0; i < layout.slots().size(); i++) {
             RecipeViewerLayout.Pos pos = layout.slots().get(i);
-            ReiWidgets.inputSlot(widgets, x + pos.x(), y + pos.y(), inputs.get(i));
+            ReiWidgets.inputSlot(widgets, x + pos.x(), y + pos.y(), i < inputs.size() ? inputs.get(i) : EntryIngredient.empty());
         }
         for (RecipeViewerLayout.Pos pos : layout.arrows()) {
             ReiWidgets.rightArrow(widgets, x + pos.x(), y + pos.y());

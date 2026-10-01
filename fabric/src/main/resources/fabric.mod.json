@@ -36,6 +36,7 @@
     "farm_and_charm-common.mixins.json"
   ],
   "depends": {
+    "foundation": ">=1.0.0",
     "fabric-api": "*",
     "minecraft": ">=1.20",
     "architectury": ">=9.0.8"

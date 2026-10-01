@@ -1,5 +1,7 @@
 package net.satisfy.farm_and_charm.client;
 
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
+import net.satisfy.foundation.storage.StorageBlockEntityRenderer;
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
 import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
 import dev.architectury.registry.client.particle.ParticleProviderRegistry;
@@ -12,28 +14,35 @@ import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.satisfy.farm_and_charm.client.event.ClientEventHandler;
-import net.satisfy.farm_and_charm.client.gui.overlay.BlockInfoOverlay;
+import net.satisfy.foundation.ambient.FireflyAmbience;
+import net.satisfy.foundation.banner.CompletionistBannerRenderer;
+import net.satisfy.foundation.overlay.BlockInfoOverlay;
+import net.satisfy.farm_and_charm.client.gui.overlay.CraftingBowlInfoProvider;
 import net.satisfy.farm_and_charm.client.gui.overlay.CuttingBoardInfoProvider;
+import net.satisfy.farm_and_charm.client.gui.overlay.MincerInfoProvider;
+import net.satisfy.farm_and_charm.client.gui.overlay.SiloInfoProvider;
+import net.satisfy.foundation.tooltip.InfoTooltip;
 import net.satisfy.farm_and_charm.client.gui.CookingPotGui;
 import net.satisfy.farm_and_charm.client.gui.PetBowlEditGui;
 import net.satisfy.farm_and_charm.client.gui.RoasterGui;
 import net.satisfy.farm_and_charm.client.gui.StoveGui;
 import net.satisfy.farm_and_charm.client.model.*;
-import net.satisfy.farm_and_charm.client.particle.DyeSplashParticle;
-import net.satisfy.farm_and_charm.client.particle.FeatherParticle;
-import net.satisfy.farm_and_charm.client.particle.WaterDripParticle;
-import net.satisfy.farm_and_charm.client.particle.WaterSplashParticle;
-import net.satisfy.farm_and_charm.client.particle.SoupBubbleParticle;
-import net.satisfy.farm_and_charm.client.particle.SoupCookingBubbleParticle;
-import net.satisfy.farm_and_charm.client.particle.SoupSteamParticle;
+import net.satisfy.foundation.particle.DyeSplashParticle;
+import net.satisfy.foundation.particle.FeatherParticle;
+import net.satisfy.foundation.particle.FireflyParticle;
+import net.satisfy.foundation.particle.WaterDripParticle;
+import net.satisfy.foundation.particle.WaterSplashParticle;
+import net.satisfy.foundation.particle.SoupBubbleParticle;
+import net.satisfy.foundation.particle.SoupCookingBubbleParticle;
+import net.satisfy.foundation.particle.SoupSteamParticle;
 import net.satisfy.farm_and_charm.client.renderer.block.*;
-import net.satisfy.farm_and_charm.client.renderer.entity.ChairRenderer;
+import net.satisfy.foundation.seat.ChairRenderer;
 import net.satisfy.farm_and_charm.client.renderer.entity.PlowCartRenderer;
 import net.satisfy.farm_and_charm.client.renderer.entity.SeederCartRenderer;
 import net.satisfy.farm_and_charm.client.renderer.entity.SupplyCartRenderer;
 import net.satisfy.farm_and_charm.core.block.entity.PetBowlBlockEntity;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
-import net.satisfy.farm_and_charm.core.registry.ParticleTypeRegistry;
+import net.satisfy.foundation.registry.FoundationParticles;
 import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.StorageTypeRegistry;
 
@@ -53,13 +62,6 @@ public class FarmAndCharmClient {
                 WHEAT_PILE.get()
         );
 
-        ParticleProviderRegistry.register(ParticleTypeRegistry.SOUP_BUBBLE.get(), SoupBubbleParticle.Provider::new);
-        ParticleProviderRegistry.register(ParticleTypeRegistry.SOUP_STEAM.get(), SoupSteamParticle.Provider::new);
-        ParticleProviderRegistry.register(ParticleTypeRegistry.SOUP_COOKING_BUBBLE.get(), SoupCookingBubbleParticle.Provider::new);
-        ParticleProviderRegistry.register(ParticleTypeRegistry.DYE_SPLASH.get(), DyeSplashParticle.Provider::new);
-        ParticleProviderRegistry.register(ParticleTypeRegistry.FEATHER.get(), FeatherParticle.Provider::new);
-        ParticleProviderRegistry.register(ParticleTypeRegistry.WATER_DRIP.get(), WaterDripParticle.Provider::new);
-        ParticleProviderRegistry.register(ParticleTypeRegistry.WATER_SPLASH.get(), WaterSplashParticle.Provider::new);
 
         ColorHandlerRegistry.registerBlockColors((state, world, pos, tintIndex) -> {
             if (tintIndex != 1 || world == null || pos == null) {
@@ -70,8 +72,14 @@ public class FarmAndCharmClient {
 
         ClientStorageTypes.init();
         ClientEventHandler.init();
+        FireflyAmbience.init(PlatformHelper::isFirefliesEnabled);
         BlockInfoOverlay.init();
         BlockInfoOverlay.registerProvider(new CuttingBoardInfoProvider());
+        BlockInfoOverlay.registerProvider(new SiloInfoProvider());
+        BlockInfoOverlay.registerProvider(new MincerInfoProvider());
+        BlockInfoOverlay.registerProvider(new CraftingBowlInfoProvider());
+        InfoTooltip.init();
+        InfoTooltip.of(CUTTING_BOARD.get()).placeable().details(3).register();
         registerStorageTypeRenderers();
         registerBlockEntityRenderer();
         MenuRegistry.registerScreenFactory(ScreenhandlerTypeRegistry.COOKING_POT_SCREEN_HANDLER.get(), CookingPotGui::new);
@@ -84,7 +92,6 @@ public class FarmAndCharmClient {
         EntityRendererRegistry.register(EntityTypeRegistry.SUPPLY_CART, SupplyCartRenderer::new);
         EntityRendererRegistry.register(EntityTypeRegistry.PLOW, PlowCartRenderer::new);
         EntityRendererRegistry.register(EntityTypeRegistry.SEEDER, SeederCartRenderer::new);
-        EntityRendererRegistry.register(EntityTypeRegistry.CHAIR, ChairRenderer::new);
     }
 
 

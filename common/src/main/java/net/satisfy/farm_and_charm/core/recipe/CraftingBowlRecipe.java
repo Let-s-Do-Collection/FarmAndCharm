@@ -13,7 +13,7 @@ import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
 import net.satisfy.farm_and_charm.core.util.GeneralUtil;
-import net.satisfy.farm_and_charm.core.util.StreamCodecUtil;
+import net.satisfy.foundation.util.StreamCodecUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class CraftingBowlRecipe implements Recipe<RecipeInput> {

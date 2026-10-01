@@ -1,6 +1,10 @@
 {
   "replace": false,
   "values": [
-    "#c:strawberry"
+    "farm_and_charm:strawberry",
+    {
+      "id": "#c:strawberries",
+      "required": false
+    }
   ]
 }

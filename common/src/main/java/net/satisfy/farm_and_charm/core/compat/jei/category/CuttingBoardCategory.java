@@ -14,7 +14,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.satisfy.farm_and_charm.FarmAndCharm;
-import net.satisfy.farm_and_charm.core.compat.RecipeViewerLayout;
+import net.satisfy.foundation.compat.RecipeViewerLayout;
 import net.satisfy.farm_and_charm.core.recipe.CuttingBoardRecipe;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -61,9 +61,10 @@ public class CuttingBoardCategory implements IRecipeCategory<CuttingBoardRecipe>
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, CuttingBoardRecipe recipe, IFocusGroup focuses) {
-        builder.addSlot(RecipeIngredientRole.INPUT, INPUT_X + 1, ROW_Y + 1).setBackground(this.slot, -1, -1).addIngredients(recipe.getIngredient());
-        builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_X + 1, ROW_Y + 1).setBackground(this.slot, -1, -1).addItemStack(recipe.getResult());
-        int x = OUTPUT_X + RecipeViewerLayout.SLOT;
+        int offset = offset(recipe);
+        builder.addSlot(RecipeIngredientRole.INPUT, offset + INPUT_X + 1, ROW_Y + 1).setBackground(this.slot, -1, -1).addIngredients(recipe.getIngredient());
+        builder.addSlot(RecipeIngredientRole.OUTPUT, offset + OUTPUT_X + 1, ROW_Y + 1).setBackground(this.slot, -1, -1).addItemStack(recipe.getResult());
+        int x = offset + OUTPUT_X + RecipeViewerLayout.SLOT;
         for (ItemStack byproduct : recipe.getByproducts()) {
             builder.addSlot(RecipeIngredientRole.OUTPUT, x + 1, ROW_Y + 1).setBackground(this.slot, -1, -1).addItemStack(byproduct);
             x += RecipeViewerLayout.SLOT;
@@ -72,6 +73,11 @@ public class CuttingBoardCategory implements IRecipeCategory<CuttingBoardRecipe>
 
     @Override
     public void draw(CuttingBoardRecipe recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
-        RecipeViewerLayout.drawRightArrow(graphics, ARROW_X, ROW_Y + 1);
+        RecipeViewerLayout.drawRightArrow(graphics, offset(recipe) + ARROW_X, ROW_Y + 1);
+    }
+
+    private static int offset(CuttingBoardRecipe recipe) {
+        int width = OUTPUT_X - INPUT_X + (1 + recipe.getByproducts().size()) * RecipeViewerLayout.SLOT;
+        return (RecipeViewerLayout.ROW_WIDTH - width) / 2 - INPUT_X;
     }
 }

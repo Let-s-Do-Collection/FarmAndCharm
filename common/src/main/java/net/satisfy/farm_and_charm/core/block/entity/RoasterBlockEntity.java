@@ -29,14 +29,14 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
 import net.satisfy.farm_and_charm.client.gui.handler.RoasterGuiHandler;
 import net.satisfy.farm_and_charm.core.block.RoasterBlock;
-import net.satisfy.farm_and_charm.core.item.food.EffectFood;
-import net.satisfy.farm_and_charm.core.item.food.EffectFoodHelper;
-import net.satisfy.farm_and_charm.core.recipe.RecipeUnlockManager;
+import net.satisfy.foundation.food.IngredientEffectCarrier;
+import net.satisfy.foundation.food.IngredientEffects;
+import net.satisfy.foundation.recipe.RecipeUnlockManager;
 import net.satisfy.farm_and_charm.core.recipe.RoasterRecipe;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.TagRegistry;
-import net.satisfy.farm_and_charm.core.world.ImplementedInventory;
+import net.satisfy.foundation.util.ImplementedInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -233,9 +233,9 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
 
     private ItemStack generateOutputItem(Recipe<?> recipe, RegistryAccess access) {
         ItemStack outputStack = recipe.getResultItem(access).copy();
-        if (outputStack.getItem() instanceof EffectFood) {
-            for (MobEffectInstance inst : EffectFoodHelper.collectMergedSortedEffects(this, FIRST_INGREDIENT_SLOT, LAST_INGREDIENT_SLOT)) {
-                EffectFoodHelper.addEffect(outputStack, new Pair<>(inst, 1.0f));
+        if (outputStack.getItem() instanceof IngredientEffectCarrier) {
+            for (MobEffectInstance inst : IngredientEffects.collectMergedSortedEffects(this, FIRST_INGREDIENT_SLOT, LAST_INGREDIENT_SLOT)) {
+                IngredientEffects.addEffect(outputStack, new Pair<>(inst, 1.0f));
             }
         }
         return outputStack;

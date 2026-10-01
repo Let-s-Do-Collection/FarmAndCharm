@@ -1,5 +1,9 @@
 package net.satisfy.farm_and_charm.core.block;
 
+import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.satisfy.foundation.util.ShapeUtil;
+import net.satisfy.foundation.storage.StorageBlock;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -20,7 +24,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.farm_and_charm.core.registry.StorageTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.TagRegistry;
-import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -36,13 +39,13 @@ public class ToolRackBlock extends StorageBlock {
     };
     private static final Map<Direction, VoxelShape> INTERACTION_SHAPE = Util.make(new HashMap<>(), map -> {
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            map.put(direction, GeneralUtil.rotateShape(Direction.NORTH, direction, Shapes.box(0, 0.25, 0.75, 1, 1, 1)));
+            map.put(direction, ShapeUtil.rotateShape(Direction.NORTH, direction, Shapes.box(0, 0.25, 0.75, 1, 1, 1)));
         }
     });
 
     public static final Map<Direction, VoxelShape> SHAPE = Util.make(new HashMap<>(), map -> {
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            map.put(direction, GeneralUtil.rotateShape(Direction.NORTH, direction, voxelShapeSupplier.get()));
+            map.put(direction, ShapeUtil.rotateShape(Direction.NORTH, direction, voxelShapeSupplier.get()));
         }
     });
 
@@ -63,7 +66,7 @@ public class ToolRackBlock extends StorageBlock {
 
     @Override
     public boolean canInsertStack(ItemStack stack) {
-        return stack.getItem() instanceof TieredItem || stack.getItem() == Items.SHEARS || stack.getItem() == Items.FISHING_ROD || stack.getItem() == Items.SPYGLASS || stack.is(TagRegistry.HANGABLE);
+        return stack.getItem() instanceof TieredItem || (stack.is(TagRegistry.HANGABLE) && !stack.is(TagRegistry.SHIELDS));
     }
 
     @Override
@@ -82,6 +85,11 @@ public class ToolRackBlock extends StorageBlock {
         float oneS = 1.0f / 3;
         int nSection = (int) (f / oneS);
         return 2 - nSection;
+    }
+
+    @Override
+    public BlockEntityType<?> blockEntityType() {
+        return EntityTypeRegistry.STORAGE_ENTITY.get();
     }
 
     @Override

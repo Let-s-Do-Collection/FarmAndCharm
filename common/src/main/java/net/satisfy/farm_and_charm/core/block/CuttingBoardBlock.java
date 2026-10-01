@@ -1,8 +1,7 @@
 package net.satisfy.farm_and_charm.core.block;
 
+import net.satisfy.foundation.util.ShapeUtil;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Containers;
@@ -21,10 +20,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.phys.BlockHitResult;
@@ -48,7 +43,6 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import net.satisfy.farm_and_charm.core.block.entity.CuttingBoardBlockEntity;
 import net.satisfy.farm_and_charm.core.util.Strippables;
 import org.jetbrains.annotations.NotNull;
@@ -65,9 +59,6 @@ public class CuttingBoardBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     private static final int CRUMBS = 8;
-    private static final int TOOLTIP_LINES = 3;
-    private static final int TOOLTIP_TEXT_COLOR = 0xFFD966;
-    private static final int TOOLTIP_KEY_COLOR = 0xFFD700;
     public static final TagKey<Item> CLEAVERS = TagKey.create(Registries.ITEM, FarmAndCharm.identifier("cleavers"));
     public static final TagKey<Item> KNIVES = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "tools/knife"));
 
@@ -77,7 +68,7 @@ public class CuttingBoardBlock extends BaseEntityBlock {
 
     static {
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            SHAPES.put(direction, GeneralUtil.rotateShape(Direction.NORTH, direction, SHAPE));
+            SHAPES.put(direction, ShapeUtil.rotateShape(Direction.NORTH, direction, SHAPE));
         }
     }
 
@@ -247,24 +238,6 @@ public class CuttingBoardBlock extends BaseEntityBlock {
 
     private static Optional<RecipeHolder<CuttingBoardAssemblyRecipe>> findAssembly(Level level, List<ItemStack> items) {
         return level.getRecipeManager().getRecipeFor(RecipeTypeRegistry.CUTTING_BOARD_ASSEMBLY_RECIPE_TYPE.get(), new CuttingBoardAssemblyRecipe.Input(List.copyOf(items)), level);
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.GRAY));
-        tooltip.add(Component.empty());
-        Style text = Style.EMPTY.withColor(TextColor.fromRgb(TOOLTIP_TEXT_COLOR));
-        if (!Screen.hasShiftDown()) {
-            Component key = Component.literal("[SHIFT]").withStyle(Style.EMPTY.withColor(TextColor.fromRgb(TOOLTIP_KEY_COLOR)));
-            tooltip.add(Component.translatable("tooltip.farm_and_charm.hold_shift", key).withStyle(text));
-            return;
-        }
-        for (int i = 0; i < TOOLTIP_LINES; i++) {
-            if (i > 0) {
-                tooltip.add(Component.empty());
-            }
-            tooltip.add(Component.translatable("tooltip.farm_and_charm.cutting_board.info_" + i).withStyle(text));
-        }
     }
 
     @Override

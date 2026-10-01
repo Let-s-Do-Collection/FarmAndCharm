@@ -1,0 +1,16 @@
+{
+  "replace": false,
+  "values": [
+    "#c:storage_blocks/strawberry",
+    "#c:storage_blocks/carrot",
+    "#c:storage_blocks/potato",
+    "#c:storage_blocks/beetroot",
+    "#c:storage_blocks/lettuce",
+    "#c:storage_blocks/tomato",
+    "#c:storage_blocks/corn",
+    "#c:storage_blocks/onion",
+    "#c:storage_blocks/flour",
+    "#c:storage_blocks/oat",
+    "#c:storage_blocks/barley"
+  ]
+}

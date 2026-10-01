@@ -116,6 +116,26 @@ public class PlatformHelperImpl {
         return config().animals.feedingTimeEveningEnd;
     }
 
+    public static boolean infoTooltipsNeedDungarees() {
+        return config().infoTooltips.needDungarees;
+    }
+
+    public static boolean showCuttingBoardInfo() {
+        return config().infoTooltips.showCuttingBoardInfo;
+    }
+
+    public static boolean showMincerInfo() {
+        return config().infoTooltips.showMincerInfo;
+    }
+
+    public static boolean showCraftingBowlInfo() {
+        return config().infoTooltips.showCraftingBowlInfo;
+    }
+
+    public static boolean showSiloInfo() {
+        return config().infoTooltips.showSiloInfo;
+    }
+
     public static int getIronCleaverChops() {
         return config().kitchen.ironCleaverChops;
     }
@@ -242,5 +262,9 @@ public class PlatformHelperImpl {
             case "roasted_chicken" -> food.roastedChickenSaturationMod;
             default -> 0.0f;
         };
+    }
+
+    public static boolean isFirefliesEnabled() {
+        return config().farming.enableFireflies;
     }
 }

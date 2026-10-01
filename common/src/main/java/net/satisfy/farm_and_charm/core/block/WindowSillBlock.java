@@ -1,5 +1,9 @@
 package net.satisfy.farm_and_charm.core.block;
 
+import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.satisfy.foundation.util.ShapeUtil;
+import net.satisfy.foundation.storage.StorageBlock;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -23,7 +27,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.farm_and_charm.core.registry.StorageTypeRegistry;
-import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -41,12 +44,17 @@ public class WindowSillBlock extends StorageBlock {
     };
     public static final Map<Direction, VoxelShape> SHAPE = Util.make(new HashMap<>(), map -> {
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            map.put(direction, GeneralUtil.rotateShape(Direction.NORTH, direction, voxelShapeSupplier.get()));
+            map.put(direction, ShapeUtil.rotateShape(Direction.NORTH, direction, voxelShapeSupplier.get()));
         }
     });
 
     public WindowSillBlock(Properties settings) {
         super(settings);
+    }
+
+    @Override
+    public BlockEntityType<?> blockEntityType() {
+        return EntityTypeRegistry.STORAGE_ENTITY.get();
     }
 
     @Override

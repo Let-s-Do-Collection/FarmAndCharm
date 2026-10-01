@@ -1,6 +1,6 @@
 {
   "replace": false,
   "values": [
-    "#c:raw_fishes"
+    "#c:foods/raw_fish"
   ]
 }

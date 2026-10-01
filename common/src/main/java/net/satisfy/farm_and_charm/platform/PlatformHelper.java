@@ -139,6 +139,31 @@ public abstract class PlatformHelper {
     }
 
     @ExpectPlatform
+    public static boolean infoTooltipsNeedDungarees() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static boolean showCuttingBoardInfo() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static boolean showMincerInfo() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static boolean showCraftingBowlInfo() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static boolean showSiloInfo() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
     public static int getIronCleaverChops() {
         throw new AssertionError();
     }
@@ -220,6 +245,11 @@ public abstract class PlatformHelper {
 
     @ExpectPlatform
     public static float getSaturationMod(String itemName) {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static boolean isFirefliesEnabled() {
         throw new AssertionError();
     }
 }

@@ -15,7 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.satisfy.farm_and_charm.FarmAndCharm;
-import net.satisfy.farm_and_charm.core.compat.RecipeViewerLayout;
+import net.satisfy.foundation.compat.RecipeViewerLayout;
 import net.satisfy.farm_and_charm.core.util.Strippables;
 import org.jetbrains.annotations.NotNull;
 

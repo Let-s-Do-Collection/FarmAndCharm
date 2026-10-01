@@ -111,6 +111,26 @@ public class PlatformHelperImpl {
         return FarmAndCharmNeoForgeConfig.feedingTimeEveningEnd;
     }
 
+    public static boolean infoTooltipsNeedDungarees() {
+        return FarmAndCharmNeoForgeConfig.infoTooltipsNeedDungarees;
+    }
+
+    public static boolean showCuttingBoardInfo() {
+        return FarmAndCharmNeoForgeConfig.showCuttingBoardInfo;
+    }
+
+    public static boolean showMincerInfo() {
+        return FarmAndCharmNeoForgeConfig.showMincerInfo;
+    }
+
+    public static boolean showCraftingBowlInfo() {
+        return FarmAndCharmNeoForgeConfig.showCraftingBowlInfo;
+    }
+
+    public static boolean showSiloInfo() {
+        return FarmAndCharmNeoForgeConfig.showSiloInfo;
+    }
+
     public static int getIronCleaverChops() {
         return FarmAndCharmNeoForgeConfig.ironCleaverChops;
     }
@@ -305,5 +325,9 @@ public class PlatformHelperImpl {
                 default -> 0.0f;
             };
         }
+    }
+
+    public static boolean isFirefliesEnabled() {
+        return FarmAndCharmNeoForgeConfig.enableFireflies;
     }
 }

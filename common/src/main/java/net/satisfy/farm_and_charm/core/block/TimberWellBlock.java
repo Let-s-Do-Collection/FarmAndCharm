@@ -1,8 +1,11 @@
 package net.satisfy.farm_and_charm.core.block;
 
+import net.satisfy.foundation.util.ShapeUtil;
+import net.satisfy.foundation.block.FacingBlock;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
+import net.satisfy.foundation.overlay.BlockInfoOverlay;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerLevel;
@@ -15,7 +18,7 @@ import net.satisfy.farm_and_charm.core.registry.SoundEventRegistry;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.satisfy.farm_and_charm.core.registry.ParticleTypeRegistry;
+import net.satisfy.foundation.registry.FoundationParticles;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -50,7 +53,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.List;
 
-import net.satisfy.farm_and_charm.core.util.GeneralUtil;
 import org.jetbrains.annotations.NotNull;
 import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import org.jetbrains.annotations.Nullable;
@@ -116,8 +118,8 @@ public class TimberWellBlock extends FacingBlock implements EntityBlock {
         }
 
         if (state.getValue(LEVEL) <= 0) {
-            if (!level.isClientSide) {
-                player.displayClientMessage(Component.translatable("message.farm_and_charm.timber_well.empty"), true);
+            if (level.isClientSide) {
+                BlockInfoOverlay.showNotice(getFootPos(pos, state).relative(state.getValue(FACING)).above(), Component.translatable("message.farm_and_charm.timber_well.empty"));
             }
             return ItemInteractionResult.CONSUME;
         }
@@ -140,8 +142,8 @@ public class TimberWellBlock extends FacingBlock implements EntityBlock {
             return InteractionResult.PASS;
         }
         if (!hasGroundwater(level, pos, state)) {
-            if (!level.isClientSide) {
-                player.displayClientMessage(Component.translatable("message.farm_and_charm.timber_well.no_groundwater"), true);
+            if (level.isClientSide) {
+                BlockInfoOverlay.showNotice(topPos, Component.translatable("message.farm_and_charm.timber_well.no_groundwater"));
             }
             return InteractionResult.CONSUME;
         }
@@ -151,7 +153,7 @@ public class TimberWellBlock extends FacingBlock implements EntityBlock {
             level.playSound(null, topPos, SoundEventRegistry.WELL_PUMP.get(), SoundSource.BLOCKS, 0.5F, 0.9F + level.random.nextFloat() * 0.2F);
             level.playSound(null, getFootPos(pos, state).relative(state.getValue(FACING)), SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 0.5F, 0.9F + level.random.nextFloat() * 0.2F);
             if (level instanceof ServerLevel serverLevel) {
-                serverLevel.sendParticles(ParticleTypeRegistry.WATER_SPLASH.get(), topPos.getX() + 0.5D, topPos.getY(), topPos.getZ() + 0.5D, 10, 0.15D, 0.05D, 0.15D, 0.02D);
+                serverLevel.sendParticles(FoundationParticles.WATER_SPLASH.get(), topPos.getX() + 0.5D, topPos.getY(), topPos.getZ() + 0.5D, 10, 0.15D, 0.05D, 0.15D, 0.02D);
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
@@ -353,7 +355,7 @@ public class TimberWellBlock extends FacingBlock implements EntityBlock {
     }
 
     private static void spawnBreakWater(ServerLevel level, BlockPos pos) {
-        SimpleParticleType drip = ParticleTypeRegistry.WATER_DRIP.get();
+        SimpleParticleType drip = FoundationParticles.WATER_DRIP.get();
         RandomSource random = level.random;
         for (int i = 0; i < 4; i++) {
             double x = pos.getX() + 0.2D + random.nextDouble() * 0.6D;
@@ -361,7 +363,7 @@ public class TimberWellBlock extends FacingBlock implements EntityBlock {
             double z = pos.getZ() + 0.2D + random.nextDouble() * 0.6D;
             level.sendParticles(drip, x, y, z, 0, (random.nextDouble() - 0.5D) * 0.2D, 0.1D + random.nextDouble() * 0.15D, (random.nextDouble() - 0.5D) * 0.2D, 1.0D);
         }
-        level.sendParticles(ParticleTypeRegistry.WATER_SPLASH.get(), pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, 6, 0.3D, 0.2D, 0.3D, 0.05D);
+        level.sendParticles(FoundationParticles.WATER_SPLASH.get(), pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, 6, 0.3D, 0.2D, 0.3D, 0.05D);
     }
 
     @Override
@@ -377,7 +379,7 @@ public class TimberWellBlock extends FacingBlock implements EntityBlock {
         double y = pos.getY() + 0.075D;
         double z = pos.getZ() + 0.5D;
 
-        SimpleParticleType drip = ParticleTypeRegistry.WATER_DRIP.get();
+        SimpleParticleType drip = FoundationParticles.WATER_DRIP.get();
         level.addParticle(drip, x, y, z, 0.0D, 0.0D, 0.0D);
 
         if (random.nextInt(12) == 0) {
@@ -413,7 +415,7 @@ public class TimberWellBlock extends FacingBlock implements EntityBlock {
         shape = Shapes.joinUnoptimized(shape, Block.box(0.0D, 6.0D, 0.0D, 4.0D, 12.0D, 16.0D), BooleanOp.OR);
         shape = Shapes.joinUnoptimized(shape, Block.box(4.0D, 6.0D, 0.0D, 16.0D, 12.0D, 2.0D), BooleanOp.OR);
         shape = Shapes.joinUnoptimized(shape, Block.box(4.0D, 6.0D, 14.0D, 16.0D, 12.0D, 16.0D), BooleanOp.OR);
-        return GeneralUtil.rotateShape(Direction.NORTH, Direction.WEST, shape);
+        return ShapeUtil.rotateShape(Direction.NORTH, Direction.WEST, shape);
     };
 
     private static final Supplier<VoxelShape> HEAD_SHAPE_SUPPLIER = () -> {
@@ -424,31 +426,31 @@ public class TimberWellBlock extends FacingBlock implements EntityBlock {
         shape = Shapes.joinUnoptimized(shape, Block.box(0.0D, 6.0D, 0.0D, 12.0D, 12.0D, 2.0D), BooleanOp.OR);
         shape = Shapes.joinUnoptimized(shape, Block.box(0.0D, 6.0D, 14.0D, 12.0D, 12.0D, 16.0D), BooleanOp.OR);
         shape = Shapes.joinUnoptimized(shape, Block.box(12.0D, 12.0D, 6.0D, 16.0D, 16.0D, 10.0D), BooleanOp.OR);
-        return GeneralUtil.rotateShape(Direction.NORTH, Direction.WEST, shape);
+        return ShapeUtil.rotateShape(Direction.NORTH, Direction.WEST, shape);
     };
 
     private static final Supplier<VoxelShape> TOP_SHAPE_SUPPLIER = () -> {
         VoxelShape shape = Shapes.empty();
         shape = Shapes.joinUnoptimized(shape, Block.box(12.0D, 0.0D, 6.0D, 16.0D, 8.0D, 10.0D), BooleanOp.OR);
         shape = Shapes.joinUnoptimized(shape, Block.box(6.0D, 3.0D, 7.0D, 12.0D, 5.0D, 9.0D), BooleanOp.OR);
-        return GeneralUtil.rotateShape(Direction.NORTH, Direction.WEST, shape);
+        return ShapeUtil.rotateShape(Direction.NORTH, Direction.WEST, shape);
     };
 
     private static final Map<Direction, VoxelShape> FOOT_SHAPES = Util.make(new HashMap<>(), map -> {
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            map.put(direction, GeneralUtil.rotateShape(Direction.NORTH, direction, FOOT_SHAPE_SUPPLIER.get()));
+            map.put(direction, ShapeUtil.rotateShape(Direction.NORTH, direction, FOOT_SHAPE_SUPPLIER.get()));
         }
     });
 
     private static final Map<Direction, VoxelShape> HEAD_SHAPES = Util.make(new HashMap<>(), map -> {
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            map.put(direction, GeneralUtil.rotateShape(Direction.NORTH, direction, HEAD_SHAPE_SUPPLIER.get()));
+            map.put(direction, ShapeUtil.rotateShape(Direction.NORTH, direction, HEAD_SHAPE_SUPPLIER.get()));
         }
     });
 
     private static final Map<Direction, VoxelShape> TOP_SHAPES = Util.make(new HashMap<>(), map -> {
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            map.put(direction, GeneralUtil.rotateShape(Direction.NORTH, direction, TOP_SHAPE_SUPPLIER.get()));
+            map.put(direction, ShapeUtil.rotateShape(Direction.NORTH, direction, TOP_SHAPE_SUPPLIER.get()));
         }
     });
 

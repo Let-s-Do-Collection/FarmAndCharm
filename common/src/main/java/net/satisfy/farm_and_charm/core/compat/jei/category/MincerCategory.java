@@ -1,6 +1,10 @@
 package net.satisfy.farm_and_charm.core.compat.jei.category;
 
 import mezz.jei.api.constants.VanillaTypes;
+import net.satisfy.foundation.compat.RecipeViewerLayout;
+import net.minecraft.client.gui.GuiGraphics;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -22,6 +26,10 @@ public class MincerCategory implements IRecipeCategory<MincerRecipe> {
     public static final RecipeType<MincerRecipe> MINCING_TYPE = RecipeType.create(FarmAndCharm.MOD_ID, "mincer", MincerRecipe.class);
     private static final int WIDTH = 150;
     private static final int HEIGHT = 50;
+    private static final int INPUT_X = (WIDTH - 72) / 2;
+    private static final int ARROW_X = INPUT_X + 24;
+    private static final int OUTPUT_X = INPUT_X + 54;
+    private static final int ROW_Y = (HEIGHT - RecipeViewerLayout.SLOT) / 2;
 
     private final IDrawable icon;
     private final IDrawable slot;
@@ -59,13 +67,17 @@ public class MincerCategory implements IRecipeCategory<MincerRecipe> {
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, MincerRecipe recipe, IFocusGroup focuses) {
         List<Ingredient> ingredients = recipe.getIngredients();
+        IRecipeSlotBuilder input = builder.addSlot(RecipeIngredientRole.INPUT, INPUT_X + 1, ROW_Y + 1).setBackground(this.slot, -1, -1);
         if (!ingredients.isEmpty()) {
-            builder.addSlot(RecipeIngredientRole.INPUT, 30, 15)
-                    .setBackground(this.slot, -1, -1)
-                    .addIngredients(ingredients.get(0));
+            input.addIngredients(ingredients.get(0));
         }
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 100, 15)
+        builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_X + 1, ROW_Y + 1)
                 .setBackground(this.slot, -1, -1)
                 .addItemStack(recipe.getOutput());
+    }
+
+    @Override
+    public void draw(MincerRecipe recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
+        RecipeViewerLayout.drawRightArrow(graphics, ARROW_X, ROW_Y + 1);
     }
 }

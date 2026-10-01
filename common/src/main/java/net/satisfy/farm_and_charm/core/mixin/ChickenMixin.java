@@ -11,7 +11,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.satisfy.farm_and_charm.core.block.entity.StorageBlockEntity;
+import net.satisfy.foundation.storage.StorageBlockEntity;
 import net.satisfy.farm_and_charm.core.entity.ChickenCoopAccess;
 import net.satisfy.farm_and_charm.core.entity.ai.ChickenGotoAndEnterCoopGoal;
 import net.satisfy.farm_and_charm.core.entity.ai.ChickenLocateCoopGoal;

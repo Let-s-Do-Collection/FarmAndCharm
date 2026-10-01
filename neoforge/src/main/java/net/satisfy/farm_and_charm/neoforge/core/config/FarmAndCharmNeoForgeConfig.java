@@ -6,6 +6,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public class FarmAndCharmNeoForgeConfig {
     public static final ModConfigSpec COMMON_CONFIG;
     public static final ModConfigSpec.BooleanValue ENABLE_RAIN_GROWTH_EFFECT;
+    public static final ModConfigSpec.BooleanValue ENABLE_FIREFLIES;
     public static final ModConfigSpec.DoubleValue RAIN_GROWTH_MULTIPLIER;
     public static final ModConfigSpec.IntValue BIG_CROP_CHANCE;
     public static final ModConfigSpec.BooleanValue ENABLE_BONEMEAL_EFFECT;
@@ -36,6 +37,11 @@ public class FarmAndCharmNeoForgeConfig {
     public static final ModConfigSpec.IntValue DIAMOND_CLEAVER_CHOPS;
     public static final ModConfigSpec.IntValue NETHERITE_CLEAVER_CHOPS;
     public static final ModConfigSpec.BooleanValue CLEAVER_HEAD_DROPS;
+    public static final ModConfigSpec.BooleanValue SHOW_CUTTING_BOARD_INFO;
+    public static final ModConfigSpec.BooleanValue SHOW_MINCER_INFO;
+    public static final ModConfigSpec.BooleanValue SHOW_CRAFTING_BOWL_INFO;
+    public static final ModConfigSpec.BooleanValue SHOW_SILO_INFO;
+    public static final ModConfigSpec.BooleanValue INFO_TOOLTIPS_NEED_DUNGAREES;
     public static final ModConfigSpec.IntValue CHICKEN_EFFECT_TICK_INTERVAL;
     public static final ModConfigSpec.IntValue CHICKEN_EFFECT_EGG_CHANCE;
     public static final ModConfigSpec.IntValue CHICKEN_EFFECT_FEATHER_CHANCE;
@@ -103,6 +109,7 @@ public class FarmAndCharmNeoForgeConfig {
     public static final ModConfigSpec.DoubleValue ROASTED_CHICKEN_SATURATION_MOD;
 
     public static boolean enableRainGrowthEffect = true;
+    public static boolean enableFireflies = true;
     public static double rainGrowthMultiplier = 0.5;
     public static int bigCropChance = 3;
     public static boolean enableBonemealEffect = true;
@@ -133,6 +140,11 @@ public class FarmAndCharmNeoForgeConfig {
     public static int diamondCleaverChops = 3;
     public static int netheriteCleaverChops = 1;
     public static boolean cleaverHeadDrops = true;
+    public static boolean showCuttingBoardInfo = true;
+    public static boolean showMincerInfo = true;
+    public static boolean showCraftingBowlInfo = true;
+    public static boolean showSiloInfo = true;
+    public static boolean infoTooltipsNeedDungarees = false;
     public static int chickenEffectTickInterval = 120;
     public static int chickenEffectEggChance = 20;
     public static int chickenEffectFeatherChance = 20;
@@ -203,6 +215,7 @@ public class FarmAndCharmNeoForgeConfig {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
         builder.comment("Everything about growing crops.").push("Farming");
         ENABLE_RAIN_GROWTH_EFFECT = builder.comment("Crops grow faster while it is raining on them.").define("enableRainGrowthEffect", true);
+        ENABLE_FIREFLIES = builder.comment("Shows fireflies at night above wild rice and around lit lanterns outdoors.").define("enableFireflies", true);
         RAIN_GROWTH_MULTIPLIER = builder.comment("How much faster crops grow in rain. 0.5 = 50% faster, 1.0 = twice as fast.").defineInRange("rainGrowthMultiplier", 0.5, 0.0, 2.0);
         BIG_CROP_CHANCE = builder.comment("Chance in percent that a fully grown lettuce or onion turns into a giant crop during rain.").defineInRange("bigCropChance", 3, 0, 100);
         ENABLE_BONEMEAL_EFFECT = builder.comment("Fertilized farmland occasionally acts like bone meal on the crop above it.").define("enableBonemealEffect", true);
@@ -242,6 +255,14 @@ public class FarmAndCharmNeoForgeConfig {
         DIAMOND_CLEAVER_CHOPS = builder.comment("How many chops a diamond cleaver needs per ingredient.").defineInRange("diamondCleaverChops", 3, 1, 20);
         NETHERITE_CLEAVER_CHOPS = builder.comment("How many chops a netherite cleaver needs per ingredient.").defineInRange("netheriteCleaverChops", 1, 1, 20);
         CLEAVER_HEAD_DROPS = builder.comment("Mobs killed with a cleaver can drop their head.").define("cleaverHeadDrops", true);
+        builder.pop();
+
+        builder.comment("Info tooltips that appear when looking at a block. Only affects your own screen.").push("Info Tooltips");
+        SHOW_CUTTING_BOARD_INFO = builder.comment("Shows an info tooltip when looking at the cutting board.").define("showCuttingBoardInfo", true);
+        SHOW_MINCER_INFO = builder.comment("Shows an info tooltip when looking at the mincer.").define("showMincerInfo", true);
+        SHOW_CRAFTING_BOWL_INFO = builder.comment("Shows an info tooltip when looking at the crafting bowl.").define("showCraftingBowlInfo", true);
+        SHOW_SILO_INFO = builder.comment("Shows an info tooltip when looking at the silo.").define("showSiloInfo", true);
+        INFO_TOOLTIPS_NEED_DUNGAREES = builder.comment("Info tooltips only show while wearing Dungarees.").define("needDungarees", false);
         builder.pop();
 
         builder.comment("Fine-tuning of the food effects.").push("Effects");
@@ -336,6 +357,7 @@ public class FarmAndCharmNeoForgeConfig {
 
     public static void sync() {
         enableRainGrowthEffect = ENABLE_RAIN_GROWTH_EFFECT.get();
+        enableFireflies = ENABLE_FIREFLIES.get();
         rainGrowthMultiplier = RAIN_GROWTH_MULTIPLIER.get();
         bigCropChance = BIG_CROP_CHANCE.get();
         enableBonemealEffect = ENABLE_BONEMEAL_EFFECT.get();
@@ -366,6 +388,11 @@ public class FarmAndCharmNeoForgeConfig {
         diamondCleaverChops = DIAMOND_CLEAVER_CHOPS.get();
         netheriteCleaverChops = NETHERITE_CLEAVER_CHOPS.get();
         cleaverHeadDrops = CLEAVER_HEAD_DROPS.get();
+        showCuttingBoardInfo = SHOW_CUTTING_BOARD_INFO.get();
+        showMincerInfo = SHOW_MINCER_INFO.get();
+        showCraftingBowlInfo = SHOW_CRAFTING_BOWL_INFO.get();
+        showSiloInfo = SHOW_SILO_INFO.get();
+        infoTooltipsNeedDungarees = INFO_TOOLTIPS_NEED_DUNGAREES.get();
         chickenEffectTickInterval = CHICKEN_EFFECT_TICK_INTERVAL.get();
         chickenEffectEggChance = CHICKEN_EFFECT_EGG_CHANCE.get();
         chickenEffectFeatherChance = CHICKEN_EFFECT_FEATHER_CHANCE.get();

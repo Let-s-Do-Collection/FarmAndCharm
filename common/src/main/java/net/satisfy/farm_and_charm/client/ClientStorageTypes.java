@@ -1,5 +1,7 @@
 package net.satisfy.farm_and_charm.client;
 
+import net.satisfy.foundation.storage.StorageBlockEntityRenderer;
+import net.satisfy.foundation.storage.StorageTypeRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.satisfy.farm_and_charm.client.renderer.block.*;
 import net.satisfy.farm_and_charm.core.registry.StorageTypeRegistry;

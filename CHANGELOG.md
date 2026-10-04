@@ -5,6 +5,9 @@
 * Iron, Diamond and Netherite Cleavers: the better the cleaver, the fewer chops it needs on the Cutting Board. Mobs and players killed with a cleaver drop their head
 * Horse Fodder, Chicken Feed, Cat Food and Dog Food are now assembled on the Cutting Board instead of the Crafting Table or Crafting Bowl. 
 * Cat and Dog Food Bags are now made on the Cutting Board from 4 Food and Paper, and unpack into 4 Food
+* Flowers can be cut into Dye on the Cutting Board and give twice as much as on the Crafting Table
+* More Cutting Board recipes: Porkchop into Bacon, Pumpkin and Melon Slices into Seeds, Sugar Cane into Sugar, Bones into Bone Meal, Mushroom Blocks into Mushrooms, Hay Bales into Wheat and Wool into String. Cutting a Chicken into Chicken Parts now also gives a Feather
+* Minced Beef and Lamb Ham can be cooked into Steak and Cooked Mutton on a Campfire, in a Furnace or in a Smoker
 * Rope, Compost and Chicken Nest can now also be assembled on the Cutting Board, their Crafting Table recipes stay
 * Feathers now fly when taking eggs from a Chicken Nest or putting them in, and when chasing Chickens out of a Chicken Coop with a Pitchfork
 * Breaking a Timber Well now splashes out some water
@@ -16,6 +19,7 @@
 * Mincer now shows an info tooltip once something is inside: the input, the result and the cranking progress
 * Crafting Bowl now shows an info tooltip once something is inside: the ingredients, the result and the stirring progress
 * 22 new Farm & Charm splash texts on the title screen
+* Chicken Nests now work with birds and eggs from other mods. Add the bird to the `farm_and_charm:nest_layers` entity tag and its egg to the `farm_and_charm:nest_eggs` item tag. Eggs in the `c:eggs` tag are accepted automatically
 * New common tags for better mod compatibility: `c:foods`, `c:foods/berry`, `c:foods/food_poisoning`, `c:foods/edible_when_placed`, `c:tools`, `c:storage_blocks` (Bags and Bales), `c:crops/lettuce`, `c:seeds/tomato` and `c:seeds/lettuce`
 
 **Changed**

@@ -1,6 +1,10 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
 import net.minecraft.core.BlockPos;
+import java.util.ArrayList;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -38,7 +42,8 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
     private float whiskAngle;
     private float whiskAnglePrev;
     private float whiskSpeed;
-    private float whiskTargetSpeed;
+    public static final float WHISK_MAX_SPEED = 1.2F;
+    private static final float WHISK_DECAY = 0.93F;
 
     public CraftingBowlBlockEntity(BlockPos position, BlockState state) {
         super(EntityTypeRegistry.CRAFTING_BOWL_BLOCK_ENTITY.get(), position, state);
@@ -50,7 +55,6 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
         if (!this.tryLoadLootTable(tag)) this.stacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
         ContainerHelper.loadAllItems(tag, this.stacks, provider);
         this.whiskSpeed = tag.getFloat("WhiskSpeed");
-        this.whiskTargetSpeed = tag.getFloat("WhiskTargetSpeed");
     }
 
     @Override
@@ -58,7 +62,6 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
         super.saveAdditional(tag, provider);
         if (!this.trySaveLootTable(tag)) ContainerHelper.saveAllItems(tag, this.stacks, provider);
         tag.putFloat("WhiskSpeed", this.whiskSpeed);
-        tag.putFloat("WhiskTargetSpeed", this.whiskTargetSpeed);
     }
 
     @Override
@@ -222,25 +225,28 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
     }
 
     public void addWhiskImpulse(float v) {
-        this.whiskTargetSpeed = Math.min(0.5F, this.whiskTargetSpeed + v);
+        this.whiskSpeed = Math.min(WHISK_MAX_SPEED, this.whiskSpeed + v);
+        this.setChanged();
+    }
+
+    public float getWhiskSpeed() {
+        return this.whiskSpeed;
     }
 
     @Override
     public void tick(Level level, BlockPos pos, BlockState state, CraftingBowlBlockEntity be) {
         this.whiskAnglePrev = this.whiskAngle;
         int stirring = state.getValue(CraftingBowlBlock.STIRRING);
-        if (stirring > 0) {
-            this.whiskTargetSpeed = 0.5F;
-        } else {
-            this.whiskTargetSpeed = 0F;
-        }
-        float k = 0.22F;
-        this.whiskSpeed += (this.whiskTargetSpeed - this.whiskSpeed) * k;
-        if (stirring == 0) this.whiskSpeed *= 0.96F;
+        this.whiskSpeed *= WHISK_DECAY;
+        if (this.whiskSpeed < 0.005F) this.whiskSpeed = 0F;
         this.whiskAngle += this.whiskSpeed;
         float tau = (float) (Math.PI * 2D);
         if (this.whiskAngle > tau) this.whiskAngle -= tau;
         if (this.whiskAngle < 0F) this.whiskAngle += tau;
+
+        if (level instanceof ServerLevel server && this.whiskSpeed > 0.3F && level.getGameTime() % 4L == 0L) {
+            this.sprayIngredients(server, pos, Math.round(this.whiskSpeed * 2.0F));
+        }
 
         if (!level.isClientSide && state.getBlock() instanceof CraftingBowlBlock) {
             int stirred = state.getValue(CraftingBowlBlock.STIRRED);
@@ -265,5 +271,15 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
             }
             if (stirring > 0 && level.getGameTime() % 5L == 0L) setChanged();
         }
+    }
+
+    private void sprayIngredients(ServerLevel server, BlockPos pos, int amount) {
+        List<ItemStack> present = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            if (!this.getItem(i).isEmpty()) present.add(this.getItem(i));
+        }
+        if (present.isEmpty() || amount <= 0) return;
+        ItemStack stack = present.get(server.random.nextInt(present.size()));
+        server.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, stack), pos.getX() + 0.5, pos.getY() + 0.4, pos.getZ() + 0.5, amount, 0.12, 0.02, 0.12, 0.05 + this.whiskSpeed * 0.08);
     }
 }

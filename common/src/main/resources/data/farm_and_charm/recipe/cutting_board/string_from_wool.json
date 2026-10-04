@@ -1,0 +1,10 @@
+{
+  "type": "farm_and_charm:cutting_board",
+  "ingredient": {
+    "tag": "minecraft:wool"
+  },
+  "result": {
+    "id": "minecraft:string",
+    "count": 4
+  }
+}

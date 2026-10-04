@@ -6,5 +6,11 @@
   "result": {
     "id": "farm_and_charm:chicken_parts",
     "count": 3
-  }
+  },
+  "byproducts": [
+    {
+      "id": "minecraft:feather",
+      "count": 1
+    }
+  ]
 }

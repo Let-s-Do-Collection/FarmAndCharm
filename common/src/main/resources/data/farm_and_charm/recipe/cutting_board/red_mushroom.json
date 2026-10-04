@@ -1,0 +1,10 @@
+{
+  "type": "farm_and_charm:cutting_board",
+  "ingredient": {
+    "item": "minecraft:red_mushroom_block"
+  },
+  "result": {
+    "id": "minecraft:red_mushroom",
+    "count": 2
+  }
+}

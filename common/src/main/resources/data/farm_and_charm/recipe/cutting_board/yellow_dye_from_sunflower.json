@@ -1,0 +1,10 @@
+{
+  "type": "farm_and_charm:cutting_board",
+  "ingredient": {
+    "item": "minecraft:sunflower"
+  },
+  "result": {
+    "id": "minecraft:yellow_dye",
+    "count": 4
+  }
+}

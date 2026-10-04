@@ -1,0 +1,10 @@
+{
+  "type": "farm_and_charm:cutting_board",
+  "ingredient": {
+    "item": "minecraft:blue_orchid"
+  },
+  "result": {
+    "id": "minecraft:light_blue_dye",
+    "count": 2
+  }
+}

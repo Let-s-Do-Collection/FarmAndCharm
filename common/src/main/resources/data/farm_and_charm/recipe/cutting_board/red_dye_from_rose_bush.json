@@ -1,0 +1,10 @@
+{
+  "type": "farm_and_charm:cutting_board",
+  "ingredient": {
+    "item": "minecraft:rose_bush"
+  },
+  "result": {
+    "id": "minecraft:red_dye",
+    "count": 4
+  }
+}

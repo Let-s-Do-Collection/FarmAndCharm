@@ -1,0 +1,10 @@
+{
+  "type": "farm_and_charm:cutting_board",
+  "ingredient": {
+    "item": "minecraft:allium"
+  },
+  "result": {
+    "id": "minecraft:magenta_dye",
+    "count": 2
+  }
+}

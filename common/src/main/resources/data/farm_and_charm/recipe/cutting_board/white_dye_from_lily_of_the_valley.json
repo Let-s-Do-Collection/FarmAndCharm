@@ -1,0 +1,10 @@
+{
+  "type": "farm_and_charm:cutting_board",
+  "ingredient": {
+    "item": "minecraft:lily_of_the_valley"
+  },
+  "result": {
+    "id": "minecraft:white_dye",
+    "count": 2
+  }
+}

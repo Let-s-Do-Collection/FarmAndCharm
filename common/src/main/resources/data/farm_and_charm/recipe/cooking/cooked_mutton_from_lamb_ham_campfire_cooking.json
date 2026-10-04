@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "food",
+  "ingredient": {
+    "item": "farm_and_charm:lamb_ham"
+  },
+  "result": {
+    "id": "minecraft:cooked_mutton"
+  },
+  "experience": 0.35,
+  "cookingtime": 600
+}

@@ -28,6 +28,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.satisfy.farm_and_charm.client.gui.handler.CookingPotGuiHandler;
 import net.satisfy.farm_and_charm.core.block.CookingPotBlock;
 import net.satisfy.foundation.food.IngredientEffectCarrier;
@@ -79,7 +81,19 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
     };
 
     public CookingPotBlockEntity(BlockPos pos, BlockState state) {
-        super(EntityTypeRegistry.COOKING_POT_BLOCK_ENTITY.get(), pos, state);
+        this(EntityTypeRegistry.COOKING_POT_BLOCK_ENTITY.get(), pos, state);
+    }
+
+    protected CookingPotBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
+    }
+
+    protected BooleanProperty getLitProperty() {
+        return CookingPotBlock.LIT;
+    }
+
+    protected BooleanProperty getCookingProperty() {
+        return CookingPotBlock.COOKING;
     }
 
     public static int getMaxCookingTime() {
@@ -139,11 +153,23 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
         return false;
     }
 
+    protected int getExtraOutputCount(ItemStack output) {
+        return 0;
+    }
+
+    @Nullable
+    protected Player getOwner() {
+        if (ownerUuid == null || level == null || level.getServer() == null) return null;
+        return level.getServer().getPlayerList().getPlayer(ownerUuid);
+    }
+
     private void craft(Recipe<?> recipe, RegistryAccess access) {
         if (!canCraft(recipe, access)) return;
 
         ItemStack recipeOutput = generateOutputItem(recipe, access);
         ItemStack outputSlotStack = getItem(OUTPUT_SLOT);
+        int room = recipeOutput.getMaxStackSize() - outputSlotStack.getCount() - recipeOutput.getCount();
+        recipeOutput.grow(Math.max(0, Math.min(getExtraOutputCount(recipeOutput), room)));
 
         if (outputSlotStack.isEmpty()) {
             setItem(OUTPUT_SLOT, recipeOutput);
@@ -261,8 +287,8 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
         if (world.isClientSide()) return;
         boolean wasBeingBurned = isBeingBurned;
         isBeingBurned = isBeingBurned();
-        if (wasBeingBurned != isBeingBurned || state.getValue(CookingPotBlock.LIT) != isBeingBurned) {
-            world.setBlock(pos, state.setValue(CookingPotBlock.LIT, isBeingBurned), Block.UPDATE_ALL);
+        if (wasBeingBurned != isBeingBurned || state.getValue(getLitProperty()) != isBeingBurned) {
+            world.setBlock(pos, state.setValue(getLitProperty(), isBeingBurned), Block.UPDATE_ALL);
         }
         if (!isBeingBurned) {
             return;
@@ -275,8 +301,8 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
                 ServerPlayer owner = Objects.requireNonNull(world.getServer()).getPlayerList().getPlayer(ownerUuid);
                 if (owner == null || RecipeUnlockManager.isRecipeLocked(owner, BuiltInRegistries.RECIPE_TYPE.getKey(recipe.get().getType()))) {
                     cookingTime = 0;
-                    if (state.getValue(CookingPotBlock.COOKING)) {
-                        world.setBlock(pos, state.setValue(CookingPotBlock.COOKING, false), Block.UPDATE_ALL);
+                    if (state.getValue(getCookingProperty())) {
+                        world.setBlock(pos, state.setValue(getCookingProperty(), false), Block.UPDATE_ALL);
                     }
                     return;
                 }
@@ -289,13 +315,13 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
                 cookingTime = 0;
                 craft(recipe.get(), access);
             }
-            if (!state.getValue(CookingPotBlock.COOKING)) {
-                world.setBlock(pos, state.setValue(CookingPotBlock.COOKING, true), Block.UPDATE_ALL);
+            if (!state.getValue(getCookingProperty())) {
+                world.setBlock(pos, state.setValue(getCookingProperty(), true), Block.UPDATE_ALL);
             }
         } else {
             cookingTime = 0;
-            if (state.getValue(CookingPotBlock.COOKING)) {
-                world.setBlock(pos, state.setValue(CookingPotBlock.COOKING, false), Block.UPDATE_ALL);
+            if (state.getValue(getCookingProperty())) {
+                world.setBlock(pos, state.setValue(getCookingProperty(), false), Block.UPDATE_ALL);
             }
         }
     }

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:smoking",
+  "category": "food",
+  "ingredient": {
+    "item": "farm_and_charm:minced_beef"
+  },
+  "result": {
+    "id": "minecraft:cooked_beef"
+  },
+  "experience": 0.35,
+  "cookingtime": 100
+}

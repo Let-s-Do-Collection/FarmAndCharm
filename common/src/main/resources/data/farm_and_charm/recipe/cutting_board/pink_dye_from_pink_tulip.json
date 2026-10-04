@@ -1,0 +1,10 @@
+{
+  "type": "farm_and_charm:cutting_board",
+  "ingredient": {
+    "item": "minecraft:pink_tulip"
+  },
+  "result": {
+    "id": "minecraft:pink_dye",
+    "count": 2
+  }
+}

@@ -130,19 +130,19 @@ public class CraftingBowlBlock extends BaseEntityBlock {
         if (!anyHeld || !bowl.canAddItem()) {
             if (level instanceof ServerLevel server) {
                 RandomSource r = server.random;
-                for (int i = 0; i < 4; i++) {
-                    ItemStack stack = bowl.getItem(i);
-                    if (!stack.isEmpty()) {
-                        server.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, stack), pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5, 1, r.nextGaussian() * 0.15D, 0.05D, r.nextGaussian() * 0.15D, 0.05D);
-                    }
+                ItemStack stack = bowl.getItem(r.nextInt(4));
+                if (!stack.isEmpty()) {
+                    server.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, stack), pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5, 1, r.nextGaussian() * 0.15D, 0.05D, r.nextGaussian() * 0.15D, 0.05D);
                 }
             }
             if (stirring <= 6) {
                 level.setBlock(pos, state.setValue(STIRRING, 10), 3);
-                bowl.addWhiskImpulse(0.35F);
-                level.playSound(null, pos, SoundEventRegistry.CRAFTING_BOWL_STIRRING.get(), SoundSource.BLOCKS, 0.05f, 1.0F);
-                return InteractionResult.SUCCESS;
             }
+            if (!level.isClientSide) {
+                bowl.addWhiskImpulse(0.25F);
+                level.playSound(null, pos, SoundEventRegistry.CRAFTING_BOWL_STIRRING.get(), SoundSource.BLOCKS, 0.05F + bowl.getWhiskSpeed() * 0.08F, 0.9F + bowl.getWhiskSpeed() * 0.6F);
+            }
+            return InteractionResult.SUCCESS;
         }
 
         return InteractionResult.SUCCESS;

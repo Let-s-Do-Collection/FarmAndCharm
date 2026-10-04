@@ -93,6 +93,7 @@
   "block.farm_and_charm.scarecrow": "§6Scarecrow",
   "block.farm_and_charm.silo_copper": "Copper Silo",
   "block.farm_and_charm.silo_wood": "Wooden Silo",
+  "recipe_type.farm_and_charm.drying": "Silo",
   "block.farm_and_charm.stable_floor": "Stable Floor",
   "block.farm_and_charm.stove": "Stove",
   "block.farm_and_charm.straw_stable_floor": "Straw Stable Floor",

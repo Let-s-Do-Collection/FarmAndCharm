@@ -16,7 +16,6 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -29,6 +28,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.foundation.storage.StorageBlockEntity;
 import net.satisfy.foundation.registry.FoundationParticles;
 import net.satisfy.farm_and_charm.core.registry.StorageTypeRegistry;
+import net.satisfy.farm_and_charm.core.registry.TagRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -58,7 +58,7 @@ public class ChickenNestBlock extends StorageBlock {
 
     @Override
     public boolean canInsertStack(ItemStack stack) {
-        return stack.is(Items.EGG);
+        return stack.is(TagRegistry.NEST_EGGS);
     }
 
     @Override

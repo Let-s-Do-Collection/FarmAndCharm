@@ -21,7 +21,7 @@ public class DungareesRenderer implements ArmorRenderer {
 
         Model model = ArmorRegistry.getLeggingsModel(leggings, contextModel.rightLeg, contextModel.leftLeg, contextModel.body, contextModel);
 
-        ResourceLocation base = leggings.getLeggingsTexture();
+        ResourceLocation base = leggings.getTexture();
         String path = base.getPath();
         if (!path.startsWith("textures/")) path = "textures/" + path;
         if (!path.endsWith(".png")) path = path + ".png";

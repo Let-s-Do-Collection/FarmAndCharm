@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -24,6 +25,7 @@ import net.satisfy.farm_and_charm.core.block.entity.CraftingBowlBlockEntity;
 
 public class CraftingBowlRenderer implements BlockEntityRenderer<CraftingBowlBlockEntity> {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "textures/entity/crafting_bowl.png");
+    private static final float SHAKE_ANGLE = 2.5F;
     private final ModelPart bowl;
     private final ModelPart dough;
     private final ModelPart swing;
@@ -45,6 +47,14 @@ public class CraftingBowlRenderer implements BlockEntityRenderer<CraftingBowlBlo
         pose.pushPose();
         pose.mulPose(Axis.XP.rotationDegrees(180));
         pose.translate(0.5f, -1.5f, -0.5f);
+        float shake = be.getWhiskSpeed() / CraftingBowlBlockEntity.WHISK_MAX_SPEED;
+        if (shake > 0F) {
+            float time = level.getGameTime() + f;
+            pose.translate(0f, 1.5f, 0f);
+            pose.mulPose(Axis.XP.rotationDegrees(Mth.sin(time * 1.7F) * shake * SHAKE_ANGLE));
+            pose.mulPose(Axis.ZP.rotationDegrees(Mth.cos(time * 1.3F) * shake * SHAKE_ANGLE));
+            pose.translate(0f, -1.5f, 0f);
+        }
 
         VertexConsumer vc = buf.getBuffer(RenderType.entityTranslucent(TEXTURE));
 

@@ -93,6 +93,7 @@
   "block.farm_and_charm.scarecrow": "Vogelscheuche",
   "block.farm_and_charm.silo_copper": "Kupfersilo",
   "block.farm_and_charm.silo_wood": "Holzsilo",
+  "recipe_type.farm_and_charm.drying": "Silo",
   "block.farm_and_charm.stable_floor": "Stallboden",
   "block.farm_and_charm.stove": "Herd",
   "block.farm_and_charm.straw_stable_floor": "Strohstallboden",

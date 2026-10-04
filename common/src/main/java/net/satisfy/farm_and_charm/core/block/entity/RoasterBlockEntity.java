@@ -27,6 +27,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.satisfy.farm_and_charm.client.gui.handler.RoasterGuiHandler;
 import net.satisfy.farm_and_charm.core.block.RoasterBlock;
 import net.satisfy.foundation.food.IngredientEffectCarrier;
@@ -78,7 +80,19 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
     };
 
     public RoasterBlockEntity(BlockPos pos, BlockState state) {
-        super(EntityTypeRegistry.ROASTER_BLOCK_ENTITY.get(), pos, state);
+        this(EntityTypeRegistry.ROASTER_BLOCK_ENTITY.get(), pos, state);
+    }
+
+    protected RoasterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
+    }
+
+    protected BooleanProperty getLitProperty() {
+        return RoasterBlock.LIT;
+    }
+
+    protected BooleanProperty getRoastingProperty() {
+        return RoasterBlock.ROASTING;
     }
 
     public static int getMaxRoastingTime() {
@@ -117,6 +131,10 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
         }
     }
 
+    public boolean hasOutputItem() {
+        return !getItem(OUTPUT_SLOT).isEmpty();
+    }
+
     public boolean isBeingBurned() {
         if (level == null) throw new IllegalStateException("Null world not allowed");
         BlockState belowState = level.getBlockState(worldPosition.below());
@@ -135,11 +153,23 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
         return false;
     }
 
+    protected int getExtraOutputCount(ItemStack output) {
+        return 0;
+    }
+
+    @Nullable
+    protected Player getOwner() {
+        if (ownerUuid == null || level == null || level.getServer() == null) return null;
+        return level.getServer().getPlayerList().getPlayer(ownerUuid);
+    }
+
     private void craft(Recipe<?> recipe, RegistryAccess access) {
         if (!canCraft(recipe, access)) return;
 
         ItemStack recipeOutput = generateOutputItem(recipe, access);
         ItemStack outputSlotStack = getItem(OUTPUT_SLOT);
+        int room = recipeOutput.getMaxStackSize() - outputSlotStack.getCount() - recipeOutput.getCount();
+        recipeOutput.grow(Math.max(0, Math.min(getExtraOutputCount(recipeOutput), room)));
 
         if (outputSlotStack.isEmpty()) {
             setItem(OUTPUT_SLOT, recipeOutput);
@@ -245,8 +275,8 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
         if (world.isClientSide()) return;
         boolean wasBeingBurned = isBeingBurned;
         isBeingBurned = isBeingBurned();
-        if (wasBeingBurned != isBeingBurned || state.getValue(RoasterBlock.LIT) != isBeingBurned) {
-            world.setBlock(pos, state.setValue(RoasterBlock.LIT, isBeingBurned), Block.UPDATE_ALL);
+        if (wasBeingBurned != isBeingBurned || state.getValue(getLitProperty()) != isBeingBurned) {
+            world.setBlock(pos, state.setValue(getLitProperty(), isBeingBurned), Block.UPDATE_ALL);
         }
         if (!isBeingBurned) {
             return;
@@ -261,8 +291,8 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
                 ServerPlayer owner = Objects.requireNonNull(world.getServer()).getPlayerList().getPlayer(ownerUuid);
                 if (owner == null || RecipeUnlockManager.isRecipeLocked(owner, BuiltInRegistries.RECIPE_TYPE.getKey(recipe.get().getType()))) {
                     roastingTime = 0;
-                    if (state.getValue(RoasterBlock.ROASTING)) {
-                        world.setBlock(pos, state.setValue(RoasterBlock.ROASTING, false), Block.UPDATE_ALL);
+                    if (state.getValue(getRoastingProperty())) {
+                        world.setBlock(pos, state.setValue(getRoastingProperty(), false), Block.UPDATE_ALL);
                     }
                     return;
                 }
@@ -273,13 +303,13 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
                 roastingTime = 0;
                 craft(recipe.get(), access);
             }
-            if (!state.getValue(RoasterBlock.ROASTING)) {
-                world.setBlock(pos, state.setValue(RoasterBlock.ROASTING, true), Block.UPDATE_ALL);
+            if (!state.getValue(getRoastingProperty())) {
+                world.setBlock(pos, state.setValue(getRoastingProperty(), true), Block.UPDATE_ALL);
             }
         } else {
             roastingTime = 0;
-            if (state.getValue(RoasterBlock.ROASTING)) {
-                world.setBlock(pos, state.setValue(RoasterBlock.ROASTING, false), Block.UPDATE_ALL);
+            if (state.getValue(getRoastingProperty())) {
+                world.setBlock(pos, state.setValue(getRoastingProperty(), false), Block.UPDATE_ALL);
             }
         }
     }
@@ -306,6 +336,7 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
 
     @Nullable
     public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
+        ownerUuid = player.getUUID();
         return new RoasterGuiHandler(syncId, inv, this, delegate);
     }
 

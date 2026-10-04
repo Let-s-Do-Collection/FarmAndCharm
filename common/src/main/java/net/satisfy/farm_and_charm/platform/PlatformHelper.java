@@ -164,6 +164,16 @@ public abstract class PlatformHelper {
     }
 
     @ExpectPlatform
+    public static boolean showWaterSprinklerInfo() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static boolean showScarecrowInfo() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
     public static int getIronCleaverChops() {
         throw new AssertionError();
     }

@@ -41,6 +41,8 @@ public class FarmAndCharmNeoForgeConfig {
     public static final ModConfigSpec.BooleanValue SHOW_MINCER_INFO;
     public static final ModConfigSpec.BooleanValue SHOW_CRAFTING_BOWL_INFO;
     public static final ModConfigSpec.BooleanValue SHOW_SILO_INFO;
+    public static final ModConfigSpec.BooleanValue SHOW_WATER_SPRINKLER_INFO;
+    public static final ModConfigSpec.BooleanValue SHOW_SCARECROW_INFO;
     public static final ModConfigSpec.BooleanValue INFO_TOOLTIPS_NEED_DUNGAREES;
     public static final ModConfigSpec.IntValue CHICKEN_EFFECT_TICK_INTERVAL;
     public static final ModConfigSpec.IntValue CHICKEN_EFFECT_EGG_CHANCE;
@@ -144,6 +146,8 @@ public class FarmAndCharmNeoForgeConfig {
     public static boolean showMincerInfo = true;
     public static boolean showCraftingBowlInfo = true;
     public static boolean showSiloInfo = true;
+    public static boolean showWaterSprinklerInfo = true;
+    public static boolean showScarecrowInfo = true;
     public static boolean infoTooltipsNeedDungarees = false;
     public static int chickenEffectTickInterval = 120;
     public static int chickenEffectEggChance = 20;
@@ -262,6 +266,8 @@ public class FarmAndCharmNeoForgeConfig {
         SHOW_MINCER_INFO = builder.comment("Shows an info tooltip when looking at the mincer.").define("showMincerInfo", true);
         SHOW_CRAFTING_BOWL_INFO = builder.comment("Shows an info tooltip when looking at the crafting bowl.").define("showCraftingBowlInfo", true);
         SHOW_SILO_INFO = builder.comment("Shows an info tooltip when looking at the silo.").define("showSiloInfo", true);
+        SHOW_WATER_SPRINKLER_INFO = builder.comment("Shows an info tooltip when looking at the water sprinkler.").define("showWaterSprinklerInfo", true);
+        SHOW_SCARECROW_INFO = builder.comment("Shows an info tooltip when looking at the scarecrow.").define("showScarecrowInfo", true);
         INFO_TOOLTIPS_NEED_DUNGAREES = builder.comment("Info tooltips only show while wearing Dungarees.").define("needDungarees", false);
         builder.pop();
 
@@ -392,6 +398,8 @@ public class FarmAndCharmNeoForgeConfig {
         showMincerInfo = SHOW_MINCER_INFO.get();
         showCraftingBowlInfo = SHOW_CRAFTING_BOWL_INFO.get();
         showSiloInfo = SHOW_SILO_INFO.get();
+        showWaterSprinklerInfo = SHOW_WATER_SPRINKLER_INFO.get();
+        showScarecrowInfo = SHOW_SCARECROW_INFO.get();
         infoTooltipsNeedDungarees = INFO_TOOLTIPS_NEED_DUNGAREES.get();
         chickenEffectTickInterval = CHICKEN_EFFECT_TICK_INTERVAL.get();
         chickenEffectEggChance = CHICKEN_EFFECT_EGG_CHANCE.get();

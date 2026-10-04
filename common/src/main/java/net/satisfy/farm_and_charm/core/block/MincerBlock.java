@@ -11,6 +11,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
@@ -34,7 +35,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
@@ -57,8 +57,6 @@ import java.util.function.Supplier;
 public class MincerBlock extends BaseEntityBlock {
     public static final MapCodec<MincerBlock> CODEC = simpleCodec(MincerBlock::new);
     public static final int CRANKS_NEEDED = 20;
-    public static final IntegerProperty CRANK = IntegerProperty.create("crank", 0, 32);
-    public static final IntegerProperty CRANKED = IntegerProperty.create("cranked", 0, 100);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     private static final Supplier<VoxelShape> voxelShapeSupplier = () -> {
         VoxelShape shape = Shapes.empty();
@@ -77,7 +75,7 @@ public class MincerBlock extends BaseEntityBlock {
 
     public MincerBlock(Properties settings) {
         super(settings);
-        this.registerDefaultState(this.stateDefinition.any().setValue(CRANK, 0).setValue(CRANKED, 0).setValue(FACING, Direction.NORTH));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
     @Override
@@ -97,7 +95,7 @@ public class MincerBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, CRANK, CRANKED);
+        builder.add(FACING);
     }
 
     @Override
@@ -125,11 +123,16 @@ public class MincerBlock extends BaseEntityBlock {
 
         if (player.isShiftKeyDown()) {
             if (!level.isClientSide) {
+                boolean removed = false;
                 for (int slot = 0; slot < mincer.getContainerSize(); slot++) {
                     ItemStack removedStack = mincer.removeItem(slot, mincer.getItem(slot).getCount());
                     if (!removedStack.isEmpty()) {
                         Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), removedStack);
+                        removed = true;
                     }
+                }
+                if (removed) {
+                    level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.5F, 0.9F);
                 }
             }
             return InteractionResult.SUCCESS;
@@ -137,8 +140,7 @@ public class MincerBlock extends BaseEntityBlock {
 
         ItemStack inputStack = mincer.getItem(mincer.INPUT_SLOT);
 
-        int crank = state.getValue(CRANK);
-        int cranked = state.getValue(CRANKED);
+        int crank = mincer.getCrankTicks();
 
         if (!playerStack.isEmpty() && crank == 0 && mincer.hasValidRecipe(level, playerStack)) {
             if (mincer.canPlaceItem(mincer.INPUT_SLOT, playerStack)) {
@@ -146,6 +148,7 @@ public class MincerBlock extends BaseEntityBlock {
                     ItemStack playerStackCopy = playerStack.copy();
                     playerStackCopy.setCount(playerStackCopy.getMaxStackSize());
                     mincer.setItem(mincer.INPUT_SLOT, playerStackCopy);
+                    level.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 0.6F, 0.8F + level.random.nextFloat() * 0.2F);
                     return InteractionResult.SUCCESS;
                 }
 
@@ -184,17 +187,11 @@ public class MincerBlock extends BaseEntityBlock {
                     }
                 }
 
+                level.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 0.6F, 0.8F + level.random.nextFloat() * 0.2F);
                 return InteractionResult.SUCCESS;
             }
 
-            state.setValue(CRANKED, 0);
-
             return InteractionResult.sidedSuccess(level.isClientSide());
-        }
-
-        if (cranked >= CRANKS_NEEDED && crank == 0) {
-            level.setBlock(pos, state.setValue(CRANKED, 0), Block.UPDATE_ALL);
-            return InteractionResult.SUCCESS;
         }
 
         if (level instanceof ServerLevel serverWorld) {
@@ -206,9 +203,9 @@ public class MincerBlock extends BaseEntityBlock {
             }
         }
 
-        if (crank <= 6) {
-            level.setBlock(pos, state.setValue(CRANK, 10), Block.UPDATE_ALL);
-            level.playSound(null, pos, SoundEventRegistry.MINCER_CRANKING.get(), SoundSource.BLOCKS, 0.05f, 2.5F);
+        if (crank <= 6 && !level.isClientSide) {
+            mincer.crank();
+            level.playSound(null, pos, SoundEventRegistry.MINCER_CRANKING.get(), SoundSource.BLOCKS, 0.4F, 0.9F + level.random.nextFloat() * 0.2F);
             return InteractionResult.SUCCESS;
         }
 

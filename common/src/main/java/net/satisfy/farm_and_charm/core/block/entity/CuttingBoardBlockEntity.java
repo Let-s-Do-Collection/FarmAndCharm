@@ -91,6 +91,9 @@ public class CuttingBoardBlockEntity extends BlockEntity {
 
     public int chop() {
         this.chops++;
+        if (this.level != null) {
+            this.cutStart = this.level.getGameTime();
+        }
         this.markUpdated();
         return this.chops;
     }

@@ -11,6 +11,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -18,11 +20,17 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.satisfy.farm_and_charm.core.block.entity.WaterSprinklerBlockEntity;
+import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.SoundEventRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,8 +41,25 @@ public class WaterSprinklerBlock extends BaseEntityBlock {
     public static final MapCodec<WaterSprinklerBlock> CODEC = simpleCodec(WaterSprinklerBlock::new);
     private static final VoxelShape SHAPE = Block.box(1.0, 0.0, 1.0, 15.0, 12.0, 15.0);
 
+    public static final EnumProperty<SprinklerPressure> PRESSURE = EnumProperty.create("pressure", SprinklerPressure.class);
+
     public WaterSprinklerBlock(Properties properties) {
         super(properties);
+        this.registerDefaultState(this.stateDefinition.any().setValue(PRESSURE, SprinklerPressure.STEADY));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(PRESSURE);
+    }
+
+    @Override
+    protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        if (!level.isClientSide) {
+            level.setBlock(pos, state.cycle(PRESSURE), Block.UPDATE_ALL);
+            level.playSound(null, pos, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.4F, 1.2F);
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override
@@ -59,10 +84,12 @@ public class WaterSprinklerBlock extends BaseEntityBlock {
                 BlockEntity be = world.getBlockEntity(pos);
                 if (be instanceof WaterSprinklerBlockEntity sprinkler) {
                     float angle = sprinkler.getRotationAngle();
+                    boolean high = state.getValue(PRESSURE) == SprinklerPressure.HIGH;
                     double x = pos.getX() + 0.5;
                     double y = pos.getY() + 1.0;
                     double z = pos.getZ() + 0.5;
-                    double velocity = 0.2;
+                    double velocity = high ? 0.3 : 0.2;
+                    double reach = high ? 4.5 : 3;
                     double startOffset = 0.5;
                     for (int i = 0; i < 4; ++i) {
                         double a = Math.toRadians(angle + 90 * i);
@@ -72,7 +99,7 @@ public class WaterSprinklerBlock extends BaseEntityBlock {
                         double dz = sin * velocity;
                         double startX = x + cos * startOffset;
                         double startZ = z + sin * startOffset;
-                        for (double len = 0; len < 3; len += 0.5) {
+                        for (double len = 0; len < reach; len += 0.5) {
                             double cx = startX + dx * len;
                             double cz = startZ + dz * len;
                             world.addParticle(FoundationParticles.WATER_SPLASH.get(), cx, y, cz, dx, 0.0D, dz);
@@ -111,6 +138,11 @@ public class WaterSprinklerBlock extends BaseEntityBlock {
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new WaterSprinklerBlockEntity(pos, state);
+    }
+
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
+        return level.isClientSide ? createTickerHelper(type, EntityTypeRegistry.SPRINKLER_BLOCK_ENTITY.get(), WaterSprinklerBlockEntity::clientTick) : null;
     }
 
     @Override

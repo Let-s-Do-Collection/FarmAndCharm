@@ -2,6 +2,7 @@ package net.satisfy.farm_and_charm.client.renderer.block;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -13,14 +14,15 @@ import net.minecraft.world.level.Level;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.client.model.WaterSprinklerModel;
 import net.satisfy.farm_and_charm.core.block.entity.WaterSprinklerBlockEntity;
-import org.joml.Quaternionf;
 
 public class WaterSprinklerRenderer implements BlockEntityRenderer<WaterSprinklerBlockEntity> {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "textures/entity/water_sprinkler.png");
+    private static final float WOBBLE_ANGLE = 1.5F;
+    private static final float JOLT_ANGLE = 2.5F;
+    private static final float RATTLE_ANGLE = 2.0F;
+    private static final float PIVOT_Y = 0.5F;
     private final ModelPart rotating;
     private final ModelPart basin;
-    private long lastRenderTime = 0;
-    private float rotationAngle = 0.0F;
 
     public WaterSprinklerRenderer(BlockEntityRendererProvider.Context context) {
         ModelPart root = context.bakeLayer(WaterSprinklerModel.LAYER_LOCATION);
@@ -28,35 +30,36 @@ public class WaterSprinklerRenderer implements BlockEntityRenderer<WaterSprinkle
         this.basin = root.getChild("basin");
     }
 
-    private float updateRotationAngle(WaterSprinklerBlockEntity blockEntity) {
-        Level level = blockEntity.getLevel();
-        assert level != null;
-        boolean isRaining = level.isRaining();
-        boolean isThundering = level.isThundering();
-        float rotationSpeed = isRaining || isThundering ? 2.0F : 1.0F;
-
-        long currentTime = System.currentTimeMillis();
-        if (lastRenderTime == 0) {
-            lastRenderTime = currentTime;
-        }
-        float deltaTime = (currentTime - lastRenderTime) / 1000.0F;
-        lastRenderTime = currentTime;
-
-        rotationAngle += rotationSpeed * deltaTime * 40.0F;
-        rotationAngle %= 360;
-
-        blockEntity.setRotationAngle(rotationAngle);
-        return rotationAngle;
-    }
-
     @Override
     public void render(WaterSprinklerBlockEntity blockEntity, float partialTicks, PoseStack matrixStack, MultiBufferSource bufferSource, int combinedLight, int combinedOverlay) {
+        Level level = blockEntity.getLevel();
+        if (level == null) return;
         VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.entitySolid(TEXTURE));
+        float angle = blockEntity.getRotationAngle(partialTicks);
+        float speed = Math.min(1.0F, blockEntity.getSpeed());
+        double time = level.getGameTime() + partialTicks;
+        float tiltX = 0.0F;
+        float tiltZ = 0.0F;
+        switch (blockEntity.getPressure()) {
+            case PULSING -> {
+                float jolt = blockEntity.getJolt(partialTicks);
+                tiltX = (float) Math.sin(time * 0.21) * WOBBLE_ANGLE * speed;
+                tiltZ = (float) Math.cos(time * 0.17) * WOBBLE_ANGLE * speed + jolt * jolt * JOLT_ANGLE * speed;
+            }
+            case HIGH -> {
+                tiltX = (float) Math.sin(time * 1.9) * RATTLE_ANGLE * speed;
+                tiltZ = (float) Math.cos(time * 2.3) * RATTLE_ANGLE * speed;
+            }
+            case STEADY -> {
+            }
+        }
+
         matrixStack.pushPose();
-        final var angle = updateRotationAngle(blockEntity);
-        matrixStack.translate(0.5, 0, 0.5);
-        matrixStack.mulPose(new Quaternionf().rotationY((float) Math.toRadians(-angle)));
-        matrixStack.translate(-0.5, 0, -0.5);
+        matrixStack.translate(0.5, PIVOT_Y, 0.5);
+        matrixStack.mulPose(Axis.XP.rotationDegrees(tiltX));
+        matrixStack.mulPose(Axis.ZP.rotationDegrees(tiltZ));
+        matrixStack.mulPose(Axis.YP.rotationDegrees(-angle));
+        matrixStack.translate(-0.5, -PIVOT_Y, -0.5);
         rotating.render(matrixStack, vertexConsumer, combinedLight, OverlayTexture.NO_OVERLAY);
         matrixStack.popPose();
         basin.render(matrixStack, vertexConsumer, combinedLight, OverlayTexture.NO_OVERLAY);

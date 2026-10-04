@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.satisfy.farm_and_charm.core.block.CuttingBoardBlock;
@@ -30,6 +31,9 @@ public class CuttingBoardRenderer implements BlockEntityRenderer<CuttingBoardBlo
     private static final float BLADE_DOWN = -135.0F;
     private static final double UPRIGHT_HEIGHT = 0.16;
     private static final double ITEM_OFFSET = 2.0 / 16.0;
+    private static final float HOP_TICKS = 6.0F;
+    private static final double HOP_HEIGHT = 0.05;
+    private static final float HOP_SPIN = 8.0F;
 
     public CuttingBoardRenderer(BlockEntityRendererProvider.Context context) {
     }
@@ -43,20 +47,38 @@ public class CuttingBoardRenderer implements BlockEntityRenderer<CuttingBoardBlo
         double itemX = 0.5 + right.getStepX() * ITEM_OFFSET;
         double itemZ = 0.5 + right.getStepZ() * ITEM_OFFSET;
 
+        float hop = this.getHop(board, partialTick);
+        double lift = hop * HOP_HEIGHT;
+        float spin = hop * HOP_SPIN;
+
         List<ItemStack> items = board.getItems();
         for (int i = 0; i < items.size(); i++) {
+            float wiggle = i % 2 == 0 ? spin : -spin;
             DisplayItemRenderer.renderFlat(items.get(i), poseStack, buffers, light, overlay, board.getLevel(),
-                    itemX, BOARD_TOP + i * STACK_STEP, itemZ, yaw + i * 25.0F, ITEM_SCALE, seed + i);
+                    itemX, BOARD_TOP + i * STACK_STEP + lift, itemZ, yaw + i * 25.0F + wiggle, ITEM_SCALE, seed + i);
         }
 
         if (board.isCutting()) {
             DisplayItemRenderer.renderFlat(board.getPending(), poseStack, buffers, light, overlay, board.getLevel(),
-                    itemX, BOARD_TOP, itemZ, yaw, ITEM_SCALE, seed);
+                    itemX, BOARD_TOP + lift, itemZ, yaw + spin, ITEM_SCALE, seed);
         }
 
         if (board.hasKnife()) {
             this.renderKnife(board, facing, yaw, partialTick, poseStack, buffers, light, overlay, seed);
         }
+    }
+
+    private float getHop(CuttingBoardBlockEntity board, float partialTick) {
+        if (board.getLevel() == null) {
+            return 0.0F;
+        }
+        float impact = board.isCutting() ? CuttingBoardBlockEntity.CHOP_ANIMATION_TICKS : 0.0F;
+        float sinceImpact = board.getLevel().getGameTime() - board.getCutStart() + partialTick - impact;
+        if (sinceImpact < 0.0F || sinceImpact >= HOP_TICKS) {
+            return 0.0F;
+        }
+        float progress = sinceImpact / HOP_TICKS;
+        return Math.abs(Mth.sin(progress * Mth.TWO_PI)) * (1.0F - progress);
     }
 
     private void renderKnife(CuttingBoardBlockEntity board, Direction facing, float yaw, float partialTick, PoseStack poseStack, MultiBufferSource buffers, int light, int overlay, int seed) {

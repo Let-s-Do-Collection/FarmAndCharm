@@ -8,6 +8,7 @@ import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
@@ -28,8 +29,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -47,14 +46,10 @@ import java.util.List;
 
 public class CraftingBowlBlock extends BaseEntityBlock {
     public static final MapCodec<CraftingBowlBlock> CODEC = simpleCodec(CraftingBowlBlock::new);
-    public static final int STIRS_NEEDED = 50;
-    public static final IntegerProperty STIRRING = IntegerProperty.create("stirring", 0, 32);
-    public static final IntegerProperty STIRRED = IntegerProperty.create("stirred", 0, 100);
+    public static final int STIRS_NEEDED = 200;
 
     public CraftingBowlBlock(Properties settings) {
         super(settings);
-        this.registerDefaultState(this.stateDefinition.any().setValue(STIRRING, 0));
-        this.registerDefaultState(this.stateDefinition.any().setValue(STIRRED, 0));
     }
 
     @Override
@@ -79,12 +74,6 @@ public class CraftingBowlBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(STIRRING);
-        builder.add(STIRRED);
-    }
-
-    @Override
     public @NotNull List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
         List<ItemStack> dropsOriginal = super.getDrops(state, builder);
         if (!dropsOriginal.isEmpty())
@@ -100,10 +89,10 @@ public class CraftingBowlBlock extends BaseEntityBlock {
         ItemStack main = player.getMainHandItem();
         boolean anyHeld = !main.isEmpty();
 
-        int stirring = state.getValue(STIRRING);
-        int stirred = state.getValue(STIRRED);
-
-        if (player.isShiftKeyDown() || (stirred >= STIRS_NEEDED && stirring == 0)) {
+        if (player.isShiftKeyDown() || (bowl.isFinished() && bowl.canTakeOut(level))) {
+            if (!level.isClientSide && !bowl.isEmpty()) {
+                level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.5F, 0.9F);
+            }
             for (int i = 0; i < bowl.getContainerSize(); i++) {
                 ItemStack stack = bowl.getItem(i);
                 if (!stack.isEmpty()) {
@@ -111,40 +100,37 @@ public class CraftingBowlBlock extends BaseEntityBlock {
                     bowl.setItem(i, ItemStack.EMPTY);
                 }
             }
-            level.setBlock(pos, state.setValue(STIRRED, 0), 3);
+            bowl.resetStirring();
             bowl.setChanged();
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
 
-        if (anyHeld && stirring == 0) {
-            if (bowl.canAddItem()) {
-                ItemStack one = main.copy();
-                one.setCount(1);
-                bowl.addItemStack(one);
-                if (!player.isCreative()) main.shrink(1);
-                level.setBlock(pos, state.setValue(STIRRED, 0), 3);
-                return InteractionResult.SUCCESS;
-            }
-        }
-
-        if (!anyHeld || !bowl.canAddItem()) {
-            if (level instanceof ServerLevel server) {
-                RandomSource r = server.random;
-                ItemStack stack = bowl.getItem(r.nextInt(4));
-                if (!stack.isEmpty()) {
-                    server.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, stack), pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5, 1, r.nextGaussian() * 0.15D, 0.05D, r.nextGaussian() * 0.15D, 0.05D);
-                }
-            }
-            if (stirring <= 6) {
-                level.setBlock(pos, state.setValue(STIRRING, 10), 3);
-            }
+        if (anyHeld && !bowl.isFinished() && bowl.canAddItem()) {
+            ItemStack one = main.copy();
+            one.setCount(1);
+            bowl.addItemStack(one);
+            if (!player.isCreative()) main.shrink(1);
+            bowl.resetStirring();
             if (!level.isClientSide) {
-                bowl.addWhiskImpulse(0.25F);
-                level.playSound(null, pos, SoundEventRegistry.CRAFTING_BOWL_STIRRING.get(), SoundSource.BLOCKS, 0.05F + bowl.getWhiskSpeed() * 0.08F, 0.9F + bowl.getWhiskSpeed() * 0.6F);
+                level.playSound(null, pos, SoundEvents.SLIME_SQUISH_SMALL, SoundSource.BLOCKS, 0.5F, 1.3F + level.random.nextFloat() * 0.2F);
             }
             return InteractionResult.SUCCESS;
         }
 
+        bowl.markStirred(level);
+        if (bowl.isFinished()) {
+            return InteractionResult.SUCCESS;
+        }
+        if (level instanceof ServerLevel server) {
+            RandomSource r = server.random;
+            ItemStack stack = bowl.getItem(r.nextInt(4));
+            if (!stack.isEmpty()) {
+                server.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, stack), pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5, 1, r.nextGaussian() * 0.15D, 0.05D, r.nextGaussian() * 0.15D, 0.05D);
+            }
+            bowl.splashDough(server, pos, 1);
+            bowl.addWhiskImpulse(0.25F);
+            level.playSound(null, pos, SoundEventRegistry.CRAFTING_BOWL_STIRRING.get(), SoundSource.BLOCKS, 0.35F + bowl.getWhiskSpeed() * 0.3F, 0.9F + bowl.getWhiskSpeed() * 0.5F);
+        }
         return InteractionResult.SUCCESS;
     }
 

@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -25,7 +24,11 @@ import net.satisfy.farm_and_charm.core.block.entity.CraftingBowlBlockEntity;
 
 public class CraftingBowlRenderer implements BlockEntityRenderer<CraftingBowlBlockEntity> {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(FarmAndCharm.MOD_ID, "textures/entity/crafting_bowl.png");
-    private static final float SHAKE_ANGLE = 2.5F;
+    private static final float TILT_ANGLE = 4.0F;
+    private static final float DOUGH_SURFACE = 17.0F / 16.0F;
+    private static final float DOUGH_DEPTH = 6.0F / 16.0F;
+    private static final float DOUGH_SLOSH = 6.0F;
+    private static final float DOUGH_BOB = 0.015F;
     private final ModelPart bowl;
     private final ModelPart dough;
     private final ModelPart swing;
@@ -47,25 +50,41 @@ public class CraftingBowlRenderer implements BlockEntityRenderer<CraftingBowlBlo
         pose.pushPose();
         pose.mulPose(Axis.XP.rotationDegrees(180));
         pose.translate(0.5f, -1.5f, -0.5f);
-        float shake = be.getWhiskSpeed() / CraftingBowlBlockEntity.WHISK_MAX_SPEED;
-        if (shake > 0F) {
-            float time = level.getGameTime() + f;
+        float whiskAngle = be.getInterpolatedWhiskAngle(f);
+        float tilt = be.getWhiskSpeed() / CraftingBowlBlockEntity.WHISK_MAX_SPEED * TILT_ANGLE;
+        if (tilt > 0F) {
+            // the bowl leans towards the side the whisk is pushing against and follows it around
             pose.translate(0f, 1.5f, 0f);
-            pose.mulPose(Axis.XP.rotationDegrees(Mth.sin(time * 1.7F) * shake * SHAKE_ANGLE));
-            pose.mulPose(Axis.ZP.rotationDegrees(Mth.cos(time * 1.3F) * shake * SHAKE_ANGLE));
+            pose.mulPose(Axis.XP.rotationDegrees((float) Math.cos(whiskAngle) * tilt));
+            pose.mulPose(Axis.ZP.rotationDegrees((float) Math.sin(whiskAngle) * tilt));
             pose.translate(0f, -1.5f, 0f);
         }
 
         VertexConsumer vc = buf.getBuffer(RenderType.entityTranslucent(TEXTURE));
 
         bowl.render(pose, vc, light, overlay);
-        if (be.getStirringProgress() > CraftingBowlBlock.STIRS_NEEDED) {
-            dough.render(pose, vc, light, overlay);
-        }
-        pose.mulPose(Axis.YP.rotation(be.getInterpolatedWhiskAngle(f)));
+        this.renderDough(be, level, f, whiskAngle, pose, vc, light, overlay);
+        pose.mulPose(Axis.YP.rotation(whiskAngle));
         swing.render(pose, vc, light, overlay);
 
         this.renderItems(pose, buf, be.getItems(), light, overlay);
+        pose.popPose();
+    }
+
+    /** The dough rises from the bottom while stirring and sloshes along with the whisk. */
+    private void renderDough(CraftingBowlBlockEntity be, Level level, float partialTick, float whiskAngle, PoseStack pose, VertexConsumer vc, int light, int overlay) {
+        float fill = be.getDoughFill();
+        if (fill <= 0.0F) return;
+        float speed = be.getWhiskSpeed() / CraftingBowlBlockEntity.WHISK_MAX_SPEED;
+        double time = level.getGameTime() + partialTick;
+        // the pose is upside down here, so a positive y moves the dough further down into the bowl
+        float surface = DOUGH_SURFACE + (1.0F - fill) * DOUGH_DEPTH + (float) Math.sin(time * 0.6) * DOUGH_BOB * speed;
+        pose.pushPose();
+        pose.translate(0f, surface, 0f);
+        pose.mulPose(Axis.XP.rotationDegrees((float) Math.cos(whiskAngle) * DOUGH_SLOSH * speed));
+        pose.mulPose(Axis.ZP.rotationDegrees((float) Math.sin(whiskAngle) * DOUGH_SLOSH * speed));
+        pose.translate(0f, -DOUGH_SURFACE, 0f);
+        dough.render(pose, vc, light, overlay);
         pose.popPose();
     }
 

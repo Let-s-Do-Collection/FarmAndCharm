@@ -131,6 +131,14 @@ public class PlatformHelperImpl {
         return FarmAndCharmNeoForgeConfig.showSiloInfo;
     }
 
+    public static boolean showWaterSprinklerInfo() {
+        return FarmAndCharmNeoForgeConfig.showWaterSprinklerInfo;
+    }
+
+    public static boolean showScarecrowInfo() {
+        return FarmAndCharmNeoForgeConfig.showScarecrowInfo;
+    }
+
     public static int getIronCleaverChops() {
         return FarmAndCharmNeoForgeConfig.ironCleaverChops;
     }

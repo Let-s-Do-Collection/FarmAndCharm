@@ -46,7 +46,7 @@ public class CraftingBowlInfoProvider implements BlockInfoProvider {
         bowl.findRecipe(level).ifPresent(recipe -> {
             ItemStack output = recipe.getResultItem(level.registryAccess()).copyWithCount(recipe.getOutputCount());
             sections.add(InfoSection.icons(Component.translatable("hud.farm_and_charm.result").withStyle(ChatFormatting.GREEN), List.of(output), InfoSection.ROW_COLUMNS));
-            int stirred = Math.min(state.getValue(CraftingBowlBlock.STIRRED), CraftingBowlBlock.STIRS_NEEDED);
+            int stirred = (int) bowl.getStirred();
             sections.add(InfoSection.lines(Component.translatable("hud.farm_and_charm.stir_hint").withStyle(ChatFormatting.GRAY),
                     List.of(Component.translatable("hud.farm_and_charm.stirred", stirred, CraftingBowlBlock.STIRS_NEEDED).withStyle(ChatFormatting.GRAY))));
         });

@@ -20,7 +20,9 @@ import net.satisfy.foundation.overlay.BlockInfoOverlay;
 import net.satisfy.farm_and_charm.client.gui.overlay.CraftingBowlInfoProvider;
 import net.satisfy.farm_and_charm.client.gui.overlay.CuttingBoardInfoProvider;
 import net.satisfy.farm_and_charm.client.gui.overlay.MincerInfoProvider;
+import net.satisfy.farm_and_charm.client.gui.overlay.ScarecrowInfoProvider;
 import net.satisfy.farm_and_charm.client.gui.overlay.SiloInfoProvider;
+import net.satisfy.farm_and_charm.client.gui.overlay.WaterSprinklerInfoProvider;
 import net.satisfy.foundation.tooltip.InfoTooltip;
 import net.satisfy.farm_and_charm.client.gui.CookingPotGui;
 import net.satisfy.farm_and_charm.client.gui.PetBowlEditGui;
@@ -78,6 +80,8 @@ public class FarmAndCharmClient {
         BlockInfoOverlay.registerProvider(new SiloInfoProvider());
         BlockInfoOverlay.registerProvider(new MincerInfoProvider());
         BlockInfoOverlay.registerProvider(new CraftingBowlInfoProvider());
+        BlockInfoOverlay.registerProvider(new WaterSprinklerInfoProvider());
+        BlockInfoOverlay.registerProvider(new ScarecrowInfoProvider());
         InfoTooltip.init();
         InfoTooltip.of(CUTTING_BOARD.get()).placeable().details(3).register();
         registerStorageTypeRenderers();
@@ -127,6 +131,7 @@ public class FarmAndCharmClient {
         BlockEntityRendererRegistry.register(EntityTypeRegistry.CRAFTING_BOWL_BLOCK_ENTITY.get(), CraftingBowlRenderer::new);
         BlockEntityRendererRegistry.register(EntityTypeRegistry.CUTTING_BOARD_BLOCK_ENTITY.get(), CuttingBoardRenderer::new);
         BlockEntityRendererRegistry.register(EntityTypeRegistry.SPRINKLER_BLOCK_ENTITY.get(), WaterSprinklerRenderer::new);
+        BlockEntityRendererRegistry.register(EntityTypeRegistry.STURDY_LADDER_BLOCK_ENTITY.get(), SturdyLadderRenderer::new);
         BlockEntityRendererRegistry.register(EntityTypeRegistry.PET_BOWL_BLOCK_ENTITY.get(), context -> new PetBowlBlockRenderer());
         BlockEntityRendererRegistry.register(EntityTypeRegistry.STORAGE_ENTITY.get(), context -> new StorageBlockEntityRenderer());
     }

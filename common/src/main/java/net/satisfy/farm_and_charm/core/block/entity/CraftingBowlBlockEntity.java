@@ -2,9 +2,12 @@ package net.satisfy.farm_and_charm.core.block.entity;
 
 import net.minecraft.core.BlockPos;
 import java.util.ArrayList;
+import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -29,6 +32,7 @@ import net.satisfy.farm_and_charm.core.block.CraftingBowlBlock;
 import net.satisfy.farm_and_charm.core.recipe.CraftingBowlRecipe;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
+import net.satisfy.foundation.registry.FoundationParticles;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,8 +46,19 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
     private float whiskAngle;
     private float whiskAnglePrev;
     private float whiskSpeed;
+    private float stirred;
+    private long lastStir;
+    @Nullable
+    private Boolean hasRecipe;
     public static final float WHISK_MAX_SPEED = 1.2F;
+    /** Average color of the dough texture, used for the splash particles. */
+    private static final int DOUGH_COLOR = 0xFFE1AF61;
     private static final float WHISK_DECAY = 0.93F;
+    /** Stirs per tick at full whisk speed; slower whisking stirs slower. */
+    private static final float STIR_RATE = 1.25F;
+    private static final int SYNC_INTERVAL = 10;
+    /** Ticks without stirring before a click takes the result out, so holding right-click never empties the bowl. */
+    private static final int TAKE_OUT_DELAY = 8;
 
     public CraftingBowlBlockEntity(BlockPos position, BlockState state) {
         super(EntityTypeRegistry.CRAFTING_BOWL_BLOCK_ENTITY.get(), position, state);
@@ -54,7 +69,9 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
         super.loadAdditional(tag, provider);
         if (!this.tryLoadLootTable(tag)) this.stacks = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
         ContainerHelper.loadAllItems(tag, this.stacks, provider);
+        this.hasRecipe = null;
         this.whiskSpeed = tag.getFloat("WhiskSpeed");
+        this.stirred = tag.getFloat("Stirred");
     }
 
     @Override
@@ -62,6 +79,7 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
         super.saveAdditional(tag, provider);
         if (!this.trySaveLootTable(tag)) ContainerHelper.saveAllItems(tag, this.stacks, provider);
         tag.putFloat("WhiskSpeed", this.whiskSpeed);
+        tag.putFloat("Stirred", this.stirred);
     }
 
     @Override
@@ -113,6 +131,7 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
     @Override
     protected void setItems(NonNullList<ItemStack> stacks) {
         this.stacks = stacks;
+        this.hasRecipe = null;
     }
 
     public boolean canAddItem() {
@@ -154,14 +173,53 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
         return ItemStack.EMPTY;
     }
 
-    public int getStirringProgress() {
-        return this.getBlockState().getValue(CraftingBowlBlock.STIRRED);
+    /** Stirs done so far, 0 to {@link CraftingBowlBlock#STIRS_NEEDED}. */
+    public float getStirred() {
+        return this.stirred;
+    }
+
+    public boolean isFinished() {
+        return !this.getItem(4).isEmpty();
+    }
+
+    public void markStirred(Level level) {
+        this.lastStir = level.getGameTime();
+    }
+
+    public boolean canTakeOut(Level level) {
+        return level.getGameTime() - this.lastStir > TAKE_OUT_DELAY;
+    }
+
+    public void resetStirring() {
+        this.stirred = 0.0F;
     }
 
     public Optional<CraftingBowlRecipe> findRecipe(Level level) {
         if (!this.getItem(4).isEmpty()) return Optional.empty();
         List<RecipeHolder<CraftingBowlRecipe>> all = level.getRecipeManager().getAllRecipesFor(RecipeTypeRegistry.CRAFTING_BOWL_RECIPE_TYPE.get());
         return Optional.ofNullable(matchExact(all));
+    }
+
+    /** How far the dough has risen: 0 = none, 1 = full bowl. Only rises when the ingredients make something. */
+    public float getDoughFill() {
+        if (this.isFinished()) return 1.0F;
+        if (this.stirred > 0.0F && this.hasRecipe()) return Math.min(1.0F, this.stirred / CraftingBowlBlock.STIRS_NEEDED);
+        return 0.0F;
+    }
+
+    public void splashDough(ServerLevel server, BlockPos pos, int amount) {
+        float fill = this.getDoughFill();
+        if (fill <= 0.0F || amount <= 0) return;
+        double y = pos.getY() + 0.06 + fill * 0.375;
+        server.sendParticles(ColorParticleOption.create(FoundationParticles.DYE_SPLASH.get(), DOUGH_COLOR), pos.getX() + 0.5, y, pos.getZ() + 0.5, amount, 0.12, 0.02, 0.12, 0.05 + this.whiskSpeed * 0.08);
+    }
+
+    /** Whether the ingredients in the bowl make something. Cached until the contents change. */
+    public boolean hasRecipe() {
+        if (this.hasRecipe == null) {
+            this.hasRecipe = this.level != null && this.numberOfIngredientsInBowl() > 0 && this.findRecipe(this.level).isPresent();
+        }
+        return this.hasRecipe;
     }
 
     private int numberOfIngredientsInBowl() {
@@ -203,7 +261,20 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
     @Override
     public void setItem(int slot, ItemStack stack) {
         super.setItem(slot, stack);
+        this.hasRecipe = null;
         setChanged();
+    }
+
+    @Override
+    public @NotNull ItemStack removeItem(int slot, int amount) {
+        this.hasRecipe = null;
+        return super.removeItem(slot, amount);
+    }
+
+    @Override
+    public @NotNull ItemStack removeItemNoUpdate(int slot) {
+        this.hasRecipe = null;
+        return super.removeItemNoUpdate(slot);
     }
 
     @Override
@@ -236,41 +307,43 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
     @Override
     public void tick(Level level, BlockPos pos, BlockState state, CraftingBowlBlockEntity be) {
         this.whiskAnglePrev = this.whiskAngle;
-        int stirring = state.getValue(CraftingBowlBlock.STIRRING);
         this.whiskSpeed *= WHISK_DECAY;
         if (this.whiskSpeed < 0.005F) this.whiskSpeed = 0F;
         this.whiskAngle += this.whiskSpeed;
         float tau = (float) (Math.PI * 2D);
         if (this.whiskAngle > tau) this.whiskAngle -= tau;
         if (this.whiskAngle < 0F) this.whiskAngle += tau;
+        if (this.whiskSpeed <= 0F) return;
 
-        if (level instanceof ServerLevel server && this.whiskSpeed > 0.3F && level.getGameTime() % 4L == 0L) {
+        // client and server both stir along so the dough rises smoothly; only the server finishes the recipe
+        if (!this.isFinished() && this.hasRecipe()) {
+            this.stirred = Math.min(CraftingBowlBlock.STIRS_NEEDED, this.stirred + this.whiskSpeed / WHISK_MAX_SPEED * STIR_RATE);
+        }
+
+        if (!(level instanceof ServerLevel server)) return;
+        if (this.whiskSpeed > 0.3F && level.getGameTime() % 4L == 0L) {
             this.sprayIngredients(server, pos, Math.round(this.whiskSpeed * 2.0F));
+            this.splashDough(server, pos, Math.round(this.whiskSpeed * 2.0F));
         }
+        if (this.stirred >= CraftingBowlBlock.STIRS_NEEDED && !this.isFinished()) {
+            this.finish(level, pos);
+        } else if (level.getGameTime() % SYNC_INTERVAL == 0L) {
+            this.setChanged();
+        }
+    }
 
-        if (!level.isClientSide && state.getBlock() instanceof CraftingBowlBlock) {
-            int stirred = state.getValue(CraftingBowlBlock.STIRRED);
-            if (stirring > 0) {
-                if (stirred < CraftingBowlBlock.STIRS_NEEDED) stirred += 1;
-                if (stirred == CraftingBowlBlock.STIRS_NEEDED && this.numberOfIngredientsInBowl() > 0) {
-                    Optional<CraftingBowlRecipe> recipe = be.findRecipe(level);
-                    if (recipe.isPresent()) {
-                        stirred += 1;
-                        for (int i = 0; i < 4; i++) {
-                            ItemStack stack = be.getItem(i);
-                            ItemStack remainder = getRemainderItem(stack);
-                            be.setItem(i, remainder);
-                        }
-                        ItemStack resultItem = recipe.get().getResultItem(level.registryAccess()).copy();
-                        resultItem.setCount(recipe.get().getOutputCount());
-                        be.setItem(4, resultItem);
-                    }
-                }
-                stirring -= 1;
-                level.setBlock(pos, state.setValue(CraftingBowlBlock.STIRRING, stirring).setValue(CraftingBowlBlock.STIRRED, stirred), 3);
-            }
-            if (stirring > 0 && level.getGameTime() % 5L == 0L) setChanged();
+    private void finish(Level level, BlockPos pos) {
+        Optional<CraftingBowlRecipe> recipe = this.findRecipe(level);
+        if (recipe.isEmpty()) return;
+        for (int i = 0; i < 4; i++) {
+            this.setItem(i, getRemainderItem(this.getItem(i)));
         }
+        level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.5F, 0.7F);
+        level.playSound(null, pos, SoundEvents.HONEY_BLOCK_PLACE, SoundSource.BLOCKS, 0.5F, 1.2F);
+        ItemStack resultItem = recipe.get().getResultItem(level.registryAccess()).copy();
+        resultItem.setCount(recipe.get().getOutputCount());
+        this.stirred = 0.0F;
+        this.setItem(4, resultItem);
     }
 
     private void sprayIngredients(ServerLevel server, BlockPos pos, int amount) {

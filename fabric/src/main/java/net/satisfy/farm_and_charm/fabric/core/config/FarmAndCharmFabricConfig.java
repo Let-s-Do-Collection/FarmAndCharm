@@ -167,6 +167,12 @@ public class FarmAndCharmFabricConfig implements ConfigData {
 
         @ConfigEntry.Gui.Tooltip
         public boolean showSiloInfo = true;
+
+        @ConfigEntry.Gui.Tooltip
+        public boolean showWaterSprinklerInfo = true;
+
+        @ConfigEntry.Gui.Tooltip
+        public boolean showScarecrowInfo = true;
     }
 
     public static class EffectsSettings {

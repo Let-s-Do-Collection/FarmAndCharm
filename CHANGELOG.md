@@ -18,11 +18,23 @@
 * Silo now shows an info tooltip when you look at it: how full it is, what is drying, and what is already dried
 * Mincer now shows an info tooltip once something is inside: the input, the result and the cranking progress
 * Crafting Bowl now shows an info tooltip once something is inside: the ingredients, the result and the stirring progress
+* Crafting Bowl now leans and rocks along with the whisk while you stir. The faster you whisk, the more it moves
+* The dough in the Crafting Bowl now slowly rises from the bottom while you stir and sloshes along with the whisk, instead of just appearing at the end. It only rises when the ingredients actually make something. Stirring now also splashes little drops of dough out of the bowl
+* Ingredients on the Cutting Board now hop up whenever the knife comes down
+* Mincer now rocks back and forth in time with the crank while you turn it
+* Mincer and Crafting Bowl sound much better: putting ingredients in, cranking, stirring, finishing and taking things out all have their own sounds, the Crafting Bowl gets louder and higher the faster you whisk, and the Mincer squishes meat, crunches wood and plants, grits stone and grinds ores
+* Sturdy Ladder now wobbles a little and creaks now and then while someone climbs it
+* Water Sprinkler: right-click it to switch between three pressures. Steady Pressure turns evenly, Pulsing Pressure ticks around in small steps like a real impact sprinkler and wobbles a little, High Pressure spins fast, rattles and shoots its water jets further. The pressure only changes the look, not the watering. An info tooltip shows the current pressure and can be turned off in the config. Sprinklers now slowly spin up when placed or when rain starts, every sprinkler turns on its own instead of all of them in sync, and they no longer keep turning while the game is paused
+* Scarecrow: Shift + right-click it with an empty hand to switch between three moods. Calm sways gently like before, Windy sways on its post, flaps its arms, nods its head, moves more in rain and thunder and catches a gust now and then, Watchful slowly turns its head towards the nearest player, looks around when nobody is near and throws its arms up when you come too close. The mood only changes the look, not the crop growth. An info tooltip shows the current mood and can be turned off in the config. Every Scarecrow now moves on its own instead of all of them in sync
+* Scarecrow is now a two block tall block: it needs free space above it, its head can be clicked and has collision, and no block can be placed into it anymore. Scarecrows placed before this update keep working but only get their upper half once they are picked up and placed again
 * 22 new Farm & Charm splash texts on the title screen
 * Chicken Nests now work with birds and eggs from other mods. Add the bird to the `farm_and_charm:nest_layers` entity tag and its egg to the `farm_and_charm:nest_eggs` item tag. Eggs in the `c:eggs` tag are accepted automatically
 * New common tags for better mod compatibility: `c:foods`, `c:foods/berry`, `c:foods/food_poisoning`, `c:foods/edible_when_placed`, `c:tools`, `c:storage_blocks` (Bags and Bales), `c:crops/lettuce`, `c:seeds/tomato` and `c:seeds/lettuce`
 
 **Changed**
+* Crafting Bowl recipes now need 200 stirs instead of 50, and how fast you stir counts: stirring quickly and steadily finishes in about 8 seconds, slow stirring takes longer and stopping pauses the progress
+* Mincer cranking now also speeds up and slows down with the crank instead of counting at a fixed pace
+* Crafting Bowl and Mincer went from almost 20,000 block states down to 5 (Crafting Bowl from 6,666 to 1, Mincer from 13,332 to 4). Their stirring and cranking progress now lives in the block entity, so they also no longer update their block every tick while stirring or cranking, which saves a lot of block and chunk updates. Stirring or cranking progress that was in the middle of an item when updating is reset once
 * The config is now split into Farming, Water, Animals, Kitchen, Effects and Food, and every option has an explanation. Options were moved, so changed values in an existing config file are reset to their defaults
 * Water drips and splashes from the Timber Well, Sink, Water Sprinkler and troughs now match the biome's water color
 * Tool Rack is much easier to take items from due to its increased voxelshape

@@ -136,6 +136,14 @@ public class PlatformHelperImpl {
         return config().infoTooltips.showSiloInfo;
     }
 
+    public static boolean showWaterSprinklerInfo() {
+        return config().infoTooltips.showWaterSprinklerInfo;
+    }
+
+    public static boolean showScarecrowInfo() {
+        return config().infoTooltips.showScarecrowInfo;
+    }
+
     public static int getIronCleaverChops() {
         return config().kitchen.ironCleaverChops;
     }

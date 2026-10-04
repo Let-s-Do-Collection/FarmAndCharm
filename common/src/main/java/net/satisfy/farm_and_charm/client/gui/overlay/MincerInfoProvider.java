@@ -37,7 +37,7 @@ public class MincerInfoProvider implements BlockInfoProvider {
         if (recipe != null) {
             sections.add(InfoSection.icons(Component.translatable("hud.farm_and_charm.result").withStyle(ChatFormatting.GREEN), List.of(recipe.getResultItem(level.registryAccess())), InfoSection.ROW_COLUMNS));
         }
-        int cranked = state.getValue(MincerBlock.CRANKED);
+        int cranked = (int) mincer.getCranked();
         sections.add(InfoSection.lines(Component.translatable("hud.farm_and_charm.mincer_hint").withStyle(ChatFormatting.GRAY),
                 List.of(Component.translatable("hud.farm_and_charm.mincer_cranked", cranked, MincerBlock.CRANKS_NEEDED).withStyle(ChatFormatting.GRAY))));
         return sections;

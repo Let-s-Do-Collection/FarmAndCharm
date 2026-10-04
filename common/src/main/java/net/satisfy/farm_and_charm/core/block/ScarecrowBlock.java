@@ -8,10 +8,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -23,6 +26,8 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -32,6 +37,8 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -66,12 +73,16 @@ public class ScarecrowBlock extends BaseEntityBlock {
             m.put(d, ShapeUtil.rotateShape(Direction.NORTH, d, voxelShapeSupplier.get()));
         }
     });
+    private static final Map<Direction, VoxelShape> LOWER_SHAPE = Util.make(new HashMap<>(), m -> SHAPE.forEach((d, shape) -> m.put(d, Shapes.join(shape, Shapes.block(), BooleanOp.AND))));
+    private static final Map<Direction, VoxelShape> UPPER_SHAPE = Util.make(new HashMap<>(), m -> SHAPE.forEach((d, shape) -> m.put(d, Shapes.join(shape.move(0, -1, 0), Shapes.block(), BooleanOp.AND))));
     public static final BooleanProperty HAS_DUNGAREES = BooleanProperty.create("has_dungarees");
+    public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
+    public static final EnumProperty<ScarecrowMode> MODE = EnumProperty.create("mode", ScarecrowMode.class);
 
     public ScarecrowBlock(Properties props) {
         super(props);
         this.registerDefaultState(this.defaultBlockState()
-                .setValue(FACING, Direction.NORTH).setValue(HAS_DUNGAREES, true)
+                .setValue(FACING, Direction.NORTH).setValue(HAS_DUNGAREES, true).setValue(HALF, DoubleBlockHalf.LOWER).setValue(MODE, ScarecrowMode.CALM)
         );
     }
 
@@ -82,6 +93,11 @@ public class ScarecrowBlock extends BaseEntityBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        BlockPos pos = ctx.getClickedPos();
+        Level level = ctx.getLevel();
+        if (pos.getY() >= level.getMaxBuildHeight() - 1 || !level.getBlockState(pos.above()).canBeReplaced(ctx)) {
+            return null;
+        }
         return this.defaultBlockState()
                 .setValue(FACING, ctx.getHorizontalDirection().getOpposite())
                 .setValue(HAS_DUNGAREES, true);
@@ -89,16 +105,42 @@ public class ScarecrowBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, HAS_DUNGAREES);
+        builder.add(FACING, HAS_DUNGAREES, HALF, MODE);
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        level.setBlock(pos.above(), state.setValue(HALF, DoubleBlockHalf.UPPER), 3);
+    }
+
+    @Override
+    public @NotNull BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (!level.isClientSide && state.getValue(HALF) == DoubleBlockHalf.UPPER) {
+            BlockPos below = pos.below();
+            BlockState lower = level.getBlockState(below);
+            if (lower.is(this) && lower.getValue(HALF) == DoubleBlockHalf.LOWER) {
+                if (player.isCreative()) {
+                    level.setBlock(below, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL | Block.UPDATE_SUPPRESS_DROPS);
+                    level.levelEvent(player, LevelEvent.PARTICLES_DESTROY_BLOCK, below, Block.getId(lower));
+                } else {
+                    level.destroyBlock(below, true, player);
+                }
+            }
+        }
+        return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
     public @NotNull VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-        return SHAPE.get(state.getValue(FACING));
+        return (state.getValue(HALF) == DoubleBlockHalf.UPPER ? UPPER_SHAPE : LOWER_SHAPE).get(state.getValue(FACING));
     }
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
+        if (state.getValue(HALF) == DoubleBlockHalf.UPPER) {
+            BlockState lower = world.getBlockState(pos.below());
+            return lower.is(this) && lower.getValue(HALF) == DoubleBlockHalf.LOWER;
+        }
         var below = world.getBlockState(pos.below()).getShape(world, pos.below());
         return Block.isFaceFull(below, Direction.UP);
     }
@@ -112,6 +154,15 @@ public class ScarecrowBlock extends BaseEntityBlock {
 
     @Override
     public @NotNull BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
+        if (state.getValue(HALF) == DoubleBlockHalf.UPPER) {
+            if (direction == Direction.DOWN && !(neighborState.is(this) && neighborState.getValue(HALF) == DoubleBlockHalf.LOWER)) {
+                return Blocks.AIR.defaultBlockState();
+            }
+            if (direction == Direction.DOWN) {
+                return state.setValue(FACING, neighborState.getValue(FACING)).setValue(HAS_DUNGAREES, neighborState.getValue(HAS_DUNGAREES)).setValue(MODE, neighborState.getValue(MODE));
+            }
+            return state;
+        }
         if (!state.canSurvive(world, pos)) {
             world.scheduleTick(pos, this, 1);
         }
@@ -122,6 +173,11 @@ public class ScarecrowBlock extends BaseEntityBlock {
     protected @NotNull ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, @Nullable Player player, InteractionHand hand, BlockHitResult hit) {
         if (level.isClientSide) return ItemInteractionResult.SUCCESS;
         if (player == null) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (state.getValue(HALF) == DoubleBlockHalf.UPPER) {
+            pos = pos.below();
+            state = level.getBlockState(pos);
+            if (!state.is(this)) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
 
         if (state.getValue(HAS_DUNGAREES)) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
@@ -141,6 +197,17 @@ public class ScarecrowBlock extends BaseEntityBlock {
     @Override
     public @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (state.getValue(HALF) == DoubleBlockHalf.UPPER) {
+            pos = pos.below();
+            state = level.getBlockState(pos);
+            if (!state.is(this)) return InteractionResult.PASS;
+        }
+
+        if (player.isShiftKeyDown()) {
+            level.setBlock(pos, state.cycle(MODE), 3);
+            level.playSound(null, pos, SoundEvents.GRASS_HIT, SoundSource.BLOCKS, 0.8F, 0.9F + level.random.nextFloat() * 0.2F);
+            return InteractionResult.SUCCESS;
+        }
 
         if (!state.getValue(HAS_DUNGAREES)) {
             return InteractionResult.PASS;
@@ -158,19 +225,25 @@ public class ScarecrowBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState st) {
-        return new ScarecrowBlockEntity(pos, st);
+        return st.getValue(HALF) == DoubleBlockHalf.LOWER ? new ScarecrowBlockEntity(pos, st) : null;
     }
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level lvl, BlockState st, BlockEntityType<T> type) {
         return type == EntityTypeRegistry.SCARECROW_BLOCK_ENTITY.get()
-                ? (level, pos, state, be) -> ScarecrowBlockEntity.tick(level, be)
+                ? (level, pos, state, be) -> {
+                    if (level.isClientSide) {
+                        ((ScarecrowBlockEntity) be).clientTick(level, pos, state);
+                    } else {
+                        ScarecrowBlockEntity.tick(level, be);
+                    }
+                }
                 : null;
     }
 
     @Override
     public @NotNull RenderShape getRenderShape(BlockState state) {
-        return RenderShape.ENTITYBLOCK_ANIMATED;
+        return state.getValue(HALF) == DoubleBlockHalf.UPPER ? RenderShape.INVISIBLE : RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
     @Override

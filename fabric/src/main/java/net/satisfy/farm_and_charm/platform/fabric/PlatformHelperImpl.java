@@ -160,6 +160,14 @@ public class PlatformHelperImpl {
         return config().kitchen.cleaverHeadDrops;
     }
 
+    public static boolean isCookingExperienceEnabled() {
+        return config().kitchen.cookingExperience;
+    }
+
+    public static float getCookingExperienceMultiplier() {
+        return config().kitchen.cookingExperienceMultiplier;
+    }
+
     public static int getChickenEffectTickInterval() {
         return config().effects.chickenEffect.chickenEffectTickInterval;
     }

@@ -1,5 +1,11 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.crafting.CampfireCookingRecipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.satisfy.farm_and_charm.core.util.StoredExperience;
 import net.satisfy.foundation.menu.ExperienceSource;
 import com.mojang.datafixers.util.Pair;
@@ -55,6 +61,7 @@ import java.util.UUID;
 
 public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<StoveBlockEntity>, ImplementedInventory, MenuProvider, ExperienceSource {
     public static final int TOTAL_COOKING_TIME = 240;
+    public static final int GRILL_SLOTS = 4;
     protected static final int[] INGREDIENT_SLOTS = {1, 2, 3};
     protected int burnTime;
     protected int burnTimeTotal;
@@ -91,6 +98,10 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
     };
     private final StoredExperience experience = new StoredExperience();
     private NonNullList<ItemStack> inventory;
+    private final NonNullList<ItemStack> grillItems = NonNullList.withSize(GRILL_SLOTS, ItemStack.EMPTY);
+    private final int[] grillProgress = new int[GRILL_SLOTS];
+    private final int[] grillTotal = new int[GRILL_SLOTS];
+    private final long[] grillFlipStart = new long[GRILL_SLOTS];
 
     public StoveBlockEntity(BlockPos pos, BlockState state) {
         super(EntityTypeRegistry.STOVE_BLOCK_ENTITY.get(), pos, state);
@@ -135,6 +146,19 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         if (compoundTag.hasUUID("Owner")) {
             this.ownerUuid = compoundTag.getUUID("Owner");
         }
+        CompoundTag grill = compoundTag.getCompound("Grill");
+        for (int slot = 0; slot < GRILL_SLOTS; slot++) {
+            this.grillItems.set(slot, ItemStack.EMPTY);
+        }
+        ContainerHelper.loadAllItems(grill, this.grillItems, provider);
+        int[] progress = grill.getIntArray("Progress");
+        int[] total = grill.getIntArray("Total");
+        long[] flip = grill.getLongArray("Flip");
+        for (int slot = 0; slot < GRILL_SLOTS; slot++) {
+            this.grillProgress[slot] = slot < progress.length ? progress[slot] : 0;
+            this.grillTotal[slot] = slot < total.length ? total[slot] : 0;
+            this.grillFlipStart[slot] = slot < flip.length ? flip[slot] : 0L;
+        }
     }
 
     @Override
@@ -144,6 +168,12 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         compoundTag.putShort("CookTime", (short) this.cookTime);
         compoundTag.putShort("CookTimeTotal", (short) this.cookTimeTotal);
         this.experience.save(compoundTag);
+        CompoundTag grill = new CompoundTag();
+        ContainerHelper.saveAllItems(grill, this.grillItems, true, provider);
+        grill.putIntArray("Progress", this.grillProgress);
+        grill.putIntArray("Total", this.grillTotal);
+        grill.putLongArray("Flip", this.grillFlipStart);
+        compoundTag.put("Grill", grill);
         compoundTag.putBoolean("ManuallyExtinguished", this.manuallyExtinguished);
         if (this.ownerUuid != null) {
             compoundTag.putUUID("Owner", this.ownerUuid);
@@ -212,6 +242,134 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         return true;
     }
 
+    public boolean isGrillFree() {
+        return this.level != null && this.level.getBlockState(this.worldPosition.above()).isAir();
+    }
+
+    public static int grillSlotAt(Vec3 location, BlockPos pos) {
+        double x = location.x - pos.getX();
+        double z = location.z - pos.getZ();
+        return (x >= 0.5 ? 1 : 0) + (z >= 0.5 ? 2 : 0);
+    }
+
+    public static Vec3 grillSlotCenter(int slot) {
+        return new Vec3(slot % 2 == 0 ? 0.28 : 0.72, 1.0, slot < 2 ? 0.28 : 0.72);
+    }
+
+    public ItemStack getGrillItem(int slot) {
+        return this.grillItems.get(slot);
+    }
+
+    public int getGrillProgress(int slot) {
+        return this.grillProgress[slot];
+    }
+
+    public int getGrillTotal(int slot) {
+        return this.grillTotal[slot];
+    }
+
+    public long getGrillFlipStart(int slot) {
+        return this.grillFlipStart[slot];
+    }
+
+    public boolean hasGrillItems() {
+        for (ItemStack stack : this.grillItems) {
+            if (!stack.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isLit() {
+        return this.getBlockState().getValue(StoveBlock.LIT);
+    }
+
+    public static Optional<RecipeHolder<CampfireCookingRecipe>> findGrillRecipe(Level level, ItemStack stack) {
+        if (stack.isEmpty()) {
+            return Optional.empty();
+        }
+        return level.getRecipeManager().getRecipeFor(RecipeType.CAMPFIRE_COOKING, new SingleRecipeInput(stack), level);
+    }
+
+    public boolean placeOnGrill(int slot, ItemStack stack) {
+        if (this.level == null || !this.isGrillFree() || !this.grillItems.get(slot).isEmpty()) {
+            return false;
+        }
+        Optional<RecipeHolder<CampfireCookingRecipe>> recipe = findGrillRecipe(this.level, stack);
+        if (recipe.isEmpty()) {
+            return false;
+        }
+        this.grillItems.set(slot, stack.copyWithCount(1));
+        this.grillProgress[slot] = 0;
+        this.grillTotal[slot] = recipe.get().value().getCookingTime();
+        this.grillFlipStart[slot] = 0L;
+        this.setChanged();
+        return true;
+    }
+
+    public ItemStack takeFromGrill(int slot) {
+        ItemStack stack = this.grillItems.get(slot);
+        this.grillItems.set(slot, ItemStack.EMPTY);
+        this.grillProgress[slot] = 0;
+        this.grillTotal[slot] = 0;
+        this.setChanged();
+        return stack;
+    }
+
+    public void flipGrillItem(int slot) {
+        if (this.level != null && !this.grillItems.get(slot).isEmpty()) {
+            this.grillFlipStart[slot] = this.level.getGameTime();
+            this.setChanged();
+        }
+    }
+
+    private void popGrillItem(ServerLevel level, int slot, ItemStack stack) {
+        Vec3 center = grillSlotCenter(slot);
+        ItemEntity item = new ItemEntity(level, this.worldPosition.getX() + center.x, this.worldPosition.getY() + 1.05, this.worldPosition.getZ() + center.z, stack);
+        item.setDeltaMovement(level.random.triangle(0.0, 0.06), 0.25, level.random.triangle(0.0, 0.06));
+        level.addFreshEntity(item);
+    }
+
+    public void dropGrillItems(ServerLevel level) {
+        for (int slot = 0; slot < GRILL_SLOTS; slot++) {
+            if (!this.grillItems.get(slot).isEmpty()) {
+                popGrillItem(level, slot, this.takeFromGrill(slot));
+            }
+        }
+    }
+
+    private void tickGrill(ServerLevel level) {
+        if (!this.hasGrillItems()) {
+            return;
+        }
+        if (!this.isGrillFree()) {
+            this.dropGrillItems(level);
+            return;
+        }
+        if (!this.isBurning()) {
+            return;
+        }
+        for (int slot = 0; slot < GRILL_SLOTS; slot++) {
+            ItemStack stack = this.grillItems.get(slot);
+            if (stack.isEmpty() || ++this.grillProgress[slot] < this.grillTotal[slot]) {
+                continue;
+            }
+            Optional<RecipeHolder<CampfireCookingRecipe>> recipe = findGrillRecipe(level, stack);
+            ItemStack result = recipe.map(holder -> holder.value().assemble(new SingleRecipeInput(stack), level.registryAccess())).orElse(stack);
+            this.takeFromGrill(slot);
+            popGrillItem(level, slot, result);
+            level.playSound(null, this.worldPosition, SoundEvents.CHICKEN_EGG, SoundSource.BLOCKS, 0.6F, 1.4F + level.random.nextFloat() * 0.2F);
+            if (recipe.isPresent()) {
+                this.experience.add(recipe.get().value().getExperience());
+                this.experience.award(level, Vec3.atCenterOf(this.worldPosition).add(0.0, 0.6, 0.0));
+            }
+        }
+        if (level.getGameTime() % 20L == 0L) {
+            this.setChanged();
+        }
+    }
+
     @Override
     public void tick(Level world, BlockPos pos, BlockState state, StoveBlockEntity blockEntity) {
         if (world.isClientSide) {
@@ -226,6 +384,8 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         }
 
         assert level != null;
+
+        this.tickGrill((ServerLevel) world);
 
         RecipeManager recipeManager = world.getRecipeManager();
         List<RecipeHolder<StoveRecipe>> recipes = recipeManager.getAllRecipesFor(RecipeTypeRegistry.STOVE_RECIPE_TYPE.get());
@@ -246,7 +406,7 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
 
         if (!this.isBurning() && !this.manuallyExtinguished) {
             boolean shouldKeepBurning = state.getValue(StoveBlock.LIT) && this.getTotalBurnTime(this.getItem(4)) > 0;
-            boolean shouldStartCooking = recipe.isPresent() && canCraft(recipe.get(), access) && this.getTotalBurnTime(this.getItem(4)) > 0;
+            boolean shouldStartCooking = ((recipe.isPresent() && canCraft(recipe.get(), access)) || (this.hasGrillItems() && this.isGrillFree())) && this.getTotalBurnTime(this.getItem(4)) > 0;
 
             if (shouldKeepBurning || shouldStartCooking) {
                 this.burnTime = this.burnTimeTotal = this.getTotalBurnTime(this.getItem(4));

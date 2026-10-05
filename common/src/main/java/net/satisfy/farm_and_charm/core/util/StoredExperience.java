@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.util;
 
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -11,8 +12,8 @@ public class StoredExperience {
     private float amount;
 
     public void add(float experience) {
-        if (experience > 0) {
-            amount += experience;
+        if (experience > 0 && PlatformHelper.isCookingExperienceEnabled()) {
+            amount += experience * PlatformHelper.getCookingExperienceMultiplier();
         }
     }
 

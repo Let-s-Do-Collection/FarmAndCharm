@@ -150,6 +150,12 @@ public class FarmAndCharmFabricConfig implements ConfigData {
 
         @ConfigEntry.Gui.Tooltip
         public boolean cleaverHeadDrops = true;
+
+        @ConfigEntry.Gui.Tooltip
+        public boolean cookingExperience = true;
+
+        @ConfigEntry.Gui.Tooltip
+        public float cookingExperienceMultiplier = 1.0f;
     }
 
     public static class InfoTooltipSettings {

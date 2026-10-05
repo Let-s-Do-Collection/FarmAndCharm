@@ -11,7 +11,9 @@
 * Rope, Compost and Chicken Nest can now also be assembled on the Cutting Board, their Crafting Table recipes stay
 * Feathers now fly when taking eggs from a Chicken Nest or putting them in, and when chasing Chickens out of a Chicken Coop with a Pitchfork
 * Breaking a Timber Well now splashes out some water
-* Cooking and processing now gives experience: every 5 minced items, every 10 cut and every 20 stripped items on the Cutting Board, every 5 whisked dishes in the Crafting Bowl, and every meal from the Cooking Pot and Roaster. The amount is set per recipe with the optional `experience` field
+* The Stove can now also be put out with a Water Bottle
+* The top of the Stove is now a grill with 4 spots: right-click with anything that cooks on a Campfire to put it on, right-click to flip it, sneak + right-click to take it back. It only cooks while the Stove burns and pops off when done. The HUD shows how long each piece still needs
+* Cooking and processing now gives experience: every 5 minced items, every 10 cut and every 20 stripped items on the Cutting Board, every 5 whisked dishes in the Crafting Bowl, and every meal from the Cooking Pot and Roaster. The amount is set per recipe with the optional `experience` field and can be turned off or multiplied in the config
 * Mushroom Stew, Beetroot Soup and Rabbit Stew now also give Sustenance on NeoForge
 * New config options: Giant Crop chance, Scarecrow interval and range, Wild Crop drop chance, Timber Well groundwater depth and rain fill chance, Chicken Coop capacity, Dog and Cat begging, Pet Bowl search range and feeding times, and switches to turn off the info tooltips of the Cutting Board, Mincer, Crafting Bowl and Silo or to only show them while wearing Dungarees
 * VanillaBlend: an optional built-in resource pack with muted, vanilla-friendly colors for food, dishes, teas, Mob Effect icons and more. Enable it in the Resource Packs menu. Palettes inspired by Vanilla, Farmer's Delight, Supplementaries and Create

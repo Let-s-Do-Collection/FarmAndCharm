@@ -155,6 +155,14 @@ public class PlatformHelperImpl {
         return FarmAndCharmNeoForgeConfig.cleaverHeadDrops;
     }
 
+    public static boolean isCookingExperienceEnabled() {
+        return FarmAndCharmNeoForgeConfig.cookingExperience;
+    }
+
+    public static float getCookingExperienceMultiplier() {
+        return FarmAndCharmNeoForgeConfig.cookingExperienceMultiplier;
+    }
+
     public static int getChickenEffectTickInterval() {
         return FarmAndCharmNeoForgeConfig.chickenEffectTickInterval;
     }

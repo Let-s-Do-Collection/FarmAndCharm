@@ -194,6 +194,16 @@ public abstract class PlatformHelper {
     }
 
     @ExpectPlatform
+    public static boolean isCookingExperienceEnabled() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static float getCookingExperienceMultiplier() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
     public static int getChickenEffectTickInterval() {
         throw new AssertionError();
     }

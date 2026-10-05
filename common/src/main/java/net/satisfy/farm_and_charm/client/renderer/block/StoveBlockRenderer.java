@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.client.renderer.block;
 
+import net.minecraft.util.Mth;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -16,6 +17,8 @@ import java.util.Arrays;
 
 @SuppressWarnings("unused")
 public class StoveBlockRenderer implements BlockEntityRenderer<StoveBlockEntity> {
+    private static final float FLIP_TICKS = 10.0F;
+
     public StoveBlockRenderer(Context context) {
     }
 
@@ -34,6 +37,31 @@ public class StoveBlockRenderer implements BlockEntityRenderer<StoveBlockEntity>
         renderSlots(blockEntity, poseStack, baseOffset, directionOffset, inputSlotOffset, bufferSource);
 
         renderOutput(blockEntity, poseStack, baseOffset, directionOffset, bufferSource);
+
+        renderGrill(blockEntity, partialTicks, poseStack, bufferSource);
+    }
+
+    private void renderGrill(StoveBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource) {
+        if (blockEntity.getLevel() == null || !blockEntity.isGrillFree()) {
+            return;
+        }
+        float time = blockEntity.getLevel().getGameTime() + partialTicks;
+        for (int slot = 0; slot < StoveBlockEntity.GRILL_SLOTS; slot++) {
+            ItemStack stack = blockEntity.getGrillItem(slot);
+            if (stack.isEmpty()) {
+                continue;
+            }
+            Vec3 center = StoveBlockEntity.grillSlotCenter(slot);
+            float flip = Mth.clamp((time - blockEntity.getGrillFlipStart(slot)) / FLIP_TICKS, 0.0F, 1.0F);
+            float lift = Mth.sin(flip * Mth.PI) * 0.3F;
+            poseStack.pushPose();
+            poseStack.translate(center.x, center.y + 0.02 + lift, center.z);
+            poseStack.mulPose(Axis.YP.rotationDegrees(slot * 67.0F + 20.0F));
+            poseStack.mulPose(Axis.XP.rotationDegrees(90.0F + flip * 360.0F));
+            poseStack.scale(0.35F, 0.35F, 0.35F);
+            ClientUtil.renderGuiItemForEntity(stack, poseStack, bufferSource, blockEntity.getLevel(), blockEntity.getBlockPos().above());
+            poseStack.popPose();
+        }
     }
 
     private void renderSlots(StoveBlockEntity blockEntity, PoseStack poseStack, Vec3 baseOffset, Vec3 directionOffset, Vec3 slotOffset, MultiBufferSource bufferSource) {

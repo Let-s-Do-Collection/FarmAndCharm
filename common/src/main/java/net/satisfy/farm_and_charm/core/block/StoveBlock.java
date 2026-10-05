@@ -1,5 +1,12 @@
 package net.satisfy.farm_and_charm.core.block;
 
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Component;
+import net.satisfy.foundation.overlay.BlockNotice;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -54,6 +61,15 @@ public class StoveBlock extends Block implements EntityBlock {
     @Override
     public @NotNull InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
         final BlockEntity entity = world.getBlockEntity(pos);
+        if (entity instanceof StoveBlockEntity stove && isGrillHit(stove, hit)) {
+            int slot = StoveBlockEntity.grillSlotAt(hit.getLocation(), pos);
+            if (!stove.getGrillItem(slot).isEmpty()) {
+                if (!world.isClientSide) {
+                    useGrillSlot(world, pos, player, stove, slot);
+                }
+                return InteractionResult.sidedSuccess(world.isClientSide());
+            }
+        }
         if (entity instanceof MenuProvider factory) {
             player.openMenu(factory);
             return InteractionResult.sidedSuccess(world.isClientSide());
@@ -71,7 +87,11 @@ public class StoveBlock extends Block implements EntityBlock {
 
         if (isIgnitionItem(itemStack)) {
             if (!stoveBlockEntity.canIgnite()) {
-                return ItemInteractionResult.CONSUME;
+                if (!stoveBlockEntity.isLit() && player instanceof ServerPlayer serverPlayer) {
+                    world.playSound(null, pos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 0.6f, 1.6f);
+                    BlockNotice.send(serverPlayer, pos, Component.translatable("hud.farm_and_charm.stove_no_fuel"));
+                }
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
             }
 
             if (!world.isClientSide) {
@@ -102,7 +122,44 @@ public class StoveBlock extends Block implements EntityBlock {
             return ItemInteractionResult.SUCCESS;
         }
 
+        if (isGrillHit(stoveBlockEntity, hit)) {
+            int slot = StoveBlockEntity.grillSlotAt(hit.getLocation(), pos);
+            if (!stoveBlockEntity.getGrillItem(slot).isEmpty()) {
+                if (!world.isClientSide) {
+                    useGrillSlot(world, pos, player, stoveBlockEntity, slot);
+                }
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            }
+            if (StoveBlockEntity.findGrillRecipe(world, itemStack).isPresent()) {
+                if (!world.isClientSide && stoveBlockEntity.placeOnGrill(slot, itemStack)) {
+                    itemStack.consume(1, player);
+                    world.playSound(null, pos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 0.6F, 1.2F);
+                    if (stoveBlockEntity.isLit()) {
+                        world.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.25F, 1.8F + world.random.nextFloat() * 0.2F);
+                    }
+                }
+                return ItemInteractionResult.sidedSuccess(world.isClientSide);
+            }
+        }
+
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    private static boolean isGrillHit(StoveBlockEntity stove, BlockHitResult hit) {
+        return hit.getDirection() == Direction.UP && stove.isGrillFree();
+    }
+
+    private static void useGrillSlot(Level world, BlockPos pos, Player player, StoveBlockEntity stove, int slot) {
+        if (player.isShiftKeyDown()) {
+            ItemStack taken = stove.takeFromGrill(slot);
+            if (!player.addItem(taken)) {
+                player.drop(taken, false);
+            }
+            world.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.4F, 1.2F);
+        } else {
+            stove.flipGrillItem(slot);
+            world.playSound(null, pos, SoundEvents.WOOL_HIT, SoundSource.BLOCKS, 0.5F, 1.4F + world.random.nextFloat() * 0.2F);
+        }
     }
 
     @Override
@@ -114,6 +171,7 @@ public class StoveBlock extends Block implements EntityBlock {
         if (blockEntity instanceof StoveBlockEntity entity) {
             if (world instanceof ServerLevel) {
                 Containers.dropContents(world, pos, entity);
+                entity.dropGrillItems((ServerLevel) world);
                 entity.dropExperience((ServerLevel) world, Vec3.atCenterOf(pos));
             }
             world.updateNeighbourForOutputSignal(pos, this);
@@ -154,6 +212,15 @@ public class StoveBlock extends Block implements EntityBlock {
     public void animateTick(BlockState state, Level world, BlockPos pos, RandomSource random) {
         if (!state.getValue(LIT) || !world.isEmptyBlock(pos.above()))
             return;
+
+        if (world.getBlockEntity(pos) instanceof StoveBlockEntity stove) {
+            for (int slot = 0; slot < StoveBlockEntity.GRILL_SLOTS; slot++) {
+                if (!stove.getGrillItem(slot).isEmpty() && random.nextFloat() < 0.35F) {
+                    Vec3 center = StoveBlockEntity.grillSlotCenter(slot);
+                    world.addParticle(ParticleTypes.SMOKE, pos.getX() + center.x + (random.nextDouble() - 0.5) * 0.15, pos.getY() + 1.05, pos.getZ() + center.z + (random.nextDouble() - 0.5) * 0.15, 0.0, 0.02, 0.0);
+                }
+            }
+        }
 
         double centerX = (double) pos.getX() + 0.5;
         double centerY = pos.getY() + 0.24;
@@ -198,7 +265,12 @@ public class StoveBlock extends Block implements EntityBlock {
 
     private static boolean isExtinguishItem(ItemStack itemStack) {
         Item item = itemStack.getItem();
-        return item == Items.WATER_BUCKET || item instanceof ShovelItem;
+        return item == Items.WATER_BUCKET || item instanceof ShovelItem || isWaterBottle(itemStack);
+    }
+
+    private static boolean isWaterBottle(ItemStack itemStack) {
+        PotionContents contents = itemStack.get(DataComponents.POTION_CONTENTS);
+        return itemStack.is(Items.POTION) && contents != null && contents.is(Potions.WATER);
     }
 
     private static void consumeIgnitionItem(Player player, InteractionHand hand, ItemStack itemStack) {
@@ -223,6 +295,11 @@ public class StoveBlock extends Block implements EntityBlock {
 
         if (itemStack.is(Items.WATER_BUCKET)) {
             player.setItemInHand(hand, new ItemStack(Items.BUCKET));
+            return;
+        }
+
+        if (isWaterBottle(itemStack)) {
+            player.setItemInHand(hand, ItemUtils.createFilledResult(itemStack, player, new ItemStack(Items.GLASS_BOTTLE)));
             return;
         }
 

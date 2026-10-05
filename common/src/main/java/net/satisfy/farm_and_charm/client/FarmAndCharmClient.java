@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.client;
 
+import net.satisfy.farm_and_charm.client.gui.overlay.StoveInfoProvider;
 import net.satisfy.foundation.client.armor.ArmorModels;
 import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import net.satisfy.foundation.storage.StorageBlockEntityRenderer;
@@ -80,6 +81,7 @@ public class FarmAndCharmClient {
         BlockInfoOverlay.registerProvider(new CuttingBoardInfoProvider());
         BlockInfoOverlay.registerProvider(new SiloInfoProvider());
         BlockInfoOverlay.registerProvider(new MincerInfoProvider());
+        BlockInfoOverlay.registerProvider(new StoveInfoProvider());
         BlockInfoOverlay.registerProvider(new CraftingBowlInfoProvider());
         BlockInfoOverlay.registerProvider(new WaterSprinklerInfoProvider());
         BlockInfoOverlay.registerProvider(new ScarecrowInfoProvider());

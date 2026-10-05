@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.client;
 
+import net.satisfy.foundation.client.armor.ArmorModels;
 import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import net.satisfy.foundation.storage.StorageBlockEntityRenderer;
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
@@ -86,6 +87,7 @@ public class FarmAndCharmClient {
         InfoTooltip.of(CUTTING_BOARD.get()).placeable().details(3).register();
         registerStorageTypeRenderers();
         registerBlockEntityRenderer();
+        registerArmorModels();
         MenuRegistry.registerScreenFactory(ScreenhandlerTypeRegistry.COOKING_POT_SCREEN_HANDLER.get(), CookingPotGui::new);
         MenuRegistry.registerScreenFactory(ScreenhandlerTypeRegistry.STOVE_SCREEN_HANDLER.get(), StoveGui::new);
         MenuRegistry.registerScreenFactory(ScreenhandlerTypeRegistry.ROASTER_SCREEN_HANDLER.get(), RoasterGui::new);
@@ -120,6 +122,10 @@ public class FarmAndCharmClient {
         StorageBlockEntityRenderer.registerStorageType(StorageTypeRegistry.TOOL_RACK, new ToolRackRenderer());
         StorageBlockEntityRenderer.registerStorageType(StorageTypeRegistry.WINDOW_SILL, new WindowSillRenderer());
         StorageBlockEntityRenderer.registerStorageType(StorageTypeRegistry.CHICKEN_NEST, new ChickenNestRenderer());
+    }
+
+    public static void registerArmorModels() {
+        ArmorModels.register(DungareesLeggingsModel.LAYER_LOCATION, DungareesLeggingsModel::new, DUNGAREES.get());
     }
 
     public static void registerBlockEntityRenderer() {

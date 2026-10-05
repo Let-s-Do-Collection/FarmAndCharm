@@ -20,5 +20,6 @@
     "id": "farm_and_charm:yeast",
     "count": 12
   },
-  "requiresLearning": false
+  "requiresLearning": false,
+  "experience": 0.35
 }

@@ -1,5 +1,9 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
+import net.satisfy.farm_and_charm.core.util.StoredExperience;
+import net.satisfy.foundation.menu.ExperienceSource;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.phys.Vec3;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -48,7 +52,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTicker<CookingPotBlockEntity>, ImplementedInventory, MenuProvider, Container {
+public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTicker<CookingPotBlockEntity>, ImplementedInventory, MenuProvider, ExperienceSource, Container {
     private static final int FIRST_INGREDIENT_SLOT = 0;
     private static final int LAST_INGREDIENT_SLOT = 5;
     private static final int CONTAINER_SLOT = 6;
@@ -57,6 +61,7 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
     private static final int MAX_COOKING_TIME = 900;
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(MAX_CAPACITY, ItemStack.EMPTY);
     private int cookingTime;
+    private final StoredExperience experience = new StoredExperience();
     private boolean isBeingBurned;
     private UUID ownerUuid;
     private final ContainerData delegate = new ContainerData() {
@@ -110,6 +115,11 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
     }
 
     @Override
+    public void dropExperience(ServerLevel level, Vec3 pos) {
+        experience.award(level, pos);
+    }
+
+    @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
         super.loadAdditional(tag, provider);
         NonNullList<ItemStack> loaded = NonNullList.withSize(MAX_CAPACITY, ItemStack.EMPTY);
@@ -118,6 +128,7 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
             this.inventory.set(i, loaded.get(i));
         }
         cookingTime = tag.getInt("CookingTime");
+        experience.load(tag);
         if (tag.hasUUID("OwnerUUID")) {
             ownerUuid = tag.getUUID("OwnerUUID");
         }
@@ -128,6 +139,7 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
         super.saveAdditional(tag, provider);
         ContainerHelper.saveAllItems(tag, inventory, provider);
         tag.putInt("CookingTime", cookingTime);
+        experience.save(tag);
         if (ownerUuid != null) {
             tag.putUUID("OwnerUUID", ownerUuid);
         }
@@ -175,6 +187,10 @@ public class CookingPotBlockEntity extends BlockEntity implements BlockEntityTic
             setItem(OUTPUT_SLOT, recipeOutput);
         } else {
             outputSlotStack.grow(recipeOutput.getCount());
+        }
+
+        if (recipe instanceof CookingPotRecipe cookingPotRecipe) {
+            experience.add(cookingPotRecipe.getExperience());
         }
 
         recipe.getIngredients().forEach(ingredient -> {

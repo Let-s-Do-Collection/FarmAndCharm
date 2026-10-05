@@ -12,6 +12,7 @@ import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 public class WaterSprinklerBlockEntity extends BlockEntity {
     public static final float STEP_ANGLE = 15.0F;
     private static final float STEPS_PER_TICK = 2.0F / STEP_ANGLE;
+    private static final float STEPS_PER_TURN = 360.0F / STEP_ANGLE;
     private static final float SNAP = 0.25F;
     private static final float SPIN_UP = 0.02F;
     private float phase;
@@ -26,6 +27,9 @@ public class WaterSprinklerBlockEntity extends BlockEntity {
     public static void clientTick(Level level, BlockPos pos, BlockState state, WaterSprinklerBlockEntity sprinkler) {
         float target = state.getValue(WaterSprinklerBlock.PRESSURE).getSpeed() * (level.isRaining() || level.isThundering() ? 2.0F : 1.0F);
         sprinkler.speed += (target - sprinkler.speed) * SPIN_UP;
+        if (sprinkler.phase >= STEPS_PER_TURN) {
+            sprinkler.phase -= STEPS_PER_TURN;
+        }
         sprinkler.phasePrev = sprinkler.phase;
         sprinkler.phase += sprinkler.speed * STEPS_PER_TICK;
     }
@@ -38,10 +42,6 @@ public class WaterSprinklerBlockEntity extends BlockEntity {
         return this.getBlockState().getValue(WaterSprinklerBlock.PRESSURE);
     }
 
-    /**
-     * Angle in degrees. Steady and high pressure turn evenly. Pulsing pressure rests, then snaps one step ahead
-     * and springs back a little, like an impact sprinkler.
-     */
     public float getRotationAngle(float partialTick) {
         float phase = this.getPhase(partialTick);
         if (this.getPressure() != SprinklerPressure.PULSING) {
@@ -58,13 +58,11 @@ public class WaterSprinklerBlockEntity extends BlockEntity {
         return this.getRotationAngle(1.0F);
     }
 
-    /** 1 right after a step, fading to 0 before the next one. */
     public float getJolt(float partialTick) {
         float phase = this.getPhase(partialTick);
         return 1.0F - (phase - Mth.floor(phase));
     }
 
-    /** 0 while standing still, 1 at normal speed, more in the rain or at high pressure. */
     public float getSpeed() {
         return this.speed;
     }

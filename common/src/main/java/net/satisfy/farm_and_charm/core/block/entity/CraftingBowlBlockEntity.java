@@ -1,5 +1,7 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
+import net.satisfy.farm_and_charm.core.util.StoredExperience;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.core.BlockPos;
 import java.util.ArrayList;
 import net.minecraft.core.particles.ColorParticleOption;
@@ -47,17 +49,15 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
     private float whiskAnglePrev;
     private float whiskSpeed;
     private float stirred;
+    private final StoredExperience experience = new StoredExperience();
     private long lastStir;
     @Nullable
     private Boolean hasRecipe;
     public static final float WHISK_MAX_SPEED = 1.2F;
-    /** Average color of the dough texture, used for the splash particles. */
     private static final int DOUGH_COLOR = 0xFFE1AF61;
     private static final float WHISK_DECAY = 0.93F;
-    /** Stirs per tick at full whisk speed; slower whisking stirs slower. */
     private static final float STIR_RATE = 1.25F;
     private static final int SYNC_INTERVAL = 10;
-    /** Ticks without stirring before a click takes the result out, so holding right-click never empties the bowl. */
     private static final int TAKE_OUT_DELAY = 8;
 
     public CraftingBowlBlockEntity(BlockPos position, BlockState state) {
@@ -72,6 +72,7 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
         this.hasRecipe = null;
         this.whiskSpeed = tag.getFloat("WhiskSpeed");
         this.stirred = tag.getFloat("Stirred");
+        this.experience.load(tag);
     }
 
     @Override
@@ -80,6 +81,7 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
         if (!this.trySaveLootTable(tag)) ContainerHelper.saveAllItems(tag, this.stacks, provider);
         tag.putFloat("WhiskSpeed", this.whiskSpeed);
         tag.putFloat("Stirred", this.stirred);
+        this.experience.save(tag);
     }
 
     @Override
@@ -173,7 +175,6 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
         return ItemStack.EMPTY;
     }
 
-    /** Stirs done so far, 0 to {@link CraftingBowlBlock#STIRS_NEEDED}. */
     public float getStirred() {
         return this.stirred;
     }
@@ -200,7 +201,6 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
         return Optional.ofNullable(matchExact(all));
     }
 
-    /** How far the dough has risen: 0 = none, 1 = full bowl. Only rises when the ingredients make something. */
     public float getDoughFill() {
         if (this.isFinished()) return 1.0F;
         if (this.stirred > 0.0F && this.hasRecipe()) return Math.min(1.0F, this.stirred / CraftingBowlBlock.STIRS_NEEDED);
@@ -214,7 +214,6 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
         server.sendParticles(ColorParticleOption.create(FoundationParticles.DYE_SPLASH.get(), DOUGH_COLOR), pos.getX() + 0.5, y, pos.getZ() + 0.5, amount, 0.12, 0.02, 0.12, 0.05 + this.whiskSpeed * 0.08);
     }
 
-    /** Whether the ingredients in the bowl make something. Cached until the contents change. */
     public boolean hasRecipe() {
         if (this.hasRecipe == null) {
             this.hasRecipe = this.level != null && this.numberOfIngredientsInBowl() > 0 && this.findRecipe(this.level).isPresent();
@@ -315,7 +314,6 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
         if (this.whiskAngle < 0F) this.whiskAngle += tau;
         if (this.whiskSpeed <= 0F) return;
 
-        // client and server both stir along so the dough rises smoothly; only the server finishes the recipe
         if (!this.isFinished() && this.hasRecipe()) {
             this.stirred = Math.min(CraftingBowlBlock.STIRS_NEEDED, this.stirred + this.whiskSpeed / WHISK_MAX_SPEED * STIR_RATE);
         }
@@ -344,6 +342,10 @@ public class CraftingBowlBlockEntity extends RandomizableContainerBlockEntity im
         resultItem.setCount(recipe.get().getOutputCount());
         this.stirred = 0.0F;
         this.setItem(4, resultItem);
+        if (level instanceof ServerLevel serverLevel) {
+            this.experience.add(recipe.get().getExperience());
+            this.experience.award(serverLevel, Vec3.atCenterOf(pos));
+        }
     }
 
     private void sprayIngredients(ServerLevel server, BlockPos pos, int amount) {

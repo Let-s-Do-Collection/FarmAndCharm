@@ -1,5 +1,7 @@
 package net.satisfy.farm_and_charm.client.gui.handler;
 
+import net.satisfy.foundation.menu.ExtendedSlot;
+import net.satisfy.foundation.menu.OutputSlot;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -10,8 +12,6 @@ import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
-import net.satisfy.farm_and_charm.client.gui.handler.slot.ExtendedSlot;
-import net.satisfy.farm_and_charm.client.gui.handler.slot.StoveOutputSlot;
 import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +39,7 @@ public class StoveGuiHandler extends AbstractContainerMenu {
     }
 
     private void buildBlockEntityContainer(Inventory playerInventory) {
-        this.addSlot(new StoveOutputSlot(playerInventory.player, inventory, 0, 126, 42));
+        this.addSlot(new OutputSlot(playerInventory.player, inventory, 0, 126, 42));
 
         this.addSlot(new ExtendedSlot(inventory, 1, 29, 18));
         this.addSlot(new ExtendedSlot(inventory, 2, 47, 18));

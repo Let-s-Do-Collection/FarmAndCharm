@@ -7,7 +7,6 @@ import net.satisfy.farm_and_charm.core.block.SturdyLadderBlock;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import org.jetbrains.annotations.NotNull;
 
-/** Only remembers when the ladder was last climbed (server) and when it started to shake (client). Nothing is saved. */
 public class SturdyLadderBlockEntity extends BlockEntity {
     private long lastClimbed;
     private long shakeStart;

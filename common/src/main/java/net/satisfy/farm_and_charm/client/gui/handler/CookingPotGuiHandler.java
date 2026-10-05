@@ -1,5 +1,7 @@
 package net.satisfy.farm_and_charm.client.gui.handler;
 
+import net.satisfy.foundation.menu.OutputSlot;
+import net.satisfy.foundation.menu.ExtendedSlot;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -9,7 +11,6 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.satisfy.farm_and_charm.client.gui.handler.slot.ExtendedSlot;
 import net.satisfy.farm_and_charm.core.block.entity.CookingPotBlockEntity;
 import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.TagRegistry;
@@ -30,11 +31,11 @@ public class CookingPotGuiHandler extends AbstractContainerMenu {
         this.propertyDelegate = propertyDelegate;
         this.addDataSlots(propertyDelegate);
 
-        this.buildBlockEntityContainer();
+        this.buildBlockEntityContainer(playerInventory);
         this.buildPlayerContainer(playerInventory);
     }
 
-    private void buildBlockEntityContainer() {
+    private void buildBlockEntityContainer(Inventory playerInventory) {
         this.addSlot(new ExtendedSlot(inventory, 6, 95, 55, stack -> stack.is(TagRegistry.CONTAINER)));
 
         for (int row = 0; row < 2; row++) {
@@ -43,12 +44,7 @@ public class CookingPotGuiHandler extends AbstractContainerMenu {
             }
         }
 
-        this.addSlot(new Slot(inventory, 7, 124, 28) {
-            @Override
-            public boolean mayPlace(ItemStack stack) {
-                return false;
-            }
-        });
+        this.addSlot(new OutputSlot(playerInventory.player, inventory, 7, 124, 28));
     }
 
     private void buildPlayerContainer(Inventory playerInventory) {

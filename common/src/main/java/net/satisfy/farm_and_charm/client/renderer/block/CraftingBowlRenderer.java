@@ -53,7 +53,6 @@ public class CraftingBowlRenderer implements BlockEntityRenderer<CraftingBowlBlo
         float whiskAngle = be.getInterpolatedWhiskAngle(f);
         float tilt = be.getWhiskSpeed() / CraftingBowlBlockEntity.WHISK_MAX_SPEED * TILT_ANGLE;
         if (tilt > 0F) {
-            // the bowl leans towards the side the whisk is pushing against and follows it around
             pose.translate(0f, 1.5f, 0f);
             pose.mulPose(Axis.XP.rotationDegrees((float) Math.cos(whiskAngle) * tilt));
             pose.mulPose(Axis.ZP.rotationDegrees((float) Math.sin(whiskAngle) * tilt));
@@ -71,13 +70,11 @@ public class CraftingBowlRenderer implements BlockEntityRenderer<CraftingBowlBlo
         pose.popPose();
     }
 
-    /** The dough rises from the bottom while stirring and sloshes along with the whisk. */
     private void renderDough(CraftingBowlBlockEntity be, Level level, float partialTick, float whiskAngle, PoseStack pose, VertexConsumer vc, int light, int overlay) {
         float fill = be.getDoughFill();
         if (fill <= 0.0F) return;
         float speed = be.getWhiskSpeed() / CraftingBowlBlockEntity.WHISK_MAX_SPEED;
         double time = level.getGameTime() + partialTick;
-        // the pose is upside down here, so a positive y moves the dough further down into the bowl
         float surface = DOUGH_SURFACE + (1.0F - fill) * DOUGH_DEPTH + (float) Math.sin(time * 0.6) * DOUGH_BOB * speed;
         pose.pushPose();
         pose.translate(0f, surface, 0f);

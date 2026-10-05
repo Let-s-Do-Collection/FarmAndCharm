@@ -21,8 +21,10 @@ public class RoasterRecipe implements Recipe<RecipeInput> {
     private final ItemStack container;
     private final ItemStack output;
     private final boolean requiresLearning;
+    private final float experience;
 
-    public RoasterRecipe(NonNullList<Ingredient> inputs, ItemStack container, ItemStack output, boolean requiresLearning) {
+    public RoasterRecipe(NonNullList<Ingredient> inputs, ItemStack container, ItemStack output, boolean requiresLearning, float experience) {
+        this.experience = experience;
         this.inputs = inputs;
         this.container = container;
         this.output = output;
@@ -85,6 +87,10 @@ public class RoasterRecipe implements Recipe<RecipeInput> {
         return requiresLearning;
     }
 
+    public float getExperience() {
+        return this.experience;
+    }
+
     public static class Serializer implements RecipeSerializer<RoasterRecipe> {
         public static final MapCodec<RoasterRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                         Ingredient.CODEC_NONEMPTY.listOf().fieldOf("ingredients").flatXmap(list -> {
@@ -96,7 +102,8 @@ public class RoasterRecipe implements Recipe<RecipeInput> {
                         }, DataResult::success).forGetter(RoasterRecipe::getIngredients),
                         ItemStack.CODEC.fieldOf("container").forGetter(RoasterRecipe::getContainer),
                         ItemStack.CODEC.fieldOf("result").forGetter(RoasterRecipe::getResult),
-                        Codec.BOOL.fieldOf("requiresLearning").forGetter(RoasterRecipe::requiresLearning)
+                        Codec.BOOL.fieldOf("requiresLearning").forGetter(RoasterRecipe::requiresLearning),
+                        Codec.FLOAT.optionalFieldOf("experience", 0.0F).forGetter(RoasterRecipe::getExperience)
                 ).apply(instance, RoasterRecipe::new)
         );
 
@@ -110,7 +117,8 @@ public class RoasterRecipe implements Recipe<RecipeInput> {
             ItemStack containerItem = ItemStack.STREAM_CODEC.decode(registryFriendlyByteBuf);
             ItemStack itemStack = ItemStack.STREAM_CODEC.decode(registryFriendlyByteBuf);
             boolean requiresLearning = registryFriendlyByteBuf.readBoolean();
-            return new RoasterRecipe(nonNullList, containerItem, itemStack, requiresLearning);
+            float experience = registryFriendlyByteBuf.readFloat();
+            return new RoasterRecipe(nonNullList, containerItem, itemStack, requiresLearning, experience);
         }
 
         public static void toNetwork(RegistryFriendlyByteBuf registryFriendlyByteBuf, RoasterRecipe recipe) {
@@ -122,6 +130,7 @@ public class RoasterRecipe implements Recipe<RecipeInput> {
             ItemStack.STREAM_CODEC.encode(registryFriendlyByteBuf, recipe.getContainer());
             ItemStack.STREAM_CODEC.encode(registryFriendlyByteBuf, recipe.output);
             registryFriendlyByteBuf.writeBoolean(recipe.requiresLearning);
+            registryFriendlyByteBuf.writeFloat(recipe.experience);
         }
 
         @Override

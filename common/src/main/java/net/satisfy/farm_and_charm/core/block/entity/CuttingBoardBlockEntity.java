@@ -1,5 +1,7 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
+import net.satisfy.farm_and_charm.core.util.StoredExperience;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
@@ -49,6 +51,7 @@ public class CuttingBoardBlockEntity extends BlockEntity {
     private static final String CUT_START_KEY = "CutStart";
     private static final String PENDING_CHOPS_KEY = "PendingChops";
     public static final int CHOP_ANIMATION_TICKS = 4;
+    private static final float STRIP_EXPERIENCE = 0.05F;
     private static final TagKey<Item> MEAT_SOUND = TagKey.create(Registries.ITEM, FarmAndCharm.identifier("chop_sounds/meat"));
     private static final TagKey<Item> FISH_SOUND = TagKey.create(Registries.ITEM, FarmAndCharm.identifier("chop_sounds/fish"));
     private static final TagKey<Item> VEGETABLE_SOUND = TagKey.create(Registries.ITEM, FarmAndCharm.identifier("chop_sounds/vegetable"));
@@ -62,6 +65,7 @@ public class CuttingBoardBlockEntity extends BlockEntity {
     private ItemStack pending = ItemStack.EMPTY;
     private long cutStart;
     private int pendingChops;
+    private final StoredExperience experience = new StoredExperience();
 
     public CuttingBoardBlockEntity(BlockPos pos, BlockState state) {
         super(EntityTypeRegistry.CUTTING_BOARD_BLOCK_ENTITY.get(), pos, state);
@@ -175,6 +179,7 @@ public class CuttingBoardBlockEntity extends BlockEntity {
         if (stripped.isPresent()) {
             if (this.pendingChops >= Strippables.CHOPS) {
                 output(level, this.worldPosition, stripped.get());
+                this.addExperience(level, STRIP_EXPERIENCE);
                 this.pending = ItemStack.EMPTY;
                 this.pendingChops = 0;
                 this.wearKnife(level);
@@ -187,11 +192,19 @@ public class CuttingBoardBlockEntity extends BlockEntity {
             for (ItemStack byproduct : recipe.get().value().getByproducts()) {
                 output(level, this.worldPosition, byproduct.copy());
             }
+            this.addExperience(level, recipe.get().value().getExperience());
             this.pending = ItemStack.EMPTY;
             this.pendingChops = 0;
             this.wearKnife(level);
         }
         this.markUpdated();
+    }
+
+    private void addExperience(Level level, float amount) {
+        if (level instanceof ServerLevel serverLevel) {
+            this.experience.add(amount);
+            this.experience.award(serverLevel, Vec3.atCenterOf(this.worldPosition));
+        }
     }
 
     public static void registerOutputHandler(OutputHandler handler) {
@@ -291,6 +304,7 @@ public class CuttingBoardBlockEntity extends BlockEntity {
         }
         tag.putLong(CUT_START_KEY, this.cutStart);
         tag.putInt(PENDING_CHOPS_KEY, this.pendingChops);
+        this.experience.save(tag);
     }
 
     @Override
@@ -308,6 +322,7 @@ public class CuttingBoardBlockEntity extends BlockEntity {
         this.pending = tag.contains(PENDING_KEY) ? ItemStack.parseOptional(provider, tag.getCompound(PENDING_KEY)) : ItemStack.EMPTY;
         this.cutStart = tag.getLong(CUT_START_KEY);
         this.pendingChops = tag.getInt(PENDING_CHOPS_KEY);
+        this.experience.load(tag);
     }
 
     @Override

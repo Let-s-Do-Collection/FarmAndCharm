@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.block;
 
+import net.minecraft.world.phys.Vec3;
 import net.satisfy.foundation.util.ShapeUtil;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
@@ -185,6 +186,9 @@ public class RoasterBlock extends BaseEntityBlock {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof RoasterBlockEntity) {
                 Containers.dropContents(world, pos, ((RoasterBlockEntity) blockEntity).getItems());
+                if (world instanceof ServerLevel serverLevel) {
+                    ((RoasterBlockEntity) blockEntity).dropExperience(serverLevel, Vec3.atCenterOf(pos));
+                }
                 world.updateNeighbourForOutputSignal(pos, this);
             }
             super.onRemove(state, world, pos, newState, isMoving);

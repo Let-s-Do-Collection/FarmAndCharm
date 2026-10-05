@@ -1,5 +1,7 @@
 package net.satisfy.farm_and_charm.core.recipe;
 
+import com.mojang.serialization.Codec;
+import net.minecraft.network.codec.ByteBufCodecs;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -20,11 +22,17 @@ public class CraftingBowlRecipe implements Recipe<RecipeInput> {
     private final NonNullList<Ingredient> inputs;
     private final ItemStack output;
     private final int outputCount;
+    private final float experience;
 
-    public CraftingBowlRecipe(NonNullList<Ingredient> inputs, ItemStack output) {
+    public CraftingBowlRecipe(NonNullList<Ingredient> inputs, ItemStack output, float experience) {
         this.inputs = inputs;
         this.output = output;
         this.outputCount = output.getCount();
+        this.experience = experience;
+    }
+
+    public float getExperience() {
+        return this.experience;
     }
 
     public int getOutputCount() {
@@ -97,13 +105,15 @@ public class CraftingBowlRecipe implements Recipe<RecipeInput> {
                             }
                             return DataResult.success(NonNullList.of(Ingredient.EMPTY, ingredients));
                         }, DataResult::success).forGetter(CraftingBowlRecipe::getIngredients),
-                        ItemStack.CODEC.fieldOf("result").forGetter(CraftingBowlRecipe::getResultItem)
+                        ItemStack.CODEC.fieldOf("result").forGetter(CraftingBowlRecipe::getResultItem),
+                        Codec.FLOAT.optionalFieldOf("experience", 0.0F).forGetter(CraftingBowlRecipe::getExperience)
                 ).apply(instance, CraftingBowlRecipe::new)
         );
 
         public static final StreamCodec<RegistryFriendlyByteBuf, CraftingBowlRecipe> STREAM_CODEC = StreamCodec.composite(
                 StreamCodecUtil.nonNullList(Ingredient.CONTENTS_STREAM_CODEC, Ingredient.EMPTY), CraftingBowlRecipe::getIngredients,
                 ItemStack.STREAM_CODEC, CraftingBowlRecipe::getResultItem,
+                ByteBufCodecs.FLOAT, CraftingBowlRecipe::getExperience,
                 CraftingBowlRecipe::new
         );
 

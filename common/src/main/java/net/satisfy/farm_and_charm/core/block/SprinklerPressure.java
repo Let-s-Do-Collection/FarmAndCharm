@@ -3,7 +3,6 @@ package net.satisfy.farm_and_charm.core.block;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
 
-/** How the Water Sprinkler turns. Only changes the animation and the water jets, not the watering itself. */
 public enum SprinklerPressure implements StringRepresentable {
     STEADY("steady", 1.0F),
     PULSING("pulsing", 1.0F),

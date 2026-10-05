@@ -45,7 +45,6 @@ public class ScarecrowBlockEntity extends BlockEntity {
         tag.putLong("NextGrowthTime", this.nextGrowthTime);
     }
 
-    /** Client only: where the head looks and how far the arms are raised in watchful mode. */
     public void clientTick(Level level, BlockPos pos, BlockState state) {
         this.headYawPrev = this.headYaw;
         this.armRaisePrev = this.armRaise;
@@ -71,12 +70,10 @@ public class ScarecrowBlockEntity extends BlockEntity {
         this.armRaise += (targetRaise - this.armRaise) * (targetRaise > this.armRaise ? 0.5F : 0.1F);
     }
 
-    /** Head yaw in degrees relative to the body, Minecraft yaw direction. */
     public float getHeadYaw(float partialTick) {
         return Mth.lerp(partialTick, this.headYawPrev, this.headYaw);
     }
 
-    /** 0 = arms down, 1 = arms thrown up. */
     public float getArmRaise(float partialTick) {
         return Mth.lerp(partialTick, this.armRaisePrev, this.armRaise);
     }

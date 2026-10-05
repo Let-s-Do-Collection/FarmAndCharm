@@ -7,5 +7,6 @@
   "result": {
     "id": "minecraft:iron_nugget",
     "count": 5
-  }
+  },
+  "experience": 0.2
 }

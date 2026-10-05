@@ -3,7 +3,6 @@ package net.satisfy.farm_and_charm.core.block;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.NotNull;
 
-/** How the Scarecrow moves. Only changes the animation, not the crop growth. */
 public enum ScarecrowMode implements StringRepresentable {
     CALM("calm"),
     WINDY("windy"),

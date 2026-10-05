@@ -103,7 +103,6 @@ public class ScarecrowRenderer implements BlockEntityRenderer<ScarecrowBlockEnti
         ms.popPose();
     }
 
-    /** NeoForge culls block entities by this box; the model reaches into the block above. */
     @SuppressWarnings("unused")
     public AABB getRenderBoundingBox(BlockEntity be) {
         BlockPos pos = be.getBlockPos();

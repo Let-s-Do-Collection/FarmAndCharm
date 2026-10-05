@@ -1,5 +1,7 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
+import net.satisfy.farm_and_charm.core.util.StoredExperience;
+import net.satisfy.foundation.menu.ExperienceSource;
 import com.mojang.datafixers.util.Pair;
 import dev.architectury.registry.fuel.FuelRegistry;
 import net.minecraft.core.BlockPos;
@@ -18,7 +20,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -52,7 +53,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<StoveBlockEntity>, ImplementedInventory, MenuProvider {
+public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<StoveBlockEntity>, ImplementedInventory, MenuProvider, ExperienceSource {
     public static final int TOTAL_COOKING_TIME = 240;
     protected static final int[] INGREDIENT_SLOTS = {1, 2, 3};
     protected int burnTime;
@@ -88,7 +89,7 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
             return 4;
         }
     };
-    protected float experience;
+    private final StoredExperience experience = new StoredExperience();
     private NonNullList<ItemStack> inventory;
 
     public StoveBlockEntity(BlockPos pos, BlockState state) {
@@ -104,8 +105,9 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         return 0;
     }
 
+    @Override
     public void dropExperience(ServerLevel world, Vec3 pos) {
-        ExperienceOrb.award(world, pos, (int) experience);
+        experience.award(world, pos);
     }
 
     @Override
@@ -128,7 +130,7 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         this.cookTime = compoundTag.getShort("CookTime");
         this.cookTimeTotal = compoundTag.getShort("CookTimeTotal");
         this.burnTimeTotal = this.getTotalBurnTime(this.getItem(4));
-        this.experience = compoundTag.getFloat("Experience");
+        this.experience.load(compoundTag);
         this.manuallyExtinguished = compoundTag.getBoolean("ManuallyExtinguished");
         if (compoundTag.hasUUID("Owner")) {
             this.ownerUuid = compoundTag.getUUID("Owner");
@@ -141,7 +143,7 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
         compoundTag.putShort("BurnTime", (short) this.burnTime);
         compoundTag.putShort("CookTime", (short) this.cookTime);
         compoundTag.putShort("CookTimeTotal", (short) this.cookTimeTotal);
-        compoundTag.putFloat("Experience", this.experience);
+        this.experience.save(compoundTag);
         compoundTag.putBoolean("ManuallyExtinguished", this.manuallyExtinguished);
         if (this.ownerUuid != null) {
             compoundTag.putUUID("Owner", this.ownerUuid);
@@ -333,6 +335,7 @@ public class StoveBlockEntity extends BlockEntity implements BlockEntityTicker<S
 
         ItemStack recipeOutput = generateOutputItem(recipe, access);
         ItemStack outputSlotStack = this.getItem(0);
+        experience.add(recipe.getExperience());
 
         if (outputSlotStack.isEmpty()) {
             setItem(0, recipeOutput);

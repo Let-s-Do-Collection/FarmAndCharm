@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
+import net.satisfy.farm_and_charm.core.util.StoredExperience;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -55,6 +56,7 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
     private float crankTargetSpeed;
     private int crankTicks;
     private float cranked;
+    private final StoredExperience experience = new StoredExperience();
     private static final int CRANK_TICKS_PER_CLICK = 10;
     private static final int SYNC_INTERVAL = 10;
 
@@ -82,6 +84,7 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
         this.crankTargetSpeed = compound.getFloat("CrankTargetSpeed");
         this.crankTicks = compound.getInt("CrankTicks");
         this.cranked = compound.getFloat("Cranked");
+        this.experience.load(compound);
     }
 
     @Override
@@ -92,6 +95,7 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
         compound.putFloat("CrankTargetSpeed", this.crankTargetSpeed);
         compound.putInt("CrankTicks", this.crankTicks);
         compound.putFloat("Cranked", this.cranked);
+        this.experience.save(compound);
     }
 
     @Override
@@ -227,12 +231,10 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
         return this.crankTicks;
     }
 
-    /** Cranks done on the current item, 0 to {@link MincerBlock#CRANKS_NEEDED}. */
     public float getCranked() {
         return this.cranked;
     }
 
-    /** One right-click on the crank: keeps it turning for a moment. */
     public void crank() {
         this.crankTicks = CRANK_TICKS_PER_CLICK;
         this.setChanged();
@@ -263,7 +265,6 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
         if (this.crankTicks > 0) this.crankTicks--;
         if (this.crankSpeed <= 0F) return;
 
-        // client and server both count along so the progress runs smoothly; only the server finishes an item
         if (!this.stacks.get(INPUT_SLOT).isEmpty()) {
             this.cranked = Math.min(MincerBlock.CRANKS_NEEDED, this.cranked + this.crankSpeed / CRANK_MAX_SPEED);
         }
@@ -279,6 +280,8 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
                 inputStack.shrink(1);
                 mincer.setItem(INPUT_SLOT, inputStack.isEmpty() ? ItemStack.EMPTY : inputStack);
                 mincer.setItem(OUTPUT_SLOT, recipe.getResultItem(level.registryAccess()));
+                this.experience.add(recipe.getExperience());
+                this.experience.award((ServerLevel) level, Vec3.atCenterOf(pos));
             } else {
                 this.setChanged();
             }
@@ -293,7 +296,6 @@ public class MincerBlockEntity extends RandomizableContainerBlockEntity implemen
         if (level.getGameTime() % SYNC_INTERVAL == 0L) this.setChanged();
     }
 
-    /** Squishy for meat, crunchy for wood and plants, gritty for stone, grinding for metal and ores. */
     public static SoundEvent grindSound(String recipeType) {
         return switch (recipeType) {
             case "MEAT" -> SoundEvents.SLIME_SQUISH_SMALL;

@@ -20,11 +20,17 @@ public class MincerRecipe implements Recipe<RecipeInput> {
     private final String recipe_type;
     private final Ingredient input;
     private final ItemStack output;
+    private final float experience;
 
-    public MincerRecipe(String type, Ingredient input, ItemStack output) {
+    public MincerRecipe(String type, Ingredient input, ItemStack output, float experience) {
         this.recipe_type = type;
         this.input = input;
         this.output = output;
+        this.experience = experience;
+    }
+
+    public float getExperience() {
+        return this.experience;
     }
 
     public Ingredient getInput() {
@@ -90,7 +96,8 @@ public class MincerRecipe implements Recipe<RecipeInput> {
         public static final MapCodec<MincerRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Codec.STRING.fieldOf("recipe_type").forGetter(MincerRecipe::getRecipeType),
                 Ingredient.CODEC.fieldOf("ingredient").forGetter(MincerRecipe::getInput),
-                ItemStack.CODEC.fieldOf("result").forGetter(MincerRecipe::getOutput)
+                ItemStack.CODEC.fieldOf("result").forGetter(MincerRecipe::getOutput),
+                Codec.FLOAT.optionalFieldOf("experience", 0.0F).forGetter(MincerRecipe::getExperience)
                 ).apply(instance, MincerRecipe::new)
         );
 
@@ -98,6 +105,7 @@ public class MincerRecipe implements Recipe<RecipeInput> {
                 ByteBufCodecs.fromCodec(Codec.STRING), MincerRecipe::getRecipeType,
                 Ingredient.CONTENTS_STREAM_CODEC, MincerRecipe::getInput,
                 ItemStack.STREAM_CODEC, MincerRecipe::getOutput,
+                ByteBufCodecs.FLOAT, MincerRecipe::getExperience,
                 MincerRecipe::new
         );
 

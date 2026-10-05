@@ -28,5 +28,6 @@
     "id": "farm_and_charm:sausage_with_oat_patty",
     "count": 2
   },
-  "requiresLearning": false
+  "requiresLearning": false,
+  "experience": 0.35
 }

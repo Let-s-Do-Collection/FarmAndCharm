@@ -13,7 +13,6 @@ import net.satisfy.farm_and_charm.core.block.SturdyLadderBlock;
 import net.satisfy.farm_and_charm.core.block.entity.SturdyLadderBlockEntity;
 import org.joml.Quaternionf;
 
-/** Only draws the ladder while someone climbs it; otherwise the normal block model is used. */
 public class SturdyLadderRenderer implements BlockEntityRenderer<SturdyLadderBlockEntity> {
     private static final float TILT_ANGLE = 1.2F;
     private static final float JITTER = 0.008F;
@@ -36,7 +35,6 @@ public class SturdyLadderRenderer implements BlockEntityRenderer<SturdyLadderBlo
         float jitter = (float) Math.sin(time * 2.3) * JITTER * ramp;
 
         pose.pushPose();
-        // lean the top away from the wall around the bottom edge it rests on, and wiggle along the wall
         pose.translate(0.5 + wall.getStepX() * 0.5 + facing.getStepZ() * jitter, 0.0, 0.5 + wall.getStepZ() * 0.5 - facing.getStepX() * jitter);
         pose.mulPose(new Quaternionf().rotationAxis(tilt * ((float) Math.PI / 180F), facing.getStepZ(), 0.0F, -facing.getStepX()));
         pose.translate(-0.5 - wall.getStepX() * 0.5, 0.0, -0.5 - wall.getStepZ() * 0.5);

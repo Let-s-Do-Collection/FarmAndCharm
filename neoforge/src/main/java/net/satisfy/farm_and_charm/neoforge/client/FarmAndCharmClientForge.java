@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.neoforge.client;
 
+import net.satisfy.foundation.neoforge.client.FoundationArmorExtensions;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -24,7 +25,6 @@ import net.satisfy.foundation.particle.WaterSplashParticle;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import net.satisfy.foundation.registry.FoundationParticles;
 import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
-import net.satisfy.farm_and_charm.neoforge.client.extensions.DungareesLeggingsExtensions;
 
 @SuppressWarnings("removal")
 @EventBusSubscriber(modid = FarmAndCharm.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
@@ -53,6 +53,6 @@ public class FarmAndCharmClientForge {
 
     @SubscribeEvent
     public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
-        event.registerItem(new DungareesLeggingsExtensions(), ObjectRegistry.DUNGAREES.get());
+        event.registerItem(FoundationArmorExtensions.INSTANCE, ObjectRegistry.DUNGAREES.get());
     }
 }

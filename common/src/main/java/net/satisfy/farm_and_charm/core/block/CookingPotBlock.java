@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.block;
 
+import net.minecraft.world.phys.Vec3;
 import net.satisfy.foundation.util.ShapeUtil;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
@@ -286,6 +287,9 @@ public class CookingPotBlock extends BaseEntityBlock {
             BlockEntity blockEntity = world.getBlockEntity(pos);
             if (blockEntity instanceof CookingPotBlockEntity) {
                 Containers.dropContents(world, pos, ((CookingPotBlockEntity) blockEntity).getItems());
+                if (world instanceof ServerLevel serverLevel) {
+                    ((CookingPotBlockEntity) blockEntity).dropExperience(serverLevel, Vec3.atCenterOf(pos));
+                }
                 world.updateNeighbourForOutputSignal(pos, this);
             }
             super.onRemove(state, world, pos, newState, isMoving);

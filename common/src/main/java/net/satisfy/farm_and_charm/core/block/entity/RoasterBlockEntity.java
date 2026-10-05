@@ -1,5 +1,9 @@
 package net.satisfy.farm_and_charm.core.block.entity;
 
+import net.satisfy.farm_and_charm.core.util.StoredExperience;
+import net.satisfy.foundation.menu.ExperienceSource;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.phys.Vec3;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -47,7 +51,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker<RoasterBlockEntity>, ImplementedInventory, MenuProvider {
+public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker<RoasterBlockEntity>, ImplementedInventory, MenuProvider, ExperienceSource {
     private static final int FIRST_INGREDIENT_SLOT = 0;
     private static final int LAST_INGREDIENT_SLOT = 5;
     private static final int CONTAINER_SLOT = 6;
@@ -56,6 +60,7 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
     private static final int MAX_ROASTING_TIME = 900;
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(MAX_CAPACITY, ItemStack.EMPTY);
     private int roastingTime;
+    private final StoredExperience experience = new StoredExperience();
     private boolean isBeingBurned;
     private UUID ownerUuid;
     private final ContainerData delegate = new ContainerData() {
@@ -116,6 +121,7 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
             this.inventory.set(i, loaded.get(i));
         }
         roastingTime = tag.getInt("RoastingTime");
+        experience.load(tag);
         if (tag.hasUUID("OwnerUUID")) {
             ownerUuid = tag.getUUID("OwnerUUID");
         }
@@ -126,9 +132,15 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
         super.saveAdditional(tag, provider);
         ContainerHelper.saveAllItems(tag, inventory, provider);
         tag.putInt("RoastingTime", roastingTime);
+        experience.save(tag);
         if (ownerUuid != null) {
             tag.putUUID("OwnerUUID", ownerUuid);
         }
+    }
+
+    @Override
+    public void dropExperience(ServerLevel level, Vec3 pos) {
+        experience.award(level, pos);
     }
 
     public boolean hasOutputItem() {
@@ -175,6 +187,10 @@ public class RoasterBlockEntity extends BlockEntity implements BlockEntityTicker
             setItem(OUTPUT_SLOT, recipeOutput);
         } else {
             outputSlotStack.grow(recipeOutput.getCount());
+        }
+
+        if (recipe instanceof RoasterRecipe roasterRecipe) {
+            experience.add(roasterRecipe.getExperience());
         }
 
         recipe.getIngredients().forEach(ingredient -> {

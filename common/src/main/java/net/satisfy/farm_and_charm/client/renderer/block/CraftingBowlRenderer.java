@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.client.model.CraftingBowlModel;
 import net.satisfy.farm_and_charm.core.block.CraftingBowlBlock;
@@ -51,7 +52,7 @@ public class CraftingBowlRenderer implements BlockEntityRenderer<CraftingBowlBlo
         pose.mulPose(Axis.XP.rotationDegrees(180));
         pose.translate(0.5f, -1.5f, -0.5f);
         float whiskAngle = be.getInterpolatedWhiskAngle(f);
-        float tilt = be.getWhiskSpeed() / CraftingBowlBlockEntity.WHISK_MAX_SPEED * TILT_ANGLE;
+        float tilt = !PlatformHelper.animationsEnabled() ? 0.0F : be.getWhiskSpeed() / CraftingBowlBlockEntity.WHISK_MAX_SPEED * TILT_ANGLE;
         if (tilt > 0F) {
             pose.translate(0f, 1.5f, 0f);
             pose.mulPose(Axis.XP.rotationDegrees((float) Math.cos(whiskAngle) * tilt));
@@ -73,7 +74,7 @@ public class CraftingBowlRenderer implements BlockEntityRenderer<CraftingBowlBlo
     private void renderDough(CraftingBowlBlockEntity be, Level level, float partialTick, float whiskAngle, PoseStack pose, VertexConsumer vc, int light, int overlay) {
         float fill = be.getDoughFill();
         if (fill <= 0.0F) return;
-        float speed = be.getWhiskSpeed() / CraftingBowlBlockEntity.WHISK_MAX_SPEED;
+        float speed = !PlatformHelper.animationsEnabled() ? 0.0F : be.getWhiskSpeed() / CraftingBowlBlockEntity.WHISK_MAX_SPEED;
         double time = level.getGameTime() + partialTick;
         float surface = DOUGH_SURFACE + (1.0F - fill) * DOUGH_DEPTH + (float) Math.sin(time * 0.6) * DOUGH_BOB * speed;
         pose.pushPose();

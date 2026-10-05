@@ -156,6 +156,9 @@ public class FarmAndCharmFabricConfig implements ConfigData {
 
         @ConfigEntry.Gui.Tooltip
         public float cookingExperienceMultiplier = 1.0f;
+
+        @ConfigEntry.Gui.Tooltip
+        public boolean animations = true;
     }
 
     public static class InfoTooltipSettings {

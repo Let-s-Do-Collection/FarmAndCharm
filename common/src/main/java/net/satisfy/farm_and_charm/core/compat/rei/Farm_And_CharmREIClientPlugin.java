@@ -2,7 +2,9 @@ package net.satisfy.farm_and_charm.core.compat.rei;
 
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
+import dev.architectury.event.EventResult;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
+import me.shedaniel.rei.api.client.registry.entry.EntryRegistry;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -31,6 +33,7 @@ import net.satisfy.farm_and_charm.core.compat.rei.stove.StoveDisplay;
 import net.satisfy.farm_and_charm.core.recipe.*;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
+import net.satisfy.farm_and_charm.core.registry.TagRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +59,13 @@ public class Farm_And_CharmREIClientPlugin implements REIClientPlugin {
     }
 
     @Override
+    public void registerEntries(EntryRegistry registry) {
+        registry.removeEntryIf(entry -> entry.getValue() instanceof ItemStack stack && stack.is(TagRegistry.CAMPFIRE_MEATS));
+    }
+
+    @Override
     public void registerDisplays(DisplayRegistry registry) {
+        registry.registerVisibilityPredicate((category, display) -> display.getOutputEntries().stream().flatMap(List::stream).anyMatch(entry -> entry.getValue() instanceof ItemStack stack && stack.is(TagRegistry.CAMPFIRE_MEATS)) ? EventResult.interruptFalse() : EventResult.pass());
         registry.registerRecipeFiller(
                 CookingPotRecipe.class,
                 RecipeTypeRegistry.COOKING_POT_RECIPE_TYPE.get(),

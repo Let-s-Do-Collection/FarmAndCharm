@@ -150,14 +150,13 @@ public class StoveBlock extends Block implements EntityBlock {
     }
 
     private static void useGrillSlot(Level world, BlockPos pos, Player player, StoveBlockEntity stove, int slot) {
-        if (player.isShiftKeyDown()) {
+        if (player.isShiftKeyDown() || stove.isGrillDone(slot)) {
             ItemStack taken = stove.takeFromGrill(slot);
             if (!player.addItem(taken)) {
                 player.drop(taken, false);
             }
             world.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.4F, 1.2F);
-        } else {
-            stove.flipGrillItem(slot);
+        } else if (stove.flipGrillItem(slot)) {
             world.playSound(null, pos, SoundEvents.WOOL_HIT, SoundSource.BLOCKS, 0.5F, 1.4F + world.random.nextFloat() * 0.2F);
         }
     }

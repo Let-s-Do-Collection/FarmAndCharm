@@ -155,6 +155,10 @@ public class PlatformHelperImpl {
         return FarmAndCharmNeoForgeConfig.cleaverHeadDrops;
     }
 
+    public static boolean animationsEnabled() {
+        return FarmAndCharmNeoForgeConfig.animations;
+    }
+
     public static boolean isCookingExperienceEnabled() {
         return FarmAndCharmNeoForgeConfig.cookingExperience;
     }

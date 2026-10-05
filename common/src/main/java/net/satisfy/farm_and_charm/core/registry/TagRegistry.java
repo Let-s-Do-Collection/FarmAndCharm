@@ -14,6 +14,7 @@ public class TagRegistry {
     public static final TagKey<Block> ALLOWS_COOKING = TagKey.create(Registries.BLOCK, FarmAndCharm.identifier("allows_cooking"));
     public static final TagKey<Item> FEEDING_TROUGH_FOOD = TagKey.create(Registries.ITEM, FarmAndCharm.identifier("feeding_trough_food"));
     public static final TagKey<Item> NEST_EGGS = TagKey.create(Registries.ITEM, FarmAndCharm.identifier("nest_eggs"));
+    public static final TagKey<Item> CAMPFIRE_MEATS = TagKey.create(Registries.ITEM, FarmAndCharm.identifier("campfire_meats"));
     public static final TagKey<Item> HANGABLE = TagKey.create(Registries.ITEM, FarmAndCharm.identifier("hangable"));
     public static final TagKey<Item> SHIELDS = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "tools/shield"));
     public static final TagKey<Item> CONTAINER = TagKey.create(Registries.ITEM, FarmAndCharm.identifier("container"));

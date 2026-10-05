@@ -16,6 +16,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.client.model.ScarecrowModel;
 import net.satisfy.farm_and_charm.core.block.ScarecrowBlock;
@@ -56,7 +57,7 @@ public class ScarecrowRenderer implements BlockEntityRenderer<ScarecrowBlockEnti
         ResourceLocation tex = has ? TEX_WITH : TEX_NO;
         VertexConsumer vc = buf.getBuffer(RenderType.entityCutoutNoCull(tex));
 
-        double time = level.getGameTime() + pt + (Mth.murmurHash3Mixer((int) be.getBlockPos().asLong()) & 1023);
+        double time = (PlatformHelper.animationsEnabled() ? level.getGameTime() + pt : 0.0) + (Mth.murmurHash3Mixer((int) be.getBlockPos().asLong()) & 1023);
         float side = 0.0F;
         float forward = 0.0F;
 

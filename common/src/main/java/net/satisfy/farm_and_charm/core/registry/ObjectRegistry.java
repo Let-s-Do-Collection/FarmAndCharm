@@ -1,6 +1,7 @@
 package net.satisfy.farm_and_charm.core.registry;
 
 import net.satisfy.foundation.food.FoodBlock;
+import net.satisfy.farm_and_charm.core.block.FoodShapes;
 import net.satisfy.foundation.food.TeaJugItem;
 import net.satisfy.foundation.block.*;
 import net.satisfy.foundation.food.PlaceableEffectFoodItem;
@@ -61,6 +62,10 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> LAMB_HAM = registerItem("lamb_ham", () -> new Item(getSettings().food(Foods.MUTTON)));
     public static final RegistrySupplier<Item> BACON = registerItem("bacon", () -> new Item(getSettings().food(Foods.PORKCHOP)));
     public static final RegistrySupplier<Item> CHICKEN_PARTS = registerItem("chicken_parts", () -> new Item(getSettings().food(Foods.CHICKEN)));
+    public static final RegistrySupplier<Item> COOKED_MINCED_BEEF = registerItem("cooked_minced_beef", () -> new Item(getSettings().food(Foods.COOKED_BEEF)));
+    public static final RegistrySupplier<Item> COOKED_BACON = registerItem("cooked_bacon", () -> new Item(getSettings().food(Foods.COOKED_PORKCHOP)));
+    public static final RegistrySupplier<Item> COOKED_CHICKEN_PARTS = registerItem("cooked_chicken_parts", () -> new Item(getSettings().food(Foods.COOKED_CHICKEN)));
+    public static final RegistrySupplier<Item> COOKED_LAMB_HAM = registerItem("cooked_lamb_ham", () -> new Item(getSettings().food(Foods.COOKED_MUTTON)));
     public static final RegistrySupplier<Item> CORN = registerItem("corn", () -> new Item(getSettings().food(Foods.SWEET_BERRIES)));
     public static final RegistrySupplier<Item> BARLEY = registerItem("barley", () -> new Item(getSettings()));
     public static final RegistrySupplier<Item> OAT = registerItem("oat", () -> new Item(getSettings()));
@@ -131,14 +136,14 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Block> WINDOW_SILL = registerWithItem("window_sill", () -> new WindowSillBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.FLOWER_POT).noCollission()));
     public static final RegistrySupplier<Block> TOOL_RACK = registerWithItem("tool_rack", () -> new ToolRackBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.FLOWER_POT).noCollission()));
     public static final RegistrySupplier<Block> SCARECROW = registerWithItem("scarecrow", () -> new ScarecrowBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.HAY_BLOCK)));
-    public static final RegistrySupplier<Block> OAT_PANCAKE_BLOCK = registerWithoutItem("oat_pancake_block", () -> new StackableEatableBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 7));
-    public static final RegistrySupplier<Block> ROASTED_CORN_BLOCK = registerWithoutItem("roasted_corn_block", () -> new StackableEatableBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 4));
-    public static final RegistrySupplier<Block> POTATO_WITH_ROAST_MEAT = registerWithoutItem("potato_with_roast_meat_block", () -> new FoodBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 4, new FoodProperties.Builder().nutrition(7).saturationModifier(0.7F).build()));
-    public static final RegistrySupplier<Block> BAKED_LAMB_HAM = registerWithoutItem("baked_lamb_ham_block", () -> new FoodBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 4, new FoodProperties.Builder().nutrition(8).saturationModifier(0.9F).build()));
-    public static final RegistrySupplier<Block> FARMERS_BREAKFAST = registerWithoutItem("farmers_breakfast_block", () -> new FoodBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 4, new FoodProperties.Builder().nutrition(12).saturationModifier(1.2F).build()));
-    public static final RegistrySupplier<Block> STUFFED_CHICKEN = registerWithoutItem("stuffed_chicken_block", () -> new FoodBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 4, new FoodProperties.Builder().nutrition(8).saturationModifier(0.8F).build()));
-    public static final RegistrySupplier<Block> STUFFED_RABBIT = registerWithoutItem("stuffed_rabbit_block", () -> new FoodBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 4, new FoodProperties.Builder().nutrition(9).saturationModifier(0.9F).build()));
-    public static final RegistrySupplier<Block> FARMERS_BREAD = registerWithoutItem("farmers_bread_block", () -> new FoodBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 4, new FoodProperties.Builder().nutrition(6).saturationModifier(0.8F).build()));
+    public static final RegistrySupplier<Block> OAT_PANCAKE_BLOCK = registerWithoutItem("oat_pancake_block", () -> new StackableEatableBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 7, FoodShapes.OAT_PANCAKE));
+    public static final RegistrySupplier<Block> ROASTED_CORN_BLOCK = registerWithoutItem("roasted_corn_block", () -> new StackableEatableBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 4, FoodShapes.ROASTED_CORN));
+    public static final RegistrySupplier<Block> POTATO_WITH_ROAST_MEAT = registerWithoutItem("potato_with_roast_meat_block", () -> new FoodBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 4, new FoodProperties.Builder().nutrition(7).saturationModifier(0.7F).build(), FoodShapes.POTATO_WITH_ROAST_MEAT));
+    public static final RegistrySupplier<Block> BAKED_LAMB_HAM = registerWithoutItem("baked_lamb_ham_block", () -> new FoodBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 4, new FoodProperties.Builder().nutrition(8).saturationModifier(0.9F).build(), FoodShapes.BAKED_LAMB_HAM));
+    public static final RegistrySupplier<Block> FARMERS_BREAKFAST = registerWithoutItem("farmers_breakfast_block", () -> new FoodBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 4, new FoodProperties.Builder().nutrition(12).saturationModifier(1.2F).build(), FoodShapes.FARMERS_BREAKFAST));
+    public static final RegistrySupplier<Block> STUFFED_CHICKEN = registerWithoutItem("stuffed_chicken_block", () -> new FoodBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 4, new FoodProperties.Builder().nutrition(8).saturationModifier(0.8F).build(), FoodShapes.STUFFED_CHICKEN));
+    public static final RegistrySupplier<Block> STUFFED_RABBIT = registerWithoutItem("stuffed_rabbit_block", () -> new FoodBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 4, new FoodProperties.Builder().nutrition(9).saturationModifier(0.9F).build(), FoodShapes.STUFFED_RABBIT));
+    public static final RegistrySupplier<Block> FARMERS_BREAD = registerWithoutItem("farmers_bread_block", () -> new FoodBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 4, new FoodProperties.Builder().nutrition(6).saturationModifier(0.8F).build(), FoodShapes.FARMERS_BREAD));
     public static final RegistrySupplier<Block> STRAWBERRY_TEA = registerTea("strawberry_tea", () -> new TeaJugBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS)), MobEffects.DIG_SPEED, 240);
     public static final RegistrySupplier<Block> NETTLE_TEA = registerTea("nettle_tea", () -> new TeaJugBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS)), MobEffects.HEAL, 0);
     public static final RegistrySupplier<Block> RIBWORT_TEA = registerTea("ribwort_tea", () -> new TeaJugBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GLASS)), MobEffects.REGENERATION, 120);
@@ -156,7 +161,7 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Item> FARMERS_BREAKFAST_ITEM = registerItem("farmers_breakfast", () -> new PlaceableEffectFoodItem(FARMERS_BREAKFAST.get(), getFoodItemSettings(PlatformHelper.getNutrition("farmers_breakfast"), PlatformHelper.getSaturationMod("farmers_breakfast"), MobEffectRegistry.FARMERS_BLESSING, 9600)));
     public static final RegistrySupplier<Item> STUFFED_CHICKEN_ITEM = registerItem("stuffed_chicken", () -> new PlaceableEffectFoodItem(STUFFED_CHICKEN.get(), getFoodItemSettings(PlatformHelper.getNutrition("stuffed_chicken"), PlatformHelper.getSaturationMod("stuffed_chicken"), MobEffectRegistry.FEAST, 9600)));
     public static final RegistrySupplier<Item> STUFFED_RABBIT_ITEM = registerItem("stuffed_rabbit", () -> new PlaceableEffectFoodItem(STUFFED_RABBIT.get(), getFoodItemSettings(PlatformHelper.getNutrition("stuffed_rabbit"), PlatformHelper.getSaturationMod("stuffed_rabbit"), MobEffectRegistry.FEAST, 9600)));
-    public static final RegistrySupplier<Block> GRANDMOTHERS_STRAWBERRY_CAKE = registerWithoutItem("grandmothers_strawberry_cake_block", () -> new FoodBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 4, new FoodProperties.Builder().nutrition(7).saturationModifier(0.6F).effect(MobEffectRegistry.inst(MobEffectRegistry.GRANDMAS_BLESSING, 2400), 1.0F).build()));
+    public static final RegistrySupplier<Block> GRANDMOTHERS_STRAWBERRY_CAKE = registerWithoutItem("grandmothers_strawberry_cake_block", () -> new FoodBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE), 4, new FoodProperties.Builder().nutrition(7).saturationModifier(0.6F).effect(MobEffectRegistry.inst(MobEffectRegistry.GRANDMAS_BLESSING, 2400), 1.0F).build(), FoodShapes.GRANDMOTHERS_STRAWBERRY_CAKE));
     public static final RegistrySupplier<Item> GRANDMOTHERS_STRAWBERRY_CAKE_ITEM = registerItem("grandmothers_strawberry_cake", () -> new PlaceableEffectFoodItem(GRANDMOTHERS_STRAWBERRY_CAKE.get(), getFoodItemSettings(PlatformHelper.getNutrition("grandmothers_strawberry_cake"), PlatformHelper.getSaturationMod("grandmothers_strawberry_cake"), MobEffectRegistry.GRANDMAS_BLESSING, 2400)));
     public static final RegistrySupplier<Item> FARMERS_BREAD_ITEM = registerItem("farmers_bread", () -> new PlaceableEffectFoodItem(FARMERS_BREAD.get(), getFoodItemSettings(PlatformHelper.getNutrition("farmers_bread"), PlatformHelper.getSaturationMod("farmers_bread"), MobEffectRegistry.FARMERS_BLESSING, 3600)));
     public static final RegistrySupplier<Item> FARMER_SALAD = registerItem("farmer_salad", () -> new EffectFoodItem(getFoodItemSettings(PlatformHelper.getNutrition("farmer_salad"), PlatformHelper.getSaturationMod("farmer_salad"), MobEffectRegistry.SATIATION, 4800, true, false), 4800, false));

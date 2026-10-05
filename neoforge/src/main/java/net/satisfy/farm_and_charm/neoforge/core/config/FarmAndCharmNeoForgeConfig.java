@@ -39,6 +39,7 @@ public class FarmAndCharmNeoForgeConfig {
     public static final ModConfigSpec.BooleanValue CLEAVER_HEAD_DROPS;
     public static final ModConfigSpec.BooleanValue COOKING_EXPERIENCE;
     public static final ModConfigSpec.DoubleValue COOKING_EXPERIENCE_MULTIPLIER;
+    public static final ModConfigSpec.BooleanValue ANIMATIONS;
     public static final ModConfigSpec.BooleanValue SHOW_CUTTING_BOARD_INFO;
     public static final ModConfigSpec.BooleanValue SHOW_MINCER_INFO;
     public static final ModConfigSpec.BooleanValue SHOW_CRAFTING_BOWL_INFO;
@@ -146,6 +147,7 @@ public class FarmAndCharmNeoForgeConfig {
     public static boolean cleaverHeadDrops = true;
     public static boolean cookingExperience = true;
     public static float cookingExperienceMultiplier = 1.0f;
+    public static boolean animations = true;
     public static boolean showCuttingBoardInfo = true;
     public static boolean showMincerInfo = true;
     public static boolean showCraftingBowlInfo = true;
@@ -265,6 +267,7 @@ public class FarmAndCharmNeoForgeConfig {
         CLEAVER_HEAD_DROPS = builder.comment("Mobs killed with a cleaver can drop their head.").define("cleaverHeadDrops", true);
         COOKING_EXPERIENCE = builder.comment("Cooking, mincing, cutting, stripping and whisking give experience. The amount per recipe is set in the recipe files.").define("cookingExperience", true);
         COOKING_EXPERIENCE_MULTIPLIER = builder.comment("Multiplies all experience from cooking and food processing. 1.0 = as set in the recipes.").defineInRange("cookingExperienceMultiplier", 1.0, 0.0, 10.0);
+        ANIMATIONS = builder.comment("Blocks of this mod are animated.").define("animations", true);
         builder.pop();
 
         builder.comment("Info tooltips that appear when looking at a block. Only affects your own screen.").push("Info Tooltips");
@@ -402,6 +405,7 @@ public class FarmAndCharmNeoForgeConfig {
         cleaverHeadDrops = CLEAVER_HEAD_DROPS.get();
         cookingExperience = COOKING_EXPERIENCE.get();
         cookingExperienceMultiplier = COOKING_EXPERIENCE_MULTIPLIER.get().floatValue();
+        animations = ANIMATIONS.get();
         showCuttingBoardInfo = SHOW_CUTTING_BOARD_INFO.get();
         showMincerInfo = SHOW_MINCER_INFO.get();
         showCraftingBowlInfo = SHOW_CRAFTING_BOWL_INFO.get();

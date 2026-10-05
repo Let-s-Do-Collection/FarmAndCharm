@@ -1,0 +1,30 @@
+{
+  "type": "farm_and_charm:abandoned_field",
+  "config": {
+    "entries": [
+      {
+        "crop": "farm_and_charm:corn_crop",
+        "decoration": "farm_and_charm:corn_bag",
+        "weight": 3
+      },
+      {
+        "crop": "farm_and_charm:tomato_crop",
+        "decoration": "farm_and_charm:tomato_bag",
+        "weight": 2
+      }
+    ],
+    "width": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 4,
+      "max_inclusive": 7
+    },
+    "length": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 5,
+      "max_inclusive": 9
+    },
+    "path_chance": 0.3,
+    "mature_chance": 0.1,
+    "decoration_chance": 0.35
+  }
+}

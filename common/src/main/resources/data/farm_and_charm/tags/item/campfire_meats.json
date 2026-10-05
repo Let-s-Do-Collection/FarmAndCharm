@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "farm_and_charm:cooked_minced_beef",
+    "farm_and_charm:cooked_bacon",
+    "farm_and_charm:cooked_chicken_parts",
+    "farm_and_charm:cooked_lamb_ham"
+  ]
+}

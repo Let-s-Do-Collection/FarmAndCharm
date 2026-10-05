@@ -18,6 +18,7 @@ public class FarmAndCharm {
     public static void init() {
         MobEffectRegistry.init();
         ObjectRegistry.init();
+        FeatureRegistry.init();
         VanillaItemPlacements.init();
         EntityTypeRegistry.init();
         TabRegistry.init();

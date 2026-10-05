@@ -164,6 +164,8 @@
   "hud.farm_and_charm.grill_time": "Noch %s s",
   "hud.farm_and_charm.grill_cold": "Braucht Feuer",
   "hud.farm_and_charm.grill_hint": "Rechtsklick: Wenden · Shift + Rechtsklick: Nehmen",
+  "hud.farm_and_charm.grill_done": "Fertig",
+  "hud.farm_and_charm.grill_hint_done": "Rechtsklick: Nehmen",
   "hud.farm_and_charm.stove_no_fuel": "Braucht Brennstoff zum Anzünden",
   "hud.farm_and_charm.in_bowl": "In der Schüssel",
   "hud.farm_and_charm.mincer_cranked": "Gekurbelt %s/%s",
@@ -421,6 +423,8 @@
   "text.autoconfig.farm_and_charm.option.kitchen.cookingExperience.@Tooltip": "Kochen, Hacken, Schneiden, Entrinden und Verrühren geben Erfahrung. Die Menge pro Rezept steht in den Rezeptdateien.",
   "text.autoconfig.farm_and_charm.option.kitchen.cookingExperienceMultiplier": "Erfahrungs-Multiplikator beim Kochen",
   "text.autoconfig.farm_and_charm.option.kitchen.cookingExperienceMultiplier.@Tooltip": "Multipliziert alle Erfahrung aus Kochen und Verarbeiten. 1.0 = wie in den Rezepten.",
+  "text.autoconfig.farm_and_charm.option.kitchen.animations": "Animationen",
+  "text.autoconfig.farm_and_charm.option.kitchen.animations.@Tooltip": "Blöcke dieser Mod sind animiert.",
   "text.autoconfig.farm_and_charm.option.kitchen.diamondCleaverChops": "Schnitte mit Diamant-Hackbeil",
   "text.autoconfig.farm_and_charm.option.kitchen.diamondCleaverChops.@Tooltip": "Wie viele Schnitte ein Diamant-Hackbeil pro Zutat braucht.",
   "text.autoconfig.farm_and_charm.option.kitchen.ironCleaverChops": "Schnitte mit Eisen-Hackbeil",
@@ -496,5 +500,11 @@
   "pack.farm_and_charm.vanilla_blend": "Farm & Charm: VanillaBlend",
   "pack.farm_and_charm.vanilla_blend.description": "Gedämpfte Farben, inspiriert von Vanilla und Vanilla-Style-Mods",
   "text.autoconfig.farm_and_charm.option.farming.enableFireflies": "Glühwürmchen",
-  "text.autoconfig.farm_and_charm.option.farming.enableFireflies.@Tooltip": "Zeigt nachts im Freien Glühwürmchen über Wildreis und um brennende Papierlaternen."
+  "text.autoconfig.farm_and_charm.option.farming.enableFireflies.@Tooltip": "Zeigt nachts im Freien Glühwürmchen über Wildreis und um brennende Papierlaternen.",
+  "item.farm_and_charm.cooked_minced_beef": "Gebratenes Hackfleisch",
+  "item.farm_and_charm.cooked_bacon": "Gebratener Speck",
+  "item.farm_and_charm.cooked_chicken_parts": "Gebratene Hähnchenteile",
+  "item.farm_and_charm.cooked_lamb_ham": "Gebratene Lammkeule",
+  "advancement.farm_and_charm.campfire_meats": "Lagerfeuerküche",
+  "advancement.farm_and_charm.campfire_meats.desc": "Brate vorbereitetes Fleisch über einem offenen Lagerfeuer"
 }

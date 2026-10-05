@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.client.model.WellPumpModel;
 import net.satisfy.farm_and_charm.core.block.TimberWellBlock;
@@ -39,7 +40,7 @@ public class TimberWellRenderer implements BlockEntityRenderer<TimberWellBlockEn
             return;
         }
 
-        float angle = getLeverAngle(be.getLevel().getGameTime() - be.getPumpStartTick() + partialTick);
+        float angle = !PlatformHelper.animationsEnabled() ? REST_ANGLE : getLeverAngle(be.getLevel().getGameTime() - be.getPumpStartTick() + partialTick);
         float blockstateYRot = (state.getValue(TimberWellBlock.FACING).toYRot() + 90.0F) % 360.0F;
 
         poseStack.pushPose();

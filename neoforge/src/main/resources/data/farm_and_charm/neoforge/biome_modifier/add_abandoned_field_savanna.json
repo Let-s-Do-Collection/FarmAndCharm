@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#farm_and_charm:spawns_abandoned_field_savanna",
+  "features": "farm_and_charm:abandoned_field_savanna",
+  "step": "vegetal_decoration"
+}

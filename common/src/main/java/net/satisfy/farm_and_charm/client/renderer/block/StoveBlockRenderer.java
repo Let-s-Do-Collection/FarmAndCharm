@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Con
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import net.satisfy.foundation.render.ClientUtil;
 import net.satisfy.farm_and_charm.core.block.StoveBlock;
 import net.satisfy.farm_and_charm.core.block.entity.StoveBlockEntity;
@@ -52,7 +53,7 @@ public class StoveBlockRenderer implements BlockEntityRenderer<StoveBlockEntity>
                 continue;
             }
             Vec3 center = StoveBlockEntity.grillSlotCenter(slot);
-            float flip = Mth.clamp((time - blockEntity.getGrillFlipStart(slot)) / FLIP_TICKS, 0.0F, 1.0F);
+            float flip = !PlatformHelper.animationsEnabled() ? 1.0F : Mth.clamp((time - blockEntity.getGrillFlipStart(slot)) / FLIP_TICKS, 0.0F, 1.0F);
             float lift = Mth.sin(flip * Mth.PI) * 0.3F;
             poseStack.pushPose();
             poseStack.translate(center.x, center.y + 0.02 + lift, center.z);

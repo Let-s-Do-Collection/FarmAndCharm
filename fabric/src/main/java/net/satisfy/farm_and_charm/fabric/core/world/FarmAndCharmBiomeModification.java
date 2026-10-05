@@ -47,6 +47,14 @@ public class FarmAndCharmBiomeModification {
         world.add(ModificationPhase.ADDITIONS, spawnsWildOatBiomes, ctx -> ctx.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, FarmAndCharmPlacedFeature.WILD_OAT_PATCH_CHANCE_KEY));
 
         world.add(ModificationPhase.ADDITIONS, spawnsWildBarleyBiomes, ctx -> ctx.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, FarmAndCharmPlacedFeature.WILD_BARLEY_PATCH_CHANCE_KEY));
+
+        world.add(ModificationPhase.ADDITIONS, getFarm_And_CharmSelector("spawns_abandoned_field_plains"), ctx -> ctx.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, FarmAndCharmPlacedFeature.ABANDONED_FIELD_PLAINS_KEY));
+
+        world.add(ModificationPhase.ADDITIONS, getFarm_And_CharmSelector("spawns_abandoned_field_forest"), ctx -> ctx.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, FarmAndCharmPlacedFeature.ABANDONED_FIELD_FOREST_KEY));
+
+        world.add(ModificationPhase.ADDITIONS, getFarm_And_CharmSelector("spawns_abandoned_field_taiga"), ctx -> ctx.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, FarmAndCharmPlacedFeature.ABANDONED_FIELD_TAIGA_KEY));
+
+        world.add(ModificationPhase.ADDITIONS, getFarm_And_CharmSelector("spawns_abandoned_field_savanna"), ctx -> ctx.getGenerationSettings().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, FarmAndCharmPlacedFeature.ABANDONED_FIELD_SAVANNA_KEY));
     }
 
     private static Predicate<BiomeSelectionContext> getFarm_And_CharmSelector(String path) {

@@ -22,6 +22,11 @@ public class FarmAndCharmPlacedFeature {
     public static final ResourceKey<PlacedFeature> WILD_EMMER_PATCH_CHANCE_KEY = registerKey("wild_emmer_chance");
     public static final ResourceKey<PlacedFeature> WILD_CORN_PATCH_CHANCE_KEY = registerKey("wild_corn_chance");
 
+    public static final ResourceKey<PlacedFeature> ABANDONED_FIELD_PLAINS_KEY = registerKey("abandoned_field_plains");
+    public static final ResourceKey<PlacedFeature> ABANDONED_FIELD_FOREST_KEY = registerKey("abandoned_field_forest");
+    public static final ResourceKey<PlacedFeature> ABANDONED_FIELD_TAIGA_KEY = registerKey("abandoned_field_taiga");
+    public static final ResourceKey<PlacedFeature> ABANDONED_FIELD_SAVANNA_KEY = registerKey("abandoned_field_savanna");
+
     public static ResourceKey<PlacedFeature> registerKey(String name) {
         return ResourceKey.create(Registries.PLACED_FEATURE, FarmAndCharm.identifier(name));
     }

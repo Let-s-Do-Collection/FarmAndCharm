@@ -3,6 +3,8 @@ package net.satisfy.farm_and_charm.client.renderer.block;
 import net.satisfy.foundation.storage.StorageTypeRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
+import net.satisfy.foundation.client.render.WobbleAnimation;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -16,6 +18,8 @@ import net.satisfy.farm_and_charm.core.registry.TagRegistry;
 @SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
 public class ToolRackRenderer implements StorageTypeRenderer {
+    private static final float WOBBLE_STRENGTH = 3.0F;
+
     @Override
     public void render(StorageBlockEntity entity, PoseStack matrices, MultiBufferSource vertexConsumers, NonNullList<ItemStack> itemStacks) {
         for (int i = 0; i < itemStacks.size(); i++) {
@@ -25,15 +29,18 @@ public class ToolRackRenderer implements StorageTypeRenderer {
                 matrices.pushPose();
                 Item item = stack.getItem();
                 double translate = (i + 1) * (1D / 3);
+                float wobble = WobbleAnimation.angle(entity.getLevel(), entity.getWobbleStart(i), Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false)) * WOBBLE_STRENGTH;
 
                 if (stack.is(TagRegistry.HANGABLE)) {
                     matrices.translate(translate - (2D / 3.2), 0.675f, 0.38f);
+                    matrices.mulPose(Axis.ZP.rotationDegrees(wobble));
                     matrices.scale(0.5f, 0.5f, 0.5f);
                     matrices.mulPose(Axis.ZN.rotationDegrees(45f));
                     matrices.mulPose(Axis.YN.rotationDegrees(-180f));
                     ClientUtil.renderItem(stack, matrices, vertexConsumers, entity);
                 } else {
                     matrices.translate(translate - (2D / 3), 0.6f, 0.38f);
+                    matrices.mulPose(Axis.ZP.rotationDegrees(wobble));
                     matrices.scale(0.6f, 0.6f, 0.6f);
                     matrices.mulPose(Axis.ZN.rotationDegrees(135f));
                     matrices.mulPose(Axis.YN.rotationDegrees(0f));

@@ -10,6 +10,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import net.satisfy.farm_and_charm.core.block.CuttingBoardBlock;
 import net.satisfy.farm_and_charm.core.block.entity.CuttingBoardBlockEntity;
 import net.satisfy.foundation.render.DisplayItemRenderer;
@@ -69,7 +70,7 @@ public class CuttingBoardRenderer implements BlockEntityRenderer<CuttingBoardBlo
     }
 
     private float getHop(CuttingBoardBlockEntity board, float partialTick) {
-        if (board.getLevel() == null) {
+        if (board.getLevel() == null || !PlatformHelper.animationsEnabled()) {
             return 0.0F;
         }
         float impact = board.isCutting() ? CuttingBoardBlockEntity.CHOP_ANIMATION_TICKS : 0.0F;
@@ -90,7 +91,7 @@ public class CuttingBoardRenderer implements BlockEntityRenderer<CuttingBoardBlo
         if (board.isCutting() && board.getLevel() != null) {
             offset = KNIFE_REST_OFFSET - TOOL_FORWARD;
             float sinceChop = board.getLevel().getGameTime() - board.getCutStart() + partialTick;
-            if (sinceChop >= 0.0F && sinceChop < CuttingBoardBlockEntity.CHOP_ANIMATION_TICKS) {
+            if (PlatformHelper.animationsEnabled() && sinceChop >= 0.0F && sinceChop < CuttingBoardBlockEntity.CHOP_ANIMATION_TICKS) {
                 double chop = Math.sin(Math.PI * sinceChop / CuttingBoardBlockEntity.CHOP_ANIMATION_TICKS);
                 lift = chop * CHOP_HEIGHT;
                 tilt = (float) chop * CHOP_TILT;

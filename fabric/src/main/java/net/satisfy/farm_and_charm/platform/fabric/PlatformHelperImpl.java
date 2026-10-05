@@ -160,6 +160,10 @@ public class PlatformHelperImpl {
         return config().kitchen.cleaverHeadDrops;
     }
 
+    public static boolean animationsEnabled() {
+        return config().kitchen.animations;
+    }
+
     public static boolean isCookingExperienceEnabled() {
         return config().kitchen.cookingExperience;
     }

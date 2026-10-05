@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "food",
+  "ingredient": {
+    "item": "farm_and_charm:chicken_parts"
+  },
+  "result": {
+    "id": "farm_and_charm:cooked_chicken_parts"
+  },
+  "experience": 0.35,
+  "cookingtime": 600
+}

@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import net.satisfy.farm_and_charm.FarmAndCharm;
 import net.satisfy.farm_and_charm.client.model.MincerModel;
 import net.satisfy.farm_and_charm.core.block.MincerBlock;
@@ -57,7 +58,7 @@ public class MincerRenderer implements BlockEntityRenderer<MincerBlockEntity> {
 
         float crankAngle = blockEntity.getInterpolatedCrankAngle(partialTicks);
         float wobble = blockEntity.getCrankSpeed() / MincerBlockEntity.CRANK_MAX_SPEED;
-        if (wobble > 0.01F) {
+        if (PlatformHelper.animationsEnabled() && wobble > 0.01F) {
             poseStack.translate(0.5F, Math.abs(Mth.sin(crankAngle)) * wobble * WOBBLE_HOP, 0.5F);
             poseStack.mulPose(Axis.XP.rotationDegrees(Mth.sin(crankAngle) * wobble * WOBBLE_ANGLE));
             poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.cos(crankAngle * 2.0F) * wobble * WOBBLE_ANGLE * 0.4F));

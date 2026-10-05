@@ -1,0 +1,40 @@
+{
+  "type": "farm_and_charm:abandoned_field",
+  "config": {
+    "entries": [
+      {
+        "crop": "minecraft:potatoes",
+        "decoration": "farm_and_charm:potato_bag",
+        "weight": 3
+      },
+      {
+        "crop": "minecraft:carrots",
+        "decoration": "farm_and_charm:carrot_bag",
+        "weight": 3
+      },
+      {
+        "crop": "minecraft:beetroots",
+        "decoration": "farm_and_charm:beetroot_bag",
+        "weight": 2
+      },
+      {
+        "crop": "farm_and_charm:barley_crop",
+        "decoration": "farm_and_charm:barley_ball",
+        "weight": 2
+      }
+    ],
+    "width": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 4,
+      "max_inclusive": 7
+    },
+    "length": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 5,
+      "max_inclusive": 9
+    },
+    "path_chance": 0.3,
+    "mature_chance": 0.1,
+    "decoration_chance": 0.35
+  }
+}

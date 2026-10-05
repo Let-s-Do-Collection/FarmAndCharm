@@ -30,8 +30,11 @@ public class StoveInfoProvider implements BlockInfoProvider {
         if (stack.isEmpty()) {
             return List.of();
         }
+        boolean done = stove.isGrillDone(slot);
         Component status;
-        if (!stove.isLit()) {
+        if (done) {
+            status = Component.translatable("hud.farm_and_charm.grill_done").withStyle(ChatFormatting.GREEN);
+        } else if (!stove.isLit()) {
             status = Component.translatable("hud.farm_and_charm.grill_cold").withStyle(ChatFormatting.GRAY);
         } else {
             int seconds = Mth.positiveCeilDiv(Math.max(0, stove.getGrillTotal(slot) - stove.getGrillProgress(slot)), 20);
@@ -39,7 +42,7 @@ public class StoveInfoProvider implements BlockInfoProvider {
         }
         return List.of(
                 InfoSection.rows(Component.translatable("hud.farm_and_charm.grill"), List.of(InfoSection.Row.item(stack, stack.getHoverName().copy().append(" ").append(status)))),
-                InfoSection.title(Component.translatable("hud.farm_and_charm.grill_hint").withStyle(ChatFormatting.GRAY))
+                InfoSection.title(Component.translatable(done ? "hud.farm_and_charm.grill_hint_done" : "hud.farm_and_charm.grill_hint").withStyle(ChatFormatting.GRAY))
         );
     }
 }

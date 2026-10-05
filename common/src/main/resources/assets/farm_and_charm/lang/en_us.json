@@ -164,6 +164,8 @@
   "hud.farm_and_charm.grill_time": "%ss Left",
   "hud.farm_and_charm.grill_cold": "Needs Fire",
   "hud.farm_and_charm.grill_hint": "Right-Click: Flip · Shift + Right-Click: Take",
+  "hud.farm_and_charm.grill_done": "Ready",
+  "hud.farm_and_charm.grill_hint_done": "Right-Click: Take",
   "hud.farm_and_charm.stove_no_fuel": "Needs Fuel to Light",
   "hud.farm_and_charm.in_bowl": "In the Bowl",
   "hud.farm_and_charm.mincer_cranked": "Cranked %s/%s",
@@ -421,6 +423,8 @@
   "text.autoconfig.farm_and_charm.option.kitchen.cookingExperience.@Tooltip": "Cooking, mincing, cutting, stripping and whisking give experience. The amount per recipe is set in the recipe files.",
   "text.autoconfig.farm_and_charm.option.kitchen.cookingExperienceMultiplier": "Cooking Experience Multiplier",
   "text.autoconfig.farm_and_charm.option.kitchen.cookingExperienceMultiplier.@Tooltip": "Multiplies all experience from cooking and food processing. 1.0 = as set in the recipes.",
+  "text.autoconfig.farm_and_charm.option.kitchen.animations": "Animations",
+  "text.autoconfig.farm_and_charm.option.kitchen.animations.@Tooltip": "Blocks of this mod are animated.",
   "text.autoconfig.farm_and_charm.option.kitchen.diamondCleaverChops": "Diamond Cleaver Chops",
   "text.autoconfig.farm_and_charm.option.kitchen.diamondCleaverChops.@Tooltip": "How many chops a diamond cleaver needs per ingredient.",
   "text.autoconfig.farm_and_charm.option.kitchen.ironCleaverChops": "Iron Cleaver Chops",
@@ -496,5 +500,11 @@
   "pack.farm_and_charm.vanilla_blend": "Farm & Charm: VanillaBlend",
   "pack.farm_and_charm.vanilla_blend.description": "Muted colors inspired by Vanilla and Vanilla-Style-Mods",
   "text.autoconfig.farm_and_charm.option.farming.enableFireflies": "Fireflies",
-  "text.autoconfig.farm_and_charm.option.farming.enableFireflies.@Tooltip": "Shows fireflies above wild rice and around lit paper lanterns outdoors at night."
+  "text.autoconfig.farm_and_charm.option.farming.enableFireflies.@Tooltip": "Shows fireflies above wild rice and around lit paper lanterns outdoors at night.",
+  "item.farm_and_charm.cooked_minced_beef": "Cooked Minced Beef",
+  "item.farm_and_charm.cooked_bacon": "Cooked Bacon",
+  "item.farm_and_charm.cooked_chicken_parts": "Cooked Chicken Parts",
+  "item.farm_and_charm.cooked_lamb_ham": "Cooked Lamb Ham",
+  "advancement.farm_and_charm.campfire_meats": "Campfire Cuisine",
+  "advancement.farm_and_charm.campfire_meats.desc": "Cook prepared meat over an open campfire"
 }

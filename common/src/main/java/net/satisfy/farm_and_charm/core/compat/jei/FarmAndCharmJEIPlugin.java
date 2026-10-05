@@ -2,6 +2,14 @@ package net.satisfy.farm_and_charm.core.compat.jei;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.constants.RecipeTypes;
+import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.runtime.IJeiRuntime;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.crafting.CampfireCookingRecipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.satisfy.farm_and_charm.core.registry.TagRegistry;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
@@ -106,6 +114,17 @@ public class FarmAndCharmJEIPlugin implements IModPlugin {
     @Override
     public @NotNull ResourceLocation getPluginUid() {
         return FarmAndCharm.identifier("jei_plugin");
+    }
+
+    @Override
+    public void onRuntimeAvailable(IJeiRuntime runtime) {
+        List<ItemStack> hidden = BuiltInRegistries.ITEM.getTag(TagRegistry.CAMPFIRE_MEATS).stream().flatMap(HolderSet.Named::stream).map(holder -> new ItemStack(holder.value())).toList();
+        if (!hidden.isEmpty()) {
+            runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM_STACK, hidden);
+        }
+        RecipeManager rm = Objects.requireNonNull(Minecraft.getInstance().level).getRecipeManager();
+        List<RecipeHolder<CampfireCookingRecipe>> campfire = rm.getAllRecipesFor(RecipeType.CAMPFIRE_COOKING).stream().filter(holder -> holder.value().getResultItem(Minecraft.getInstance().level.registryAccess()).is(TagRegistry.CAMPFIRE_MEATS)).toList();
+        runtime.getRecipeManager().hideRecipes(RecipeTypes.CAMPFIRE_COOKING, campfire);
     }
 
     @Override

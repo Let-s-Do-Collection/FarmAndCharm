@@ -4,6 +4,11 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 
 public abstract class PlatformHelper {
     @ExpectPlatform
+    public static boolean animationsEnabled() {
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
     public static boolean isRainGrowthEffectEnabled() {
         throw new AssertionError();
     }

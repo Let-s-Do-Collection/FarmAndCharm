@@ -9,6 +9,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LadderBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import net.satisfy.farm_and_charm.core.block.SturdyLadderBlock;
 import net.satisfy.farm_and_charm.core.block.entity.SturdyLadderBlockEntity;
 import org.joml.Quaternionf;
@@ -28,7 +29,7 @@ public class SturdyLadderRenderer implements BlockEntityRenderer<SturdyLadderBlo
         if (level == null || !state.getValue(SturdyLadderBlock.SHAKING)) return;
 
         double time = level.getGameTime() + partialTick;
-        float ramp = Math.min(1.0F, (float) (time - ladder.getShakeStart()) / RAMP_TICKS);
+        float ramp = !PlatformHelper.animationsEnabled() ? 0.0F : Math.min(1.0F, (float) (time - ladder.getShakeStart()) / RAMP_TICKS);
         Direction facing = state.getValue(LadderBlock.FACING);
         Direction wall = facing.getOpposite();
         float tilt = (0.6F + Math.abs((float) Math.sin(time * 1.1))) * TILT_ANGLE * ramp;

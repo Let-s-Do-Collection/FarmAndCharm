@@ -12,6 +12,7 @@
 * Feathers now fly when taking eggs from a Chicken Nest or putting them in, and when chasing Chickens out of a Chicken Coop with a Pitchfork
 * Breaking a Timber Well now splashes out some water
 * The Stove can now also be put out with a Water Bottle
+* Abandoned Fields: small, overgrown fields now appear now and then in Plains, Meadows, Forests, Taigas and Savannas. Packed Dirt and grass blend into old Farmland with crops in all growth stages, matching the biome, and sometimes a few fitting crop bags are left at the edge
 * The top of the Stove is now a grill with 4 spots: right-click with anything that cooks on a Campfire to put it on, right-click to flip it, sneak + right-click to take it back. It only cooks while the Stove burns and pops off when done. The HUD shows how long each piece still needs
 * Cooking and processing now gives experience: every 5 minced items, every 10 cut and every 20 stripped items on the Cutting Board, every 5 whisked dishes in the Crafting Bowl, and every meal from the Cooking Pot and Roaster. The amount is set per recipe with the optional `experience` field and can be turned off or multiplied in the config
 * Mushroom Stew, Beetroot Soup and Rabbit Stew now also give Sustenance on NeoForge

@@ -9,7 +9,9 @@
   ],
   "contact": {
     "issues": "https://github.com/satisfyu/Let-s-Do-Hub",
-    "sources": "https://github.com/satisfyu/FarmAndCharm"
+    "sources": "https://github.com/satisfyu/FarmAndCharm",
+    "homepage": "https://www.lets-do.ch",
+    "wiki": "https://lets-do.ch/wiki/farm-and-charm/"
   },
   "license": "custom",
   "icon": "pack.png",
@@ -29,7 +31,7 @@
     ],
     "modmenu": [
       "net.satisfy.farm_and_charm.fabric.core.config.ModMenu"
-      ]
+    ]
   },
   "mixins": [
     "FarmAndCharm.mixins.json",

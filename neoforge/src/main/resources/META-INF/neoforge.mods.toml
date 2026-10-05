@@ -17,7 +17,8 @@ authors = "satisfy"
 description = '''
 The farm calls: Experience the art of advanced agriculture and farmhouse cuisine! Use mincers, cooking pots, as well as new grains and fruit varieties to enhance your culinary and agricultural skills.
 '''
-logoFile = "pack.png"
+logoFile = "logo.png"
+displayURL = "https://www.lets-do.ch"
 
 [[dependencies.farm_and_charm]]
 modId = "neoforge"

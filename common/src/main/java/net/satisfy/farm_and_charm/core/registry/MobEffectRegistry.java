@@ -53,6 +53,6 @@ public class MobEffectRegistry {
     }
 
     public static MobEffectInstance inst(ResourceLocation id, int duration) {
-        return new MobEffectInstance(getHolder(id), duration);
+        return new MobEffectInstance(getHolder(id), duration, 0, false, false);
     }
 }

@@ -4,16 +4,16 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.satisfy.farm_and_charm.FarmAndCharm;
+import net.satisfy.foundation.client.gui.recipebook.StationRecipeBookScreen;
 import net.satisfy.farm_and_charm.client.gui.handler.CookingPotGuiHandler;
 
 @Environment(EnvType.CLIENT)
-public class CookingPotGui extends AbstractContainerScreen<CookingPotGuiHandler> {
+public class CookingPotGui extends StationRecipeBookScreen<CookingPotGuiHandler> {
     
     public static final ResourceLocation BACKGROUND;
 
@@ -29,11 +29,6 @@ public class CookingPotGui extends AbstractContainerScreen<CookingPotGuiHandler>
     }
 
     @Override
-    protected void init() {
-        super.init();
-    }
-
-    @Override
     protected void renderBg(GuiGraphics guiGraphics, float f, int i, int j) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -43,13 +38,6 @@ public class CookingPotGui extends AbstractContainerScreen<CookingPotGuiHandler>
         guiGraphics.blit(CookingPotGui.BACKGROUND, posX, posY, 0, 0, this.imageWidth - 1, this.imageHeight);
         this.renderProgressArrow(guiGraphics);
         this.renderBurnIcon(guiGraphics, posX, posY);
-    }
-
-    @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        //this.renderBackground(guiGraphics, mouseX, mouseY, delta);
-        super.render(guiGraphics, mouseX, mouseY, delta);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
     public void renderProgressArrow(GuiGraphics guiGraphics) {

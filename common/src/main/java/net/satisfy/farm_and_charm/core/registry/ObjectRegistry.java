@@ -151,7 +151,7 @@ public class ObjectRegistry {
     public static final RegistrySupplier<Block> DOG_FOOD_BAG = registerWithItem("dog_food_bag", () -> new StackableBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CYAN_CARPET), 3));
     public static final RegistrySupplier<Block> CAT_FOOD_BAG = registerWithItem("cat_food_bag", () -> new StackableBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.PINK_CARPET), 3));
     public static final RegistrySupplier<Block> CHICKEN_NEST = registerWithItem("chicken_nest", () -> new ChickenNestBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK).noCollission().instabreak()));
-    public static final RegistrySupplier<Item> DUNGAREES = registerItem("dungarees", () -> new DungareesItem(ArmorMaterialRegistry.withTextureNoOverlay(ArmorMaterialRegistry.CLOTH, FarmAndCharm.identifier("models/armor/dungarees")), ArmorItem.Type.LEGGINGS, getSettings().stacksTo(1).rarity(Rarity.EPIC), FarmAndCharm.identifier("models/armor/dungarees")));
+    public static final RegistrySupplier<Item> DUNGAREES = registerItem("dungarees", () -> new DungareesItem(ArmorMaterialRegistry.withTextureNoOverlay(ArmorMaterialRegistry.CLOTH, FarmAndCharm.identifier("models/armor/dungarees")), ArmorItem.Type.LEGGINGS, getSettings().stacksTo(1).rarity(Rarity.RARE), FarmAndCharm.identifier("models/armor/dungarees")));
     public static final RegistrySupplier<Block> CHICKEN_COOP = registerWithoutItem("chicken_coop", () -> new ChickenCoopBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS).strength(1.0F).sound(SoundType.WOOD)));
     public static final RegistrySupplier<Item> CHICKEN_COOP_ITEM = registerItem("chicken_coop", () -> new ChickenCoopBlockItem(ObjectRegistry.CHICKEN_COOP.get(), getSettings()));
     public static final RegistrySupplier<Item> OAT_PANCAKE = registerItem("oat_pancake", () -> new PlaceableEffectFoodItem(OAT_PANCAKE_BLOCK.get(), getFoodItemSettings(PlatformHelper.getNutrition("oat_pancake"), PlatformHelper.getSaturationMod("oat_pancake"), MobEffectRegistry.SATIATION, 2400)));
@@ -233,7 +233,7 @@ public class ObjectRegistry {
         return new Item.Properties().food(new FoodProperties.Builder()
                 .nutrition(nutrition)
                 .saturationModifier(saturationMod)
-                .effect(new MobEffectInstance(effect, duration), 1.0f)
+                .effect(new MobEffectInstance(effect, duration, 0, false, false), 1.0f)
                 .build());
     }
 
@@ -263,7 +263,7 @@ public class ObjectRegistry {
         FoodProperties.Builder food = new FoodProperties.Builder().nutrition(nutrition).saturationModifier(saturationMod);
         if (alwaysEat) food.alwaysEdible();
         if (fast) food.fast();
-        if (effect != null) food.effect(new MobEffectInstance(effect, duration), 1.0f);
+        if (effect != null) food.effect(new MobEffectInstance(effect, duration, 0, false, false), 1.0f);
         return food.build();
     }
 
@@ -277,7 +277,7 @@ public class ObjectRegistry {
 
     private static FoodProperties teaFoodComponent(Holder<MobEffect> effect, int duration) {
         FoodProperties.Builder component = new FoodProperties.Builder().nutrition(1).saturationModifier(1).alwaysEdible();
-        if (effect != null) component.effect(new MobEffectInstance(effect, duration), 1.0f);
+        if (effect != null) component.effect(new MobEffectInstance(effect, duration, 0, false, false), 1.0f);
         return component.build();
     }
 

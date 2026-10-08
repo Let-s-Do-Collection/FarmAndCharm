@@ -11,11 +11,17 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
+import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
+import net.satisfy.foundation.recipe.book.StationRecipeBookMenu;
 import org.jetbrains.annotations.NotNull;
 
-public class StoveGuiHandler extends AbstractContainerMenu {
+public class StoveGuiHandler extends AbstractContainerMenu implements StationRecipeBookMenu {
+    private static final int OUTPUT_SLOT = 0;
+    private static final int[] INPUT_SLOTS = {1, 2, 3};
+
     private final Container inventory;
     public final ContainerData propertyDelegate;
 
@@ -105,6 +111,21 @@ public class StoveGuiHandler extends AbstractContainerMenu {
             return copy;
         }
         return ItemStack.EMPTY;
+    }
+
+    @Override
+    public RecipeType<?> recipeBookType() {
+        return RecipeTypeRegistry.STOVE_RECIPE_TYPE.get();
+    }
+
+    @Override
+    public int[] recipeBookInputSlots() {
+        return INPUT_SLOTS;
+    }
+
+    @Override
+    public int recipeBookResultSlot(RecipeType<?> type) {
+        return OUTPUT_SLOT;
     }
 
     @Override

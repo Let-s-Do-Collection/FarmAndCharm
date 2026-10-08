@@ -42,6 +42,8 @@ dependencies {
     modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
     modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
     modRuntimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
+    modCompileOnly("dev.emi:emi-neoforge:${emi_version}:api")
+    modLocalRuntime("dev.emi:emi-neoforge:${emi_version}")
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive false }

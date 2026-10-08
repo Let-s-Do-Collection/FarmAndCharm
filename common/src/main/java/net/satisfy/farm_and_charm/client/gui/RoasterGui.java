@@ -5,16 +5,16 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.satisfy.farm_and_charm.FarmAndCharm;
+import net.satisfy.foundation.client.gui.recipebook.StationRecipeBookScreen;
 import net.satisfy.farm_and_charm.client.gui.handler.RoasterGuiHandler;
 
 @Environment(EnvType.CLIENT)
-public class RoasterGui extends AbstractContainerScreen<RoasterGuiHandler> {
+public class RoasterGui extends StationRecipeBookScreen<RoasterGuiHandler> {
     public static final ResourceLocation BACKGROUND;
 
     public static final int ARROW_X = 95;
@@ -29,11 +29,6 @@ public class RoasterGui extends AbstractContainerScreen<RoasterGuiHandler> {
     }
 
     @Override
-    protected void init() {
-        super.init();
-    }
-
-    @Override
     protected void renderBg(GuiGraphics guiGraphics, float delta, int mouseX, int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -43,13 +38,6 @@ public class RoasterGui extends AbstractContainerScreen<RoasterGuiHandler> {
         guiGraphics.blit(RoasterGui.BACKGROUND, posX, posY, 0, 0, this.imageWidth - 1, this.imageHeight);
         this.renderProgressArrow(guiGraphics);
         this.renderBurnIcon(guiGraphics, posX, posY);
-    }
-
-    @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        //this.renderBackground(guiGraphics, mouseX, mouseY, delta);
-        super.render(guiGraphics, mouseX, mouseY, delta);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
     public void renderProgressArrow(GuiGraphics guiGraphics) {

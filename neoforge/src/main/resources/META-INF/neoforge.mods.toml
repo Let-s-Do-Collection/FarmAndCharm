@@ -14,36 +14,37 @@ modId = "farm_and_charm"
 version = "${version}"
 displayName = "[Let's Do] Farm & Charm"
 authors = "satisfy"
+credits = "MissLilitu, CR-055, Jason13Official"
 description = '''
 The farm calls: Experience the art of advanced agriculture and farmhouse cuisine! Use mincers, cooking pots, as well as new grains and fruit varieties to enhance your culinary and agricultural skills.
 '''
-logoFile = "logo.png"
+logoFile = "pack.png"
 displayURL = "https://www.lets-do.ch"
 
 [[dependencies.farm_and_charm]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21.0,)"
+versionRange = "[21.1,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.farm_and_charm]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21,)"
+versionRange = "[1.21.1,1.22)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.farm_and_charm]]
 modId = "architectury"
 type = "required"
-versionRange = "[9.0.8,)"
+versionRange = "[13.0.8,)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.farm_and_charm]]
 modId = "foundation"
 type = "required"
-versionRange = "[1.0.0,)"
+versionRange = "[1.0.3,)"
 ordering = "AFTER"
 side = "BOTH"

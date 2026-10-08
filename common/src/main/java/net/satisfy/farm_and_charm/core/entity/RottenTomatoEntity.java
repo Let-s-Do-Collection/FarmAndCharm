@@ -57,7 +57,7 @@ public class RottenTomatoEntity extends ThrowableItemProjectile {
         super.onHitEntity(result);
         Entity entity = result.getEntity();
         if (entity instanceof LivingEntity livingEntity) {
-            livingEntity.addEffect(new MobEffectInstance(MobEffects.POISON, 30, 0));
+            livingEntity.addEffect(new MobEffectInstance(MobEffects.POISON, 30, 0, false, false));
         }
         int damage = 1;
         entity.hurt(entity.damageSources().thrown(this, this.getOwner()), (float) damage);

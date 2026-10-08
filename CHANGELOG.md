@@ -32,6 +32,7 @@
 * Scarecrow: Shift + right-click it with an empty hand to switch between three moods. Calm sways gently like before, Windy sways on its post, flaps its arms, nods its head, moves more in rain and thunder and catches a gust now and then, Watchful slowly turns its head towards the nearest player, looks around when nobody is near and throws its arms up when you come too close. The mood only changes the look, not the crop growth. An info tooltip shows the current mood and can be turned off in the config. Every Scarecrow now moves on its own instead of all of them in sync
 * Scarecrow is now a two block tall block: it needs free space above it, its head can be clicked and has collision, and no block can be placed into it anymore. Scarecrows placed before this update keep working but only get their upper half once they are picked up and placed again
 * 22 new Farm & Charm splash texts on the title screen
+* Farm&Charm Blocks are now finally burning... Just took me 2 years
 * Chicken Nests now work with birds and eggs from other mods. Add the bird to the `farm_and_charm:nest_layers` entity tag and its egg to the `farm_and_charm:nest_eggs` item tag. Eggs in the `c:eggs` tag are accepted automatically
 * New common tags for better mod compatibility: `c:foods`, `c:foods/berry`, `c:foods/food_poisoning`, `c:foods/edible_when_placed`, `c:tools`, `c:storage_blocks` (Bags and Bales), `c:crops/lettuce`, `c:seeds/tomato` and `c:seeds/lettuce`
 

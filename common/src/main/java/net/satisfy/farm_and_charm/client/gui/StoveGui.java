@@ -4,16 +4,16 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.satisfy.farm_and_charm.FarmAndCharm;
+import net.satisfy.foundation.client.gui.recipebook.StationRecipeBookScreen;
 import net.satisfy.farm_and_charm.client.gui.handler.StoveGuiHandler;
 
 @Environment(EnvType.CLIENT)
-public class StoveGui extends AbstractContainerScreen<StoveGuiHandler> {
+public class StoveGui extends StationRecipeBookScreen<StoveGuiHandler> {
     public static final ResourceLocation BACKGROUND  = FarmAndCharm.identifier("textures/gui/stove_gui.png");
 
     public static final int ARROW_X = 93;
@@ -21,18 +21,6 @@ public class StoveGui extends AbstractContainerScreen<StoveGuiHandler> {
 
     public StoveGui(StoveGuiHandler handler, Inventory inventory, Component title) {
         super(handler, inventory, title);
-    }
-
-    @Override
-    protected void init() {
-        super.init();
-    }
-
-    @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        //this.renderBackground(guiGraphics, mouseX, mouseY, delta);
-        super.render(guiGraphics, mouseX, mouseY, delta);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 
     @Override

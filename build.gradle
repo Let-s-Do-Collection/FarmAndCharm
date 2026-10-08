@@ -26,7 +26,17 @@ allprojects {
     group = rootProject.maven_group
 
     repositories {
-        mavenLocal()
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "Let's Do Maven"
+                    url = "https://raw.githubusercontent.com/Let-s-Do-Collection/Foundation/1.21.1/maven"
+                }
+            }
+            filter {
+                includeGroup "net.satisfy.foundation"
+            }
+        }
         exclusiveContent {
             forRepository {
                 maven {
@@ -41,6 +51,10 @@ allprojects {
         maven {
             name = "Jared's maven"
             url = "https://maven.blamejared.com/"
+        }
+        maven {
+            name = "TerraformersMC"
+            url = "https://maven.terraformersmc.com/releases/"
         }
     }
 

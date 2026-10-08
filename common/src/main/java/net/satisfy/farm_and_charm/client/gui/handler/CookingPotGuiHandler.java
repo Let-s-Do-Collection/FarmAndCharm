@@ -3,6 +3,9 @@ package net.satisfy.farm_and_charm.client.gui.handler;
 import net.satisfy.foundation.menu.OutputSlot;
 import net.satisfy.foundation.menu.ExtendedSlot;
 import net.minecraft.world.Container;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -14,9 +17,18 @@ import net.minecraft.world.item.ItemStack;
 import net.satisfy.farm_and_charm.core.block.entity.CookingPotBlockEntity;
 import net.satisfy.farm_and_charm.core.registry.ScreenhandlerTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.TagRegistry;
+import net.satisfy.farm_and_charm.core.recipe.CookingPotRecipe;
+import net.satisfy.farm_and_charm.core.registry.RecipeTypeRegistry;
+import net.satisfy.foundation.recipe.book.StationRecipeBookMenu;
 import org.jetbrains.annotations.NotNull;
 
-public class CookingPotGuiHandler extends AbstractContainerMenu {
+import java.util.Map;
+
+public class CookingPotGuiHandler extends AbstractContainerMenu implements StationRecipeBookMenu {
+    private static final int CONTAINER_SLOT = 0;
+    private static final int[] INPUT_SLOTS = {1, 2, 3, 4, 5, 6};
+    private static final int OUTPUT_SLOT = 7;
+
     private final Container inventory;
     private final ContainerData propertyDelegate;
 
@@ -103,6 +115,29 @@ public class CookingPotGuiHandler extends AbstractContainerMenu {
             return copy;
         }
         return ItemStack.EMPTY;
+    }
+
+    @Override
+    public RecipeType<?> recipeBookType() {
+        return RecipeTypeRegistry.COOKING_POT_RECIPE_TYPE.get();
+    }
+
+    @Override
+    public int[] recipeBookInputSlots() {
+        return INPUT_SLOTS;
+    }
+
+    @Override
+    public int recipeBookResultSlot(RecipeType<?> type) {
+        return OUTPUT_SLOT;
+    }
+
+    @Override
+    public Map<Integer, Ingredient> recipeBookExtraInputs(RecipeHolder<?> recipe) {
+        if (recipe.value() instanceof CookingPotRecipe r && r.isContainerRequired() && !r.getContainerItem().isEmpty()) {
+            return Map.of(CONTAINER_SLOT, Ingredient.of(r.getContainerItem()));
+        }
+        return Map.of();
     }
 
     @Override

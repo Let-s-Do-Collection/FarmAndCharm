@@ -6,13 +6,6 @@
       "conditions": [
         {
           "condition": "minecraft:survives_explosion"
-        },
-        {
-          "condition": "minecraft:block_state_property",
-          "block": "farm_and_charm:timber_well",
-          "properties": {
-            "part": "foot"
-          }
         }
       ],
       "entries": [

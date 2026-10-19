@@ -15,6 +15,7 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
@@ -66,38 +67,14 @@ public class WaterTroughBlock extends LineConnectingBlock {
         if (stack.is(Items.WATER_BUCKET)) {
             if (level.isClientSide) return ItemInteractionResult.SUCCESS;
 
-            List<BlockPos> component = getComponent(level, pos, state.getValue(FACING));
-            int baseFill = getFillLevelForComponentSize(component.size());
-
-            boolean hasAnyZero = false;
-            for (BlockPos componentPos : component) {
+            boolean changed = false;
+            for (BlockPos componentPos : getComponent(level, pos, state.getValue(FACING))) {
                 BlockState componentState = level.getBlockState(componentPos);
                 if (componentState.getBlock() != this) continue;
-                if (componentState.getValue(LEVEL) == 0) {
-                    hasAnyZero = true;
-                    break;
-                }
-            }
-
-            boolean changed = false;
-
-            if (hasAnyZero) {
-                for (BlockPos componentPos : component) {
-                    BlockState componentState = level.getBlockState(componentPos);
-                    if (componentState.getBlock() != this) continue;
-                    if (componentState.getValue(LEVEL) == baseFill) continue;
-                    level.setBlock(componentPos, componentState.setValue(LEVEL, baseFill), 3);
-                    changed = true;
-                }
-            } else {
-                for (BlockPos componentPos : component) {
-                    BlockState componentState = level.getBlockState(componentPos);
-                    if (componentState.getBlock() != this) continue;
-                    int currentLevel = componentState.getValue(LEVEL);
-                    if (currentLevel >= 3) continue;
-                    level.setBlock(componentPos, componentState.setValue(LEVEL, currentLevel + 1), 3);
-                    changed = true;
-                }
+                int currentLevel = componentState.getValue(LEVEL);
+                if (currentLevel >= 3) continue;
+                level.setBlock(componentPos, componentState.setValue(LEVEL, currentLevel + 1), 3);
+                changed = true;
             }
 
             if (!player.getAbilities().instabuild && changed) {
@@ -114,9 +91,7 @@ public class WaterTroughBlock extends LineConnectingBlock {
 
             boolean infinite = isInfiniteSource(level, pos, state.getValue(FACING));
 
-            if (!player.getAbilities().instabuild) {
-                player.setItemInHand(hand, new ItemStack(Items.WATER_BUCKET));
-            }
+            player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.WATER_BUCKET)));
 
             if (!infinite) {
                 level.setBlock(pos, state.setValue(LEVEL, Math.max(0, currentLevel - 1)), 3);
@@ -228,12 +203,6 @@ public class WaterTroughBlock extends LineConnectingBlock {
             map.put(direction, ShapeUtil.rotateShape(Direction.NORTH, direction, northShape));
         }
         return map;
-    }
-
-    private int getFillLevelForComponentSize(int size) {
-        if (size <= 1) return 3;
-        if (size == 2) return 2;
-        return 1;
     }
 
     private boolean isInfiniteSource(Level level, BlockPos pos, Direction facing) {

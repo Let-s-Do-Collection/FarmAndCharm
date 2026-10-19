@@ -5,7 +5,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.animal.Animal;
@@ -18,6 +17,7 @@ import net.satisfy.farm_and_charm.core.block.FeedingTroughBlock;
 import net.satisfy.farm_and_charm.core.network.PacketHandler;
 import net.satisfy.farm_and_charm.core.network.packet.SyncSaturationPacket;
 import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
+import net.satisfy.farm_and_charm.core.registry.TagRegistry;
 import net.satisfy.farm_and_charm.core.util.SaturationTracker;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +29,7 @@ public class FeedingTroughBlockEntity extends BlockEntity implements WorldlyCont
     }
 
     public boolean addOne(Item item) {
-        if (!new ItemStack(item).is(ItemTags.VILLAGER_PLANTABLE_SEEDS)) return false;
+        if (!new ItemStack(item).is(TagRegistry.FEEDING_TROUGH_FOOD)) return false;
         ItemStack slot = items.get(0);
         if (slot.isEmpty()) {
             items.set(0, new ItemStack(item, 1));
@@ -75,7 +75,7 @@ public class FeedingTroughBlockEntity extends BlockEntity implements WorldlyCont
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
         ItemStack cur = getItem(slot);
-        return stack.is(ItemTags.VILLAGER_PLANTABLE_SEEDS) && (cur.isEmpty() || cur.is(stack.getItem())) && cur.getCount() < 4;
+        return stack.is(TagRegistry.FEEDING_TROUGH_FOOD) && (cur.isEmpty() || cur.is(stack.getItem())) && cur.getCount() < 4;
     }
 
     @Override

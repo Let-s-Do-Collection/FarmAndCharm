@@ -6,6 +6,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -19,6 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.BlockItemStateProperties;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -82,7 +84,7 @@ public class ScarecrowBlock extends BaseEntityBlock {
     public ScarecrowBlock(Properties props) {
         super(props);
         this.registerDefaultState(this.defaultBlockState()
-                .setValue(FACING, Direction.NORTH).setValue(HAS_DUNGAREES, true).setValue(HALF, DoubleBlockHalf.LOWER).setValue(MODE, ScarecrowMode.CALM)
+                .setValue(FACING, Direction.NORTH).setValue(HAS_DUNGAREES, false).setValue(HALF, DoubleBlockHalf.LOWER).setValue(MODE, ScarecrowMode.CALM)
         );
     }
 
@@ -100,7 +102,7 @@ public class ScarecrowBlock extends BaseEntityBlock {
         }
         return this.defaultBlockState()
                 .setValue(FACING, ctx.getHorizontalDirection().getOpposite())
-                .setValue(HAS_DUNGAREES, true);
+                .setValue(HAS_DUNGAREES, false);
     }
 
     @Override
@@ -252,6 +254,9 @@ public class ScarecrowBlock extends BaseEntityBlock {
         tooltip.add(Component.empty());
         tooltip.add(Component.translatable("tooltip.farm_and_charm.thankyou_2").withStyle(ChatFormatting.DARK_PURPLE));
         tooltip.add(Component.translatable("tooltip.farm_and_charm.thankyou_4").withStyle(ChatFormatting.BLUE));
+        if (Boolean.TRUE.equals(itemStack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY).get(HAS_DUNGAREES))) {
+            tooltip.add(Component.translatable("tooltip.farm_and_charm.scarecrow_dungarees").withStyle(ChatFormatting.BLUE));
+        }
         tooltip.add(Component.empty());
         tooltip.add(Component.translatable("tooltip.farm_and_charm.thankyou_3").withStyle(ChatFormatting.GOLD));
     }

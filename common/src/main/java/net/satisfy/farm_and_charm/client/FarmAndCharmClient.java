@@ -9,11 +9,16 @@ import dev.architectury.registry.client.level.entity.EntityRendererRegistry;
 import dev.architectury.registry.client.rendering.BlockEntityRendererRegistry;
 import dev.architectury.registry.client.rendering.ColorHandlerRegistry;
 import dev.architectury.registry.client.rendering.RenderTypeRegistry;
+import dev.architectury.registry.item.ItemPropertiesRegistry;
 import dev.architectury.registry.menu.MenuRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.BlockItemStateProperties;
+import net.satisfy.farm_and_charm.FarmAndCharm;
+import net.satisfy.farm_and_charm.core.block.ScarecrowBlock;
 import net.satisfy.farm_and_charm.client.event.ClientEventHandler;
 import net.satisfy.foundation.ambient.FireflyAmbience;
 import net.satisfy.foundation.overlay.BlockInfoOverlay;
@@ -40,6 +45,11 @@ import net.satisfy.farm_and_charm.core.registry.StorageTypeRegistry;
 
 import static net.satisfy.farm_and_charm.core.registry.ObjectRegistry.*;
 import net.satisfy.foundation.client.mimic.MimicModels;
+import net.satisfy.foundation.client.creative.CreativeSideTabs;
+import net.satisfy.foundation.client.creative.CreativeTabTooltips;
+import net.satisfy.foundation.rarity.FoundationRarity;
+import net.satisfy.farm_and_charm.core.registry.TabRegistry;
+import net.minecraft.network.chat.Component;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 
 public class FarmAndCharmClient {
@@ -65,6 +75,14 @@ public class FarmAndCharmClient {
             }
             return BiomeColors.getAverageWaterColor(world, pos);
         }, WATER_TROUGH.get(), TIMBER_WELL.get());
+
+        CreativeSideTabs.register(TabRegistry.FARM_AND_CHARM_TAB.getKey(),
+                CreativeSideTabs.SideTab.of(Component.translatable("creativetab.farm_and_charm.side.farm"), SCARECROW.get(), TabRegistry::acceptFarm),
+                CreativeSideTabs.SideTab.of(Component.translatable("creativetab.farm_and_charm.side.food"), COOKING_POT.get(), TabRegistry::acceptFood));
+        CreativeTabTooltips.register(TabRegistry.FARM_AND_CHARM_TAB.getKey(), FoundationRarity.solid("farm_and_charm:straw", 0xE0B050));
+
+        ItemPropertiesRegistry.register(SCARECROW.get(), FarmAndCharm.identifier("dungarees"), (stack, level, entity, seed) ->
+                Boolean.TRUE.equals(stack.getOrDefault(DataComponents.BLOCK_STATE, BlockItemStateProperties.EMPTY).get(ScarecrowBlock.HAS_DUNGAREES)) ? 1.0F : 0.0F);
 
         ClientStorageTypes.init();
         ClientEventHandler.init();

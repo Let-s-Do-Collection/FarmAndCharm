@@ -28,7 +28,7 @@ import java.util.List;
 
 public final class VanillaItemPlacements {
 
-    private static final MutableComponent PLACEABLE_TOOLTIP = Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.DARK_GRAY);
+    private static final MutableComponent PLACEABLE_TOOLTIP = Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.GRAY);
 
     public static void init() {
         InteractionEvent.RIGHT_CLICK_BLOCK.register(VanillaItemPlacements::onRightClickBlock);

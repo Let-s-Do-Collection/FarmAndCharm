@@ -18,7 +18,16 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "farm_and_charm:scarecrow"
+          "name": "farm_and_charm:scarecrow",
+          "functions": [
+            {
+              "function": "minecraft:copy_state",
+              "block": "farm_and_charm:scarecrow",
+              "properties": [
+                "has_dungarees"
+              ]
+            }
+          ]
         }
       ],
       "rolls": 1

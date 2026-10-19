@@ -1,7 +1,25 @@
+[1.1.30]
+
+**Fixed**
+* A Water Bucket now fills an empty Water Trough by a third instead of filling it completely, so one bucket no longer turns into three
+* Taking water from a Water Trough with a stack of Buckets no longer replaces the whole stack with a single Water Bucket
+* The Feeding Trough now accepts Pumpkin and Melon Seeds
+* A Timber Well now drops itself no matter which part of it you break
+* The Scarecrow no longer gives you free Dungarees. A Scarecrow now remembers whether it is dressed: breaking a dressed one gives you a dressed Scarecrow back, and copied Scarecrows come without Dungarees
+* Placeable meals and drinks show the "Can be placed" tooltip again
+
+**Changed**
+* The Scarecrows from the "Farm to Table" advancement come dressed in Dungarees
+* Items now have a rarity: everyday ingredients, crops and workstations are Common, simple meals, animal feed, Fertilizer, tools, machines and Wild Crops are Uncommon, placeable meals, roaster meals, Compost, pet food bags, the Stove, Dungarees and the Diamond Cleaver are Rare, feasts, Farmer's Breakfast, Grandmother's Strawberry Cake and the Netherite Cleaver are Epic and the Scarecrow stays Legendary
+* The creative tab is split into Farm and Food side tabs, and hovering the tab or a side tab shows a framed tooltip
+* Requires Foundation 1.0.12 or newer
+
+***
+
 [1.1.29]
 
 **Fixed**
-* Much faster game start in bigger modpacks with ModernFix: Foundation no longer loads the models of every other mod during startup, which also removes model warnings from other mods in the log
+* Much faster game start in bigger modpacks with ModernFix: Foundation  no longer loads the models of every other mod during startup, which also removes model warnings from other mods in the log
 
 ***
 

@@ -1,6 +1,14 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "farm_and_charm:item/scarecrow"
-  }
+    "layer0": "farm_and_charm:item/scarecrow_no_dungarees"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "farm_and_charm:dungarees": 1
+      },
+      "model": "farm_and_charm:item/scarecrow_dungarees"
+    }
+  ]
 }

@@ -12,6 +12,14 @@
             {
               "function": "minecraft:set_count",
               "count": 2
+            },
+            {
+              "function": "minecraft:set_components",
+              "components": {
+                "minecraft:block_state": {
+                  "has_dungarees": "true"
+                }
+              }
             }
           ]
         }

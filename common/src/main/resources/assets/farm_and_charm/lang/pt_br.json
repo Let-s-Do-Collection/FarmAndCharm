@@ -420,7 +420,7 @@
   "text.autoconfig.farm_and_charm.option.kitchen.cleaverHeadDrops": "Cutelos extraem cabeças de criaturas",
   "text.autoconfig.farm_and_charm.option.kitchen.cleaverHeadDrops.@Tooltip": "Criaturas mortas com um Cutelo podem largar suas cabeças.",
   "text.autoconfig.farm_and_charm.option.kitchen.cookingExperience": "Experiência de cozinha",
-  "text.autoconfig.farm_and_charm.option.kitchen.cookingExperience.@Tooltip": "Cozinhar, moer, cortar, descascar e mexer dão experiência. A quantidade por receita é definida nos arquivos das receita.",
+  "text.autoconfig.farm_and_charm.option.kitchen.cookingExperience.@Tooltip": "Cozinhar, moer, cortar, descascar e mexer dão experiência. A quantidade por receita é definida nos arquivos das receitas.",
   "text.autoconfig.farm_and_charm.option.kitchen.cookingExperienceMultiplier": "Multiplicador da experiência de cozinha",
   "text.autoconfig.farm_and_charm.option.kitchen.cookingExperienceMultiplier.@Tooltip": "Multiplica toda experiência ao cozinhar e processar comida. 1.0 = como já definido nas receitas.",
   "text.autoconfig.farm_and_charm.option.misc.animations": "Animações",

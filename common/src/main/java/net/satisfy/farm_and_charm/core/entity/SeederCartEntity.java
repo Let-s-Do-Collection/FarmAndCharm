@@ -18,6 +18,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -93,7 +94,9 @@ public class SeederCartEntity extends AbstractCartEntity implements MenuProvider
 
     @Override
     public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
-        if (player.isShiftKeyDown() && player.getItemInHand(hand).isEmpty() && this.getPulling() == player) {
+        if (player.isShiftKeyDown()
+                && player.getItemInHand(hand).isEmpty()
+                && (this.getPulling() == player || this.getPulling() instanceof AbstractHorse)) {
             if (this.level().isClientSide) {
                 return InteractionResult.SUCCESS;
             }
@@ -218,7 +221,7 @@ public class SeederCartEntity extends AbstractCartEntity implements MenuProvider
         if (this.level().isClientSide) {
             return;
         }
-        if (!(this.getPulling() instanceof Player)) {
+        if (!(this.getPulling() instanceof Player) && !(this.getPulling() instanceof AbstractHorse)) {
             return;
         }
         if (Math.abs(this.getX() - prevX) < 1.0E-4 && Math.abs(this.getZ() - prevZ) < 1.0E-4) {

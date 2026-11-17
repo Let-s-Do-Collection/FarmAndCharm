@@ -11,6 +11,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -52,7 +53,9 @@ public class PlowCartEntity extends AbstractCartEntity {
 
     @Override
     public @NotNull InteractionResult interact(Player player, InteractionHand hand) {
-        if (player.isShiftKeyDown() && player.getItemInHand(hand).isEmpty() && this.getPulling() == player) {
+        if (player.isShiftKeyDown()
+                && player.getItemInHand(hand).isEmpty()
+                && (this.getPulling() == player || this.getPulling() instanceof AbstractHorse)) {
             if (!this.level().isClientSide) {
                 this.entityData.set(DATA_PLOW_ENABLED, !this.entityData.get(DATA_PLOW_ENABLED));
             }
@@ -93,7 +96,7 @@ public class PlowCartEntity extends AbstractCartEntity {
         if (!this.entityData.get(DATA_PLOW_ENABLED)) {
             return;
         }
-        if (!(this.getPulling() instanceof Player)) {
+        if (!(this.getPulling() instanceof Player) && !(this.getPulling() instanceof AbstractHorse)) {
             return;
         }
         if (Math.abs(this.getX() - prevX) < 1.0E-4 && Math.abs(this.getZ() - prevZ) < 1.0E-4) {

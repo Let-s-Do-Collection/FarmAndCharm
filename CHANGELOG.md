@@ -1,18 +1,29 @@
 [1.1.30]
 
+**Added**
+* Hoppers below a Chicken Coop take out the eggs, and a comparator shows how many eggs are waiting
+* A redstone signal turns off the Water Sprinkler
+* Comparators read the Cooking Pot, the Roaster and the Stove and give a full signal once something is ready to take. The Crafting Bowl gives a full signal when it is done and otherwise shows how many ingredients are in it
+* Comparators show how full the Mincer, the Feeding Trough, the Pet Bowl, the Tool Rack, the Window Sill, the Chicken Nest and the Timber Well are
+* Addons can list their own Cooking Pots, Stoves, Roasters, Crafting Bowls and Mincers as workstations in EMI, JEI and REI
+
 **Fixed**
+* Hoppers can no longer put any item into the Tool Rack, the Window Sill or the Chicken Nest. They only accept what you could place there by hand
 * A Water Bucket now fills an empty Water Trough by a third instead of filling it completely, so one bucket no longer turns into three
 * Taking water from a Water Trough with a stack of Buckets no longer replaces the whole stack with a single Water Bucket
 * The Feeding Trough now accepts Pumpkin and Melon Seeds
 * A Timber Well now drops itself no matter which part of it you break
 * The Scarecrow no longer gives you free Dungarees. A Scarecrow now remembers whether it is dressed: breaking a dressed one gives you a dressed Scarecrow back, and copied Scarecrows come without Dungarees
 * Placeable meals and drinks show the "Can be placed" tooltip again
+* On NeoForge, food gives its full saturation again instead of almost none
+* Hoppers and Create can fill a Silo and take the dried items out at the bottom
 
 **Changed**
+* Foundation is no longer bundled inside the mod. It is now a separate required download, Modrinth and CurseForge install it automatically
 * The Scarecrows from the "Farm to Table" advancement come dressed in Dungarees
 * Items now have a rarity: everyday ingredients, crops and workstations are Common, simple meals, animal feed, Fertilizer, tools, machines and Wild Crops are Uncommon, placeable meals, roaster meals, Compost, pet food bags, the Stove, Dungarees and the Diamond Cleaver are Rare, feasts, Farmer's Breakfast, Grandmother's Strawberry Cake and the Netherite Cleaver are Epic and the Scarecrow stays Legendary
+* The Cutting Board can be crafted from any Planks instead of only Birch Planks
 * The creative tab is split into Farm and Food side tabs, and hovering the tab or a side tab shows a framed tooltip
-* Requires Foundation 1.0.12 or newer
 
 ***
 

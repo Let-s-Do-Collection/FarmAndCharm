@@ -368,6 +368,48 @@ public class SiloBlockEntity extends BlockEntity implements IMultiBlockEntityCon
         return !isController() ? 0 : this.width * this.width * this.height;
     }
 
+    @Nullable
+    public SiloBlockEntity getControllerSilo() {
+        if (isController()) {
+            return this;
+        }
+        if (level == null || controller == null) {
+            return null;
+        }
+        return level.getBlockEntity(controller) instanceof SiloBlockEntity silo && silo.isController() ? silo : null;
+    }
+
+    @Override
+    public int getMaxStackSize() {
+        return 1;
+    }
+
+    @Override
+    public int @NotNull [] getSlotsForFace(Direction side) {
+        int capacity = getCapacity();
+        int offset = side == Direction.DOWN ? MAX_CAPACITY : 0;
+        int[] slots = new int[capacity];
+        for (int i = 0; i < capacity; i++) {
+            slots[i] = offset + i;
+        }
+        return slots;
+    }
+
+    @Override
+    public boolean canPlaceItem(int slot, ItemStack stack) {
+        return slot < getCapacity() && level != null && SiloBlock.isDryItem(level, stack);
+    }
+
+    @Override
+    public boolean canPlaceItemThroughFace(int slot, ItemStack stack, @Nullable Direction side) {
+        return side != Direction.DOWN && getItem(slot).isEmpty() && canPlaceItem(slot, stack);
+    }
+
+    @Override
+    public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction side) {
+        return side == Direction.DOWN && slot >= MAX_CAPACITY && slot < MAX_CAPACITY + getCapacity();
+    }
+
     @Override
     public NonNullList<ItemStack> getItems() {
         return items;

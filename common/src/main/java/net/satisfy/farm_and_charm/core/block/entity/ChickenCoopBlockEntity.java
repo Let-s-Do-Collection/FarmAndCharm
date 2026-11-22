@@ -5,9 +5,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -20,8 +23,12 @@ import java.util.Iterator;
 import java.util.List;
 import net.satisfy.farm_and_charm.platform.PlatformHelper;
 import java.util.UUID;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class ChickenCoopBlockEntity extends BlockEntity {
+public class ChickenCoopBlockEntity extends BlockEntity implements WorldlyContainer {
+    private static final int[] SLOTS_DOWN = {0};
+    private static final int[] NO_SLOTS = {};
     private static final String KEY_CHICKENS = "Chickens";
     private static final String KEY_EGGS = "EggCount";
     private static final String KEY_COOP_TIME = "CoopTime";
@@ -183,6 +190,88 @@ public class ChickenCoopBlockEntity extends BlockEntity {
 
     public List<CompoundTag> getStoredChickens() {
         return this.storedChickens;
+    }
+
+    public int getAnalogSignal() {
+        if (eggCount <= 0) return 0;
+        return Math.max(1, Math.min(15, Math.round(eggCount * 15.0F / Math.max(1, PlatformHelper.getChickenCoopMaxEggs()))));
+    }
+
+    @Override
+    public int @NotNull [] getSlotsForFace(Direction side) {
+        return side == Direction.DOWN ? SLOTS_DOWN : NO_SLOTS;
+    }
+
+    @Override
+    public boolean canPlaceItemThroughFace(int slot, ItemStack stack, @Nullable Direction side) {
+        return false;
+    }
+
+    @Override
+    public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction side) {
+        return side == Direction.DOWN && eggCount > 0;
+    }
+
+    @Override
+    public boolean canPlaceItem(int slot, ItemStack stack) {
+        return false;
+    }
+
+    @Override
+    public int getContainerSize() {
+        return 1;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return eggCount <= 0;
+    }
+
+    @Override
+    public @NotNull ItemStack getItem(int slot) {
+        return eggCount > 0 ? new ItemStack(Items.EGG) : ItemStack.EMPTY;
+    }
+
+    @Override
+    public @NotNull ItemStack removeItem(int slot, int amount) {
+        if (eggCount <= 0 || amount <= 0) return ItemStack.EMPTY;
+        int taken = Math.min(amount, eggCount);
+        eggCount -= taken;
+        setChanged();
+        return new ItemStack(Items.EGG, taken);
+    }
+
+    @Override
+    public @NotNull ItemStack removeItemNoUpdate(int slot) {
+        return removeItem(slot, eggCount);
+    }
+
+    @Override
+    public void setItem(int slot, ItemStack stack) {
+        if (stack.isEmpty()) {
+            if (eggCount > 0) {
+                eggCount--;
+                setChanged();
+            }
+        } else if (stack.is(Items.EGG)) {
+            eggCount = Math.min(PlatformHelper.getChickenCoopMaxEggs(), eggCount + 1);
+            setChanged();
+        }
+    }
+
+    @Override
+    public int getMaxStackSize() {
+        return 1;
+    }
+
+    @Override
+    public boolean stillValid(Player player) {
+        return false;
+    }
+
+    @Override
+    public void clearContent() {
+        clearEggs();
     }
 
     @Override

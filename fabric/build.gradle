@@ -35,7 +35,7 @@ repositories {
 }
 
 dependencies {
-    include(modImplementation("net.satisfy.foundation:foundation-fabric:${rootProject.foundation_version}") { transitive = false })
+    modImplementation("net.satisfy.foundation:foundation-fabric:${rootProject.foundation_version}") { transitive = false }
     modImplementation "com.terraformersmc:modmenu:${rootProject.mod_menu_version}"
     modImplementation("me.shedaniel:RoughlyEnoughItems-fabric:$rei_version") { exclude group: 'net.fabricmc', module: 'fabric-loader' }
 
@@ -106,6 +106,7 @@ modrinth {
     additionalFiles = [tasks.sourcesJar.archiveFile]
 
     dependencies {
+        required.project "lets-do-foundation"
         required.project "architectury-api"
         required.project "cloth-config"
     }
@@ -123,6 +124,7 @@ tasks.register("curseforge1038103", net.darkhax.curseforgegradle.TaskPublishCurs
     mainFile.addGameVersion(rootProject.minecraft_version)
     mainFile.addModLoader("Fabric")
     mainFile.addEnvironment("Client", "Server")
+    mainFile.addRequirement("lets-do-foundation")
     mainFile.addRequirement("architectury-api")
     mainFile.addRequirement("cloth-config")
 }

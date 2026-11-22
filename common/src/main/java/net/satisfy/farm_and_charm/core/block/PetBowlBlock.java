@@ -162,4 +162,16 @@ public class PetBowlBlock extends FacingBlock implements EntityBlock {
             ).withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
         }
     }
+
+    @Override
+    protected boolean hasAnalogOutputSignal(BlockState state) {
+        return true;
+    }
+
+    @Override
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        if (!(level.getBlockEntity(pos) instanceof PetBowlBlockEntity bowl)) return 0;
+        int count = bowl.getItem(0).getCount();
+        return count <= 0 ? 0 : Math.max(1, Math.round(count * 15.0F / 4));
+    }
 }

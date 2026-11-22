@@ -25,3 +25,8 @@ publishing {
         }
     }
 }
+
+tasks.register("release") {
+    group = "publishing"
+    dependsOn([":fabric", ":neoforge"].collect { path -> project(path).tasks.matching { it.name == "modrinth" || it.name.startsWith("curseforge") } })
+}

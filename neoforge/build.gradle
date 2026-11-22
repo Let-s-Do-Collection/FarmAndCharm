@@ -34,7 +34,7 @@ repositories {
 }
 
 dependencies {
-    include(modImplementation("net.satisfy.foundation:foundation-neoforge:${rootProject.foundation_version}") { transitive = false })
+    modImplementation("net.satisfy.foundation:foundation-neoforge:${rootProject.foundation_version}") { transitive = false }
     neoForge "net.neoforged:neoforge:${rootProject.neoforge_version}"
     modApi "dev.architectury:architectury-neoforge:${rootProject.architectury_version}"
 
@@ -105,6 +105,7 @@ modrinth {
     additionalFiles = [tasks.sourcesJar.archiveFile]
 
     dependencies {
+        required.project "lets-do-foundation"
         required.project "architectury-api"
     }
 }
@@ -121,6 +122,7 @@ tasks.register("curseforge1038103", net.darkhax.curseforgegradle.TaskPublishCurs
     mainFile.addGameVersion(rootProject.minecraft_version)
     mainFile.addModLoader("NeoForge")
     mainFile.addEnvironment("Client", "Server")
+    mainFile.addRequirement("lets-do-foundation")
     mainFile.addRequirement("architectury-api")
 }
 

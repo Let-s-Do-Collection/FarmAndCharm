@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.compat.rei;
 
+import net.satisfy.farm_and_charm.core.compat.RecipeWorkstations;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
 import dev.architectury.event.EventResult;
@@ -56,6 +57,11 @@ public class Farm_And_CharmREIClientPlugin implements REIClientPlugin {
         registry.addWorkstations(StoveDisplay.STOVE_DISPLAY, EntryStacks.of(ObjectRegistry.STOVE.get()));
         registry.addWorkstations(RoasterDisplay.ROASTER_DISPLAY, EntryStacks.of(ObjectRegistry.ROASTER.get()));
         registry.addWorkstations(SiloCategory.SILO_DISPLAY, EntryStacks.of(ObjectRegistry.SILO_WOOD.get()), EntryStacks.of(ObjectRegistry.SILO_COPPER.get()));
+        RecipeWorkstations.get(RecipeWorkstations.Type.COOKING_POT).forEach(stack -> registry.addWorkstations(CookingPotDisplay.COOKING_POT_DISPLAY, EntryStacks.of(stack)));
+        RecipeWorkstations.get(RecipeWorkstations.Type.STOVE).forEach(stack -> registry.addWorkstations(StoveDisplay.STOVE_DISPLAY, EntryStacks.of(stack)));
+        RecipeWorkstations.get(RecipeWorkstations.Type.ROASTER).forEach(stack -> registry.addWorkstations(RoasterDisplay.ROASTER_DISPLAY, EntryStacks.of(stack)));
+        RecipeWorkstations.get(RecipeWorkstations.Type.CRAFTING_BOWL).forEach(stack -> registry.addWorkstations(CraftingBowlCategory.CRAFTING_BOWL_DISPLAY, EntryStacks.of(stack)));
+        RecipeWorkstations.get(RecipeWorkstations.Type.MINCER).forEach(stack -> registry.addWorkstations(MincingCategory.MINCING_DISPLAY, EntryStacks.of(stack)));
     }
 
     @Override

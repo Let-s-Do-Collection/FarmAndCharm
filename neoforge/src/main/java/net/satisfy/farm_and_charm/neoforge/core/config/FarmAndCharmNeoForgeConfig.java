@@ -4,6 +4,9 @@ import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class FarmAndCharmNeoForgeConfig {
+    public static final ModConfigSpec.Builder STARTUP_BUILDER = new ModConfigSpec.Builder();
+    public static final ModConfigSpec STARTUP_CONFIG;
+
     public static final ModConfigSpec COMMON_CONFIG;
     public static final ModConfigSpec.BooleanValue ENABLE_RAIN_GROWTH_EFFECT;
     public static final ModConfigSpec.BooleanValue ENABLE_FIREFLIES;
@@ -305,72 +308,78 @@ public class FarmAndCharmNeoForgeConfig {
         ANIMATIONS = builder.comment("Blocks of this mod are animated.").define("animations", true);
         builder.pop();
 
-        builder.comment("Hunger and saturation of the food items. Changes need a game restart.").push("Food");
-        OAT_PANCAKE_NUTRITION = builder.comment("Hunger points restored by Oat Pancake. 2 points = 1 drumstick.").defineInRange("oatPancakeNutrition", 5, 0, 20);
-        OAT_PANCAKE_SATURATION = builder.comment("Saturation given by Oat Pancake, multiplied with its hunger points.").defineInRange("oatPancakeSaturation", 0.6, 0.0, 2.0);
-        ROASTED_CORN_NUTRITION = builder.comment("Hunger points restored by Roasted Corn. 2 points = 1 drumstick.").defineInRange("roastedCornNutrition", 6, 0, 20);
-        ROASTED_CORN_SATURATION = builder.comment("Saturation given by Roasted Corn, multiplied with its hunger points.").defineInRange("roastedCornSaturation", 0.5, 0.0, 2.0);
-        POTATO_WITH_ROAST_MEAT_NUTRITION = builder.comment("Hunger points restored by Potato with Roast Meat. 2 points = 1 drumstick.").defineInRange("potatoWithRoastMeatNutrition", 4, 0, 20);
-        POTATO_WITH_ROAST_MEAT_SATURATION = builder.comment("Saturation given by Potato with Roast Meat, multiplied with its hunger points.").defineInRange("potatoWithRoastMeatSaturation", 0.6, 0.0, 2.0);
-        BAKED_LAMB_HAM_NUTRITION = builder.comment("Hunger points restored by Baked Lamb Ham. 2 points = 1 drumstick.").defineInRange("bakedLambHamNutrition", 5, 0, 20);
-        BAKED_LAMB_HAM_SATURATION = builder.comment("Saturation given by Baked Lamb Ham, multiplied with its hunger points.").defineInRange("bakedLambHamSaturation", 0.8, 0.0, 2.0);
-        FARMERS_BREAKFAST_NUTRITION = builder.comment("Hunger points restored by Farmer's Breakfast. 2 points = 1 drumstick.").defineInRange("farmersBreakfastNutrition", 7, 0, 20);
-        FARMERS_BREAKFAST_SATURATION = builder.comment("Saturation given by Farmer's Breakfast, multiplied with its hunger points.").defineInRange("farmersBreakfastSaturation", 0.8, 0.0, 2.0);
-        STUFFED_CHICKEN_NUTRITION = builder.comment("Hunger points restored by Stuffed Chicken. 2 points = 1 drumstick.").defineInRange("stuffedChickenNutrition", 5, 0, 20);
-        STUFFED_CHICKEN_SATURATION = builder.comment("Saturation given by Stuffed Chicken, multiplied with its hunger points.").defineInRange("stuffedChickenSaturation", 0.7, 0.0, 2.0);
-        STUFFED_RABBIT_NUTRITION = builder.comment("Hunger points restored by Stuffed Rabbit. 2 points = 1 drumstick.").defineInRange("stuffedRabbitNutrition", 5, 0, 20);
-        STUFFED_RABBIT_SATURATION = builder.comment("Saturation given by Stuffed Rabbit, multiplied with its hunger points.").defineInRange("stuffedRabbitSaturation", 0.7, 0.0, 2.0);
-        GRANDMOTHERS_STRAWBERRY_CAKE_NUTRITION = builder.comment("Hunger points restored by Grandmother's Strawberry Cake. 2 points = 1 drumstick.").defineInRange("grandmothersStrawberryCakeNutrition", 4, 0, 20);
-        GRANDMOTHERS_STRAWBERRY_CAKE_SATURATION = builder.comment("Saturation given by Grandmother's Strawberry Cake, multiplied with its hunger points.").defineInRange("grandmothersStrawberryCakeSaturation", 0.5, 0.0, 2.0);
-        FARMERS_BREAD_NUTRITION = builder.comment("Hunger points restored by Farmer's Bread. 2 points = 1 drumstick.").defineInRange("farmersBreadNutrition", 3, 0, 20);
-        FARMERS_BREAD_SATURATION = builder.comment("Saturation given by Farmer's Bread, multiplied with its hunger points.").defineInRange("farmersBreadSaturation", 0.6, 0.0, 2.0);
-        FARMER_SALAD_NUTRITION = builder.comment("Hunger points restored by Farmer Salad. 2 points = 1 drumstick.").defineInRange("farmerSaladNutrition", 6, 0, 20);
-        FARMER_SALAD_SATURATION = builder.comment("Saturation given by Farmer Salad, multiplied with its hunger points.").defineInRange("farmerSaladSaturation", 0.5, 0.0, 2.0);
-        GOULASH_NUTRITION = builder.comment("Hunger points restored by Goulash. 2 points = 1 drumstick.").defineInRange("goulashNutrition", 14, 0, 20);
-        GOULASH_SATURATION = builder.comment("Saturation given by Goulash, multiplied with its hunger points.").defineInRange("goulashSaturation", 0.8, 0.0, 2.0);
-        SIMPLE_TOMATO_SOUP_NUTRITION = builder.comment("Hunger points restored by Simple Tomato Soup. 2 points = 1 drumstick.").defineInRange("simpleTomatoSoupNutrition", 7, 0, 20);
-        SIMPLE_TOMATO_SOUP_SATURATION = builder.comment("Saturation given by Simple Tomato Soup, multiplied with its hunger points.").defineInRange("simpleTomatoSoupSaturation", 0.6, 0.0, 2.0);
-        BARLEY_SOUP_NUTRITION = builder.comment("Hunger points restored by Barley Soup. 2 points = 1 drumstick.").defineInRange("barleySoupNutrition", 7, 0, 20);
-        BARLEY_SOUP_SATURATION = builder.comment("Saturation given by Barley Soup, multiplied with its hunger points.").defineInRange("barleySoupSaturation", 0.65, 0.0, 2.0);
-        ONION_SOUP_NUTRITION = builder.comment("Hunger points restored by Onion Soup. 2 points = 1 drumstick.").defineInRange("onionSoupNutrition", 9, 0, 20);
-        ONION_SOUP_SATURATION = builder.comment("Saturation given by Onion Soup, multiplied with its hunger points.").defineInRange("onionSoupSaturation", 0.5, 0.0, 2.0);
-        POTATO_SOUP_NUTRITION = builder.comment("Hunger points restored by Potato Soup. 2 points = 1 drumstick.").defineInRange("potatoSoupNutrition", 8, 0, 20);
-        POTATO_SOUP_SATURATION = builder.comment("Saturation given by Potato Soup, multiplied with its hunger points.").defineInRange("potatoSoupSaturation", 0.55, 0.0, 2.0);
-        PASTA_WITH_ONION_SAUCE_NUTRITION = builder.comment("Hunger points restored by Pasta with Onion Sauce. 2 points = 1 drumstick.").defineInRange("pastaWithOnionSauceNutrition", 5, 0, 20);
-        PASTA_WITH_ONION_SAUCE_SATURATION = builder.comment("Saturation given by Pasta with Onion Sauce, multiplied with its hunger points.").defineInRange("pastaWithOnionSauceSaturation", 0.6, 0.0, 2.0);
-        CORN_GRITS_NUTRITION = builder.comment("Hunger points restored by Corn Grits. 2 points = 1 drumstick.").defineInRange("cornGritsNutrition", 6, 0, 20);
-        CORN_GRITS_SATURATION = builder.comment("Saturation given by Corn Grits, multiplied with its hunger points.").defineInRange("cornGritsSaturation", 0.5, 0.0, 2.0);
-        OATMEAL_WITH_STRAWBERRIES_NUTRITION = builder.comment("Hunger points restored by Oatmeal with Strawberries. 2 points = 1 drumstick.").defineInRange("oatmealWithStrawberriesNutrition", 5, 0, 20);
-        OATMEAL_WITH_STRAWBERRIES_SATURATION = builder.comment("Saturation given by Oatmeal with Strawberries, multiplied with its hunger points.").defineInRange("oatmealWithStrawberriesSaturation", 0.5, 0.0, 2.0);
-        SAUSAGE_WITH_OAT_PATTY_NUTRITION = builder.comment("Hunger points restored by Sausage with Oat Patty. 2 points = 1 drumstick.").defineInRange("sausageWithOatPattyNutrition", 13, 0, 20);
-        SAUSAGE_WITH_OAT_PATTY_SATURATION = builder.comment("Saturation given by Sausage with Oat Patty, multiplied with its hunger points.").defineInRange("sausageWithOatPattySaturation", 0.9, 0.0, 2.0);
-        LAMB_WITH_CORN_NUTRITION = builder.comment("Hunger points restored by Lamb with Corn. 2 points = 1 drumstick.").defineInRange("lambWithCornNutrition", 12, 0, 20);
-        LAMB_WITH_CORN_SATURATION = builder.comment("Saturation given by Lamb with Corn, multiplied with its hunger points.").defineInRange("lambWithCornSaturation", 0.8, 0.0, 2.0);
-        BEEF_PATTY_WITH_VEGETABLES_NUTRITION = builder.comment("Hunger points restored by Beef Patty with Vegetables. 2 points = 1 drumstick.").defineInRange("beefPattyWithVegetablesNutrition", 11, 0, 20);
-        BEEF_PATTY_WITH_VEGETABLES_SATURATION = builder.comment("Saturation given by Beef Patty with Vegetables, multiplied with its hunger points.").defineInRange("beefPattyWithVegetablesSaturation", 0.75, 0.0, 2.0);
-        BARLEY_PATTIES_WITH_POTATOES_NUTRITION = builder.comment("Hunger points restored by Barley Patties with Potatoes. 2 points = 1 drumstick.").defineInRange("barleyPattiesWithPotatoesNutrition", 10, 0, 20);
-        BARLEY_PATTIES_WITH_POTATOES_SATURATION = builder.comment("Saturation given by Barley Patties with Potatoes, multiplied with its hunger points.").defineInRange("barleyPattiesWithPotatoesSaturation", 0.65, 0.0, 2.0);
-        BACON_WITH_EGGS_NUTRITION = builder.comment("Hunger points restored by Bacon with Eggs. 2 points = 1 drumstick.").defineInRange("baconWithEggsNutrition", 6, 0, 20);
-        BACON_WITH_EGGS_SATURATION = builder.comment("Saturation given by Bacon with Eggs, multiplied with its hunger points.").defineInRange("baconWithEggsSaturation", 0.75, 0.0, 2.0);
-        CHICKEN_WRAPPED_IN_BACON_NUTRITION = builder.comment("Hunger points restored by Chicken Wrapped in Bacon. 2 points = 1 drumstick.").defineInRange("chickenWrappedInBaconNutrition", 12, 0, 20);
-        CHICKEN_WRAPPED_IN_BACON_SATURATION = builder.comment("Saturation given by Chicken Wrapped in Bacon, multiplied with its hunger points.").defineInRange("chickenWrappedInBaconSaturation", 0.7, 0.0, 2.0);
-        COOKED_SALMON_NUTRITION = builder.comment("Hunger points restored by Cooked Salmon. 2 points = 1 drumstick.").defineInRange("cookedSalmonNutrition", 12, 0, 20);
-        COOKED_SALMON_SATURATION = builder.comment("Saturation given by Cooked Salmon, multiplied with its hunger points.").defineInRange("cookedSalmonSaturation", 0.8, 0.0, 2.0);
-        COOKED_COD_NUTRITION = builder.comment("Hunger points restored by Cooked Cod. 2 points = 1 drumstick.").defineInRange("cookedCodNutrition", 11, 0, 20);
-        COOKED_COD_SATURATION = builder.comment("Saturation given by Cooked Cod, multiplied with its hunger points.").defineInRange("cookedCodSaturation", 0.75, 0.0, 2.0);
-        ROASTED_CHICKEN_NUTRITION = builder.comment("Hunger points restored by Roasted Chicken. 2 points = 1 drumstick.").defineInRange("roastedChickenNutrition", 5, 0, 20);
-        ROASTED_CHICKEN_SATURATION = builder.comment("Saturation given by Roasted Chicken, multiplied with its hunger points.").defineInRange("roastedChickenSaturation", 0.6, 0.0, 2.0);
-        builder.pop();
+        STARTUP_BUILDER.comment("Hunger and saturation of the food items. Changes need a game restart.").push("Food");
+        OAT_PANCAKE_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Oat Pancake. 2 points = 1 drumstick.").defineInRange("oatPancakeNutrition", 5, 0, 20);
+        OAT_PANCAKE_SATURATION = STARTUP_BUILDER.comment("Saturation given by Oat Pancake, multiplied with its hunger points.").defineInRange("oatPancakeSaturation", 0.6, 0.0, 2.0);
+        ROASTED_CORN_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Roasted Corn. 2 points = 1 drumstick.").defineInRange("roastedCornNutrition", 6, 0, 20);
+        ROASTED_CORN_SATURATION = STARTUP_BUILDER.comment("Saturation given by Roasted Corn, multiplied with its hunger points.").defineInRange("roastedCornSaturation", 0.5, 0.0, 2.0);
+        POTATO_WITH_ROAST_MEAT_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Potato with Roast Meat. 2 points = 1 drumstick.").defineInRange("potatoWithRoastMeatNutrition", 4, 0, 20);
+        POTATO_WITH_ROAST_MEAT_SATURATION = STARTUP_BUILDER.comment("Saturation given by Potato with Roast Meat, multiplied with its hunger points.").defineInRange("potatoWithRoastMeatSaturation", 0.6, 0.0, 2.0);
+        BAKED_LAMB_HAM_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Baked Lamb Ham. 2 points = 1 drumstick.").defineInRange("bakedLambHamNutrition", 5, 0, 20);
+        BAKED_LAMB_HAM_SATURATION = STARTUP_BUILDER.comment("Saturation given by Baked Lamb Ham, multiplied with its hunger points.").defineInRange("bakedLambHamSaturation", 0.8, 0.0, 2.0);
+        FARMERS_BREAKFAST_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Farmer's Breakfast. 2 points = 1 drumstick.").defineInRange("farmersBreakfastNutrition", 7, 0, 20);
+        FARMERS_BREAKFAST_SATURATION = STARTUP_BUILDER.comment("Saturation given by Farmer's Breakfast, multiplied with its hunger points.").defineInRange("farmersBreakfastSaturation", 0.8, 0.0, 2.0);
+        STUFFED_CHICKEN_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Stuffed Chicken. 2 points = 1 drumstick.").defineInRange("stuffedChickenNutrition", 5, 0, 20);
+        STUFFED_CHICKEN_SATURATION = STARTUP_BUILDER.comment("Saturation given by Stuffed Chicken, multiplied with its hunger points.").defineInRange("stuffedChickenSaturation", 0.7, 0.0, 2.0);
+        STUFFED_RABBIT_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Stuffed Rabbit. 2 points = 1 drumstick.").defineInRange("stuffedRabbitNutrition", 5, 0, 20);
+        STUFFED_RABBIT_SATURATION = STARTUP_BUILDER.comment("Saturation given by Stuffed Rabbit, multiplied with its hunger points.").defineInRange("stuffedRabbitSaturation", 0.7, 0.0, 2.0);
+        GRANDMOTHERS_STRAWBERRY_CAKE_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Grandmother's Strawberry Cake. 2 points = 1 drumstick.").defineInRange("grandmothersStrawberryCakeNutrition", 4, 0, 20);
+        GRANDMOTHERS_STRAWBERRY_CAKE_SATURATION = STARTUP_BUILDER.comment("Saturation given by Grandmother's Strawberry Cake, multiplied with its hunger points.").defineInRange("grandmothersStrawberryCakeSaturation", 0.5, 0.0, 2.0);
+        FARMERS_BREAD_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Farmer's Bread. 2 points = 1 drumstick.").defineInRange("farmersBreadNutrition", 3, 0, 20);
+        FARMERS_BREAD_SATURATION = STARTUP_BUILDER.comment("Saturation given by Farmer's Bread, multiplied with its hunger points.").defineInRange("farmersBreadSaturation", 0.6, 0.0, 2.0);
+        FARMER_SALAD_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Farmer Salad. 2 points = 1 drumstick.").defineInRange("farmerSaladNutrition", 6, 0, 20);
+        FARMER_SALAD_SATURATION = STARTUP_BUILDER.comment("Saturation given by Farmer Salad, multiplied with its hunger points.").defineInRange("farmerSaladSaturation", 0.5, 0.0, 2.0);
+        GOULASH_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Goulash. 2 points = 1 drumstick.").defineInRange("goulashNutrition", 14, 0, 20);
+        GOULASH_SATURATION = STARTUP_BUILDER.comment("Saturation given by Goulash, multiplied with its hunger points.").defineInRange("goulashSaturation", 0.8, 0.0, 2.0);
+        SIMPLE_TOMATO_SOUP_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Simple Tomato Soup. 2 points = 1 drumstick.").defineInRange("simpleTomatoSoupNutrition", 7, 0, 20);
+        SIMPLE_TOMATO_SOUP_SATURATION = STARTUP_BUILDER.comment("Saturation given by Simple Tomato Soup, multiplied with its hunger points.").defineInRange("simpleTomatoSoupSaturation", 0.6, 0.0, 2.0);
+        BARLEY_SOUP_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Barley Soup. 2 points = 1 drumstick.").defineInRange("barleySoupNutrition", 7, 0, 20);
+        BARLEY_SOUP_SATURATION = STARTUP_BUILDER.comment("Saturation given by Barley Soup, multiplied with its hunger points.").defineInRange("barleySoupSaturation", 0.65, 0.0, 2.0);
+        ONION_SOUP_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Onion Soup. 2 points = 1 drumstick.").defineInRange("onionSoupNutrition", 9, 0, 20);
+        ONION_SOUP_SATURATION = STARTUP_BUILDER.comment("Saturation given by Onion Soup, multiplied with its hunger points.").defineInRange("onionSoupSaturation", 0.5, 0.0, 2.0);
+        POTATO_SOUP_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Potato Soup. 2 points = 1 drumstick.").defineInRange("potatoSoupNutrition", 8, 0, 20);
+        POTATO_SOUP_SATURATION = STARTUP_BUILDER.comment("Saturation given by Potato Soup, multiplied with its hunger points.").defineInRange("potatoSoupSaturation", 0.55, 0.0, 2.0);
+        PASTA_WITH_ONION_SAUCE_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Pasta with Onion Sauce. 2 points = 1 drumstick.").defineInRange("pastaWithOnionSauceNutrition", 5, 0, 20);
+        PASTA_WITH_ONION_SAUCE_SATURATION = STARTUP_BUILDER.comment("Saturation given by Pasta with Onion Sauce, multiplied with its hunger points.").defineInRange("pastaWithOnionSauceSaturation", 0.6, 0.0, 2.0);
+        CORN_GRITS_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Corn Grits. 2 points = 1 drumstick.").defineInRange("cornGritsNutrition", 6, 0, 20);
+        CORN_GRITS_SATURATION = STARTUP_BUILDER.comment("Saturation given by Corn Grits, multiplied with its hunger points.").defineInRange("cornGritsSaturation", 0.5, 0.0, 2.0);
+        OATMEAL_WITH_STRAWBERRIES_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Oatmeal with Strawberries. 2 points = 1 drumstick.").defineInRange("oatmealWithStrawberriesNutrition", 5, 0, 20);
+        OATMEAL_WITH_STRAWBERRIES_SATURATION = STARTUP_BUILDER.comment("Saturation given by Oatmeal with Strawberries, multiplied with its hunger points.").defineInRange("oatmealWithStrawberriesSaturation", 0.5, 0.0, 2.0);
+        SAUSAGE_WITH_OAT_PATTY_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Sausage with Oat Patty. 2 points = 1 drumstick.").defineInRange("sausageWithOatPattyNutrition", 13, 0, 20);
+        SAUSAGE_WITH_OAT_PATTY_SATURATION = STARTUP_BUILDER.comment("Saturation given by Sausage with Oat Patty, multiplied with its hunger points.").defineInRange("sausageWithOatPattySaturation", 0.9, 0.0, 2.0);
+        LAMB_WITH_CORN_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Lamb with Corn. 2 points = 1 drumstick.").defineInRange("lambWithCornNutrition", 12, 0, 20);
+        LAMB_WITH_CORN_SATURATION = STARTUP_BUILDER.comment("Saturation given by Lamb with Corn, multiplied with its hunger points.").defineInRange("lambWithCornSaturation", 0.8, 0.0, 2.0);
+        BEEF_PATTY_WITH_VEGETABLES_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Beef Patty with Vegetables. 2 points = 1 drumstick.").defineInRange("beefPattyWithVegetablesNutrition", 11, 0, 20);
+        BEEF_PATTY_WITH_VEGETABLES_SATURATION = STARTUP_BUILDER.comment("Saturation given by Beef Patty with Vegetables, multiplied with its hunger points.").defineInRange("beefPattyWithVegetablesSaturation", 0.75, 0.0, 2.0);
+        BARLEY_PATTIES_WITH_POTATOES_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Barley Patties with Potatoes. 2 points = 1 drumstick.").defineInRange("barleyPattiesWithPotatoesNutrition", 10, 0, 20);
+        BARLEY_PATTIES_WITH_POTATOES_SATURATION = STARTUP_BUILDER.comment("Saturation given by Barley Patties with Potatoes, multiplied with its hunger points.").defineInRange("barleyPattiesWithPotatoesSaturation", 0.65, 0.0, 2.0);
+        BACON_WITH_EGGS_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Bacon with Eggs. 2 points = 1 drumstick.").defineInRange("baconWithEggsNutrition", 6, 0, 20);
+        BACON_WITH_EGGS_SATURATION = STARTUP_BUILDER.comment("Saturation given by Bacon with Eggs, multiplied with its hunger points.").defineInRange("baconWithEggsSaturation", 0.75, 0.0, 2.0);
+        CHICKEN_WRAPPED_IN_BACON_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Chicken Wrapped in Bacon. 2 points = 1 drumstick.").defineInRange("chickenWrappedInBaconNutrition", 12, 0, 20);
+        CHICKEN_WRAPPED_IN_BACON_SATURATION = STARTUP_BUILDER.comment("Saturation given by Chicken Wrapped in Bacon, multiplied with its hunger points.").defineInRange("chickenWrappedInBaconSaturation", 0.7, 0.0, 2.0);
+        COOKED_SALMON_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Cooked Salmon. 2 points = 1 drumstick.").defineInRange("cookedSalmonNutrition", 12, 0, 20);
+        COOKED_SALMON_SATURATION = STARTUP_BUILDER.comment("Saturation given by Cooked Salmon, multiplied with its hunger points.").defineInRange("cookedSalmonSaturation", 0.8, 0.0, 2.0);
+        COOKED_COD_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Cooked Cod. 2 points = 1 drumstick.").defineInRange("cookedCodNutrition", 11, 0, 20);
+        COOKED_COD_SATURATION = STARTUP_BUILDER.comment("Saturation given by Cooked Cod, multiplied with its hunger points.").defineInRange("cookedCodSaturation", 0.75, 0.0, 2.0);
+        ROASTED_CHICKEN_NUTRITION = STARTUP_BUILDER.comment("Hunger points restored by Roasted Chicken. 2 points = 1 drumstick.").defineInRange("roastedChickenNutrition", 5, 0, 20);
+        ROASTED_CHICKEN_SATURATION = STARTUP_BUILDER.comment("Saturation given by Roasted Chicken, multiplied with its hunger points.").defineInRange("roastedChickenSaturation", 0.6, 0.0, 2.0);
+        STARTUP_BUILDER.pop();
+
+        STARTUP_CONFIG = STARTUP_BUILDER.build();
 
         COMMON_CONFIG = builder.build();
     }
 
     public static void onLoad(ModConfigEvent.Loading event) {
-        sync();
+        if (event.getConfig().getSpec() == COMMON_CONFIG) {
+            sync();
+        }
     }
 
     public static void onReload(ModConfigEvent.Reloading event) {
-        sync();
+        if (event.getConfig().getSpec() == COMMON_CONFIG) {
+            sync();
+        }
     }
 
     public static void sync() {
@@ -427,6 +436,9 @@ public class FarmAndCharmNeoForgeConfig {
         sustenanceEffectFoodIncrement = SUSTENANCE_EFFECT_FOOD_INCREMENT.get();
         satiationEffectInterval = SATIATION_EFFECT_INTERVAL.get();
         satiationEffectHealAmount = SATIATION_EFFECT_HEAL_AMOUNT.get();
+    }
+
+    public static void syncFood() {
         oatPancakeNutrition = OAT_PANCAKE_NUTRITION.get();
         oatPancakeSaturation = OAT_PANCAKE_SATURATION.get();
         roastedCornNutrition = ROASTED_CORN_NUTRITION.get();

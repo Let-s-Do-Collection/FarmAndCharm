@@ -7,12 +7,12 @@
         "recipe": "farm_and_charm:cutting_board"
       }
     },
-    "has_birch_planks": {
+    "has_planks": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "items": "minecraft:birch_planks"
+            "items": "#minecraft:planks"
           }
         ]
       }
@@ -21,7 +21,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_birch_planks"
+      "has_planks"
     ]
   ],
   "rewards": {

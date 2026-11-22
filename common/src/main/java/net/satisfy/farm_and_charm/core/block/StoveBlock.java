@@ -306,4 +306,14 @@ public class StoveBlock extends Block implements EntityBlock {
             itemStack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
         }
     }
+
+    @Override
+    protected boolean hasAnalogOutputSignal(BlockState state) {
+        return true;
+    }
+
+    @Override
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        return level.getBlockEntity(pos) instanceof StoveBlockEntity stove && !stove.getItem(stove.getOutputSlot()).isEmpty() ? 15 : 0;
+    }
 }

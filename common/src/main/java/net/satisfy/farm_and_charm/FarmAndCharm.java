@@ -2,7 +2,10 @@ package net.satisfy.farm_and_charm;
 
 import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.registry.registries.RegistrySupplier;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.satisfy.farm_and_charm.core.event.CleaverEvents;
 import net.satisfy.farm_and_charm.core.event.VanillaItemPlacements;
 import net.satisfy.foundation.overlay.BlockInfoSync;
@@ -76,6 +79,11 @@ public class FarmAndCharm {
                 ObjectRegistry.POTATO_WITH_ROAST_MEAT_ITEM, ObjectRegistry.BAKED_LAMB_HAM_ITEM, ObjectRegistry.STUFFED_CHICKEN_ITEM, ObjectRegistry.STUFFED_RABBIT_ITEM,
                 ObjectRegistry.FARMERS_BREAKFAST_ITEM, ObjectRegistry.GRANDMOTHERS_STRAWBERRY_CAKE_ITEM, ObjectRegistry.NETHERITE_CLEAVER);
         registerRarity(FoundationRarity.LEGENDARY, ObjectRegistry.SCARECROW);
+        for (Item item : BuiltInRegistries.ITEM) {
+            if (MOD_ID.equals(BuiltInRegistries.ITEM.getKey(item).getNamespace()) && FoundationRarities.get(new ItemStack(item)) == null) {
+                FoundationRarities.register(item, FoundationRarity.COMMON);
+            }
+        }
     }
 
     @SafeVarargs

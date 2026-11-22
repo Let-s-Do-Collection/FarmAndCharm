@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.compat.jei;
 
+import net.satisfy.farm_and_charm.core.compat.RecipeWorkstations;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.RecipeTypes;
@@ -149,6 +150,11 @@ public class FarmAndCharmJEIPlugin implements IModPlugin {
         registration.addRecipeCatalyst(new ItemStack(ObjectRegistry.DIAMOND_CLEAVER.get()), CuttingBoardCategory.TYPE);
         registration.addRecipeCatalyst(new ItemStack(ObjectRegistry.NETHERITE_CLEAVER.get()), CuttingBoardCategory.TYPE);
         registration.addRecipeCatalyst(new ItemStack(Items.IRON_AXE), StrippingCategory.TYPE);
+        RecipeWorkstations.get(RecipeWorkstations.Type.COOKING_POT).forEach(stack -> registration.addRecipeCatalyst(stack, CookingPotCategory.COOKING_POT));
+        RecipeWorkstations.get(RecipeWorkstations.Type.STOVE).forEach(stack -> registration.addRecipeCatalyst(stack, StoveCategory.STOVE));
+        RecipeWorkstations.get(RecipeWorkstations.Type.ROASTER).forEach(stack -> registration.addRecipeCatalyst(stack, RoasterCategory.ROASTER));
+        RecipeWorkstations.get(RecipeWorkstations.Type.CRAFTING_BOWL).forEach(stack -> registration.addRecipeCatalyst(stack, CraftingBowlCategory.DOUGHING));
+        RecipeWorkstations.get(RecipeWorkstations.Type.MINCER).forEach(stack -> registration.addRecipeCatalyst(stack, MincerCategory.MINCING_TYPE));
 
     }
 }

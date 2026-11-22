@@ -25,7 +25,7 @@ public class WaterSprinklerBlockEntity extends BlockEntity {
     }
 
     public static void clientTick(Level level, BlockPos pos, BlockState state, WaterSprinklerBlockEntity sprinkler) {
-        float target = state.getValue(WaterSprinklerBlock.PRESSURE).getSpeed() * (level.isRaining() || level.isThundering() ? 2.0F : 1.0F);
+        float target = level.hasNeighborSignal(pos) ? 0.0F : state.getValue(WaterSprinklerBlock.PRESSURE).getSpeed() * (level.isRaining() || level.isThundering() ? 2.0F : 1.0F);
         sprinkler.speed += (target - sprinkler.speed) * SPIN_UP;
         if (sprinkler.phase >= STEPS_PER_TURN) {
             sprinkler.phase -= STEPS_PER_TURN;

@@ -473,4 +473,14 @@ public class TimberWellBlock extends FacingBlock implements EntityBlock {
         VoxelShape shape = this.getShape(state, level, pos, CollisionContext.empty());
         return state.getValue(PART) == TimberWellPart.TOP ? shape : Shapes.or(shape, TUB_FILL);
     }
+
+    @Override
+    protected boolean hasAnalogOutputSignal(BlockState state) {
+        return true;
+    }
+
+    @Override
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        return state.getValue(LEVEL) * 5;
+    }
 }

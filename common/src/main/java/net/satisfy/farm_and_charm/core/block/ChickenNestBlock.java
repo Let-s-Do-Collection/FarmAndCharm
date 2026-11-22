@@ -5,6 +5,10 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.satisfy.foundation.storage.StorageBlock;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import org.jetbrains.annotations.Nullable;
+import net.satisfy.farm_and_charm.core.block.entity.FarmAndCharmStorageBlockEntity;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ColorParticleOption;
@@ -130,5 +134,20 @@ public class ChickenNestBlock extends StorageBlock {
     @Override
     public void appendHoverText(ItemStack itemStack, Item.TooltipContext tooltipContext, List<Component> tooltip, TooltipFlag tooltipFlag) {
         tooltip.add(Component.translatable("tooltip.farm_and_charm.canbeplaced").withStyle(ChatFormatting.GRAY));
+    }
+
+    @Override
+    public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new FarmAndCharmStorageBlockEntity(pos, state, size());
+    }
+
+    @Override
+    protected boolean hasAnalogOutputSignal(BlockState state) {
+        return true;
+    }
+
+    @Override
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(pos));
     }
 }

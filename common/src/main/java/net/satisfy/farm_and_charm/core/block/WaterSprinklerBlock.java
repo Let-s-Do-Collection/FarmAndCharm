@@ -79,7 +79,7 @@ public class WaterSprinklerBlock extends BaseEntityBlock {
 
     @Override
     public void animateTick(@NotNull BlockState state, Level world, @NotNull BlockPos pos, @NotNull RandomSource random) {
-        if (!world.isRaining() && !world.isThundering()) {
+        if (!world.isRaining() && !world.isThundering() && !world.hasNeighborSignal(pos)) {
             if (world.isClientSide) {
                 BlockEntity be = world.getBlockEntity(pos);
                 if (be instanceof WaterSprinklerBlockEntity sprinkler) {
@@ -112,6 +112,10 @@ public class WaterSprinklerBlock extends BaseEntityBlock {
 
     @Override
     public void tick(@NotNull BlockState state, ServerLevel world, BlockPos pos, @NotNull RandomSource random) {
+        if (world.hasNeighborSignal(pos)) {
+            world.scheduleTick(pos, this, 20);
+            return;
+        }
         int range = PlatformHelper.getWaterSprinklerRange();
         BlockPos.betweenClosed(pos.offset(-range, -1, -range), pos.offset(range, 1, range)).forEach(p -> {
             BlockState blockState = world.getBlockState(p);

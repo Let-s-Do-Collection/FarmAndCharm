@@ -104,4 +104,16 @@ public class FeedingTroughBlock extends LineConnectingBlock implements EntityBlo
             ).withStyle(Style.EMPTY.withColor(TextColor.fromRgb(earthy))));
         }
     }
+
+    @Override
+    protected boolean hasAnalogOutputSignal(BlockState state) {
+        return true;
+    }
+
+    @Override
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        if (!(level.getBlockEntity(pos) instanceof FeedingTroughBlockEntity trough)) return 0;
+        int count = trough.getItem(0).getCount();
+        return count <= 0 ? 0 : Math.max(1, Math.round(count * 15.0F / 4));
+    }
 }

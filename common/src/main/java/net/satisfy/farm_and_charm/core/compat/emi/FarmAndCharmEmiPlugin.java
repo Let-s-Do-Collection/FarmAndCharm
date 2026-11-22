@@ -1,5 +1,6 @@
 package net.satisfy.farm_and_charm.core.compat.emi;
 
+import net.satisfy.farm_and_charm.core.compat.RecipeWorkstations;
 import dev.emi.emi.api.EmiEntrypoint;
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
@@ -93,6 +94,11 @@ public class FarmAndCharmEmiPlugin implements EmiPlugin {
         registry.addWorkstation(CUTTING_BOARD, EmiStack.of(ObjectRegistry.NETHERITE_CLEAVER.get()));
         registry.addWorkstation(ASSEMBLY, EmiStack.of(ObjectRegistry.CUTTING_BOARD.get()));
         registry.addWorkstation(LOG_STRIPPING, EmiStack.of(ObjectRegistry.CUTTING_BOARD.get()));
+        RecipeWorkstations.get(RecipeWorkstations.Type.COOKING_POT).forEach(stack -> registry.addWorkstation(COOKING_POT, EmiStack.of(stack)));
+        RecipeWorkstations.get(RecipeWorkstations.Type.STOVE).forEach(stack -> registry.addWorkstation(STOVE, EmiStack.of(stack)));
+        RecipeWorkstations.get(RecipeWorkstations.Type.ROASTER).forEach(stack -> registry.addWorkstation(ROASTER, EmiStack.of(stack)));
+        RecipeWorkstations.get(RecipeWorkstations.Type.CRAFTING_BOWL).forEach(stack -> registry.addWorkstation(DOUGHING, EmiStack.of(stack)));
+        RecipeWorkstations.get(RecipeWorkstations.Type.MINCER).forEach(stack -> registry.addWorkstation(MINCING, EmiStack.of(stack)));
         registry.addWorkstation(LOG_STRIPPING, EmiStack.of(Items.IRON_AXE));
 
         registry.addRecipeHandler(ScreenhandlerTypeRegistry.COOKING_POT_SCREEN_HANDLER.get(), new FarmAndCharmEmiRecipeHandler<>(COOKING_POT, 1, 6, 0, 8));

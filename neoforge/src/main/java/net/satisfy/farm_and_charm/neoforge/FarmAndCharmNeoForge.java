@@ -14,10 +14,16 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.items.wrapper.SidedInvWrapper;
 import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.satisfy.farm_and_charm.FarmAndCharm;
+import net.satisfy.farm_and_charm.core.block.entity.SiloBlockEntity;
+import net.satisfy.farm_and_charm.core.registry.EntityTypeRegistry;
 import net.satisfy.farm_and_charm.core.registry.ObjectRegistry;
 import net.satisfy.farm_and_charm.neoforge.core.config.FarmAndCharmNeoForgeConfig;
 import net.satisfy.farm_and_charm.platform.neoforge.PlatformHelperImpl;
@@ -36,11 +42,24 @@ public class FarmAndCharmNeoForge {
 
     public FarmAndCharmNeoForge(ModContainer modContainer) {
         modContainer.registerConfig(ModConfig.Type.COMMON, FarmAndCharmNeoForgeConfig.COMMON_CONFIG);
+        modContainer.registerConfig(ModConfig.Type.STARTUP, FarmAndCharmNeoForgeConfig.STARTUP_CONFIG);
+        FarmAndCharmNeoForgeConfig.syncFood();
         Objects.requireNonNull(modContainer.getEventBus()).addListener(FarmAndCharmNeoForgeConfig::onLoad);
         modContainer.getEventBus().addListener(FarmAndCharmNeoForgeConfig::onReload);
         modContainer.getEventBus().addListener(FarmAndCharmNeoForge::reapplyFoodConfig);
         modContainer.getEventBus().addListener(FarmAndCharmNeoForge::addBuiltinPacks);
+        modContainer.getEventBus().addListener(FarmAndCharmNeoForge::registerCapabilities);
         FarmAndCharm.init();
+    }
+
+    private static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, EntityTypeRegistry.SILO_BLOCK_ENTITY.get(), (silo, side) -> {
+            SiloBlockEntity controller = silo.getControllerSilo();
+            if (controller == null) {
+                return null;
+            }
+            return side == null ? new InvWrapper(controller) : new SidedInvWrapper(controller, side);
+        });
     }
 
     private static void addBuiltinPacks(AddPackFindersEvent event) {
@@ -104,7 +123,7 @@ public class FarmAndCharmNeoForge {
 
         FoodProperties updated = new FoodProperties(
                 PlatformHelperImpl.getNutrition(key),
-                PlatformHelperImpl.getSaturation(key),
+                PlatformHelperImpl.getNutrition(key) * PlatformHelperImpl.getSaturation(key) * 2.0F,
                 current.canAlwaysEat(),
                 current.eatSeconds(),
                 current.usingConvertsTo(),

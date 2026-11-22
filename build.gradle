@@ -81,3 +81,18 @@ allprojects {
         withSourcesJar()
     }
 }
+
+tasks.register("publishModrinth") {
+    group = "publishing"
+    dependsOn([":fabric", ":neoforge"].collect { path -> project(path).tasks.matching { it.name == "modrinth" } })
+}
+
+tasks.register("publishCurseForge") {
+    group = "publishing"
+    dependsOn([":fabric", ":neoforge"].collect { path -> project(path).tasks.matching { it.name.startsWith("curseforge") } })
+}
+
+tasks.register("publishAll") {
+    group = "publishing"
+    dependsOn "publishModrinth", "publishCurseForge"
+}

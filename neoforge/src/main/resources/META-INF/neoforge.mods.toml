@@ -50,6 +50,6 @@ side = "BOTH"
 [[dependencies.farm_and_charm]]
 modId = "foundation"
 type = "required"
-versionRange = "[1.0.12,)"
+versionRange = "[1.1.0,)"
 ordering = "AFTER"
 side = "BOTH"

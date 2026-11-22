@@ -8,6 +8,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.Containers;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.WorldlyContainerHolder;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -19,6 +21,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.Mirror;
@@ -45,7 +48,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-public class SiloBlock extends FacingBlock implements EntityBlock {
+public class SiloBlock extends FacingBlock implements EntityBlock, WorldlyContainerHolder {
     public static final BooleanProperty TOP = BooleanProperty.create("top");
     public static final BooleanProperty BOTTOM = BooleanProperty.create("bottom");
     public static final BooleanProperty OPEN = BooleanProperty.create("open");
@@ -60,6 +63,11 @@ public class SiloBlock extends FacingBlock implements EntityBlock {
                 .setValue(OPEN, false)
                 .setValue(SHAPE, Shape.NONE)
                 .setValue(FACING, Direction.NORTH));
+    }
+
+    @Override
+    public @Nullable WorldlyContainer getContainer(BlockState state, LevelAccessor level, BlockPos pos) {
+        return level.getBlockEntity(pos) instanceof SiloBlockEntity silo ? silo.getControllerSilo() : null;
     }
 
     public static boolean isSilo(ItemStack itemStack) {
